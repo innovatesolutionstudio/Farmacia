@@ -1,9 +1,9 @@
 const mysql = require('mysql');
 const coneccion = mysql.createConnection({
-    host:'localhost',
-    user:'root',
-    password:'',
-    database:'farmacia_1'
+    host:'31.22.7.56',
+    user:'innovat1_admin',
+    password:'iss1234qwert',
+    database:'innovat1_farmacia'
 });
 //Conexión a la database
 coneccion.connect(function(error){
