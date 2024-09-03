@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="shortcut icon" href="#" />
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+  <title>DataTables estilo Bootstrap 5 - NodeJS y Express</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
+    integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous" />
+  <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap5.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css" />
+  <style>
+    table.dataTable thead {
+      background-color: #485464;
+    color: white;
+    }
+ 
+    .ftable{
+      background-color: rgba(224, 223, 223, 0.433);
+      color: rgb(0, 0, 0);
+    }
+    .btn-group img {
+    max-width: 24px; /* Define el ancho máximo del icono */
+    max-height: 24px; /* Define el alto máximo del icono */
+    }
+    body{
+      background-color: #00000000;
+    }
+  </style>
+</head>
+<div class="container-fluid">
+    <H1 id="tituloImpresion" class="" style="
+      text-align: left;
+      font-family: Arial,sans-serif;
+      font-size: 25px;
+      padding: 20px 0;
+      background-color: #485464; 
+      color: #ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;Tablero de control - Compras</H1>
+  
+      <a id="btnActualizar" class="btn btn-group btn-light mt-2" style="font-size: 20px;">
+        <img src="resources/images/iconos/refresh.svg" alt="Crear"> &nbsp;Actualizar
+      </a>
+  
+      <a id="btnExportar" class="btn btn-group btn-light mt-2" style="font-size: 20px;">
+        <img src="resources/images/iconos/export.svg" alt="Crear"> &nbsp;Exportar CSV 
+      </a>
+  
+    <!-- Contenedor de la tabla de compras -->
+    <div class="row shadow-lg p-3 mb-5 ftable" id="comprasContainer">
+      <div class="col">
+        <table id="tablaCompras" class="table table-striped table-bordered" style="width: 100%">
+          <thead>
+            <tr>
+              <th class="text-center">ID</th>
+              <th class="text-center">Fecha de Compra</th>
+              <th class="text-center">Total de Compra</th>
+              <th class="text-center">ID Proveedor</th>
+              <th class="text-center" style="width: 150px;">ACCIONES</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% results.forEach(function(compra) { %>
+              <tr>
+                <td class="text-center"><%= compra.ID_Compra %></td>
+                <td class="text-center"><%= compra.Fecha_Compra %></td>
+                <td class="text-center"><%= compra.Total_Compra %></td>
+                <td class="text-center"><%= compra.NombreProveedor %></td>
+                <td>
+                  <div class="text-center">
+                    <div class="btn-group">
+                      <a href="#" class="btn btn-sm btnRestaurar"><img src="resources/images/iconos/restaurar.svg" alt="Restaurar"></a>
+                      <a href="#" class="btn btn-sm btnCopiar"><img src="resources/images/iconos/copy.svg" alt="Copiar"></a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Tus scripts de JavaScript -->
+  <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.min.js" integrity="sha384-5h4UG+6GOuV9qXh6HqOLwZMY4mnLPraeTrjT5v07o347pj6IkfuoASuGBhfDsp3d" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.all.min.js"></script>
+  <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+ <script>
+    $(document).ready(function () {
+  let url = "/compras_p/"; // Cambia la URL de acuerdo a tu backend
+  let opcion = null;
+
+  let tablaCompras = $("#tablaCompras").DataTable({
+    json: {
+      url: url,
+      dataSrc: ""
+    },
+    columns: [
+      { data: "ID_Compra" },
+      { data: "Fecha_Compra" },
+      { data: "Total_Compra" },
+      { data: "ID_Proveedor" },
+      {
+        defaultContent:
+          "<div class='text-center'><div class='btn-group'><button class='btn btn-info btn-sm btnEditar'>Editar</button><button class='btn btn-danger btn-sm btnBorrar'>Borrar</button></div></div>",
+      },
+    ],
+    language: {
+      url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json",
+    },
+  });
+
+  // Evento click para el botón de restaurar
+  $("#tablaCompras").on("click", ".btnRestaurar", function () {
+    var data = tablaCompras.row($(this).parents("tr")).data();
+    var id = data.ID_Compra;
+    opcion = "restaurar";
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "¡No podrás revertir esto!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, restaurar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          type: "POST",
+          url: url + id,
+          data: { opcion: opcion },
+          success: function (data) {
+            Swal.fire(
+              "¡Restaurado!",
+              "El registro ha sido restaurado.",
+              "success"
+            ).then((result) => {
+              if (result.isConfirmed) {
+                window.location.reload();
+              }
+            });
+          },
+          error: function (err) {
+            console.error("Error al restaurar compra:", err);
+          },
+        });
+      }
+    });
+  });
+
+  // Botón de actualizar
+  $("#btnActualizar").click(function () {
+    location.reload();
+  });
+
+  // Botón de exportar
+  $("#btnExportar").click(function () {
+    var wb = XLSX.utils.book_new();
+    var wsData = [];
+    $("#tablaCompras tbody tr").each(function () {
+      var rowData = [];
+      $(this)
+        .find("td:not(:last-child)")
+        .each(function () {
+          rowData.push($(this).text().trim());
+        });
+      wsData.push(rowData);
+    });
+    var ws = XLSX.utils.aoa_to_sheet([
+      ["ID", "Fecha de Compra", "Total de Compra", "ID Proveedor"],
+    ].concat(wsData));
+    XLSX.utils.book_append_sheet(wb, ws, "Compras");
+    XLSX.writeFile(wb, "compras.xlsx");
+  });
+});
+    //#region boton copiar
+    $("#tablaCompras").on("click", ".btnCopiar", function () {
+    // Obtener la fila correspondiente al botón de copiar
+    var fila = $(this).closest("tr");
+
+    // Obtener los datos de la fila
+    var datosFila = fila.find("td").map(function () {
+        return $(this).text();
+    }).get();
+
+    // Convertir los datos en una cadena separada por tabulaciones
+    var datosCopiar = datosFila.join("\t");
+
+    // Copiar los datos al portapapeles
+    navigator.clipboard.writeText(datosCopiar).then(function () {
+        console.log("Datos copiados al portapapeles:", datosCopiar);
+        // Mostrar un mensaje de éxito
+        alert("¡Datos copiados al portapapeles!");
+    }).catch(function (error) {
+        console.error("Error al copiar datos al portapapeles:", error);
+        // Mostrar un mensaje de error si es necesario
+        alert("Error al copiar datos al portapapeles");
+    });
+});
+
+//#endregion
+ </script>
+  
+</body>
+
+</html>

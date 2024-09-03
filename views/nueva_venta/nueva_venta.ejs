@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="shortcut icon" href="#" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"/>
+    <title>PROYECTO CREADO POR ISS</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"  integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous"/>
+    <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap5.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css"/>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+      table.dataTable thead {
+        background-color: #485464;
+        color: white;
+      }
+
+      .ftable {
+        background-color: rgba(224, 223, 223, 0.433);
+        color: rgb(0, 0, 0);
+      }
+      .btn-group img {
+        max-width: 24px;
+        max-height: 24px;
+      }
+      body {
+        background-color: #01010100;
+        width: 100%;
+ 
+      }
+      .contenedor {
+        background-color: #dcd6d689;
+        width: 90%;
+        height: auto;
+        padding-top: 40px;
+        padding-bottom: 100px;
+        padding-left: 10px;
+        padding-right: 20px;
+        margin: 30px 90px;
+      }
+      .h2 {
+        padding-block: 15px;
+        text-align: center;
+      }
+ 
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+      }
+      #iframe-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      #externalAppIframe {
+        width: 80%;
+        height: 1000px;
+        border: 1px solid #ccc; /* Opción de borde para visualizar mejor el iframe */
+      }
+
+      .dropdown-menu {
+        max-height: 200px;
+        overflow-y: auto;
+        display: none; /* Oculto inicialmente */
+        position: absolute;
+        z-index: 1000;
+        width: 100%;
+      }
+      .show {
+        display: block; /* Mostrar cuando haya productos */
+      }
+      .btn-group img {
+        max-width: 24px; /* Define el ancho máximo del icono */
+        max-height: 24px; /* Define el alto máximo del icono */
+    }
+    .btn-group {
+        margin-top: 5px;
+    }
+    .icono{
+        max-width: 24px; /* Define el ancho máximo del icono */
+        max-height: 24px; /* Define el alto máximo del icono */
+    }
+    @media screen and (max-width: 768px) {
+    #tablaProductosAgregados {
+        /* Ajustes específicos para pantallas pequeñas */
+        display: block; /* Cambiar a 'block' para mostrar la tabla como un bloque */
+        overflow-x: auto; /* Permitir scroll horizontal si es necesario */
+    }
+
+    #tablaProductosAgregados thead th,
+    #tablaProductosAgregados tbody td {
+        /* Ajustes para celdas en pantallas pequeñas */
+        text-align: left; /* Alinear texto a la izquierda */
+        white-space: nowrap; /* Evitar saltos de línea en celdas */
+    }
+}
+    </style>
+  </head>
+
+  <body>
+    <div class="contenedor row">
+      <div>
+        <div class="justify-content-between align-items-center" style="padding-bottom: 40px;">
+          <H1 id="tituloImpresion"  style="
+          text-align: center;
+          font-family: Arial,sans-serif;
+          font-size: 40px;
+          padding: 20px 0;
+          background-color: #485464; 
+          color: #ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;Registro de Nuevas ventas</H1>
+        </div>
+     
+        <a  type="button" class="btn btn-group btn-light mt-2" style="font-size: 20px;" id="buscar-medicamento-btn">
+          <img src="resources/images/iconos/buscador.svg" alt="Crear"> &nbsp;Buscar Medicamento
+        </a>
+
+        <form id="detallesVentaForm" action="/nueva_venta" method="POST">
+          <div class="row mb-3 ">
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="ID_Empleado" name="ID_Empleado" maxlength="30" required hidden
+                value="<%= ID_Empleado %>" readonly>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="ID_Sucursal" name="ID_Sucursal" maxlength="30" required hidden
+                value="<%= ID_Sucursal %>" readonly>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="ID_Caja" name="ID_Caja" maxlength="30" required hidden
+                value="<%= ID_Caja %>" readonly>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="apellido" class="form-label">Apellido del cliente :</label>
+              <input type="text" class="form-control" id="apellido" name="apellido" maxlength="30" required>
+            </div>
+            <div class="col-md-6">
+              <label for="nombre" class="form-label">Nombre del cliente:</label>
+              <input type="text" class="form-control" id="nombre" name="nombre" maxlength="30" required>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6" style="width: 630px;">
+              <label for="carnet" class="form-label">Carnet:</label>
+              <input type="number" class="form-control" id="carnet" name="carnet" required>
+            </div>
+            <div class="col-md-2 text-center" style="width: 100px; margin-top: 30px;">
+              <a type="button" class="btn btn-light  btn-group me-3" id="copyButton"> <img
+                  src="resources/images/iconos/reverse.svg" alt="Crear"></a>
+            </div>
+            <div class="col-md-6" style="width: 630px;">
+              <label for="nit" class="form-label">Nit:</label>
+              <input type="number" class="form-control" id="nit" name="nit" required>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="fechaVenta" class="form-label">Fecha:</label>
+              <input type="date" class="form-control" style="background-color:#ffffff; color: rgb(0, 0, 0);"
+                id="fechaVenta" name="fechaVenta" readonly>
+            </div>
+          </div>
+          <a type="button" class="btn btn-success btn-group mb-3" onclick="confirmarVenta()"><img
+              src="resources/images/iconos/venta.svg" alt="Crear"> &nbsp;Hacer venta</a>
+          <a type="button" class="btn btn-danger btn-group mb-3"><img src="resources/images/iconos/cancel.svg"
+              alt="Crear"> &nbsp;Cancelar Venta</a>
+          <h2>Detalles de la venta</h2>
+          <div class="row mb-3" id="detallesVenta">
+            <div class="col-md-4" style="width: 600px; position: relative">
+              <label for="productoFiltro" class="form-label">Buscar Producto:</label>
+              <input type="text" class="form-control" id="productoFiltro" placeholder="Buscar producto..."
+                autocomplete="off" />
+              <div class="dropdown-menu" id="dropdownProductos">
+              </div>
+            </div>
+            <div class="col-md-2" style="width: 250px">
+              <label for="cantidadInventario" class="form-label">Cantidad en inventario:</label>
+              <input type="number" class="form-control" id="cantidadInventario" placeholder="Cargando..." readonly
+                value="Cargando..." />
+            </div>
+            <div class="col-md-2" style="width: 250px">
+              <label for="cantidad" class="form-label">Cantidad:</label>
+              <input type="number" class="form-control" id="cantidad" min="1" placeholder="Cantidad" />
+            </div>
+            <div class="col-md-2" style="margin-top: 32px">
+              <button type="button" class="btn btn-light btn-group mb-3" id="agregarProducto"> <img
+                  src="resources/images/iconos/agregar.svg" alt="Crear"> &nbsp; Agregar Prod </button>
+            </div>
+            <div class="col-md-2">
+              <label for="total" class="form-label">Total a pagar:</label>
+              <input type="text" class="form-control" style="background-color:#407787; color: rgb(255, 255, 255);"
+                id="total" name="total" readonly>
+            </div>
+          </div>
+
+          <h3>Productos Agregados</h3>
+          <div class="table-responsive">
+            <table class=" table table-bordered" style="background-color: white;" id="tablaProductosAgregados">
+              <thead style="background-color: #485464; color: white;">
+                <tr>
+                  <th>ID_Producto</th>
+                  <th>Producto</th>
+                  <th>Unidad de Venta</th>
+                  <th>Cantidad</th>
+                  <th>Precio</th>
+                  <th>Subtotal</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Aquí se agregarán los productos -->
+              </tbody>
+            </table>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </body>
+  <script>
+    $(document).ready(function () {
+      $('#cantidad').on('input', function () {
+        const cantidadInventario = parseInt($('#cantidadInventario').val(), 10);
+        const cantidad = parseInt($(this).val(), 10);
+
+        if (cantidad > cantidadInventario) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Cantidad Excedida',
+            text: 'La cantidad ingresada excede la cantidad disponible en inventario.',
+          });
+          $(this).val(cantidadInventario);
+        }
+      });
+
+      $('#ventaForm').on('submit', function (event) {
+        const cantidadInventario = parseInt($('#cantidadInventario').val(), 10);
+        const cantidad = parseInt($('#cantidad').val(), 10);
+
+        if (cantidad > cantidadInventario) {
+          event.preventDefault();
+          Swal.fire({
+            icon: 'error',
+            title: 'Cantidad Excedida',
+            text: 'La cantidad ingresada excede la cantidad disponible en inventario.',
+          });
+        }
+      });
+    });
+  </script>
+  <script>
+    function enviarVenta() {
+      const ID_Empleado = document.getElementById("ID_Empleado").value;
+      const ID_Sucursal = document.getElementById("ID_Sucursal").value;
+      const ID_Caja = document.getElementById("ID_Caja").value;
+      const nombre = document.getElementById("nombre").value;
+      const apellido = document.getElementById("apellido").value;
+      const nit = document.getElementById("nit").value;
+      const carnet = document.getElementById("carnet").value;
+      const fechaVenta = document.getElementById("fechaVenta").value;
+      const detallesVenta = {
+        ID_Empleado: ID_Empleado,
+        ID_Sucursal: ID_Sucursal,
+        ID_Caja: ID_Caja,
+        nombre: nombre,
+        apellido: apellido,
+        carnet: carnet,
+        nit: nit,
+        fechaVenta: fechaVenta,
+        productos: [],
+        cantidades: [],
+      };
+
+      const tablaProductos = document.getElementById(
+        "tablaProductosAgregados"
+      );
+
+      const filasProductos = tablaProductos.querySelectorAll("tbody tr");
+
+      filasProductos.forEach((fila) => {
+        const celdas = fila.cells;
+        const idProducto = celdas[0].dataset.id;
+        const cantidad = celdas[3].textContent;
+        detallesVenta.productos.push(idProducto);
+        detallesVenta.cantidades.push(cantidad);
+      });
+      if (detallesVenta.productos.length > 0) {
+        enviarDetallesVenta(detallesVenta);
+      } else {
+        console.error("No hay detalles de venta para enviar");
+      }
+    }
+
+    async function enviarDetallesVenta(detallesVenta) {
+      try {
+        const response = await fetch("/nueva_venta", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(detallesVenta),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+        } else {
+          console.error("Error en la solicitud:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error al procesar la solicitud:", error);
+      }
+    }
+  </script>
+  <script>
+    async function handleSubmit(event) {
+      event.preventDefault();
+      const ID_Empleado = document.getElementById("ID_Empleado").value;
+      const ID_Sucursal = document.getElementById("ID_Sucursal").value;
+      const ID_Caja = document.getElementById("ID_Caja").value;
+      const nombre = document.getElementById("nombre").value;
+      const apellido = document.getElementById("apellido").value;
+      const carnet = document.getElementById("carnet").value;
+      const nit = document.getElementById("nit").value;
+      const fechaVenta = document.getElementById("fechaVenta").value;
+      const detallesVenta = {
+        ID_Empleado: ID_Empleado,
+        ID_Sucursal: ID_Sucursal,
+        ID_Caja: ID_Caja,
+        nombre: nombre,
+        apellido: apellido,
+        carnet: carnet,
+        nit: nit,
+        fechaVenta: fechaVenta,
+        productos: [],
+        cantidades: [],
+      };
+      const filasProductos = document.querySelectorAll(
+        "#tablaProductosAgregados tbody tr"
+      );
+      filasProductos.forEach((fila) => {
+        const idProducto = parseInt(
+          fila.querySelector("td:first-child").textContent
+        );
+        const cantidad = parseInt(
+          fila.querySelector("td:nth-child(4)").textContent
+        );
+        detallesVenta.productos.push(idProducto);
+        detallesVenta.cantidades.push(cantidad);
+      });
+      if (detallesVenta.productos.length > 0) {
+        await enviarDetallesVenta(detallesVenta);
+      } else {
+        console.error("No hay detalles de venta para enviar");
+      }
+    }
+    document.getElementById("detallesVentaForm").addEventListener("submit", handleSubmit);
+  </script>
+  <script>
+    let productos = [];
+    async function obtenerProductos() {
+      try {
+        const response = await fetch("/obtener_productos_inventario");
+        if (!response.ok) {
+          throw new Error("Error al obtener los productos");
+        }
+        productos = await response.json();
+      } catch (error) {
+        console.error("Error al obtener los productos del inventario:", error);
+      }
+    }
+
+    async function obtenerCantidadInventario(idProducto) {
+      try {
+        const response = await fetch(`/obtener_cantidad_inventario/${idProducto}`);
+        if (!response.ok) {
+          throw new Error("Error al obtener la cantidad en inventario del producto");
+        }
+        const data = await response.json();
+        return data.cantidad;
+      } catch (error) {
+        console.error("Error al obtener la cantidad en inventario del producto:", error);
+        return null;
+      }
+    }
+
+    async function obtenerPrecioProducto(idProducto) {
+      try {
+        const response = await fetch(
+          `/obtener_precio_producto/${idProducto}`
+        );
+        if (!response.ok) {
+          throw new Error("Error al obtener el precio del producto");
+        }
+        const data = await response.json();
+        return data.precio;
+      } catch (error) {
+        console.error("Error al obtener el precio del producto:", error);
+        return null;
+      }
+    }
+
+    let productoSeleccionado = null;
+
+    function filtrarProductos() {
+      const filtro = document
+        .getElementById("productoFiltro")
+        .value.toLowerCase();
+      const dropdownProductos = document.getElementById("dropdownProductos");
+      dropdownProductos.innerHTML = "";
+      const productosFiltrados = productos.filter((producto) =>
+        producto.Nombre.toLowerCase().includes(filtro)
+      );
+      if (productosFiltrados.length > 0) {
+        dropdownProductos.classList.add("show");
+        productosFiltrados.forEach((producto) => {
+          const opcion = document.createElement("a");
+          opcion.classList.add("dropdown-item");
+          opcion.href = "#";
+          opcion.textContent = `${producto.Nombre} (${producto.Unidad_Venta})`;
+          opcion.dataset.idProducto = producto.ID_Producto;
+          opcion.addEventListener("click", async function () {
+            await seleccionarProducto(producto);
+          });
+          dropdownProductos.appendChild(opcion);
+        });
+      } else {
+        dropdownProductos.classList.remove("show");
+      }
+    }
+
+    async function seleccionarProducto(producto) {
+      const precio = await obtenerPrecioProducto(producto.ID_Producto);
+      const cantidadInventario = await obtenerCantidadInventario(producto.ID_Producto);
+      if (precio !== null && cantidadInventario !== null) {
+        productoSeleccionado = {
+          ...producto,
+          Precio_Unitario: precio,
+          Cantidad_Inventario: cantidadInventario
+        };
+        document.getElementById("productoFiltro").value = producto.Nombre;
+        document.getElementById("cantidadInventario").value = cantidadInventario;
+        document.getElementById("dropdownProductos").classList.remove("show");
+      } else {
+        alert("Error al obtener los detalles del producto");
+      }
+    }
+
+    document.getElementById("productoFiltro").addEventListener("input", filtrarProductos);
+    document.getElementById("productoFiltro").addEventListener("blur", function () {
+        setTimeout(() => {
+          document
+            .getElementById("dropdownProductos")
+            .classList.remove("show");
+        }, 200);
+      });
+
+    function eliminarFila(event) {
+      const fila = event.target.closest('tr'); 
+      fila.remove(); 
+      calcularTotal();
+    }
+    document.querySelectorAll('.eliminarProducto').forEach((boton) => {
+      boton.addEventListener('click', eliminarFila);
+    });
+
+    document.getElementById("agregarProducto").addEventListener("click", function () {
+      const cantidadInput = document.getElementById("cantidad");
+      const cantidad = cantidadInput.value;
+      if (productoSeleccionado && cantidad && cantidad > 0) {
+        const precio = productoSeleccionado.Precio_Unitario;
+        const subtotal = cantidad * precio;
+        const tablaProductosAgregados = document
+          .getElementById("tablaProductosAgregados")
+          .querySelector("tbody");
+        const nuevaFila = document.createElement("tr");
+        nuevaFila.innerHTML = `
+            <td data-id="${productoSeleccionado.ID_Producto}">${
+            productoSeleccionado.ID_Producto
+            }</td>
+            <td>${productoSeleccionado.Nombre}</td>
+            <td>${productoSeleccionado.Unidad_Venta}</td>
+            <td>${cantidad}</td>
+            <td>${precio.toFixed(2)}</td>
+            <td>${subtotal.toFixed(2)}</td>
+            <td><button class="btn btn-danger eliminarProducto">Eliminar</button></td> <!-- Botón de eliminar -->
+        `;
+        tablaProductosAgregados.appendChild(nuevaFila);
+        document.getElementById("productoFiltro").value = "";
+        cantidadInput.value = "";
+        productoSeleccionado = null;
+        nuevaFila.querySelector('.eliminarProducto').addEventListener('click', eliminarFila);
+        calcularTotal();
+      } else {
+        alert("Por favor, selecciona un producto y una cantidad válida.");
+      }
+    });
+    obtenerProductos();
+  </script>
+  <script>
+    function calcularTotal() {
+      let total = 0;
+      const filasProductos = document.querySelectorAll("#tablaProductosAgregados tbody tr");
+      filasProductos.forEach((fila) => {
+        const subtotal = parseFloat(fila.cells[5].textContent);
+        total += subtotal;
+      });
+      document.getElementById("total").value = total.toFixed(2);
+    }
+    window.onload = calcularTotal;
+    document.getElementById("agregarProducto").addEventListener("click", function () {
+      calcularTotal();
+    });
+    const fechaVentaInput = document.getElementById('fechaVenta');
+    fechaVentaInput.value = new Date().toISOString().slice(0, 10);
+    const nitInput = document.getElementById('nit');
+    nitInput.addEventListener('keyup', function () {
+      this.value = this.value.slice(0, 15);
+    });
+    const ciInput = document.getElementById('carnet');
+    ciInput.addEventListener('keyup', function () {
+      this.value = this.value.slice(0, 12);
+    });
+    const carnetInput = document.getElementById('carnet');
+    const copyButton = document.getElementById('copyButton');
+    copyButton.addEventListener('click', function () {
+      nitInput.value = carnetInput.value;
+    });
+  </script>
+      
+  <script>
+    function confirmarVenta() {
+      const ID_Empleado = document.getElementById("ID_Empleado").value;
+      const ID_Sucursal = document.getElementById("ID_Sucursal").value;
+      const ID_Caja = document.getElementById("ID_Caja").value;
+      const nombre = document.getElementById("nombre").value;
+      const apellido = document.getElementById("apellido").value;
+      const nit = document.getElementById("nit").value;
+      const carnet = document.getElementById("carnet").value;
+      const fechaVenta = document.getElementById("fechaVenta").value;
+      const total = document.getElementById("total").value;
+
+      if (!ID_Empleado.trim() || !ID_Sucursal.trim() || !ID_Caja.trim() || !nombre.trim() || !apellido.trim() 
+      || !carnet.trim() || !fechaVenta.trim() || !total.trim()) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Por favor, complete todos los campos obligatorios.'
+        });
+        return;
+      }
+      const detallesVenta = {
+        ID_Empleado: ID_Empleado,
+        ID_Sucursal: ID_Sucursal,
+        ID_Caja: ID_Caja,
+        nombre: nombre,
+        apellido: apellido,
+        carnet: carnet,
+        nit: nit,
+        fechaVenta: fechaVenta,
+        productos: [],
+        nombres: [],
+        cantidades: [],
+        precio: [],
+      };
+
+      const filasProductos = document.querySelectorAll("#tablaProductosAgregados tbody tr");
+
+      filasProductos.forEach((fila) => {
+        const celdas = fila.cells;
+        const idProducto = celdas[0].dataset.id;
+        const cantidad = celdas[3].textContent;
+        const precio = parseFloat(celdas[4].textContent);
+        const nombreProducto = celdas[1].textContent;
+        detallesVenta.nombres.push(nombreProducto);
+        detallesVenta.productos.push(idProducto);
+        detallesVenta.cantidades.push(cantidad);
+        detallesVenta.precio.push(precio);
+      });
+
+      const detallesHTMLPromises = detallesVenta.nombres.map(async (nombreProducto, index) => {
+        const precio = parseFloat(detallesVenta.precio[index]); 
+        if (!isNaN(precio)) {
+          return `
+                <tr>
+                    <td>${detallesVenta.cantidades[index]}</td>
+                    <td>${nombreProducto}</td> <!-- Cambio aquí -->
+                    <td>${precio.toFixed(2)} bs</td>
+                    <td>${(precio * detallesVenta.cantidades[index]).toFixed(2)} bs</td>
+                </tr>
+            `;
+        } else {
+          return `<tr><td colspan="4">Error al obtener el precio del producto ${nombreProducto}</td></tr>`;
+        }
+      });
+
+
+      Promise.all(detallesHTMLPromises)
+        .then((detallesHTML) => {
+          const detallesHTMLString = detallesHTML.join('');
+          const totalVenta = total;
+          const htmlContent = `
+                <div style="display: flex;">
+                    <div style="flex: 2; text-align: left;">
+                        <p><strong>Vendedor:</strong> ${ID_Empleado}</p>
+                        <p><strong>Sucursal:</strong> ${ID_Sucursal}</p>
+                        <p><strong>Caja:</strong> ${ID_Caja}</p>
+                        <p><strong>Cliente:</strong> ${nombre} ${apellido}</p>
+                        <p><strong>NIT:</strong> ${nit}</p>
+                        <p><strong>Carnet:</strong> ${carnet}</p>
+                        <p><strong>Fecha de Venta:</strong> ${fechaVenta}</p>
+                        <hr>
+                        <p><strong>Detalles:</strong></p>
+                        <table style="width:100%">
+                            <tr>
+                                <th>Cantidad</th>
+                                <th>Producto</th>
+                                <th>Precio Unitario</th>
+                                <th>Subtotal</th>
+                            </tr>
+                            ${detallesHTMLString}
+                        </table>
+                    </div>
+                    <div style="flex: 1; text-align: center;">
+                        <img src="resources/images/firmas/qr.jpg" alt="Imagen de venta" style="max-width: 100%;">
+                        <p><strong>Total a pagar:</strong> ${totalVenta}</p>
+                    </div>
+                </div>
+            `;
+          Swal.fire({
+            title: 'Confirmar Venta',
+            html: htmlContent,
+            width: '1200px', 
+            height: '800px',
+            showCancelButton: true,
+            confirmButtonText: '<img class="icono" src="resources/images/iconos/venta.svg" alt="Crear"> Confirmar venta / Imprimir Recibo &nbsp;<img class="icono" src="resources/images/iconos/print.svg" alt="Crear">',
+            confirmButtonColor: '#28a745', 
+            cancelButtonText: '<img class="icono" src="resources/images/iconos/cancel.svg" alt="Crear"> &nbsp;Cancelar',
+            cancelButtonColor: '#dc3545',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Quieres proceder con la venta e imprimir la factura?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, proceder',
+                cancelButtonText: 'No, cancelar'
+              }).then((confirmResult) => {
+                if (confirmResult.isConfirmed) {
+                  enviarVenta();
+                  imprimirFactura({
+                    ID_Empleado,
+                    ID_Sucursal,
+                    ID_Caja,
+                    nombre,
+                    apellido,
+                    nit,
+                    carnet,
+                    fechaVenta,
+                    detalles: detallesVenta.nombres.map((nombreProducto, index) => ({
+                      cantidad: detallesVenta.cantidades[index],
+                      producto: nombreProducto,
+                      precio: detallesVenta.precio[index],
+                      subtotal: detallesVenta.precio[index] * detallesVenta.cantidades[index]
+                    })),
+                    totalVenta
+                  });
+                }
+              });
+            }
+          });
+        })
+        .catch((error) => {
+          console.error('Error al construir el HTML:', error);
+        });
+    }
+
+    function imprimirFactura(datosFactura) {
+      fetch('/generar_factura', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(datosFactura)
+        })
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Error al generar la factura');
+          }
+        })
+        .then(data => {
+          Swal.fire({
+            title: 'Factura generada',
+            text: 'La factura se ha generado correctamente.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          }).then(() => {
+            window.open(data.url, '_blank');
+            window.location.reload();
+          });
+        })
+        .catch(error => {
+          console.error('Error al generar la factura:', error);
+          Swal.fire({
+            title: 'Error',
+            text: 'Error al generar la factura',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        });
+    }
+  </script>
+
+
+<script>
+    document.getElementById('buscar-medicamento-btn').addEventListener('click', () => {
+        Swal.fire({
+            title: '¿Tiene alguna duda?, busque medicamento o sintoma',
+            html: `
+                <div class="p-3">
+                    <form id="buscador-form" class="form-inline">
+                        <div class="input-group w-100">
+                            <input type="text" id="medicamento" class="form-control" placeholder="Ingrese su pregunta aqui" required>
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-primary">Buscar</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="progress mt-3" style="height: 25px;">
+                        <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div>
+                    <div id="resultado" class="mt-3" style="text-align: justify;"></div>
+                </div>
+            `,
+            width: '70%', // Ajusta el tamaño de la alerta
+            showConfirmButton: false,
+            didOpen: () => {
+                // Buscador de Medicamentos por Nombre
+                document.getElementById('buscador-form').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    const medicamento = document.getElementById('medicamento').value;
+                    const progressBar = document.getElementById('progress-bar');
+
+                    // Simular el progreso durante la solicitud
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        if (progress < 90) { // Se detiene en 90% hasta que se complete la solicitud
+                            progress += 1;
+                            progressBar.style.width = `${progress}%`;
+                            progressBar.innerText = `${progress}%`;
+                            progressBar.setAttribute('aria-valuenow', progress);
+                        }
+                    }, 200); // Ajusta la velocidad de la animación
+
+                    try {
+                        const response = await fetch('/buscar', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ medicamento }),
+                        });
+
+                        const data = await response.json();
+
+                        clearInterval(interval); // Detener la animación de progreso
+                        progressBar.style.width = '100%';
+                        progressBar.innerText = '100%';
+                        progressBar.setAttribute('aria-valuenow', 100);
+
+                        document.getElementById('resultado').innerText = data.informacion;
+                    } catch (error) {
+                        clearInterval(interval); // Detener la animación de progreso en caso de error
+                        progressBar.style.width = '100%';
+                        progressBar.innerText = 'Error';
+                        progressBar.classList.add('bg-danger');
+                        document.getElementById('resultado').innerText = 'Error al buscar el medicamento';
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+
+
+</html>

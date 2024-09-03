@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- lick pora icnos  https://www.svgrepo.com/svg/460656/cashier-machine -->
+    <!-- basic -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- site metas -->
+    <title>Dashboard - Farmacia SjD</title>
+    <!-- site icon -->
+    <link rel="icon" href="resources/images/iconos/farmacia.ico">
+
+    <!-- bootstrap css -->
+    <link rel="stylesheet" href="resources/css/bootstrap.min.css" />
+    <!-- site css -->
+    <link rel="stylesheet" href="resources/css/style.css" />
+    <link rel="stylesheet" href="resources/css/responsive.css" />
+    <!-- color css -->
+    <link rel="stylesheet" href="resources/css/colors.css" />
+    <!-- select bootstrap -->
+    <link rel="stylesheet" href="resources/css/bootstrap-select.css" />
+    <!-- scrollbar css -->
+    <link rel="stylesheet" href="resources/css/perfect-scrollbar.css" />
+    <!-- custom css -->
+    <link rel="stylesheet" href="resources/css/custom.css" />
+    <!-- calendar file css -->
+    <link rel="stylesheet" href="resources/js/semantic.min.css" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+      .btn-group img {
+    width: 24px; 
+    height: 24px;
+    
+    }
+    
+</style>
+    </head>
+<body >
+
+    <div class="full_container" >
+        <div class="inner_container" >
+           <!-- menu  -->
+            <nav id="sidebar">
+                <!-- Nombre deel usuario / online  -->
+  
+                <div class="sidebar_blog_1" >
+                    <div class="sidebar-header">
+                        <div class="logo_section">
+                             <a href="index.html"><img class="logo_icon img-responsive" src="resources/images/logo/logo_fm2.png" alt="#" /></a>
+                         </div>
+                    </div>
+  
+                    <div class="sidebar_user_info">
+  
+                        <div class="user_profle_side">
+                            <div class="user_img"><img class="img-responsive" width="110px" height="80px" src="resources/images/logo/logo_fm2.png" alt="#" /></div>
+                            
+                            <div class="user_info">
+                              
+                                <h3 style="color: white;">
+                                FARMACIA 
+                                </h3>
+                                <h1 style="color: white; font-size: 15px;">San juan de Dios</h1>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+  
+                <!--  comienzo del menu -->
+                <div class="sidebar_blog_2" class="panel">
+                    <% if (sesion === 1 || sesion === 2 || sesion === 3 || sesion === 4|| sesion === 5) { %>
+                        <ul class="list-unstyled components">
+                            <h4>General</h4>
+                            <li><a href="#" onclick="cargarContenido('/nueva_venta')" class="btn-group"><img class="icono" src="resources/images/iconos/money1.svg"> <span>&nbsp;&nbsp;Nueva Venta</span></a></li>
+                            <li><a href="#" onclick="cargarContenido('/buscador_ia')" class="btn-group"><img class="icono" src="resources/images/iconos/money1.svg"> <span>&nbsp;&nbsp;info  farmaco</span></a></li>
+                            <li><a href="#" onclick="cargarContenido('/inventario_vista')" class="btn-group"><img class="icono" src="resources/images/iconos/product-disp.svg"> <span>&nbsp;&nbsp;Productos Disponibles</span></a></li>
+                        </ul>
+                        <% if (sesion === 1 || sesion === 3 || sesion === 4) { %>
+                            <ul class="list-unstyled components">
+                                <h4>Finanzas</h4>
+                                <!-- Primer elemento -->
+                                <li class="active">
+                                    <a href="#dashboard" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group"><img class="icono" src="resources/images/iconos/white.svg"><span>&nbsp;&nbsp;Dashboard</span></a>
+                                    <ul class="collapse list-unstyled" id="dashboard">
+                                        <li><a href="#" onclick="cargarContenido('/graficos')">> <span>Dashboard</span></a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#" onclick="cargarContenido('/ganancias_es')" class="btn-group"><img class="icono" src="resources/images/iconos/statistic.svg"> <span>&nbsp;&nbsp;Ganancias</span></a></li>
+                                <li class="active">
+                                    <a href="#reportes" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group"><img class="icono" src="resources/images/iconos/report.svg"> <span>&nbsp;&nbsp;Reportes</span></a>
+                                    <ul class="collapse list-unstyled" id="reportes">
+                                        <li><a href="#" onclick="cargarContenido('/reporte_productos')">> <span>Productos</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/reporte_ventas')">> <span>Ventas</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/reporte_compras')">> <span>Compras</span></a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#" onclick="cargarContenido('/Cajas')" class="btn-group"><img class="icono" src="resources/images/iconos/cajas.svg"> <span>&nbsp;&nbsp;Cajas</span></a></li>
+                            </ul>
+                        <% } %>
+                        <% if (sesion === 1 || sesion === 2 || sesion === 4) { %>
+                            <ul class="list-unstyled components">
+                                <h4>Seccion de Areas</h4>
+                                <!-- Tercer elemento -->
+                                <li>
+                                    <a href="#element" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group"><img class="icono" src="resources/images/iconos/money-ventas.svg"> <span>&nbsp;&nbsp;Ventas</span></a>
+                                    <ul class="collapse list-unstyled" id="element">
+                                        <li><a href="#" onclick="cargarContenido('/ventas')">> <span>Ventas</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/clientes')">> <span>Clientes</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/cajas_c')">> <span>Cajas</span></a></li>
+                                    </ul>
+                                </li>
+                                <!-- Cuarto elemento -->
+                                <li><a href="#" onclick="cargarContenido('/inventario')" class="btn-group"><img class="icono" src="resources/images/iconos/inventory.svg"> <span>&nbsp;&nbsp;Inventario</span></a></li>
+                                <li>
+                                    <a href="#apps" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group"><img class="icono" src="resources/images/iconos/product.svg"><span>&nbsp;&nbsp;Productos</span></a>
+                                    <ul class="collapse list-unstyled" id="apps">
+                                        <li><a href="#" onclick="cargarContenido('/productos')">> <span>Productos</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/unidad_venta')">> <span>Unidad de venta</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/area_producto')">> <span>Area del producto</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/categoria_producto')">> <span>Categoria del producto</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/tipo_paciente')">> <span>Tipo de paciente</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/vias_administracion')">> <span>Vias de administracion</span></a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#compras" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group"><img class="icono" src="resources/images/iconos/compras.svg"> <span>&nbsp;&nbsp;Compras</span></a>
+                                    <ul class="collapse list-unstyled" id="compras">
+                                        <li><a href="#" onclick="cargarContenido('/nueva_compra')">> <span>Nueva Compras</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/compras')">> <span>Compras</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/unidad_empaque')">> <span>Unidades de empaque</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/proveedores')">> <span>Proveedores</span></a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        <% } %>
+                        <% if (sesion === 1 || sesion === 4) { %>
+                            <ul class="list-unstyled components">
+                                <h4 class="panel"> Recursos</h4>
+                                <li>
+                                    <a href="#rech" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group"><img class="icono" src="resources/images/iconos/recursos-h.svg"> <span>&nbsp;&nbsp;Recursos Humanos</span></a>
+                                    <ul class="collapse list-unstyled" id="rech">
+                                        <li><a href="#" onclick="cargarContenido('/empleados')">> <span>Empleados</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/roles')">> <span>Roles</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/sucursales')">> <span>Sucursales</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/ciudades')">> <span>Ciudades</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/paises')">> <span>Paises</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/departamentos')">> <span>Departamentos</span></a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#papeleria" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group"><img class="icono" src="resources/images/iconos/papeleria.svg"> <span>&nbsp;&nbsp;Papeleria</span></a>
+                                    <ul class="collapse list-unstyled" id="papeleria">
+                                        <li><a href="#" onclick="cargarContenido('/ventas_p')">> <span>Ventas</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/compras_p')">> <span>Compras</span></a></li>
+                                       
+                                    </ul>
+                                </li>
+
+                                
+                                <li><a href="#" onclick="cargarContenido('/mantenimiento')" class="btn-group"><img class="icono" src="resources/images/iconos/configure.svg"> <span>&nbsp;&nbsp;Configuracion</span></a></li>
+                            </ul>
+                        <% } %>
+                    <% } %>
+                    
+              </div>
+          </nav>
+          <!-- fin menu -->
+
+          <!-- cabecera -->
+            <div id="content">
+                <!-- topbar -->
+                <div class="topbar" >
+                    <nav class="navbar navbar-expand-lg navbar-light">
+                        <div class="full">
+    
+                            <!--  boton para esconder menu -->
+                            <button type="button" id="sidebarCollapse" class="sidebar_toggle"><i class="fa fa-bars"></i></button>
+                            <!-- logo  -->
+    
+                            <div class="logo_section text-center justify-content-center">
+                               
+                                <div class="col-sm-4" style="width: 300px; ">
+                                    <h1 clash="justify-content-center" style="
+                                        font-size: 20px; 
+                                        font-family: cursive;
+                                        margin: 5px 0 0 0 ;
+                                        width: 300px;"
+                                    >Bienvenido: <%= Nombre %> <%= Apellido %>   <p><span class='online_animation'></span> Conectado</p> </h1>
+                                   
+                                </div>
+                               
+                               
+                            </div>
+                            
+                            
+                            
+                            <!-- menu de perfil  -->
+                            <div class="right_topbar">
+                                <div class="icon_info">
+                                    <ul>
+                                        <li>
+                                       
+                                        </li>
+                                      
+                                        <li  style="margin: 0 15px 0 15px;"><a href="#" class="btn-group "><label class="switch btn-group" style="margin: 4px 10px 0 0;">
+                                            <input type="checkbox" class="checkbox" >
+                                            <div class="slider" style="background-color: #7d8a93;"> </div>
+                                        </label></a><p>Tema</p></li>
+                                        <li  style="margin: 0 25px 0 15px;"><a href="#" id="btnActualizar" class="btn-group"><img style="margin: 0 0 0 10px;" class="icono" src="resources/images/iconos/refresh.svg"></a><p>Recargar</p></li>
+                                        <li style="margin: 0 15px 0 15px;">
+                                            <a href="#" id="btnEmpleado" class="btn-group">
+                                              <img class="icono" src="resources/images/iconos/person.svg">
+                                            </a>
+                                            <p>Perfil</p>
+                                          </li>
+                                        <li  style="margin: 0 15px 0 15px;"><a href="/logout" class="btn-group"><img class="icono" src="resources/images/iconos/salir.svg"></a><p>Salir</p></li>
+                                    </ul>
+                                    
+                                    
+                                    <ul class="user_profile_dd">
+                                        <li>
+                                         <img   src=""  />
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+    
+                        </div>
+                    </nav>
+                    <div id="contenido">
+                        <% if ( sesion === 5) { %>
+                            <iframe id="contenidoFrame" src="/nueva_venta" frameborder="0" ></iframe>
+                        <% } %>
+                        <% if ( sesion === 2) { %>
+                            <iframe id="contenidoFrame" src="/inventario" frameborder="0" ></iframe>
+                        <% } %>
+                        <% if ( sesion === 1 || sesion === 3 || sesion === 4) { %>
+                            <iframe id="contenidoFrame" src="/graficos" frameborder="0" ></iframe>
+                        <% } %>
+                    </div>
+                </div>
+              
+            </div>
+           
+        </div>
+        <!-- fin cabecera -->
+       
+    </div>
+
+<div id="myModal" class="modal" style="width: 400px; height: 500px; background-color: #fff; border-radius: 10px; padding: 20px;">
+
+    <h2 style="text-align: center; font-size: 18px; margin-bottom: 20px;">FARMACIA SAN JUAN DE DIOS</h2>
+    <div class="empleado-info" style="text-align: center;">
+        <img id="fotoEmpleado" src="fotos/img_empleados/<%= Fotografia %>" alt="Foto del empleado" style="width: 200px; height: 200px; margin-bottom: 10px;">
+        <p id="nombreEmpleado" style=" font-weight: bold; font-size: 20px;">Nombre: <%= Nombre %></p>
+        <p id="apellidoEmpleado" style="font-weight: bold; font-size: 20px;">Apellido: <%= Apellido %> </p>
+        <hr style="border-color: #000; margin: 10px 0;">
+        <p id="direccionEmpleado" style="margin: 0;">Direccion:  <%= Dirección %></p>
+        <p id="telefonoEmpleado" style="margin: 0;">Telefono:  <%= Teléfono %></p>
+        <p id="rolEmpleado" style="margin: 0;"> 
+            <% if (sesion === 1 ) { %>
+                Administrador
+            <% } %>
+            <% if (sesion === 2 ) { %>
+                Empleado - Ventas - Compras
+            <% } %>
+            <% if (sesion === 3 ) { %>
+                Empleado - Finanzas
+            <% } %>
+            <% if (sesion === 4 ) { %>
+                Gerencia
+            <% } %>
+        </p>
+    </div>  
+<br>
+    <button id="btnCerrar" style="width: 100%; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Esconder</button>
+  </div>
+
+         <!-- jQuery -->
+      <script src="resources/js/jquery.min.js"></script>
+      <script src="resources/js/popper.min.js"></script>
+      <script src="resources/js/bootstrap.min.js"></script>
+      <!-- wow animation -->
+      <script src="resources/js/animate.js"></script>
+      <!-- select country -->
+      <script src="resources/js/bootstrap-select.js"></script>
+      <!-- owl carousel -->
+      <script src="resources/js/owl.carousel.js"></script> 
+      <!-- chart js -->
+      <script src="resources/js/Chart.min.js"></script>
+      <script src="resources/js/Chart.bundle.min.js"></script>
+      <script src="resources/js/utils.js"></script>
+      <script src="resources/js/analyser.js"></script>
+      <!-- nice scrollbar -->
+      <script src="resources/js/perfect-scrollbar.min.js"></script>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     
+      <!-- custom js -->
+      <script src="resources/js/custom.js"></script>
+      <script src="resources/js/chart_custom_style1.js"></script>
+  </body>
+</html>
+<style>
+    
+/* Estilos comunes para #contenido */
+#contenido {
+    width: 100%; /* Ocupa todo el ancho disponible */
+}
+
+/* Estilos para modo PC */
+@media (min-width: 768px) {
+    #contenido {
+        height: calc(100vh - 50px); /* Ajusta la altura para dejar espacio para la barra de navegación */
+    }
+}
+
+/* Estilos para modo celular */
+@media (max-width: 767px) {
+    #contenido {
+        height: calc(91vh - 50px); /* Ajusta la altura para dejar espacio para la barra de navegación */
+    }
+}
+
+#contenido iframe {
+    
+    padding: 20px;
+    width: 100%;
+    height: 100%; /* Ocupa todo el alto disponible */
+    border: none; /* Elimina el borde del iframe */
+}
+
+
+    .switch{
+        margin-left: 25%;
+        position: relative;
+        width: 40px;
+        height: 20px;
+        border: 2px solid rgb(134 145 169);
+        display: flex;
+        border-radius: 35px;
+    }
+
+    .checkbox{
+        display: none;
+    }
+    .slider{
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        background-color: rgb(94,156,287);
+    }
+    input:checked + .slider{
+        translate:20px;
+    }
+
+  .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(255, 255, 255, 0.849);
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+</style>
+
+<script>
+    
+    $("#btnActualizar").click(function () {
+    // Recarga la página actual
+    location.reload();
+    });
+
+    function cargarContenido(ruta) {
+    var contenidoFrame = document.getElementById('contenidoFrame');
+    contenidoFrame.src = window.location.origin + ruta;
+    }
+
+
+    let chbox = document.querySelector('.checkbox');
+    let contenidoFrame = document.getElementById('contenidoFrame');
+    let fullContainer = document.querySelector('.full');
+    let textoBienvenida = document.querySelector('.logo_section h1');
+    let iconos = document.querySelectorAll('.icono');
+    let sidebarBlog2 = document.querySelector('.sidebar_blog_2');
+    let sidebar = document.querySelector('.ps');
+    let h4Elements = document.querySelectorAll('.components h4'); 
+    let aElements = document.querySelectorAll('.components a'); 
+    let ulElements = document.querySelectorAll('.components ul');
+
+$color = "#272a2d";
+chbox.addEventListener('change', function() {
+    if (this.checked) {
+        contenidoFrame.style.backgroundColor = $color;
+        contenidoFrame.style.color = 'white';
+        fullContainer.style.backgroundColor = $color;
+        textoBienvenida.style.color = 'white';
+        iconos.forEach(icono => {
+            icono.style.filter = 'invert(1)';
+        });
+        sidebarBlog2.style.backgroundColor = $color;
+        sidebar.style.backgroundColor = $color;
+        h4Elements.forEach(h4 => {
+            h4.style.color = 'white';
+            h4.style.backgroundColor  = $color;
+        });
+
+        aElements.forEach(a => {
+            a.style.color = 'white';
+            a.style.backgroundColor  = $color;
+        });
+        ulElements.forEach(ul => {
+            ul.style.backgroundColor =$color;
+        });
+    } else {
+        contenidoFrame.style.backgroundColor = 'white';
+        contenidoFrame.style.color = 'black';
+        fullContainer.style.backgroundColor = 'white';
+        textoBienvenida.style.color = 'black';
+        iconos.forEach(icono => {
+            icono.style.filter = 'none';
+        });
+        sidebarBlog2.style.backgroundColor = 'white';
+        sidebar.style.backgroundColor = 'white';
+        h4Elements.forEach(h4 => {
+            h4.style.color = 'black';
+            h4.style.backgroundColor = 'white';
+        });
+
+        aElements.forEach(a => {
+            a.style.color = 'black';
+            a.style.backgroundColor = 'white';
+        });
+        ulElements.forEach(ul => {
+            ul.style.backgroundColor = 'white';
+            ul.style.color = 'black';
+        });
+    }
+});
+
+ // Obtener referencia al enlace
+ const btnEmpleado = document.getElementById('btnEmpleado');
+    const btnCerrar = document.getElementById('btnCerrar');
+
+    // Agregar evento de clic al enlace
+    btnEmpleado.addEventListener('click', function() {
+   
+      // Mostrar la ventana emergente con el nombre del empleado
+      const modal = document.getElementById('myModal');
+
+      modal.style.display = 'block';
+    });
+
+    // Agregar evento de clic al botón para cerrar el modal
+    btnCerrar.addEventListener('click', function() {
+      const modal = document.getElementById('myModal');
+      modal.style.display = 'none';
+    });
+</script>
