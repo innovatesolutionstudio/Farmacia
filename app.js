@@ -176,14 +176,14 @@ app.post('/auth', async (req, res) => {
                 // Si Situacion es 1, continuar con la sesión normalmente
 
                 // Actualizar Situacion a 2 en la base de datos
-                coneccion.query('UPDATE empleados SET Situacion = 2 WHERE Email = ?', [email], (updateError, updateResults) => {
+                coneccion.query('UPDATE empleados SET Situacion = 1 WHERE Email = ?', [email], (updateError, updateResults) => {
                     if (updateError) {
                         console.log("Error al actualizar Situacion:", updateError);
                     }
                 });
 
                 // Guardar en el historial
-                coneccion.query('INSERT INTO Historial (Fecha, ID_Empleado) VALUES (?, ?)', [fecha, ID_empleado], (insertError, insertResults) => {
+                coneccion.query('INSERT INTO historial (Fecha, ID_Empleado) VALUES (?, ?)', [fecha, ID_empleado], (insertError, insertResults) => {
                     if (insertError) {
                         console.error("Error al insertar en el historial:", insertError);
                     }

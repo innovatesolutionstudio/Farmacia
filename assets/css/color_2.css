@@ -24,11 +24,11 @@
 }
 
 .icon_info ul li a {
-    color: #333;
+    color: #000000;
 }
 
 .user_info h6 {
-    color: #222;
+    color: #000000;
 }
 
 .counter_section .counter_no p.total_no {
@@ -66,7 +66,7 @@
 }
 
 #sidebar ul.components ul li a {
-    color: #333;
+    color: #ffffff;
 }
 
 #sidebar ul.components ul li a:hover {

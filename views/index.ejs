@@ -54,15 +54,29 @@
                     <div class="sidebar_user_info">
   
                         <div class="user_profle_side">
-                            <div class="user_img"><img class="img-responsive" width="110px" height="80px" src="resources/images/logo/logo_fm2.png" alt="#" /></div>
+                            <div class="user_img"><img class="img-responsive" style="padding: 5px;" width="70px" height="70px" src="resources/images/logo/logo_fm2.png" alt="#" /></div>
                             
                             <div class="user_info">
                               
                                 <h3 style="color: white;">
                                 FARMACIA 
-                                </h3>
-                                <h1 style="color: white; font-size: 15px;">San juan de Dios</h1>
-
+                                </h3>                             
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sidebar_user_info2">
+  
+                        <div class="user_profle_side">
+                            <div class="user_img2"><img class="img-responsive" width="80px" height="80px" src="resources/images/perfil/pato1.jpg" alt="#" /></div>
+                            
+                            <div class="col-sm-4" style="width: 300px; ">
+                                <h1 clash="justify-content-center" style="
+                                    font-size: 20px; 
+                                    margin: 5px 0 0 0 ;
+                                    width: 300px;
+                                    color: white;"
+                                ><%= Nombre %><br> <%= Apellido %>   </h1>
+                               
                             </div>
                         </div>
                     </div>
@@ -72,20 +86,24 @@
                 <div class="sidebar_blog_2" class="panel">
                     <% if (sesion === 1 || sesion === 2 || sesion === 3 || sesion === 4|| sesion === 5) { %>
                         <ul class="list-unstyled components">
-                            <h4>General</h4>
+                          
                             <li><a href="#" onclick="cargarContenido('/nueva_venta')" class="btn-group"><img class="icono" src="resources/images/iconos/money1.svg"> <span>&nbsp;&nbsp;Nueva Venta</span></a></li>
                             <li><a href="#" onclick="cargarContenido('/inventario_vista')" class="btn-group"><img class="icono" src="resources/images/iconos/product-disp.svg"> <span>&nbsp;&nbsp;Productos Disponibles</span></a></li>
                         </ul>
                         <% if (sesion === 1 || sesion === 3 || sesion === 4) { %>
                             <ul class="list-unstyled components">
-                                <h4>Finanzas</h4>
+                             
                                 <!-- Primer elemento -->
                                 <li class="active">
-                                    <a href="#dashboard" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group"><img class="icono" src="resources/images/iconos/white.svg"><span>&nbsp;&nbsp;Dashboard</span></a>
+                                    <a href="#dashboard" data-toggle="collapse" aria-expanded="false" class="btn-group"><img class="icono" src="resources/images/iconos/white.svg"><span>&nbsp;&nbsp;Dashboard</span></a>
                                     <ul class="collapse list-unstyled" id="dashboard">
                                         <li><a href="#" onclick="cargarContenido('/graficos')">> <span>Dashboard</span></a></li>
                                     </ul>
                                 </li>
+
+
+
+                                
                                 <li><a href="#" onclick="cargarContenido('/ganancias_es')" class="btn-group"><img class="icono" src="resources/images/iconos/statistic.svg"> <span>&nbsp;&nbsp;Ganancias</span></a></li>
                                 <li class="active">
                                     <a href="#reportes" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group"><img class="icono" src="resources/images/iconos/report.svg"> <span>&nbsp;&nbsp;Reportes</span></a>
@@ -100,7 +118,7 @@
                         <% } %>
                         <% if (sesion === 1 || sesion === 2 || sesion === 4) { %>
                             <ul class="list-unstyled components">
-                                <h4>Seccion de Areas</h4>
+                               
                                 <!-- Tercer elemento -->
                                 <li>
                                     <a href="#element" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group"><img class="icono" src="resources/images/iconos/money-ventas.svg"> <span>&nbsp;&nbsp;Ventas</span></a>
@@ -136,7 +154,7 @@
                         <% } %>
                         <% if (sesion === 1 || sesion === 4) { %>
                             <ul class="list-unstyled components">
-                                <h4 class="panel"> Recursos</h4>
+                               
                                 <li>
                                     <a href="#rech" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group"><img class="icono" src="resources/images/iconos/recursos-h.svg"> <span>&nbsp;&nbsp;Recursos Humanos</span></a>
                                     <ul class="collapse list-unstyled" id="rech">
@@ -175,30 +193,17 @@
                         <div class="full">
     
                             <!--  boton para esconder menu -->
-                            <button type="button" id="sidebarCollapse" class="sidebar_toggle"><i class="fa fa-bars"></i></button>
+                            <button type="button" id="sidebarCollapse" class="sidebar_toggle"><i class="fa fa-angle-left"></i></button>
                             <!-- logo  -->
     
-                            <div class="logo_section text-center justify-content-center">
-                               
-                                <div class="col-sm-4" style="width: 300px; ">
-                                    <h1 clash="justify-content-center" style="
-                                        font-size: 20px; 
-                                        font-family: cursive;
-                                        margin: 5px 0 0 0 ;
-                                        width: 300px;"
-                                    >Bienvenido: <%= Nombre %> <%= Apellido %>   <p><span class='online_animation'></span> Conectado</p> </h1>
-                                   
-                                </div>
-                               
-                               
-                            </div>
+                            
                             
                             
                             
                             <!-- menu de perfil  -->
                             <div class="right_topbar">
                                 <div class="icon_info">
-                                    <ul>
+                                    <ul><!--
                                         <li>
                                        
                                         </li>
@@ -215,6 +220,14 @@
                                             <p>Perfil</p>
                                           </li>
                                         <li  style="margin: 0 15px 0 15px;"><a href="/logout" class="btn-group"><img class="icono" src="resources/images/iconos/salir.svg"></a><p>Salir</p></li>
+                                        -->
+                                        <li style="margin: 10px 15px 0 15px; width: 350px;">
+                                            <div>
+                                                <p style="color: #000; font-family:sansserif ; text-align: right; font-size: 18px;"><span class='online_animation' style="margin-right: 5px;">  </span>En Linea</p>
+                                                <p  style="color: #000; font-family:math ; text-align: right;font-size: 18px;" id="fechaHora">16 de septiembre 2024 </p>
+                                            </div>
+                                        </li>
+
                                     </ul>
                                     
                                     
@@ -367,7 +380,17 @@
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
 </style>
+<script>
+    function actualizarHora() {
+        const ahora = new Date();
+        const fecha = ahora.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+        const hora = ahora.toLocaleTimeString('es-ES');
+        document.getElementById('fechaHora').innerText = `${fecha} -  ${hora}`;
+    }
 
+    setInterval(actualizarHora, 1000);  // Actualiza cada segundo
+    window.onload = actualizarHora;  // Actualiza al cargar la página
+</script>
 <script>
     
     $("#btnActualizar").click(function () {
