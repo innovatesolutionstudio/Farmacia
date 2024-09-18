@@ -1,6 +1,7 @@
 //invocamos a express
 const express = require('express');
 const app = express();
+
 const ciudadesRoutes = require('./routes/ciudades');
 const proveedoresRoutes = require('./routes/proveedores');
 const ventasRoutes = require('./routes/ventas');
@@ -28,10 +29,11 @@ const nueva_compraRoutes = require('./routes/nueva_compra');
 const cajas_cRoutes = require('./routes/cajas_c');
 const rolesRoutes = require('./routes/roles');
 const sucursalesRoutes = require('./routes/sucursales');
+const vista_ventas = require('./routes/vista_ventas')
 
 //#endregion
 const graficosRouter = require('./routes/graficos'); // Ajusta la ruta según la ubicación de tu archivo graficos.js
-
+ 
 //reportes
 const generador_reportesRoutes = require('./routes/generador_reportes');
 const reportestareasRoutes = require('./routes/reporte_tareas');
@@ -258,20 +260,21 @@ app.get('/login',(req, res)=>{
 
 app.get('/', (req, res) => {
     if (req.session.loggedin) {
+        
+        const primerNombre = req.session.Nombre.split(' ')[0];
+        const primerApellido = req.session.Apellido.split(' ')[0];
+
         res.render('index', {
-            
             login: true,
-            Nombre: req.session.Nombre,
-            Apellido: req.session.Apellido,
+            Nombre: primerNombre,
+            Apellido: primerApellido,
             Fotografia: req.session.Fotografia,
-            Dirección:  req.session.Dirección,
-            Teléfono : req.session.Teléfono,
-            sesion : req.session.ID_Rol,
-            Situacion : req.session.Situacion
+            Dirección: req.session.Dirección,
+            Teléfono: req.session.Teléfono,
+            sesion: req.session.ID_Rol,
+            Situacion: req.session.Situacion
         });
-    } 
-    
-    else {
+    } else {
         res.render('login', {
             login: false,
             Nombre: 'Debe iniciar sesión'
@@ -339,6 +342,7 @@ app.use(nueva_compraRoutes);
 app.use(cajas_cRoutes);
 app.use(rolesRoutes);
 app.use(sucursalesRoutes);
+app.use(vista_ventas);
 //reportes
 
 app.use(generador_reportesRoutes);
