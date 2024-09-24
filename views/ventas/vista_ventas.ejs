@@ -17,6 +17,11 @@
             margin: 0;
             padding: 20px;
         }
+        .btn-group2 img {
+            width: 15%; 
+            height: 15%;
+        
+        }
         .btn-group img {
             width: 30%; 
             height: 30%;
@@ -46,7 +51,8 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             padding: 20px;
             text-align: center;
-            width: 300px;
+            width: auto;
+            min-width: 350px;
             margin-right: 20px;
             border: 2px solid #29a3a3;
             position: relative; /* Necesario para posicionar elementos dentro del card */
@@ -189,8 +195,8 @@
             <div class="dropdown">
                 <button class="dropdown-button">Descargar Reporte</button>
                 <div class="dropdown-content">
-                    <a href="#">Imprimir</a>
-                    <a href="#">PDF</a>
+                    <a class="btn-group2" href="#"><img class="icono" src="resources/images/iconos/print.svg">&nbsp;&nbsp;Imprimir</a>
+                    <a class="btn-group2"href="#"><img class="icono" src="resources/images/iconos/print.svg">&nbsp;&nbsp;PDF</a>
                 </div>
             </div>
 
