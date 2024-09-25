@@ -2,10 +2,10 @@ const mysql = require('mysql');
 
 // Configuración de la conexión
 const db_config = {
-    host: '31.22.7.56',
-    user: 'innovat1_admin',
-    password: 'iss1234qwert',
-    database: 'innovat1_farmacia'
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'farmacia_1'
 };
 
 let coneccion;

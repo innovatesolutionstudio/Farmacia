@@ -104,8 +104,9 @@ app.use(session({
     resave:true,
     saveUninitialized:true
 }));
+
 app.post('/auth', async (req, res) => {
-    const email = req.body.Email.toLowerCase(); // Convertir el correo electrónico a minúsculas
+    const email = req.body.Email.toLowerCase(); 
     const password = req.body.pass;
 
     // Verificar si los campos están llenos
@@ -214,6 +215,7 @@ app.post('/auth', async (req, res) => {
                     ruta: ''
                 });
             }
+            
         }
 
         // Incrementar el valor de "Grado" en la base de datos si la contraseña es incorrecta
@@ -399,11 +401,13 @@ app.get('/reporte_compras',(req, res)=>{
 app.get('/reporte_tareas_e',(req, res)=>{
     res.render('./reportes/reporte_tareas');
 })
-
+app.get('/login2',(req, res)=>{
+    res.render('login2');
+})
 
 //#endregion
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Servidor conectado en http://localhost:${PORT}`);
 });
