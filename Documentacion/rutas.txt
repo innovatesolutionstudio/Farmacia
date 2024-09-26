@@ -1,0 +1,727 @@
+Documentación de Rutas del Sistema Administrativo para Farmacia
+Introducción
+Esta documentación describe las rutas utilizadas en el sistema administrativo para farmacia. Cada ruta está asociada a un 
+recurso o acción específica dentro de la aplicación, proporcionando información sobre el método HTTP utilizado, 
+la descripción, los parámetros requeridos y las respuestas esperadas.
+
+#Rutas Principales
+
+1. Inicio de sesión
+Ruta: /login
+Método: GET
+Descripción: Muestra la página de inicio de sesión.
+Parámetros: Ninguno.
+Respuesta: Renderiza la vista login.ejs.
+
+2. ruta principal
+Ruta: /
+Método: GET
+Descripción: verificacion de inicio de sesion.
+Parámetros: nombre apellido.
+Respuesta: Renderiza la vista index.ejs.
+
+3. ruta cerrar sesion
+Ruta: /logout
+Método: GET
+Descripción: cierra sesion haciendo un update a la base de datos para poder cambiar el campo de la tabla empleados "Situacion de 2 a 1".
+Parámetros: Ninguno.
+Respuesta: Renderiza login.ejs.
+
+4. ruta cerrar sesion
+Ruta: /logout
+Método: GET
+Descripción: cierra sesion haciendo un update a la base de datos para poder cambiar el campo de la tabla empleados "Situacion de 2 a 1".
+Parámetros: Ninguno.
+Respuesta: Renderiza login.ejs.
+
+4. ruta cerrar sesion
+Ruta: 
+Método: GET
+Descripción: 
+Parámetros: Ninguno.
+Respuesta: .
+
+#rutas reportes 
+
+1. Reporte de Ganancias
+Ruta: /reporte_ganancias
+Método: GET
+Descripción: Muestra el reporte de ganancias del sistema.
+Parámetros: Ninguno.
+Respuesta: Renderiza la vista reporte_ganancias.ejs.
+
+2. Reporte de Productos
+Ruta: /reporte_productos
+Método: GET
+Descripción: Muestra el reporte de productos disponibles en el sistema.
+Parámetros: Ninguno.
+Respuesta: Renderiza la vista reporte_productos.ejs
+
+3. Reporte de Ventas
+Ruta: /reporte_ventas
+Método: GET
+Descripción: Muestra el reporte de ventas realizadas en el sistema.
+Parámetros: Ninguno.
+Respuesta: Renderiza la vista reporte_ventas.ejs.
+
+4. Reporte de Compras
+Ruta: /reporte_compras
+Método: GET
+Descripción: Muestra el reporte de compras realizadas en el sistema.
+Parámetros: Ninguno.
+Respuesta: Renderiza la vista reporte_compras.ejs.
+
+5. Reporte de Tareas
+Ruta: /reporte_tareas_e
+Método: GET
+Descripción: Muestra el reporte de tareas pendientes y completadas en el sistema.
+Parámetros: Ninguno.
+Respuesta: Renderiza la vista reporte_tareas.ejs.
+
+# Rutas de Área de Producto
+1. Obtener Todas las Áreas de Producto
+Ruta: /area_producto
+Método: GET
+Descripción: Recupera todas las áreas de producto de la base de datos y renderiza la vista correspondiente.
+Parámetros: Ninguno.
+Respuesta: Renderiza la vista area_producto.ejs pasando los resultados de la consulta a la tabla area_producto.
+
+2. Crear, Editar o Eliminar un Área de Producto
+Ruta: /area_producto/:id?
+Método: POST
+Descripción: Permite crear, editar o eliminar un área de producto según la opción proporcionada en el cuerpo de la solicitud.
+Parámetros:
+id (opcional): ID del área de producto a editar o eliminar.
+Respuesta:
+Crear: Confirma la creación del área de producto.
+Editar: Confirma la edición del área de producto.
+Eliminar: Confirma la eliminación del área de producto.
+
+# Rutas del Buscador de IA
+1. Renderizar Buscador de IA
+Ruta: /buscador_ia
+Método: GET
+Descripción: Renderiza la vista del buscador de IA donde los usuarios pueden realizar búsquedas sobre medicamentos.
+Parámetros: Ninguno.
+Respuesta: Renderiza la vista buscador_ai.ejs.
+
+2. Manejar Solicitudes de Búsqueda
+Ruta: /buscar
+Método: POST
+Descripción: Recibe el nombre de un medicamento y utiliza la API de Cohere para obtener información específica sobre dicho medicamento.
+Parámetros:
+medicamento: Nombre del medicamento enviado en el cuerpo de la solicitud.
+Respuesta:
+Éxito: Devuelve un objeto JSON con la información sobre el medicamento solicitada.
+Error: En caso de un problema al obtener la información, devuelve un objeto JSON con un mensaje de error.
+
+# Rutas de Cajas
+1. Obtener todas las Cajas
+Ruta: /cajas_c
+Método: GET
+Descripción: Realiza una consulta a la base de datos para obtener todos los datos de la tabla "cajas" y renderiza la vista correspondiente.
+Parámetros: Ninguno.
+Respuesta:
+Éxito: Renderiza la vista cajas_c.ejs con los resultados de la consulta.
+Error: Si ocurre un error al obtener los datos, responde con un mensaje de error y un código de estado 500.
+
+2. Crear, Editar o Eliminar Cajas
+Ruta: /cajas/:id?
+Método: POST
+Descripción: Permite crear, editar o eliminar una caja en la base de datos según la opción especificada.
+Parámetros:
+id: ID de la caja (opcional).
+Cuerpo de la solicitud:
+opcion: Puede ser crear, editar o eliminar.
+Codigo: Código de la caja (necesario para crear y editar).
+ID_Sucursal: ID de la sucursal asociada a la caja (necesario para crear y editar).
+Estado: Estado de la caja (necesario para crear y editar).
+Respuesta:
+Éxito:
+Crear: Mensaje de éxito al crear una nueva caja.
+Editar: Mensaje de éxito al editar la caja.
+Eliminar: Mensaje de éxito al eliminar la caja.
+Error: Si ocurre un error durante el proceso, se responde con un mensaje de error y un código de estado 500.
+Opción no válida: Responde con un mensaje de error y un código de estado 400 si la opción no es válida.
+
+#Rutas de Cajas y Reportes de Ventas
+
+1. Obtener la Vista de Cajas
+Ruta: /cajas
+Método: GET
+Descripción: Obtiene la información de las cajas y las ventas totales para la sucursal del usuario. Renderiza la vista de cajas si el usuario está autenticado.
+Parámetros: Ninguno.
+Respuesta:
+Éxito: Renderiza la vista cajas.ejs con los datos de la sucursal, ventas totales y detalles de las cajas.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error durante la consulta a la base de datos.
+Sucursal no encontrada: Responde con un mensaje de error y un código de estado 404 si no se encuentra la sucursal.
+Desconectado: Si el usuario no está autenticado, se renderiza la vista logout.ejs.
+
+2. Abrir una Caja
+Ruta: /abrir-caja
+Método: POST
+Descripción: Abre una caja específica en la base de datos.
+Parámetros:
+Cuerpo de la solicitud:
+idCaja: ID de la caja a abrir.
+Respuesta:
+Éxito: Redirige a /cajas.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error durante la operación.
+
+3. Cerrar una Caja
+Ruta: /cerrar-caja
+Método: POST
+Descripción: Cierra una caja específica en la base de datos.
+Parámetros:
+Cuerpo de la solicitud:
+idCaja: ID de la caja a cerrar.
+Respuesta:
+Éxito: Redirige a /cajas.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error durante la operación.
+
+4. Abrir Todas las Cajas de una Sucursal
+Ruta: /abrir-todas
+Método: POST
+Descripción: Abre todas las cajas de la sucursal del usuario.
+Parámetros: Ninguno.
+Respuesta:
+Éxito: Redirige a /cajas.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error durante la operación.
+
+5. Cerrar Todas las Cajas de una Sucursal
+Ruta: /cerrar-todas
+Método: POST
+Descripción: Cierra todas las cajas de la sucursal del usuario.
+Parámetros: Ninguno.
+Respuesta:
+Éxito: Redirige a /cajas.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error durante la operación.
+
+6. Generar Reporte de Ventas
+Ruta: /reporte-ventas
+Método: GET
+Descripción: Genera un documento PDF con las ventas realizadas en el día actual.
+Parámetros: Ninguno.
+Respuesta:
+Éxito: Envía un archivo PDF con el informe de ventas del día.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error durante la consulta a la base de datos.
+
+#Rutas de Categoria de productos
+
+1. Obtener Todas las Categorías de Productos
+Ruta: /categoria_producto
+Método: GET
+Descripción: Obtiene todas las categorías de productos desde la base de datos y renderiza la vista correspondiente.
+Parámetros: Ninguno.
+Respuesta:
+Éxito:
+
+Renderiza la vista EJS categoria_producto y pasa los resultados de la consulta como variable results.
+Error:
+
+Responde con un mensaje de error y un código de estado 500 si ocurre un error durante la consulta a la base de datos.
+
+2. Crear, Editar o Eliminar una Categoría de Producto
+Ruta: /categoria_producto/:id?
+Método: POST
+Descripción: Permite crear, editar o eliminar una categoría de producto.
+Parámetros:
+id (opcional): ID de la categoría de producto que se va a editar o eliminar.
+Cuerpo de la Solicitud:
+opcion: Debe ser crear, editar o eliminar.
+Nombre_Categoria: Nombre de la nueva categoría de producto (solo necesario para las opciones crear y editar).
+Respuesta:
+Crear:
+
+Éxito: Responde con un mensaje de confirmación si la categoría se crea correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al crear la categoría.
+Editar:
+
+Éxito: Responde con un mensaje de confirmación si la categoría se edita correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al editar la categoría.
+Eliminar:
+
+Éxito: Responde con un mensaje de confirmación si la categoría se elimina correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al eliminar la categoría.
+Opción no válida:
+
+Responde con un mensaje de error y un código de estado 400 si se proporciona una opción no válida.
+
+#Rutas para la Gestión de Ciudades
+
+1. Obtener Todas las Ciudades
+Ruta: /ciudades
+Método: GET
+Descripción: Obtiene todas las ciudades desde la base de datos y renderiza la vista correspondiente.
+Parámetros: Ninguno.
+Respuesta:
+Éxito:
+Renderiza la vista EJS ciudades y pasa los resultados de la consulta como variable results.
+Error:
+Responde con un mensaje de error y un código de estado 500 si ocurre un error durante la consulta a la base de datos.
+
+2. Crear, Editar o Eliminar una Ciudad
+Ruta: /ciudades/:id?
+Método: POST
+Descripción: Permite crear, editar o eliminar una ciudad.
+Parámetros:
+id (opcional): ID de la ciudad que se va a editar o eliminar.
+Cuerpo de la Solicitud:
+opcion: Debe ser crear, editar o eliminar.
+Nombre: Nombre de la nueva ciudad (solo necesario para las opciones crear y editar).
+Respuesta:
+Crear:
+
+Éxito: Responde con un mensaje de confirmación si la ciudad se crea correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al crear la ciudad.
+Editar:
+
+Éxito: Responde con un mensaje de confirmación si la ciudad se edita correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al editar la ciudad.
+Eliminar:
+
+Éxito: Responde con un mensaje de confirmación si la ciudad se elimina correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al eliminar la ciudad.
+Opción no válida:
+
+Responde con un mensaje de error y un código de estado 400 si se proporciona una opción no válida.
+
+#Rutas para la Gestión de Clientes
+
+1. Obtener Todos los Clientes
+Ruta: /clientes
+Método: GET
+Descripción: Obtiene todos los clientes desde la base de datos y renderiza la vista correspondiente.
+Parámetros: Ninguno.
+Respuesta:
+Éxito:
+Renderiza la vista EJS clientes y pasa los resultados de la consulta como variable results.
+Error:
+Responde con un mensaje de error y un código de estado 500 si ocurre un error durante la consulta a la base de datos.
+
+2. Crear, Editar o Eliminar un Cliente
+Ruta: /clientes/:id?
+Método: POST
+Descripción: Permite crear, editar o eliminar un cliente.
+Parámetros:
+id (opcional): ID del cliente que se va a editar o eliminar.
+Cuerpo de la Solicitud:
+opcion: Debe ser crear, editar o eliminar.
+Datos del cliente:
+Nombre: Nombre del cliente.
+Apellido: Apellido del cliente.
+Telefono: Teléfono del cliente.
+CI: Cédula de identidad del cliente.
+Nit: Número de identificación tributaria del cliente.
+Gmail: Correo electrónico del cliente.
+Respuesta:
+Crear:
+
+Éxito: Responde con un mensaje de confirmación si el cliente se crea correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al crear el cliente.
+Editar:
+
+Éxito: Responde con un mensaje de confirmación si el cliente se actualiza correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al editar el cliente.
+Eliminar:
+
+Éxito: Responde con un mensaje de confirmación si el cliente se elimina correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al eliminar el cliente.
+Opción no válida:
+
+Responde con un mensaje de error y un código de estado 400 si se proporciona una opción no válida.
+
+#Rutas para la Gestión de Compras
+
+1. Obtener Todas las Compras
+Ruta: /compras
+Método: GET
+Descripción: Obtiene todas las compras desde la base de datos, excluyendo aquellas con estado definido como 2, y renderiza la vista correspondiente.
+Parámetros: Ninguno.
+Respuesta:
+Éxito:
+
+Renderiza la vista EJS compras y pasa los resultados de la consulta como variable results.
+Error:
+
+Responde con un mensaje de error y un código de estado 500 si ocurre un error durante la consulta a la base de datos.
+
+2. Obtener Detalle de una Compra
+Ruta: /detalle_compra/:id
+Método: GET
+Descripción: Obtiene los detalles de una compra específica utilizando su ID.
+Parámetros:
+id: ID de la compra.
+Respuesta:
+Éxito:
+Renderiza la vista detalles_compras y pasa los datos de la compra y sus detalles.
+Error:
+Responde con un mensaje de error y un código de estado 500 si ocurre un error durante la consulta.
+Responde con un código de estado 404 si no se encuentra la compra.
+
+3. Crear, Editar o Eliminar una Compra
+Ruta: /compras/:id?
+
+Método: POST
+
+Descripción: Permite crear, editar o eliminar una compra.
+
+Parámetros:
+
+id (opcional): ID de la compra que se va a editar o eliminar.
+Cuerpo de la Solicitud:
+
+opcion: Debe ser crear, editar o eliminar.
+Datos de la compra:
+Fecha: Fecha de la compra.
+Total_Compra: Total de la compra.
+ID_Proveedor: ID del proveedor asociado a la compra.
+Respuesta:
+Crear:
+
+Éxito: Responde con un mensaje de confirmación si la compra se crea correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al crear la compra.
+Editar:
+
+Éxito: Responde con un mensaje de confirmación si la compra se actualiza correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al editar la compra.
+Eliminar:
+
+Éxito: Responde con un mensaje de confirmación si la compra se elimina correctamente (cambiando el estado).
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al eliminar la compra.
+Opción no válida:
+
+Responde con un mensaje de error y un código de estado 400 si se proporciona una opción no válida.
+
+#Rutas para la Gestión de Departamentos
+
+1. Obtener Todos los Departamentos
+Ruta: /departamentos
+Método: GET
+Descripción: Obtiene todos los departamentos desde la base de datos y renderiza la vista correspondiente.
+Parámetros: Ninguno.
+Respuesta:
+Éxito:
+
+Renderiza la vista EJS departamentos y pasa los resultados de la consulta como variable results.
+Error:
+
+Responde con un mensaje de error y un código de estado 500 si ocurre un error durante la consulta a la base de datos.
+
+2. Crear, Editar o Eliminar un Departamento
+Ruta: /departamentos/:id?
+
+Método: POST
+
+Descripción: Permite crear, editar o eliminar un departamento.
+
+Parámetros:
+
+id (opcional): ID del departamento que se va a editar o eliminar.
+Cuerpo de la Solicitud:
+
+opcion: Debe ser crear, editar o eliminar.
+Datos del departamento:
+Nombre: Nombre del departamento.
+Respuesta:
+Crear:
+
+Éxito: Responde con un mensaje de confirmación si el departamento se crea correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al crear el departamento.
+Editar:
+
+Éxito: Responde con un mensaje de confirmación si el departamento se edita correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al editar el departamento.
+Eliminar:
+
+Éxito: Responde con un mensaje de confirmación si el departamento se elimina correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al eliminar el departamento.
+Opción no válida:
+
+Responde con un mensaje de error y un código de estado 400 si se proporciona una opción no válida.
+
+#Rutas para la Gestión de Detalles de Compras
+
+
+2. Crear, Editar o Eliminar un Detalle de Compra
+Ruta: /detalles_compras/:id?
+
+Método: POST
+
+Descripción: Permite crear, editar o eliminar un detalle de compra.
+
+Parámetros:
+
+id (opcional): ID del detalle de compra que se va a editar o eliminar.
+Cuerpo de la Solicitud:
+
+opcion: Debe ser crear, editar o eliminar.
+Datos del detalle de compra:
+ID_Compra: ID de la compra asociada.
+ID_Producto: ID del producto.
+Cantidad_Empaque: Cantidad del empaque.
+Cantidad_Unitario: Cantidad unitario.
+Fecha_Vencimiento: Fecha de vencimiento.
+Precio_Unitario: Precio por unidad.
+ID_Unidad_Empaque: ID de la unidad de empaque.
+Respuesta:
+Crear:
+
+Éxito: Responde con un mensaje de confirmación si el detalle de compra se crea correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al crear el detalle de compra.
+Editar:
+
+Éxito: Responde con un mensaje de confirmación si el detalle de compra se actualiza correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al actualizar el detalle de compra.
+Eliminar:
+
+Éxito: Responde con un mensaje de confirmación si el detalle de compra se elimina correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al eliminar el detalle de compra.
+Opción no válida:
+
+Responde con un mensaje de error y un código de estado 400 si se proporciona una opción no válida.
+
+#Rutas para la Gestión de Detalles de Ventas
+
+1. Obtener Todos los Detalles de Ventas
+Ruta: /detalles_ventas
+Método: GET
+Descripción: Obtiene los detalles de venta desde la base de datos y renderiza la vista correspondiente.
+Parámetros: Ninguno.
+Respuesta:
+Éxito:
+
+Renderiza la vista EJS detalles_ventas y pasa los resultados de la consulta como variable results.
+Error:
+
+Responde con un mensaje de error y un código de estado 500 si ocurre un error durante la consulta a la base de datos.
+
+2. Crear, Editar o Eliminar un Detalle de Venta
+Ruta: /detalles_ventas/:id?
+
+Método: POST
+
+Descripción: Permite crear, editar o eliminar un detalle de venta.
+
+Parámetros:
+
+id (opcional): ID del detalle de venta que se va a editar o eliminar.
+Cuerpo de la Solicitud:
+
+opcion: Debe ser crear, editar o eliminar.
+Datos del detalle de venta:
+ID_Venta: ID de la venta asociada.
+ID_Producto: ID del producto.
+Cantidad: Cantidad del producto vendido.
+Respuesta:
+Crear:
+
+Éxito: Responde con un mensaje de confirmación si el detalle de venta se crea correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al crear el detalle de venta.
+Editar:
+
+Éxito: Responde con un mensaje de confirmación si el detalle de venta se actualiza correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al actualizar el detalle de venta.
+Eliminar:
+
+Éxito: Responde con un mensaje de confirmación si el detalle de venta se elimina correctamente.
+Error: Responde con un mensaje de error y un código de estado 500 si ocurre un error al eliminar el detalle de venta.
+Opción no válida:
+
+Responde con un mensaje de error y un código de estado 400 si se proporciona una opción no válida.
+
+#Rutas para Gestión de Empleados
+
+1. Subir Fotografía de Empleado
+Ruta: /fotos
+Método: POST
+Descripción: Permite subir una fotografía de un empleado.
+Parámetros:
+
+Fotografia: Archivo de imagen (en formato multipart/form-data).
+Respuesta:
+
+Éxito:
+Responde con un mensaje "Imagen subida correctamente".
+Estado: 200 OK.
+Error:
+Responde con un mensaje "No se ha proporcionado ninguna imagen".
+Estado: 400 Bad Request.
+
+2. Obtener Todos los Empleados
+Ruta: /empleados
+Método: GET
+Descripción: Obtiene todos los empleados y sus detalles relacionados desde la base de datos, incluyendo ciudades, departamentos, géneros, roles y sucursales.
+Parámetros: Ninguno.
+
+Respuesta:
+
+Éxito:
+Renderiza la vista EJS empleados y pasa los resultados de la consulta como variable results.
+Error:
+Responde con un mensaje de error "Error al obtener datos de la tabla empleados" y un código de estado 500 si ocurre un error en la consulta inicial.
+Responde con un mensaje "Error al obtener datos adicionales" y un código de estado 500 si ocurre un error en las consultas adicionales.
+
+3. Crear, Editar o Eliminar Empleado
+Ruta: /empleados/:id?
+Método: POST
+Descripción: Permite crear, editar o eliminar un empleado según la opción especificada.
+Parámetros:
+
+id (opcional): ID del empleado a editar o eliminar.
+opcion:
+crear: Crea un nuevo empleado.
+editar: Edita los datos de un empleado existente.
+eliminar: Elimina un empleado.
+Cuerpo de la solicitud (para crear y editar):
+
+Nombre: Nombre del empleado.
+Apellido: Apellido del empleado.
+Fecha_Nacimiento: Fecha de nacimiento del empleado.
+Dirección: Dirección del empleado.
+Teléfono: Teléfono del empleado.
+Email: Correo electrónico del empleado.
+CI: Cédula de identidad del empleado.
+Telefono_referencia: Teléfono de referencia del empleado.
+ID_Departamento: ID del departamento del empleado.
+ID_Ciudad: ID de la ciudad del empleado.
+ID_Genero: ID del género del empleado.
+ID_Rol: ID del rol del empleado.
+Contrasena: Contraseña del empleado.
+Fotografia: Ruta de la fotografía del empleado.
+Estado: Estado del empleado (activo/inactivo).
+Grado: Grado del empleado.
+ID_Sucursal: ID de la sucursal del empleado.
+ID_Caja: ID de la caja del empleado.
+Respuesta:
+
+Éxito:
+Para crear: Responde con "Empleado creado correctamente" y estado 200 OK.
+Para editar: Responde con "Empleado editado correctamente" y estado 200 OK.
+Para eliminar: Responde con "Empleado eliminado correctamente" y estado 200 OK.
+Error:
+Responde con "Error al crear un nuevo empleado" y estado 500 si hay un error en la creación.
+Responde con "Error al editar el empleado" y estado 500 si hay un error en la edición.
+Responde con "Error al eliminar el empleado" y estado 500 si hay un error en la eliminación.
+Si se intenta crear un empleado con un email ya registrado, se muestra una alerta y se redirige a la página de inicio.
+
+#Ruta para Obtener Ganancias por Año
+
+1. Obtener Ganancias Anuales
+Ruta: /ganancias_es
+Método: GET
+Descripción: Realiza una consulta a la base de datos para obtener las ganancias totales por año.
+Respuesta:
+
+Éxito: Renderiza la vista EJS ganancias/ganancias_es y pasa los resultados de la consulta como variable results.
+Error: Si ocurre un error durante la consulta, se registra el error en la consola y se responde con un mensaje de error y un código de estado 500.
+
+#Ruta para Guardar Imagen y Generar PDF
+
+1. Guardar Imagen y Crear Reporte PDF
+Ruta: /save_chart_image
+Método: POST
+Descripción: Recibe una imagen en formato base64 junto con el año, mes y título, y genera un archivo PDF que incluye la imagen y otros detalles.
+Proceso:
+
+Extrae los datos de la imagen y otros parámetros del cuerpo de la solicitud.
+Convierte el título a una forma corta para usarlo en los nombres de archivo.
+Crea las rutas donde se guardarán la imagen y el PDF.
+Asegura que los directorios necesarios existen.
+Guarda la imagen en formato PNG.
+Crea un documento PDF que incluye:
+Un logo y título de la farmacia.
+La fecha del reporte.
+Un mensaje descriptivo del reporte.
+La imagen generada.
+Maneja errores durante el proceso de guardado.
+
+#Ruta para Obtener Datos de Ventas
+
+1. Obtener Ventas Anuales
+Ruta: /graficos
+Método: GET
+Descripción: Realiza una consulta a la base de datos para obtener las ventas totales por año y renderiza un gráfico.
+Proceso:
+
+Ejecuta una consulta SQL para sumar las ventas totales agrupadas por año.
+Procesa los resultados para obtener etiquetas y datos para el gráfico.
+Renderiza la vista EJS graficos/graficos pasando las etiquetas y datos.
+
+2. Obtener Ventas Mensuales del Último Año
+Ruta: /ventas-mensuales-ultimo-ano
+Método: GET
+Descripción: Obtiene las ventas mensuales del año actual.
+Proceso:
+
+Calcula el año actual.
+Ejecuta una consulta SQL para obtener las ventas mensuales agrupadas por mes.
+Procesa los resultados para generar etiquetas y datos del gráfico.
+Envía los datos como respuesta en formato JSON.
+
+3. Obtener Ventas por Empleado en el Año 2024
+Ruta: /ventas-por-empleado-2024
+Método: GET
+Descripción: Obtiene las ventas totales por empleado para el año 2024.
+Proceso:
+
+Ejecuta una consulta SQL para sumar las ventas por empleado en el año 2024.
+Procesa los resultados para obtener etiquetas y datos del gráfico.
+Envía los datos como respuesta en formato JSON.
+
+4. Obtener Productos Más Vendidos
+Ruta: /top-10-productos-vendidos
+Método: GET
+Descripción: Obtiene los 10 productos más vendidos.
+Proceso:
+
+Ejecuta una consulta SQL para contar las ventas de cada producto.
+Procesa los resultados para generar etiquetas y datos del gráfico.
+Envía los datos como respuesta en formato JSON.
+
+5. Obtener Datos Generales de Ventas
+Ruta: /datos
+Método: GET
+Descripción: Obtiene información general sobre las ventas y clientes.
+Proceso:
+
+Realiza varias consultas SQL para obtener:
+Ventas totales del mes.
+Ventas totales de la semana.
+Número total de clientes registrados este mes.
+Número total de clientes.
+Total de compras realizadas este año.
+Número total de productos comprados este año.
+Envía todos los datos como respuesta en formato JSON.
+6. Obtener Datos de Compras
+Ruta: /datos-compras
+Método: GET
+Descripción: Obtiene datos sobre las compras realizadas durante el año actual.
+Proceso:
+
+Realiza consultas SQL para obtener:
+Ventas totales agrupadas por mes.
+Cantidad de detalles de compra agrupados por mes.
+Cantidad de proveedores agrupados por mes.
+Envía los resultados como respuesta en formato JSON.
+7. Obtener Proveedores y Productos Comprados
+Ruta: /proveedores-y-productos
+Método: GET
+Descripción: Obtiene la lista de proveedores y la cantidad de productos comprados a cada uno.
+Proceso:
+
+Ejecuta una consulta SQL para obtener la lista de proveedores junto con la cantidad de productos comprados.
+Envía los resultados como respuesta en formato JSON.
+
+#Ruta para Obtener Registros del Inventario
+
+1. Obtener Registros del Inventario
+Ruta: /inventario_vista
+Método: GET
+Descripción: Obtiene todos los registros del inventario filtrados por la sucursal del empleado que está en sesión.
+Proceso:
+Se obtiene el ID de la sucursal del empleado desde la sesión.
+Se realiza una consulta SQL para obtener los datos de la tabla inventario y los nombres de los productos asociados, filtrando por el ID de la sucursal del empleado.
+Respuesta:
+Éxito: Renderiza la vista EJS inventario/inventario_vista y pasa los resultados de la consulta como variable results, así como el ID de la sucursal como ID_Sucursal.
+Error: Si ocurre un error durante la consulta, se registra el error en la consola y se responde con un mensaje de error y un código de estado 500.

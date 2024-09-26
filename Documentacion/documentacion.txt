@@ -1,0 +1,255 @@
+Documentación de Código: SISTEMA ADMINISTRATIVA PARA FARMACIA
+
+Introducción
+Este documento tiene como objetivo proporcionar una guía completa sobre la estructura y funcionamiento del 
+código fuente del SISTEMA ADMINISTRATIVA PARA FARMACIA. Se detalla la arquitectura, los componentes principales y el
+flujo de trabajo del código, permitiendo a los desarrolladores y colaboradores comprender su implementación y 
+realizar modificaciones de manera eficiente.
+
+
+Descripción General del Proyecto
+El proyecto SISTEMA ADMINISTRATIVA PARA FARMACIA es un sistema diseñado para la administracion de ventas, compras, inventario y otros. 
+Está desarrollado utilizando NODEJS, EXPRES,MYSQL y emplea tecnologías como pdf-viewer.
+
+Estructura del Proyecto
+├── assets # Archivos estáticos como CSS, fonts, fotografias, imagenes, javaScript
+│   ├── css  
+│   │     ├── animate.css
+│   │     ├── baguetteBox.min.css
+│   │     ├── bootstrap-grid.css
+│   │     ├── bootstrap-grid.css.map
+│   │     ├── bootstrap-grid.min.css
+│   │     ├── bootstrap-grid.min.css.map
+│   │     ├── bootstrap-reboot.css
+│   │     ├── bootstrap-reboot.css.map
+│   │     ├── bootstrap-reboot.min.css
+│   │     ├── bootstrap-reboot.min.css.map
+│   │     ├── bootstrap-select.css
+│   │     ├── bootstrap.css
+│   │     ├── bootstrap.css.map
+│   │     ├── bootstrap.min.css
+│   │     ├── bootstrap.min.css.map
+│   │     ├── calendar.css
+│   │     ├── calendar.min.css
+│   │     ├── color_2.css
+│   │     ├── custom.css
+│   │     ├── flaticon.css
+│   │     ├── font-awesome.css
+│   │     ├── font-awesome.min.css
+│   │     ├── jquery.fancybox.css
+│   │     ├── jquery.fancybox.min.css
+│   │     ├── owl.carousel.css
+│   │     ├── perfect-scrollbar.css
+│   │     ├── responsive.css
+│   │     ├── semantic.min.css
+│   │     ├── style.css
+│   │     └── style_login.css
+│   │
+│   │
+│   ├── fonts
+│   ├── imagenes
+│   │     ├── firmas
+│   │     ├── iconos
+│   │     ├── login
+│   │     ├── logos
+│   │     └── perfil
+│   └── js
+│       ├── analyser.js
+│       ├── animate.js
+│       ├── bootstrap-select.js
+│       ├── bootstrap.bundle.js
+│       ├── bootstrap.bundle.js.map
+│       ├── bootstrap.bundle.min.js
+│       ├── bootstrap.bundle.min.js.map
+│       ├── bootstrap.js
+│       ├── bootstrap.js.map
+│       ├── bootstrap.min.js
+│       ├── bootstrap.min.js.map
+│       ├── calendar.js
+│       ├── calendar.min.js
+│       ├── Chart.bundle.js
+│       ├── Chart.bundle.min.js
+│       ├── Chart.js
+│       ├── Chart.min.js
+│       ├── chart_custom_style1.js
+│       ├── chart_custom_style2.js
+│       ├── custom.js
+│       ├── custom_chart.js
+│       ├── jquery-3.3.1.min.js
+│       ├── jquery.fancybox.js
+│       ├── jquery.fancybox.min.js
+│       ├── jquery.min.js
+│       ├── owl.carousel.js
+│       ├── perfect-scrollbar.min.js
+│       ├── popper.min.js
+│       ├── script_login.js
+│       ├── semantic.min.js
+│       ├── settings.html
+│       └── utils.js
+│
+│
+│
+├── database           # Configuraciones de la base de datos y el servidor
+│   └── db.js          # Configuración de la base de datos MySQL
+├── facturas_ventas    # Carpeta donde se guardan las facturas creadas de las ventas hechas 
+├── img_empleados      # carpeta donde se guardan las fotos agregadas de los empleados
+├── impresiones        # Carpeta donde se guardan todos los reportes generados
+├── node_modules
+├── papeleria          # javaScript de rutas para papelerias
+├── reportes_generados # Carpeta donde se guardan todos los reportes generados
+├── routes             # Definición de rutas para las diferentes funcionalidades
+│   ├── area_producto.js
+│   ├── buscador_ai.js
+│   ├── cajas.js
+│   ├── cajas_c.js
+│   ├── categoria_producto.js
+│   ├── ciudades.js
+│   ├── clientes.js
+│   ├── compras.js
+│   ├── departamentos.js
+│   ├── detalles_compras.js
+│   ├── detalles_ventas.js
+│   ├── empleados.js
+│   ├── ganancias_es.js
+│   ├── generador_reportes.js
+│   ├── graficos.js
+│   ├── impre_areas_producto.js
+│   ├── impre_categoria.js
+│   ├── impre_ciudades.js
+│   ├── impre_clientes.js
+│   ├── impre_departamentos.js
+│   ├── impre_empleado.js
+│   ├── impre_paises.js
+│   ├── impre_proveedor.js
+│   ├── impre_tipo_paciente.js
+│   ├── impre_unidad_empaque.js
+│   ├── impre_unidad_venta.js
+│   ├── imp_ventas.js
+│   ├── inventario.js
+│   ├── inventario_vista.js
+│   ├── login.js
+│   ├── nueva_compra.js
+│   ├── nueva_venta.js
+│   ├── paises.js
+│   ├── productos.js
+│   ├── proveedores.js
+│   ├── reporte_compras_G.js
+│   ├── reporte_fut_ventas.js
+│   ├── reporte_Productos_V.js
+│   ├── reporte_tareas.js
+│   ├── reporte_ventas.js
+│   ├── roles.js
+│   ├── sucursales.js
+│   ├── tipo_paciente.js
+│   ├── unidad_empaque.js
+│   ├── unidad_venta.js
+│   ├── ventas.js
+│   ├── venta_espe.js
+│   ├── vias_administracion.js
+│   ├── vista_ventas.js
+│   ├── graficos_reportes
+│   └── reporte_generado
+│
+├── storage
+├── views              # Archivos EJS para la vista del sistema
+│   ├── index.ejs
+│   ├── login.ejs
+│   │
+│   ├── AI
+│   │   └── buscador_ai.ejs
+│   │
+│   ├── area_producto
+│   │   └── area_producto.ejs
+│   │
+│   ├── cajas
+│   │   ├── cajas.ejs
+│   │   └── cajas_c.ejs
+│   │
+│   ├── categoria_producto
+│   │   └── categoria_producto.ejs
+│   │
+│   ├── ciudades
+│   │   └── ciudades.ejs
+│   │
+│   ├── clientes
+│   │   └── clientes.ejs
+│   │
+│   ├── compras
+│   │   ├── compras.ejs
+│   │   └── detalles_compras.ejs
+│   │
+│   ├── departamentos
+│   │   └── departamentos.ejs
+│   │
+│   ├── empleados
+│   │   └── empleados.ejs
+│   │
+│   ├── ganancias
+│   │   └── ganancias_es.ejs
+│   │
+│   ├── graficos
+│   │   └── graficos.ejs
+│   │
+│   ├── inventario
+│   │   ├── inventario.ejs
+│   │   └── inventario_vista.ejs
+│   │
+│   ├── login
+│   │
+│   ├── nueva_compra
+│   │   └── nueva_compra.ejs
+│   │
+│   ├── nueva_venta
+│   │   └── nueva_venta.ejs
+│   │
+│   ├── paginas
+│   │   ├── caja_c.ejs
+│   │   ├── error_404.ejs
+│   │   ├── logout.ejs
+│   │   └── mantenimiento.ejs
+│   │
+│   ├── paises
+│   │   └── paises.ejs
+│   │
+│   ├── papeleria
+│   │   ├── compras.ejs
+│   │   └── ventas.ejs
+│   │
+│   ├── productos
+│   │   └── productos.ejs
+│   │
+│   ├── proveedores
+│   │   └── proveedores.ejs
+│   │
+│   ├── reportes
+│   │   ├── reporte_compras.ejs
+│   │   ├── reporte_ganancias.ejs
+│   │   ├── reporte_productos.ejs
+│   │   ├── reporte_tareas.ejs
+│   │   └── reporte_ventas.ejs
+│   │
+│   ├── roles
+│   │   └── roles.ejs
+│   │
+│   ├── sucursales
+│   │   └── sucursales.ejs
+│   │
+│   ├── tipo_paciente
+│   │   └── tipo_paciente.ejs
+│   │
+│   ├── unidad_empaque
+│   │   └── unidad_empaque.ejs
+│   │
+│   ├── unidad_venta
+│   │   └── unidad_venta.ejs
+│   │
+│   ├── ventas
+│   │   ├── detalles_ventas.ejs
+│   │   ├── ventas.ejs
+│   │   ├── venta_espe.ejs
+│   │   └── vista_ventas.ejs
+│   │
+│   └── vias_administracion
+│       └── vias_administracion.ejs
+├── app.js             # Archivo principal del servidor
+└── package.json       # Dependencias y scripts del proyecto
