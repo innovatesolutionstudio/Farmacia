@@ -41,6 +41,17 @@
     background-color: #EDF1F5 !important;
     cursor: pointer;
   }
+  .badge {
+    background-color: #dc3545; /* Color rojo para el contador */
+    color: white;
+    border-radius: 12px;
+    padding: 5px 10px;
+    position: absolute; /* Para que se superponga al icono */
+    top: 10px;
+    right: 20px; /* Ajusta según sea necesario */
+    font-size: 14px;
+}
+
 </style>
     </head>
 <body >
@@ -66,7 +77,7 @@
                             <div class="user_info">
                               
                                 <h3 style="color: white;">
-                                FARMACIA 
+                                FARMACIA
                                 </h3>                             
                             </div>
                         </div>
@@ -121,7 +132,7 @@
                     <% if (sesion === 1 || sesion === 2 || sesion === 3 || sesion === 4|| sesion === 5) { %>
                         <ul class="list-unstyled components">
                             <li><a href="#" onclick="cargarContenido('/graficos')" class="btn-group" style="font-size: 18px; font-family: monospace;"> <i class="fa fa-area-chart" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Dashboard</span></a></li>
-                        </ul>
+                        </ul>   
                         <% if (sesion === 1 || sesion === 3 || sesion === 4) { %>
                             <ul class="list-unstyled components">
                                 <li class="active">
@@ -133,10 +144,20 @@
                                     </ul>
                                 </li>
                             </ul>
-                        <% } %>                       
+                        <% } %>   
+                         <!-- Notificacion solo para administradores  -->
+                            <% if (sesion === 1) { %> 
+                                <ul class="list-unstyled components">
+                                    <li>
+                                        <a href="#" onclick="cargarContenido('/notificacion'); marcarComoLeidas();" class="btn-group" style="font-size: 18px; font-family: monospace;">
+                                            <i class="fa fa-bell" style="font-size: 30px;"></i>
+                                            <span>&nbsp;&nbsp;Notificaciones</span>
+                                            <span id="notification-count" class="badge">2</span> <!-- Contador de notificaciones -->
+                                        </a>
+                                    </li>
+                                </ul>
+                            <% } %>                            
                     <% } %>
-
-
               </div>
           </nav>
           <!-- fin menu -->
@@ -330,6 +351,38 @@
     setInterval(actualizarHora, 1000);  // Actualiza cada segundo
     window.onload = actualizarHora;  // Actualiza al cargar la página
 </script>
+
+
+ <!-- Script de notificaciones -->
+<script>
+    // Función para cargar el contenido en el iframe
+    function cargarContenido(url) {
+        const iframe = document.getElementById('externalAppIframe');
+        iframe.src = url; // Cargar la URL en el iframe
+        marcarComoLeidas(); // Marca notificaciones como leídas al cargar el contenido
+    }
+
+    // Función para marcar notificaciones como leídas
+    function marcarComoLeidas() {
+        // Aquí solo ocultamos el contador de notificaciones
+        document.getElementById('notification-count').style.display = 'none';
+    }
+
+    // Función para obtener el número de notificaciones (simulación)
+    function obtenerNumeroNotificaciones() {
+        const numeroNotificaciones = 2; // Cambia esto según tu lógica real
+        const notificationCount = document.getElementById('notification-count');
+        notificationCount.textContent = numeroNotificaciones;
+
+        // Mostrar u ocultar el contador según el número de notificaciones
+        notificationCount.style.display = numeroNotificaciones > 0 ? 'inline-block' : 'none';
+    }
+
+    // Llama a esta función al cargar la página
+    document.addEventListener('DOMContentLoaded', obtenerNumeroNotificaciones);
+</script>
+
+
 <script>
     
     $("#btnActualizar").click(function () {

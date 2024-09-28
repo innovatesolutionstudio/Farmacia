@@ -1,6 +1,7 @@
 //invocamos a express
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
 
 const ciudadesRoutes = require('./routes/ciudades');
 const proveedoresRoutes = require('./routes/proveedores');
@@ -31,6 +32,15 @@ const rolesRoutes = require('./routes/roles');
 const sucursalesRoutes = require('./routes/sucursales');
 const vista_ventas = require('./routes/vista_ventas')
 const rutas_login = require('./routes/login')
+
+// Añade esta línea al principio de tu app.js
+const notificacionesRoutes = require('./routes/notificaciones');
+
+app.use(bodyParser.urlencoded({ extended: true })); // Para formularios URL-encoded
+app.use(bodyParser.json()); // Para formularios JSON
+
+app.use(notificacionesRoutes);
+
 
 //#endregion
 const graficosRouter = require('./routes/graficos'); // Ajusta la ruta según la ubicación de tu archivo graficos.js

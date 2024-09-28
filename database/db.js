@@ -5,7 +5,7 @@ const db_config = {
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'farmacia_1'
+    database: 'innovat1_farmacia'
 };
 
 let coneccion;
