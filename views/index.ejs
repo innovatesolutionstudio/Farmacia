@@ -41,7 +41,7 @@
     background-color: #EDF1F5 !important;
     cursor: pointer;
   }
-  .badge {
+    .badge {
     background-color: #dc3545; /* Color rojo para el contador */
     color: white;
     border-radius: 12px;
@@ -125,40 +125,81 @@
                     </div>
                 </div>
   
-                <!--  comienzo del menu -->
-                <div class="sidebar_blog_2" class="panel">
+                 <!--  comienzo del menu -->
+                 <div class="sidebar_blog_2" class="panel">
                     
                     <% if (sesion === 1 || sesion === 2 || sesion === 3 || sesion === 4|| sesion === 5) { %>
                         <ul class="list-unstyled components">
-                            <li><a href="#" onclick="cargarContenido('/graficos')" class="btn-group" style="font-size: 18px; font-family: monospace;"> <i class="fa fa-area-chart" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Dashboard</span></a></li>
-                        </ul>
+                            <li><a href="#" onclick="cargarContenido('/mantenimiento')" class="btn-group" style="font-size: 18px; font-family: monospace;"> <i class="fa fa-area-chart" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Dashboard</span></a></li>
+                        </ul>   
                         <% if (sesion === 1 || sesion === 3 || sesion === 4) { %>
                             <ul class="list-unstyled components">
                                 <li class="active">
-                                    <a href="#ventas" onclick="cargarContenido('/vista_ventas')"  data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group" style="font-size: 18px; font-family: monospace; "><i class="fa fa-money" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Ventas</span></a>
+                                    <a href="#ventas" onclick="cargarContenido('/mantenimiento')"  data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group" style="font-size: 18px; font-family: monospace; "><i class="fa fa-money" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Ventas</span></a>
                                     <ul class="collapse list-unstyled" id="ventas">
-                                        <li><a href="#" onclick="cargarContenido('/nueva_venta')" style="font-size: 18px; font-family: monospace; ">> <span>Nueva Venta</span></a></li>
-                                        <li><a href="#" onclick="cargarContenido('/inventario_vista')" style="font-size: 16px; font-family: monospace; ">> <span>Productos Disponibles</span></a></li>
-                                        <li><a href="#" onclick="cargarContenido('/reporte_compras')" style="font-size: 18px; font-family: monospace; ">> <span>Cajas</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 18px; font-family: monospace; ">> <span>Nueva Venta</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 16px; font-family: monospace; ">> <span>Productos Disponibles</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 18px; font-family: monospace; ">> <span>Cajas</span></a></li>
                                     </ul>
                                 </li>
                             </ul>
                         <% } %>   
-                         <!-- Notificacion solo para administradores  -->
-                         <% if (sesion === 1) { %> 
+                        <% if (sesion === 1 || sesion === 3 || sesion === 4) { %>
                             <ul class="list-unstyled components">
-                                <li>
-                                    <a href="#" onclick="cargarContenido('/notificacion'); marcarComoLeidas();" class="btn-group" style="font-size: 18px; font-family: monospace;">
-                                        <i class="fa fa-bell" style="font-size: 30px;"></i>
-                                        <span>&nbsp;&nbsp;Notificaciones</span>
-                                        <span id="notification-count" class="badge">2</span> <!-- Contador de notificaciones -->
-                                    </a>
+                                <li class="active">
+                                    <a href="#finanzas" onclick="cargarContenido('/mantenimiento')"  data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group" style="font-size: 18px; font-family: monospace; "><i class="fas fa-donate" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Finanzas</span></a>
+                                    <ul class="collapse list-unstyled" id="finanzas">
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 18px; font-family: monospace; ">> <span>Cajas</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 16px; font-family: monospace; ">> <span>Ganancias</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 18px; font-family: monospace; ">> <span>Reportes</span></a></li>
+                                    </ul>
                                 </li>
                             </ul>
-                        <% } %>                      
+                        <% } %> 
+                        <% if (sesion === 1 || sesion === 3 || sesion === 4) { %>
+                            <ul class="list-unstyled components">
+                                <li class="active">
+                                    <a href="#compras" onclick="cargarContenido('/mantenimiento')"  data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group" style="font-size: 18px; font-family: monospace; "><i class="far fa-calendar-alt" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Compras</span></a>
+                                    <ul class="collapse list-unstyled" id="compras">
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 18px; font-family: monospace; ">> <span>...</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 16px; font-family: monospace; ">> <span>...</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 18px; font-family: monospace; ">> <span>...</span></a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        <% } %> 
+                      
+                        <% if (sesion === 1 || sesion === 3 || sesion === 4) { %>
+                            <ul class="list-unstyled components">
+                                <li class="active">
+                                    <a href="#recursos_h" onclick="cargarContenido('/mantenimiento')"  data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group" style="font-size: 18px; font-family: monospace; "><i class="fa fa-money" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Inventario</span></a>
+                                    <ul class="collapse list-unstyled" id="recursos_h">
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 18px; font-family: monospace; ">> <span>...</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 16px; font-family: monospace; ">> <span>...</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 18px; font-family: monospace; ">> <span>...</span></a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        <% } %> 
+                         <!-- Notificacion solo para administradores  -->
+                            <% if (sesion === 1) { %> 
+                                <ul class="list-unstyled components">
+                                    <li>
+                                        <a href="#" onclick="cargarContenido('/notificacion'); marcarComoLeidas();" class="btn-group" style="font-size: 18px; font-family: monospace;">
+                                            <i class="fa fa-bell" style="font-size: 30px;"></i>
+                                            <span>&nbsp;&nbsp;Notificaciones</span>
+                                            <span id="notification-count" class="badge">2</span> <!-- Contador de notificaciones -->
+                                        </a>
+                                    </li>
+                                </ul>
+                            <% } %>    
+                            <ul class="list-unstyled components">
+                                <li><a href="#" onclick="cargarContenido('/mantenimiento')" class="btn-group" style="font-size: 18px; font-family: monospace;"> <i class="far fa-sun" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Configuraciones</span></a></li>
+                            </ul> 
+                            <ul class="list-unstyled components">
+                                <li><a href="#" onclick="cargarContenido('/mantenimiento')" class="btn-group" style="font-size: 18px; font-family: monospace;"> <i class="fas fa-calendar-times" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Papeleria</span></a></li>
+                            </ul>                         
                     <% } %>
-
-
               </div>
           </nav>
           <!-- fin menu -->
@@ -204,13 +245,13 @@
                     </nav>
                     <div id="contenido">
                         <% if ( sesion === 5) { %>
-                            <iframe id="contenidoFrame" src="/nueva_venta" frameborder="0" ></iframe>
+                            <iframe id="contenidoFrame" src="/mantenimiento" frameborder="0" ></iframe>
                         <% } %>
                         <% if ( sesion === 2) { %>
-                            <iframe id="contenidoFrame" src="/inventario" frameborder="0" ></iframe>
+                            <iframe id="contenidoFrame" src="/mantenimiento" frameborder="0" ></iframe>
                         <% } %>
                         <% if ( sesion === 1 || sesion === 3 || sesion === 4) { %>
-                            <iframe id="contenidoFrame" src="/graficos" frameborder="0" ></iframe>
+                            <iframe id="contenidoFrame" src="/mantenimiento" frameborder="0" ></iframe>
                         <% } %>
                     </div>
                 </div>
