@@ -31,6 +31,8 @@ const rolesRoutes = require('./routes/roles');
 const sucursalesRoutes = require('./routes/sucursales');
 const vista_ventas = require('./routes/vista_ventas')
 const rutas_login = require('./routes/login')
+// Añade esta línea al principio de tu app.js
+const notificacionesRoutes = require('./routes/notificaciones');
 
 //#endregion
 const graficosRouter = require('./routes/graficos'); // Ajusta la ruta según la ubicación de tu archivo graficos.js
@@ -202,6 +204,7 @@ app.use(rolesRoutes);
 app.use(sucursalesRoutes);
 app.use(vista_ventas);
 app.use(rutas_login);
+app.use(notificacionesRoutes);
 
 //reportes
 

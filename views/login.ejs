@@ -42,24 +42,28 @@
           
         </form>
         <!--formulario para mandar notificaciones-->
-        
-        <form action="#" class="sign-up-form">
-          <img src="resources/images/login/logo1.png" alt="#" alt="Logo">
+
+       
+        <form action="/notificar" method="POST" class="sign-up-form">
+          <img src="resources/images/login/logo1.png" alt="Logo">
           <h2 class="title">Notificaciones</h2>
           <div class="input-field">
-            <i class="fas fa-user"></i>
-            <input type="text" placeholder="Nombre" />
+       
+              <i class="fas fa-user"></i>
+              <input type="text" name="nombre" placeholder="Nombre" required />
           </div>
           <div class="input-field">
-            <i class="fas fa-envelope"></i>
-            <input type="email" placeholder="Correo" />
+       
+              <i class="fas fa-envelope"></i>
+              <input type="email" name="correo" placeholder="Correo" required />
           </div>
           <div class="input-field">
-            <i class="fas fas fa-comment-alt"></i>
-            <input type="text" placeholder="Descripcion" />
+            <i class="fas fas fa-comment-alt"></i>         
+            <input type="text" name="descripcion" placeholder="Descripción" required />
           </div>
           <input type="submit" class="btn" value="NOTIFICAR" />
         </form>
+
       </div>
     </div>
 
@@ -104,6 +108,7 @@
  <script src="resources/js/bootstrap-select.js"></script>
  <!-- nice scrollbar -->
  <script src="resources/js/perfect-scrollbar.min.js"></script>
+
  <script>
     var ps = new PerfectScrollbar('#sidebar');
  </script>

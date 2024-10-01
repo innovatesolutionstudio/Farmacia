@@ -725,3 +725,29 @@ Se realiza una consulta SQL para obtener los datos de la tabla inventario y los 
 Respuesta:
 Éxito: Renderiza la vista EJS inventario/inventario_vista y pasa los resultados de la consulta como variable results, así como el ID de la sucursal como ID_Sucursal.
 Error: Si ocurre un error durante la consulta, se registra el error en la consola y se responde con un mensaje de error y un código de estado 500.
+
+#Ruta para Autenticación de Usuarios
+1. Autenticación de Usuario
+Ruta: /auth
+Método: POST
+Descripción: Verifica las credenciales del usuario que intenta iniciar sesión.
+Proceso:
+Se obtiene el correo electrónico y la contraseña del cuerpo de la solicitud.
+Se verifica que ambos campos estén completos. Si faltan datos, se renderiza la vista login con una alerta de advertencia.
+Se realiza una consulta SQL para verificar si el correo electrónico existe en la tabla empleados.
+Si hay un error en la consulta, se registra el error y se responde con un código de estado 500.
+Si el usuario no existe, se renderiza la vista login con un mensaje de error.
+Si el usuario existe, se comprueba si su cuenta está bloqueada (grado >= 4). Si está bloqueada, se muestra un mensaje correspondiente.
+Se verifica si las credenciales son correctas.
+Si la sesión está activa en otro dispositivo (Situación = 2), se informa al usuario.
+Si la situación es 1, se actualiza el estado de la sesión y se registra la hora de inicio de sesión en la tabla historial. Luego, se asignan los datos del usuario a la sesión.
+Si la contraseña es incorrecta, se incrementa el grado del usuario en la base de datos y se muestra una advertencia.
+Si ninguna de las condiciones anteriores se cumple, se muestra un mensaje de error genérico.
+Respuesta:
+Éxito: Renderiza la vista login con un mensaje de conexión exitosa y redirige según sea necesario.
+Error:
+Si los campos están incompletos: Alerta de advertencia con el mensaje "Ingrese su correo electrónico y contraseña".
+Si el usuario no existe o las credenciales son incorrectas: Alerta de error con el mensaje "Usuario o contraseña incorrectos".
+Si la cuenta está bloqueada: Alerta con el mensaje "¡Cuenta bloqueada!".
+Si hay un error en la consulta o actualización: Mensaje de error interno del servidor.
+

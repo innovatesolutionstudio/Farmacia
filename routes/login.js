@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const coneccion = require('../database/db');
-
-
+const pool = require('../database/db'); // Importar el pool
 
 router.post('/auth', async (req, res) => {
     const email = req.body.Email.toLowerCase(); 
@@ -23,7 +21,7 @@ router.post('/auth', async (req, res) => {
     }
 
     // Consultar la base de datos para verificar las credenciales
-    coneccion.query('SELECT * FROM empleados WHERE Email = ?', [email], async (error, results) => {
+    pool.query('SELECT * FROM empleados WHERE Email = ?', [email], async (error, results) => {
         if (error) {
             console.error("Error en la consulta:", error);
             return res.status(500).send("Error interno del servidor");
@@ -78,14 +76,14 @@ router.post('/auth', async (req, res) => {
                 // Si Situacion es 1, continuar con la sesión normalmente
 
                 // Actualizar Situacion a 2 en la base de datos
-                coneccion.query('UPDATE empleados SET Situacion = 1 WHERE Email = ?', [email], (updateError, updateResults) => {
+                pool.query('UPDATE empleados SET Situacion = 1 WHERE Email = ?', [email], (updateError, updateResults) => {
                     if (updateError) {
                         console.log("Error al actualizar Situacion:", updateError);
                     }
                 });
 
                 // Guardar en el historial
-                coneccion.query('INSERT INTO historial (Fecha, ID_Empleado) VALUES (?, ?)', [fecha, ID_empleado], (insertError, insertResults) => {
+                pool.query('INSERT INTO historial (Fecha, ID_Empleado) VALUES (?, ?)', [fecha, ID_empleado], (insertError, insertResults) => {
                     if (insertError) {
                         console.error("Error al insertar en el historial:", insertError);
                     }
@@ -114,13 +112,12 @@ router.post('/auth', async (req, res) => {
                     ruta: ''
                 });
             }
-            
         }
 
         // Incrementar el valor de "Grado" en la base de datos si la contraseña es incorrecta
         if (userData.Email === email && userData.Contrasena !== password) {
             const newGrado = userData.Grado + 1;
-            coneccion.query('UPDATE empleados SET Grado = ? WHERE Email = ?', [newGrado, email], (updateError, updateResults) => {
+            pool.query('UPDATE empleados SET Grado = ? WHERE Email = ?', [newGrado, email], (updateError, updateResults) => {
                 if (updateError) {
                     console.log("Error al actualizar el grado:", updateError);
                 }
@@ -148,7 +145,5 @@ router.post('/auth', async (req, res) => {
         });
     });
 });
-
-
 
 module.exports = router;

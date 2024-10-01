@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificaciones</title>
+    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="path/to/your/styles.css">
+    <style>
+        body {
+            background-color: #01010100;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        .contenedor {
+            background-color: rgba(220, 214, 214, 0.529);
+            width: 90%;
+            padding: 40px 20px 100px 10px;
+            margin: 30px 90px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            color: #343a40;
+            text-align: center;
+            
+            margin-bottom: 20px;
+        }
+        .notification {
+            background-color: rgba(72, 84, 100, 0.8);
+            color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+            transition: transform 0.2s;
+        }
+        .notification:hover {
+            transform: translateY(-2px);
+        }
+        .notification strong {
+            color: #007bff;
+            font-size: 1.1em;
+        }
+        .notification p {
+            margin: 5px 0;
+            color: #e9ecef;
+        }
+        .notification small {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #adb5bd;
+        }
+        .notification-icon {
+            position: absolute;
+            left: -30px;
+            top: 15px;
+            font-size: 24px;
+            color: #007bff;
+        }
+        .no-notifications {
+            text-align: center;
+            color: #868e96;
+            padding: 20px;
+            font-style: italic;
+        }
+        @media (max-width: 768px) {
+            .contenedor {
+                margin: 10px;
+                padding: 20px;
+            }
+            .notification {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <h1>Lista de Notificaciones</h1>
+        <div class="notification-container">
+            <ul class="list-unstyled">
+                <% if (notificaciones.length > 0) { %>
+                    <% notificaciones.forEach(notification => { %>
+                        <li class="notification">
+                            <i class="fa fa-bell notification-icon" aria-hidden="true"></i>
+                            <div>
+                                <strong><%= notification.Nombre %></strong> (<%= notification.Correo %>)<br>
+                                <p><%= notification.Descripcion %></p>
+                                <small><%= new Date(notification.Fecha).toLocaleString() %></small>
+                            </div>
+                        </li>
+                    <% }); %>
+                <% } else { %>
+                    <li class="no-notifications">No hay notificaciones.</li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
