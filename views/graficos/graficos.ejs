@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" integrity="sha384-UzomW2R7c1D7vo/vSjtyUlbhlmJ8LZ+DRjW/zhbKUp7AWGzZQL57/bjH5CV2N2zJ" crossorigin="anonymous">
     <!-- custom css -->
     <link rel="stylesheet" href="resources/css/graficos.css" />
+    <!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
     <title>Ventas</title>
 </head>
 <body>
@@ -20,14 +23,17 @@
 
     <div class="container">
         <div class="card" style="border: 2px solid #01A768;">
-            <a href="/ventas" onclick="cargarContenido('/ventas')" class="btn-group"><img class="icono" src="resources/images/iconos/money-ventas.svg" alt="Productos"></a>
-
+            <a href="/ventas" onclick="cargarContenido('/ventas')" class="btn-group">
+              <img class="icono" src="resources/images/iconos/money-ventas.svg" alt="Productos">
+            </a>
+          
             <h2 id="ventasMes"></h2>
             <p>Ventas del mes</p>
             <div class="details">
-                <a href="/ventas" onclick="cargarContenido('/ventas')" style="background-color: #A6DBCB; color: black;">Ver Detalle Ventas &raquo;</a>
+              <a href="#" onclick="verDetallesVentas()" style="background-color: #A6DBCB; color: black;">Ver Detalle Ventas &raquo;</a>
             </div>
-        </div>
+          </div>
+          
     
         <div class="card" style="border: 2px solid #FED600;">
             <a href="#" onclick="cargarContenido('/ganancias_es')" class="btn-group"><img class="icono" src="resources/images/iconos/person.svg" alt="Cajas"></a>
@@ -74,7 +80,7 @@
                 </div>
                 <div>
                     <h2 id="obtenerProductoMasVendido"></h2>
-                    <p>Producto frecuente</p>
+                    <p>Producto mas vendido de la gestion</p>
                 </div>
             </div>
         </div>
@@ -87,12 +93,12 @@
             </div>
             <div class="content-card2">
                 <div>
-                    <h2>70,856</h2>
-                    <p>Medicamentos vendidos</p>
+                    <h2 id="obtenerTotalProductosVendidosMesSucursal"></h2>
+                    <p>Medicamentos vendidos en el mes</p>
                 </div>
                 <div>
-                    <h2>5,288</h2>
-                    <p>Cantidad Productos</p>
+                    <h2 id="obtenerCantidadTotalInventario">5,288</h2>
+                    <p>Cantidad Productos en inventario</p>
                 </div>
             </div>
         </div>
@@ -123,19 +129,21 @@
             </div>
             <div class="content-card2">
                 <div>
-                    <h2>845</h2>
+                    <h2 id="obtenerTotalComprasMesActual"></h2>
                     <p>Número total de compras</p>
                 </div>
                 <div>
-                    <h2>Droguería Inti</h2>
+                    <h2 id="obtenerProveedorMasComprado">Droguería Inti</h2>
                     <p>Proveedor</p>
                 </div>
             </div>
         </div>
+        
     </div>
   
 </body>
-
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 <script>
     
 // Hacer una solicitud al servidor para obtener los datos
@@ -149,10 +157,74 @@ fetch('/datos')
     document.getElementById('medicamentosapuntovencer').innerText =  data.medicamentosapuntovencer;
     document.getElementById('obtenerVentasMest').innerText =  data.obtenerVentasMest;
     document.getElementById('obtenerProductoMasVendido').innerText =  data.obtenerProductoMasVendido || 'No hay ventas este año'; // Manejar el caso null
+    document.getElementById('obtenerTotalProductosVendidosMesSucursal').innerText =  data.obtenerTotalProductosVendidosMesSucursal|| 'No hay ventas este mes';
+    document.getElementById('obtenerCantidadTotalInventario').innerText =  data.obtenerCantidadTotalInventario || 'Inventario vacio'; // Manejar el caso null
+    document.getElementById('obtenerTotalComprasMesActual').innerText =  data.obtenerTotalComprasMesActual || 'No hay compras en este mes'; // Manejar el caso null
+    document.getElementById('obtenerProveedorMasComprado').innerText =  data.obtenerProveedorMasComprado || 'no hay proveedores'; // Manejar el caso null
+    
   })
   .catch(error => {
     console.error('Error fetching data:', error);
   });
+
+</script>
+<script>
+async function verDetallesVentas() {
+  try {
+    const response = await fetch('/datos');
+    const { ventasMesGrafico } = await response.json();
+
+    let tabla = `
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Día</th>
+            <th>Venta Total</th>
+            <th>Clientes Totales</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    // Comprobar si hay datos
+    if (ventasMesGrafico.length === 0) {
+      tabla += `<tr><td colspan="4">No hay datos disponibles.</td></tr>`;
+    } else {
+      ventasMesGrafico.forEach(venta => {
+        tabla += `
+          <tr>
+            <td>${venta.Fecha}</td>
+            <td>${venta.Dia}</td>
+            <td>${venta.Total_Venta}</td>
+            <td>${venta.Clientes}</td>
+          </tr>
+        `;
+      });
+    }
+
+    tabla += `
+        </tbody>
+      </table>
+    `;
+
+    await Swal.fire({
+      title: 'Ventas del Mes',
+      html: tabla,
+      showCloseButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cerrar',
+    });
+  } catch (err) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudieron cargar las ventas del mes.',
+    });
+  }
+}
+
 
 </script>
 </html>
