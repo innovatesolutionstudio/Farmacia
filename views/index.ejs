@@ -130,12 +130,12 @@
                     
                     <% if (sesion === 1 || sesion === 2 || sesion === 3 || sesion === 4|| sesion === 5) { %>
                         <ul class="list-unstyled components">
-                            <li><a href="#" onclick="cargarContenido('/mantenimiento')" class="btn-group" style="font-size: 18px; font-family: monospace;"> <i class="fa fa-area-chart" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Dashboard</span></a></li>
+                            <li><a href="#" onclick="cargarContenido('/graficos')" class="btn-group" style="font-size: 18px; font-family: monospace;"> <i class="fa fa-area-chart" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Dashboard</span></a></li>
                         </ul>   
                         <% if (sesion === 1 || sesion === 3 || sesion === 4) { %>
                             <ul class="list-unstyled components">
                                 <li class="active">
-                                    <a href="#ventas" onclick="cargarContenido('/mantenimiento')"  data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group" style="font-size: 18px; font-family: monospace; "><i class="fa fa-money" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Ventas</span></a>
+                                    <a href="#ventas" onclick="cargarContenido('/vista_ventas')"  data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group" style="font-size: 18px; font-family: monospace; "><i class="fa fa-money" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Ventas</span></a>
                                     <ul class="collapse list-unstyled" id="ventas">
                                         <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 18px; font-family: monospace; ">> <span>Nueva Venta</span></a></li>
                                         <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 16px; font-family: monospace; ">> <span>Productos Disponibles</span></a></li>
@@ -170,7 +170,7 @@
                         <% } %> 
                       
                         <% if (sesion === 1 || sesion === 3 || sesion === 4) { %>
-                            <ul class="list-unstyled components">
+                            <ul class="list-unstyled components " style="border-bottom: 1px solid #ffffff69">
                                 <li class="active">
                                     <a href="#recursos_h" onclick="cargarContenido('/mantenimiento')"  data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group" style="font-size: 18px; font-family: monospace; "><i class="fa fa-money" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Inventario</span></a>
                                     <ul class="collapse list-unstyled" id="recursos_h">
