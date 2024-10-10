@@ -175,21 +175,6 @@ const obtenerCantidadTotalInventarioS = (ID_Sucursal) => {
   });
 };
 
-const obtenerTotalComprasMesActualS = (ID_Sucursal) => {
-  return new Promise((resolve, reject) => {
-    const sql = `
-      SELECT SUM(Total_Compra) AS TotalCompras
-      FROM compras
-      WHERE MONTH(Fecha_Compra) = MONTH(CURDATE())
-        AND YEAR(Fecha_Compra) = YEAR(CURDATE())
-        AND ID_Sucursal = ?
-    `;
-    conexion.query(sql, [ID_Sucursal], (err, results) => {
-      if (err) return reject(err);
-      resolve(results[0] ? results[0].TotalCompras : 0); // Devolver 0 si no hay resultados
-    });
-  });
-};
 
 const obtenerProveedorMasCompradoS = (ID_Sucursal) => {
   return new Promise((resolve, reject) => {
@@ -236,6 +221,46 @@ const obtenerVentasDelMesGraficoM = (ID_Sucursal) => {
     });
   });
 };
+const obtenerDetallesComprasMes = (ID_Sucursal) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT 
+        Fecha_Compra AS Fecha, 
+        DAYOFWEEK(Fecha_Compra) - 1 AS Dia, -- Esto te da el número del día de la semana
+        Total_Compra
+      FROM compras
+      WHERE MONTH(Fecha_Compra) = MONTH(CURRENT_DATE())
+        AND YEAR(Fecha_Compra) = YEAR(CURRENT_DATE())
+        AND ID_Sucursal = ?;
+    `;
+
+    conexion.query(sql, [ID_Sucursal], (err, results) => {
+      if (err) return reject(err);
+
+      resolve(results); // Devolver todas las compras del mes
+    });
+  });
+};
+
+const ObtenerTablaInventario = (ID_Sucursal) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT p.Nombre, i.Cantidad
+      FROM inventario i
+      JOIN productos p ON i.ID_Producto = p.ID_Producto
+      WHERE i.Cantidad < 5 
+      AND i.ID_Sucursal = ?;
+    `;
+
+    conexion.query(sql, [ID_Sucursal], (err, results) => {
+      if (err) return reject(err);
+
+      resolve(results); // Devolver los productos con menos de 5 unidades
+    });
+  });
+};
+
+
 
 
 router.get('/datos', async (req, res) => {
@@ -257,9 +282,10 @@ router.get('/datos', async (req, res) => {
       obtenerProductoMasVendido,
       obtenerTotalProductosVendidosMesSucursal,
       obtenerCantidadTotalInventario,
-      obtenerTotalComprasMesActual,
+      comprasMestabla,
       obtenerProveedorMasComprado,
-      ventasMesGrafico
+      ventasMesGrafico,
+      ObtenerTablaInventarios
     ] = await Promise.all([
       
       obtenerVentasMes(ID_Sucursal),
@@ -270,9 +296,10 @@ router.get('/datos', async (req, res) => {
       obtenerProductoMasVendidos(ID_Sucursal),
       obtenerTotalProductosVendidosMesSucursalS(ID_Sucursal),
       obtenerCantidadTotalInventarioS(ID_Sucursal),
-      obtenerTotalComprasMesActualS(ID_Sucursal),
+      obtenerDetallesComprasMes(ID_Sucursal),
       obtenerProveedorMasCompradoS(ID_Sucursal),
-      obtenerVentasDelMesGraficoM(ID_Sucursal), // Cambiar el orden aquí
+      obtenerVentasDelMesGraficoM(ID_Sucursal),
+      ObtenerTablaInventario(ID_Sucursal)
     ]);
 
     // Enviar los datos al cliente
@@ -286,9 +313,10 @@ router.get('/datos', async (req, res) => {
       obtenerProductoMasVendido,
       obtenerTotalProductosVendidosMesSucursal,
       obtenerCantidadTotalInventario,
-      obtenerTotalComprasMesActual,
+      comprasMestabla,
       obtenerProveedorMasComprado,
-      ventasMesGrafico
+      ventasMesGrafico,
+      ObtenerTablaInventarios
     });
   } catch (err) {
     console.error('Error al obtener los datos:', err);

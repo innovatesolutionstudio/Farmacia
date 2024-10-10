@@ -339,3 +339,62 @@ p {
         height: auto;
     }
 }
+
+ /* CSS para ampliar el tamaño de la ventana emergente */
+ .wide-popup {
+    max-width: 80%; /* Aumentar el tamaño al 80% del ancho de la ventana */
+    width: 80%; /* Definir el ancho de la ventana emergente */
+  }
+  
+  
+    /* Agregar estos estilos en tu archivo CSS */
+  .table {
+    width: 100%;
+    margin-bottom: 1rem;
+    background-color: #fff;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  .table th, .table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .table th {
+    font-weight: bold;
+    background-color: #f8f9fa;
+    color: #343a40;
+  }
+  
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fa;
+  }
+  
+  .table td {
+    vertical-align: middle;
+  }
+  
+  .table thead th {
+    border-bottom: 2px solid #dee2e6;
+  }
+  
+  .table tbody tr:hover {
+    background-color: #f1f3f5;
+  }
+  
+  .table-actions a {
+    text-decoration: none;
+    color: #007bff;
+  }
+  
+  .table-actions a:hover {
+    text-decoration: underline;
+  }
+  #obtenerProductoMasVendido {
+    font-size: 1.5rem; /* Ajusta el tamaño según sea necesario */
+    white-space: nowrap; /* Evita el salto de línea, si deseas que sea en una sola línea */
+    overflow: hidden; /* Oculta el desbordamiento si el texto es demasiado largo */
+    text-overflow: ellipsis; /* Agrega "..." si el texto desborda */
+  }

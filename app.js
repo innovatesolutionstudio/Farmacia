@@ -90,12 +90,14 @@ const path = require('path');
 //#region estilos - js - css 
 app.use('/resources',express.static('assets'));
 app.use('/resources', express.static(__dirname + '/assets'));
+
 app.use('/fotos',express.static('storage'));
 app.use('/fotos', express.static(__dirname + '/storage'));
 app.use('/pdf-viewer', express.static(path.join(__dirname, 'reportes_generados')));
 app.use('/impre', express.static(path.join(__dirname, 'impresiones')));
 app.use('/facturas_ventas', express.static(path.join(__dirname, 'facturas_ventas')));
 
+app.use('/js', express.static(__dirname + '/views/graficos/js'));
 //#endregion
 
 //#region - iniciar sesion - login - autenticacion 
