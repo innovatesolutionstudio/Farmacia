@@ -71,7 +71,7 @@
         <div class="card2">
             <div class="header-card2">
                 <span>Ventas Mensuales</span>
-                <a href="#">Ver más &raquo;</a>
+                <a href="#" onclick="verDetallesVentasG()">Ver más &raquo;</a>
             </div>
             <div class="content-card2">
                 <div>
@@ -89,7 +89,7 @@
         <div class="card2">
             <div class="header-card2">
                 <span>Productos</span>
-                <a href="#">Ver más &raquo;</a>
+                <a href="#" onclick="verProductosVendidosMes()">Ver más &raquo;</a>
             </div>
             <div class="content-card2">
                 <div>
@@ -125,11 +125,11 @@
         <div class="card2">
             <div class="header-card2">
                 <span>Compras</span>
-                <a href="#">Ver más &raquo;</a>
+                <a href="#" onclick="verProductosCompradosMes()">Ver más &raquo;</a>
             </div>
             <div class="content-card2">
                 <div>
-                    <h2 id="obtenerTotalComprasMesActual"></h2>
+                    <h2 id="obtenerTotalComprasC"></h2>
                     <p>Número total de compras</p>
                 </div>
                 <div>
@@ -144,9 +144,15 @@
 </body>
 <!-- SweetAlert2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script src="js/ventasmensuales.js"></script>
 <script src="js/datos.js"></script>
 <script src="js/clientesmensuales.js"></script>
 <script src="js/comprasMensuales.js"></script>
 <script src="js/InventarioTabla.js"></script>
+<script src="js/graficoventas.js"></script>
+<script src="js/graficoproductos.js"></script>
+<script src="js/gaficoCompras.js"></script>
 </html>

@@ -226,7 +226,7 @@ const obtenerDetallesComprasMes = (ID_Sucursal) => {
     const sql = `
       SELECT 
         Fecha_Compra AS Fecha, 
-        DAYOFWEEK(Fecha_Compra) - 1 AS Dia, -- Esto te da el número del día de la semana
+        DAYOFWEEK(Fecha_Compra) - 1 AS Dia,
         Total_Compra
       FROM compras
       WHERE MONTH(Fecha_Compra) = MONTH(CURRENT_DATE())
@@ -262,6 +262,96 @@ const ObtenerTablaInventario = (ID_Sucursal) => {
 
 
 
+const obtenerVentasMesActual = (ID_Sucursal) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT DATE_FORMAT(Fecha_Venta, '%Y-%m') AS Mes, SUM(Total_Venta) AS Total_Venta
+      FROM ventas
+      WHERE YEAR(Fecha_Venta) = YEAR(NOW()) 
+      AND ID_Sucursal = ?
+      GROUP BY Mes;
+    `;
+
+    conexion.query(sql, [ID_Sucursal], (err, results) => {
+      if (err) return reject(err);
+
+      resolve(results); // Devolver las ventas agrupadas por mes
+    });
+  });
+};
+
+
+const obtenerProductosVendidosMes = (ID_Sucursal) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT 
+        MONTH(v.Fecha_Venta) AS Mes, 
+        SUM(dv.Cantidad) AS Total_Productos_Vendidos
+      FROM 
+        detalles_venta dv
+      JOIN 
+        ventas v ON dv.ID_Venta = v.ID_Venta
+      WHERE 
+        v.ID_Sucursal = ?
+      GROUP BY 
+        Mes
+      ORDER BY 
+        Mes;
+    `;
+
+    conexion.query(sql, [ID_Sucursal], (err, results) => {
+      if (err) return reject(err);
+
+      resolve(results); // Devolver las cantidades agrupadas por mes
+    });
+  });
+};
+
+const obtenerTotalCompras = (ID_Sucursal) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT SUM(Total_Compra) as total FROM compras WHERE MONTH(Fecha_Compra) = MONTH(CURRENT_DATE())
+        AND YEAR(Fecha_Compra) = YEAR(CURRENT_DATE())
+        AND ID_Sucursal = ?
+    `;
+
+    conexion.query(sql, [ID_Sucursal], (err, results) => {
+      if (err) return reject(err);
+
+      // Asegúrate de que el resultado tenga un valor antes de resolver
+      resolve(results[0] ? results[0].total : 0); // Asignar 0 si no hay resultados
+    });
+  });
+};
+
+const obtenerTotalComprasG = (ID_Sucursal) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT 
+    MONTH(Fecha_Compra) AS MesNumero,
+    MONTHNAME(Fecha_Compra) AS Mes,
+    SUM(Cantidad_Unitario) AS Total_Productos_Vendidos 
+FROM 
+    detalles_compra 
+JOIN 
+    compras ON detalles_compra.ID_Compra = compras.ID_Compra 
+WHERE 
+    compras.ID_Sucursal = ? 
+GROUP BY 
+    YEAR(Fecha_Compra), MONTH(Fecha_Compra)
+ORDER BY 
+    YEAR(Fecha_Compra), MONTH(Fecha_Compra);
+
+    `;
+
+    conexion.query(sql, [ID_Sucursal], (err, results) => {
+      if (err) return reject(err);
+
+      resolve(results.length ? results : []); // Devuelve un array vacío si no hay resultados
+    });
+  });
+};
+
 
 router.get('/datos', async (req, res) => {
   const { ID_Sucursal } = req.session;
@@ -271,9 +361,7 @@ router.get('/datos', async (req, res) => {
   }
 
   try {
-    // Ejecutar todas las consultas de forma independiente
     const [
-     
       ventasMes,
       ventasSemana,
       clientesRegistradosMes,
@@ -285,9 +373,13 @@ router.get('/datos', async (req, res) => {
       comprasMestabla,
       obtenerProveedorMasComprado,
       ventasMesGrafico,
-      ObtenerTablaInventarios
-    ] = await Promise.all([
+      ObtenerTablaInventarios,
+      ventasMesActual,
+      productosVendidosMes,
+      obtenerTotalComprasC,
+      obtenerTotalComprasGR
       
+    ] = await Promise.all([
       obtenerVentasMes(ID_Sucursal),
       obtenerVentasSemana(ID_Sucursal),
       obtenerClientesRegistradosMes(ID_Sucursal),
@@ -299,12 +391,14 @@ router.get('/datos', async (req, res) => {
       obtenerDetallesComprasMes(ID_Sucursal),
       obtenerProveedorMasCompradoS(ID_Sucursal),
       obtenerVentasDelMesGraficoM(ID_Sucursal),
-      ObtenerTablaInventario(ID_Sucursal)
+      ObtenerTablaInventario(ID_Sucursal),
+      obtenerVentasMesActual(ID_Sucursal),
+      obtenerProductosVendidosMes(ID_Sucursal), 
+      obtenerTotalCompras(ID_Sucursal),
+      obtenerTotalComprasG(ID_Sucursal)
     ]);
 
-    // Enviar los datos al cliente
     res.json({
-    //
       ventasMes,
       ventasSemana,
       clientesRegistradosMes,
@@ -316,15 +410,17 @@ router.get('/datos', async (req, res) => {
       comprasMestabla,
       obtenerProveedorMasComprado,
       ventasMesGrafico,
-      ObtenerTablaInventarios
+      ObtenerTablaInventarios,
+      ventasMesActual,
+      productosVendidosMes,
+      obtenerTotalComprasC,
+      obtenerTotalComprasGR
     });
   } catch (err) {
     console.error('Error al obtener los datos:', err);
-    // Manejar errores
     res.status(500).send('Error al obtener los datos');
   }
 });
-
 
 
 module.exports = router;
