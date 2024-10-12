@@ -30,13 +30,13 @@
           <img src="resources/images/login/logo1.png" alt="#" alt="Logo"> <!-- Coloca aquí la ruta de tu logo -->
           <h2 class="title">Bienvenido!</h2>
           <div class="input-field">
-            <i class="fas fa-user"></i>
+            <i class="fa fa-user"></i>
             <input type="email" name="Email" id="Email" placeholder="Correo"  maxlength="30" />
           </div>
           <div class="input-field" style="position: relative;">
-            <i class="fas fa-lock"></i>
+            <i class="fa fa-unlock-alt"></i>
             <input type="password" name="pass" id="pass" placeholder="Contraseña" style="padding-right: 30px;" maxlength="30" />
-            <i class="far fa-smile" onclick="mostrarPassword()" id="show_password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 25px;"></i>
+            <i class="fa fa-smile-o" onclick="mostrarPassword()" id="show_password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 25px;"></i>
           </div>
           <input type="submit" value="INICIAR SESION" class="btn solid" onclick="validarFormulario()" />
           
@@ -49,16 +49,16 @@
           <h2 class="title">Notificaciones</h2>
           <div class="input-field">
        
-              <i class="fas fa-user"></i>
+              <i class="fa fa-user"></i>
               <input type="text" name="nombre" placeholder="Nombre" required />
           </div>
           <div class="input-field">
        
-              <i class="fas fa-envelope"></i>
+              <i class="fa fa-envelope"></i>
               <input type="email" name="correo" placeholder="Correo" required />
           </div>
           <div class="input-field">
-            <i class="fas fas fa-comment-alt"></i>         
+            <i class="fa fa-align-justify"></i>         
             <input type="text" name="descripcion" placeholder="Descripción" required />
           </div>
           <input type="submit" class="btn" value="NOTIFICAR" />
@@ -121,8 +121,8 @@
         title: '<%= alertTitle %>',
         text: '<%= alertMessage %>',
         icon: '<%= alertIcon %>',
-        showConfirmButton: <%= showConfirmButton %>,
-        timer:  <%= timer %>
+        showConfirmButton: '<%= showConfirmButton %>',
+        timer:  '<%= timer %>'
     }).then(()=>{
         window.location = ' /<%= ruta %>'
     })
@@ -135,12 +135,12 @@
         var icono = document.getElementById("show_password"); // Selecciona el ícono por ID
         if(cambio.type === "password"){
             cambio.type = "text";
-            icono.classList.remove('far', 'fa-smile'); // Asegúrate de usar las clases correctas
-            icono.classList.add('far', 'fa-meh'); // Cambia al ícono deseado
+            icono.classList.remove('far', 'fa-smile-o'); // Asegúrate de usar las clases correctas
+            icono.classList.add('far', 'fa-frown-o'); // Cambia al ícono deseado
         } else {
             cambio.type = "password";
-            icono.classList.remove('far', 'fa-meh');
-            icono.classList.add('far', 'fa-smile');
+            icono.classList.remove('far', 'fa-frown-o');
+            icono.classList.add('far', 'fa-smile-o');
         }
     }
 </script>
