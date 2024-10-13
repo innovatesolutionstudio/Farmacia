@@ -29,8 +29,11 @@ const nueva_compraRoutes = require('./routes/nueva_compra');
 const cajas_cRoutes = require('./routes/cajas_c');
 const rolesRoutes = require('./routes/roles');
 const sucursalesRoutes = require('./routes/sucursales');
-const vista_ventas = require('./routes/vista_ventas')
-const rutas_login = require('./routes/login')
+const vista_ventas = require('./routes/vista_ventas');
+const rutas_login = require('./routes/login');
+
+
+const vistafinanzas = require('./routes/vista_Finanzas');
 // Añade esta línea al principio de tu app.js
 const notificacionesRoutes = require('./routes/notificaciones');
 
@@ -207,6 +210,7 @@ app.use(sucursalesRoutes);
 app.use(vista_ventas);
 app.use(rutas_login);
 app.use(notificacionesRoutes);
+app.use(vistafinanzas);
 
 //reportes
 

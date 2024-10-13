@@ -1,176 +1,107 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <link rel="shortcut icon" href="#" />
-  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-  <title>Control de Cajas</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
-    integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous" />
-  <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css" />
-  <style>
-    body {
-      background-color: #f8f9fa;
-      font-family: Arial, sans-serif;
-    }
-
-    .titulo {
-      text-align: left;
-      font-family: Arial, sans-serif;
-      font-size: 25px;
-      padding: 20px 0;
-      background-color: #485464;
-      color: #ffffff;
-    }
-
-    .container {
-      max-width: 100%;
-      margin: 0 auto;
-      padding: 30px;
-    }
-
-    .card {
-      margin-bottom: 20px;
-    }
-
-    .card-header {
-      background-color: #485464;
-      color: #ffffff;
-      font-size: 24px;
-      font-weight: bold;
-      padding: 15px 20px;
-      border-bottom: none;
-    }
-
-    .card-body {
-      background-color: #ffffff;
-      padding: 20px;
-    }
-
-    .btn-action {
-      background-color: #dddddd;
-      color: #000000;
-      border: none;
-      padding: 10px 20px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      margin: 5px;
-    }
-
-   
-
-    .btn-action:hover {
-      background-color: #cccecc;
-      color: rgb(0, 0, 0);
-    }
-
- 
-   
-    .btn-group img {
-        max-width: 24px; /* Define el ancho máximo del icono */
-        max-height: 24px; /* Define el alto máximo del icono */
-    }
-    .btn-group {
-        margin-top: 5px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="resources/css/cajas.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <title>Ventas - Finanzas</title>
 </head>
 <body>
-  <div class="container-fluid">
-    <h1 class="titulo">&nbsp;&nbsp;&nbsp;&nbsp;Tablero de Cajas - Sucursal: <%= Nombre_Sucursal %></h1>
-    <div class="container">
-     <!-- Ventas Totales del Día -->
-    <div class="card">
-      <div class="card-header">
-        <span>Ventas Totales del Día</span>
-      </div>
-      <div class="card-body  d-flex justify-content-between align-items-center">
-        <h2>$<%= Ventas_Totales %></h2>
-        <div>
-          <a class="btn btn-action btn-group" onclick="confirmAction('abrir-todas', 'abrir')"><img src="resources/images/iconos/abrir.svg" alt="Crear"> &nbsp;Abrir Todas las Cajas</a>
-          <a class="btn btn-action btn-group" onclick="confirmAction('cerrar-todas', 'cerrar')"><img src="resources/images/iconos/cerra.svg" alt="Crear"> &nbsp;Cerrar Todas las Cajas</a>
 
-          <a class="btn btn-action btn-group" href="/reporte-ventas"><img src="resources/images/iconos/reporte.svg" alt="Crear"> &nbsp;Sacar Reporte del Día</a>
+<!-- Encabezado -->
+<div class="header-container">
+  <div class="breadcrumb">
+      <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Finanzas</h1>
+      <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+      <h1 style="font-weight: bold;">Cajas</h1>
+  </div>
+ 
+  <div class="button-container">
+      <button class="btn btn-success">Abrir todas las Cajas</button>
+      <button class="btn btn-danger">Cerrar todas las Cajas</button>
+  </div>
+  
+</div>
+
+    <!-- Contenido de las tarjetas -->
+    <div class="container2">
+        <!-- Card 1: Ventas Mensuales -->
+        <div class="card1">
+            <div class="header-card1">
+                <span>Tablero de Cajas - Sucursal Miraflores</span>
+            </div>
+            <div class="content-card1">
+                <div>
+                    <h2 id="">Bs. 12,345</h2>
+                    <p>Venta total del dia</p>
+                </div>
+                <div style="margin: 25px;">
+                    <p>Ver reporte del dia >></p>
+                </div>
+            </div>
+        </div>
+
+     <!-- Card 2: Productos -->
+      <div class="card1">
+        <div class="header-card1">
+            <span>Configurar Caja</span>
+            
+        </div>
+        <div class="content-card11">
+            <div class="flex-row">
+                <p>Medicamentos vendidos en el mes</p>
+                <button class="btn btn-blue">Agregar</button>
+            </div>
+            <br>
+            <div class="flex-row">
+                <p>Cantidad de productos en inventario</p>
+                <button class="btn btn-blue">Agregar</button>
+            </div>
         </div>
       </div>
-    </div>
 
 
-      <!-- Detalles de Cajas -->
-<div class="row">
-  <% Cajas.forEach(function(caja) { %>
-  <div class="col-md-4">
-    <div class="card">
-      <div class="card-header">
-        Caja <%= caja.Codigo %>
-      </div>
-      <div class="card-body">
-        <p><strong>Empleado:</strong> <%= caja.ID_Empleado || 'N/A' %></p>
-        <p><strong>Nombre del Empleado:</strong> <%= caja.Empleado_Nombre || 'N/A' %></p>
-        <p><strong>Venta Total:</strong> $<%= caja.Total_Venta %></p>
-        <p><strong>Fecha:</strong> <%= caja.Fecha_Venta ? caja.Fecha_Venta.toISOString().slice(0, 10) : 'N/A' %></p>
-        <p><strong>Estado:</strong> <%= caja.Estado === 1 ? 'Abierta' : 'Cerrada' %></p>
-        <a class="btn btn-action btn-group" onclick="confirmAction('<%= caja.ID_Caja %>', 'abrir')" <%= caja.Estado === 1 ? 'disabled' : '' %> >Abrir Caja &nbsp; <img src="resources/images/iconos/abrir.svg" alt="Crear"> </a>
-        <a class="btn btn-action btn-group" onclick="confirmAction('<%= caja.ID_Caja %>', 'cerrar')" <%= caja.Estado === 2 ? 'disabled' : '' %>>Cerrar Caja &nbsp;<img src="resources/images/iconos/cerra.svg" alt="Crear"></a>
-      </div>
+        <!-- Card 3: Pedidos -->
+        <div class="card2">
+            <div class="header-card2">
+                <span>Pedidos</span>
+                <a href="#">Ver más &raquo;</a>
+            </div>
+            <div class="content-card2">
+                <div>
+                    <h2 id="totalPedidos">04</h2>
+                    <p>Total pedidos</p>
+                </div>
+                <div>
+                    <h2 id="pedidosPendientes">05</h2>
+                    <p>Pedidos pendientes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4: Compras -->
+        <div class="card2">
+            <div class="header-card2">
+                <span>Compras</span>
+                <a href="#">Ver más &raquo;</a>
+            </div>
+            <div class="content-card2">
+                <div>
+                    <h2 id="totalCompras">20</h2>
+                    <p>Número total de compras</p>
+                </div>
+                <div>
+                    <h2 id="proveedor">Laboratorios ACME</h2>
+                    <p>Proveedor</p>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  <% }) %>
-</div>
-    </div>
-  </div>
-  
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script>
-    function confirmAction(idCaja, action) {
-      if (idCaja === 'abrir-todas' || idCaja === 'cerrar-todas') {
-        const actionText = action === 'abrir' ? 'Abrir' : 'Cerrar';
-        const actionEndpoint = action === 'abrir' ? '/abrir-todas' : '/cerrar-todas';
-        
-        Swal.fire({
-          title: `¿Estás seguro de que deseas ${actionText.toLowerCase()} todas las cajas?`,
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: `Sí, ${actionText} todas`,
-          cancelButtonText: 'Cancelar'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = actionEndpoint;
-            document.body.appendChild(form);
-            form.submit();
-          }
-        });
-      } else {
-        const actionText = action === 'abrir' ? 'Abrir' : 'Cerrar';
-        const actionEndpoint = action === 'abrir' ? '/abrir-caja' : '/cerrar-caja';
-        
-        Swal.fire({
-          title: `¿Estás seguro de que deseas ${actionText.toLowerCase()} esta caja?`,
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: `Sí, ${actionText}`,
-          cancelButtonText: 'Cancelar'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = actionEndpoint;
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'idCaja';
-            input.value = idCaja;
-            form.appendChild(input);
-            document.body.appendChild(form);
-            form.submit();
-          }
-        });
-      }
-    }
-  </script>
-  
+
+   
+
 </body>
 </html>
