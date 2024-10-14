@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="resources/css/reportes.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <title>Ventas - Finanzas</title>
+</head>
+<body>
+
+<!-- Encabezado -->
+<div class="header-container">
+  <div class="breadcrumb">
+      <a href="/vista_Finanzas" class="reporte-link "><h1 style="color: #858B92; font-weight: bold; margin-right: 5px;" >Finanzas</h1></a>
+      <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+      <h1 style="font-weight: bold;">Reportes</h1>
+  </div>
+ 
+  <div class="button-container">
+    <!-- Formulario para abrir todas las cajas -->
+    <form id="abrirCajasForm" action="/abrir-todas" method="POST">
+        <button type="button" id="abrirCajasBtn" class="btn btn-success">Abrir todas las Cajas</button>
+    </form>
+    
+    <!-- Formulario para cerrar todas las cajas -->
+    <form id="cerrarCajasForm" action="/cerrar-todas" method="POST">
+        <button type="submit" id="cerrarCajasBtn" class="btn btn-danger">Cerrar todas las Cajas</button>
+    </form>
+</div>
+
+
+  
+</div>
+
+    <!-- Contenido de las tarjetas -->
+    <div class="container2">
+        <!-- Card 1: Ventas Mensuales -->
+        <div class="card1">
+            <div class="header-card1">
+                <span>Tablero de Cajas - Sucursal Miraflores</span>
+            </div>
+            <div class="content-card1">
+                <div>
+                    <h2 id="ventasTotales">Bs. </h2>
+
+                    <p>Venta total del dia</p>
+                </div>
+                <div style="margin: 25px;">
+                    <a href="/reporte-ventas" target="_blank" class="reporte-link">Ver reporte del día >></a>
+
+                </div>
+            </div>
+        </div>
+
+     <!-- Card 2: Productos -->
+      <div class="card1">
+        <div class="header-card1">
+            <span>Configurar Caja</span>
+            
+        </div>
+        <div class="content-card11">
+            <div class="flex-row">
+                <p>Administrar Sucursal</p>
+                <button class="btn btn-blue"><a href="/mantenimiento" class="reporte-link">Administrar</a></button>
+            </div>
+            <br>
+            <div class="flex-row">
+                <p>Administrar Cajas</p>
+                <button class="btn btn-blue"><a href="/mantenimiento" class="reporte-link">Administrar</a></button>
+            </div>
+        </div>
+      </div>
+
+
+   
+
+
+        
+    </div>
+
+   
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="js/AbrirCerrar.js"></script>
+<script src="js/alertas.js"></script>
+
+
+</html>
+

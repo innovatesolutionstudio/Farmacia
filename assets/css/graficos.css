@@ -140,13 +140,14 @@ p {
 }
 .header-container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    align-items: center; /* Alineación vertical */
 }
 
 .header-container h1 {
     margin: 0;
+    display: inline; /* O inline-block para permitir más control */
 }
+
 
 .actions {
     display: flex;

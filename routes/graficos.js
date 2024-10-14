@@ -327,20 +327,20 @@ const obtenerTotalCompras = (ID_Sucursal) => {
 const obtenerTotalComprasG = (ID_Sucursal) => {
   return new Promise((resolve, reject) => {
     const sql = `
-      SELECT 
+SELECT 
     MONTH(Fecha_Compra) AS MesNumero,
     MONTHNAME(Fecha_Compra) AS Mes,
-    SUM(Cantidad_Unitario) AS Total_Productos_Vendidos 
+    SUM(Cantidad_Unitario) AS Total_Productos_Vendidos
 FROM 
-    detalles_compra 
+    detalles_compra
 JOIN 
-    compras ON detalles_compra.ID_Compra = compras.ID_Compra 
+    compras ON detalles_compra.ID_Compra = compras.ID_Compra
 WHERE 
-    compras.ID_Sucursal = ? 
+    compras.ID_Sucursal = ?
 GROUP BY 
-    YEAR(Fecha_Compra), MONTH(Fecha_Compra)
+    MesNumero, Mes -- Utilizamos los alias en el GROUP BY en lugar de las expresiones
 ORDER BY 
-    YEAR(Fecha_Compra), MONTH(Fecha_Compra);
+    MesNumero;
 
     `;
 

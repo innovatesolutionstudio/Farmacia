@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="resources/css/cajas.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <title>Ventas - Finanzas</title>
+</head>
+<body>
+
+<!-- Encabezado -->
+<div class="header-container">
+  <div class="breadcrumb">
+      <a href="/vista_Finanzas" class="reporte-link "><h1 style="color: #858B92; font-weight: bold; margin-right: 5px;" >Finanzas</h1></a>
+      <h2 style="color: #858B92; font-weight: bold; margin-right: 5px;">›</h2>
+      <a href="/cajas" class="reporte-link"><h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Cajas</h1></a>
+      <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+      <h1 style="font-weight: bold;">Adm. Caja de <%= nombreEmpleado %></h1> <!--recuperar nombre de la caja seleccionada-->
+  </div>
+
+
+
+  
+</div>
+
+<div class="container2">
+    <!-- Card 1: Información del Empleado -->
+    <div class="card1">
+        <div class="header-card1">
+            <span>Tablero de Caja</span>
+        </div>
+        <div class="content-card1">
+            <div>
+                <h2><%= nombreEmpleado %></h2>
+                <p>Responsable actual</p>
+            </div>
+            <div>
+                <h2 id="aperturaCaja"><%= aperturaCaja %></h2>
+                <p>Apertura</p>
+            </div> 
+            <div>
+                <h2 id="cierreCaja"><%= cierreCaja %></h2>
+                <p>Cierre</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 2: Estado Actual de la Caja -->
+    <div class="card1">
+        <div class="header-card1">
+            <span>Estado Actual</span>
+        </div>
+        <div class="content-card1">
+            <div>
+                <h2 id="codigoCaja"><%= codigoCaja %></h2>
+                <p>Codigo de Caja</p>
+            </div>
+            <div>
+                <h2 id="clientesFacturados">   <%= clientesFacturados %></h2>
+                <p>Clientes facturados</p>
+            </div>
+            <div>
+                <h2 id="ventasTotales">Bs. <%= ventasTotales %></h2>
+                <p>Ingresos</p>
+            </div>
+        </div>
+    </div>
+ 
+
+</div>
+<br>
+   
+<!-- Tabla de ventas y clientes facturados -->
+<div class="card3">
+    <div class="header-card1">
+        <span>Historia de Clientes Facturados</span>
+    </div>
+    <div class="content-card-clientes">
+        <table class="table-clientes">
+            <thead>
+                <tr>
+                    <th>ID Venta</th>
+                    <th>Nombre del Cliente</th>
+                    <th>CI</th>
+                    <th>Fecha</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% ventasClientes.forEach(venta => { %>
+                    <tr>
+                        <td><%= venta.ID_Venta %></td>
+                        <td><%= venta.Cliente_Nombre %></td>
+                        <td><%= venta.CI %></td>
+                        <td><%= new Date(venta.Fecha_Venta).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) %></td>
+                        <td>Bs. <%= venta.Total_Venta %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!--tabla aqui-->
+
+   
+
+</body>
+
+</html>
+
