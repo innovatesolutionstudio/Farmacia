@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>Gráfico de Dispersión</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css" />
+  <!-- Cargamos Chart.js para poder crear gráficos -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1 class="titulo">Gráfico de Regresión Lineal</h1>
+    <!-- Elemento canvas donde se dibujará el gráfico -->
+    <canvas id="Chartline" width="400" height="200"></canvas>
+
+    <!-- Input para ingresar un año y predecir la ganancia -->
+    <input type="number" id="yearInput" placeholder="Ingresa un año" />
+    <button onclick="predecirGanancia()">Predecir Ganancia</button>
+    <p id="resultadoPrediccion"></p>
+  </div>
+
+  <script>
+    // Datos que vienen desde el servidor (incrustados en la plantilla EJS)
+    const resultados = <%- JSON.stringify(results) %>;
+
+    // Extraemos los años y las ganancias de los resultados para trabajar con ellos
+    const anos = resultados.map(item => item.Ano);
+    const ganancias = resultados.map(item => item.Ganancia_Total_Anual);
+
+    // Función para calcular la regresión lineal (pendiente 'm' e intercepto 'b')
+    function calcularRegresionLineal(x, y) {
+      // Número de elementos
+      const n = x.length;
+      
+      // Sumas de x, y, x*y y x^2
+      const sumX = x.reduce((acc, val) => acc + val, 0);
+      const sumY = y.reduce((acc, val) => acc + val, 0);
+      const sumXY = x.reduce((acc, val, i) => acc + val * y[i], 0);
+      const sumX2 = x.reduce((acc, val) => acc + val * val, 0);
+
+      // Cálculo de la pendiente (m) y el intercepto (b)
+      const m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+      const b = (sumY - m * sumX) / n;
+
+      // Retorna la pendiente y el intercepto
+      return { m, b };
+    }
+
+    // Llamamos a la función para obtener la pendiente y el intercepto de la línea de regresión
+    const { m, b } = calcularRegresionLineal(anos, ganancias);
+
+    // Generamos los puntos de la línea de regresión, que son los valores estimados de 'y' para cada 'x'
+    const regressionLine = anos.map(x => ({
+      x: x,
+      y: m * x + b // Ecuación de la recta: y = m * x + b
+    }));
+
+    // Configuración de los datos para el gráfico, incluyendo los puntos y la línea de regresión
+    var datiedu3 = {
+      labels: anos, // Etiquetas de los años para el eje X
+      datasets: [
+        {
+          label: 'Ganancia Total Anual',
+          data: anos.map((ano, index) => ({ x: ano, y: ganancias[index] })),
+          backgroundColor: 'rgb(255, 99, 132)', // Color de los puntos de ganancia
+          borderWidth: 1,
+          showLine: false // No conectar los puntos, es un gráfico de dispersión
+        },
+        {
+          label: 'Línea de Regresión',
+          data: regressionLine, // Los puntos de la línea de regresión
+          borderColor: 'rgb(54, 162, 235)', // Color de la línea de regresión
+          fill: false,
+          type: 'line', // Tipo de gráfico: línea
+          pointRadius: 0 // No mostrar puntos en la línea de regresión
+        }
+      ]
+    };
+
+    // Función para crear el gráfico usando Chart.js
+    function grafo2(dati, opzioni) {
+      var grafoline = document.getElementById('Chartline').getContext('2d');
+      // Creamos un nuevo gráfico de tipo 'scatter' (dispersión)
+      new Chart(grafoline, {
+        type: 'scatter',
+        data: dati,
+        options: opzioni || {} // Opciones adicionales, si hay
+      });
+    }
+
+    // Opciones de configuración del gráfico, incluyendo etiquetas para los ejes
+    var opzioni = {
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Año' // Etiqueta del eje X
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Ganancia Total Anual' // Etiqueta del eje Y
+          }
+        }
+      }
+    };
+
+    // Mostrar los datos en la consola (útil para depuración)
+    console.log(datiedu3.datasets[0].data);
+
+    // Llamada a la función para graficar con los datos y opciones
+    grafo2(datiedu3, opzioni);
+
+    // Función para predecir la ganancia para un año ingresado por el usuario
+    function predecirGanancia() {
+      // Tomamos el año ingresado por el usuario
+      const yearInput = document.getElementById('yearInput').value;
+      const year = parseInt(yearInput);
+
+      // Validamos que el valor ingresado sea un número
+      if (isNaN(year)) {
+        document.getElementById('resultadoPrediccion').textContent = 'Por favor, ingresa un año válido.';
+        return;
+      }
+
+      // Calculamos la ganancia estimada usando la ecuación de la recta: y = m * x + b
+      const gananciaEstimada = m * year + b;
+
+      // Mostramos el resultado de la predicción en el párrafo
+      document.getElementById('resultadoPrediccion').textContent = 
+        `La ganancia estimada para el año ${year} es de ${gananciaEstimada.toFixed(2)} unidades monetarias.`;
+    }
+  </script>
+
+  <!-- Librerías de Bootstrap para estilos y componentes -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.min.js"></script>
+</body>
+</html>

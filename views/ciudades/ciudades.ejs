@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="shortcut icon" href="#" />
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+  <title>DataTables estilo Bootstrap 5 - NodeJS y Express</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
+    integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous" />
+  <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap5.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css" />
+  <style>
+    table.dataTable thead {
+      background-color: #485464;
+    color: white;
+    }
+ 
+    .ftable{
+      background-color: rgba(224, 223, 223, 0.433);
+      color: rgb(0, 0, 0);
+    }
+    .btn-group img {
+    max-width: 24px; /* Define el ancho máximo del icono */
+    max-height: 24px; /* Define el alto máximo del icono */
+    }
+    body{
+      background-color: #00000000;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <H1 id="tituloImpresion"  style="
+      text-align: left;
+      font-family: Arial,sans-serif;
+      font-size: 25px;
+      padding: 20px 0;
+      background-color: #485464; 
+      color: #ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;Tablero de control - Ciudades</H1>
+
+<a id="btnCrear" class="btn btn-group btn-light mt-2" style="font-size: 20px;">
+  <img src="resources/images/iconos/create.svg" alt="Crear"> &nbsp;Crear
+</a>
+<a id="btnActualizar" class="btn btn-group btn-light mt-2" style="font-size: 20px;">
+  <img src="resources/images/iconos/refresh.svg" alt="Crear"> &nbsp;Actualizar
+</a>
+
+<a id="btnExportar" class="btn btn-group btn-light mt-2" style="font-size: 20px;">
+  <img src="resources/images/iconos/export.svg" alt="Crear"> &nbsp;Exportar CSV 
+</a>
+
+<a href="/impre_ciudades" class="btn btn-group btn-light mt-2" style="font-size: 20px;" target="_blank">
+  <img src="resources/images/iconos/print.svg" alt="Crear"> &nbsp;Imprimir
+</a>
+
+<div class="row shadow-lg p-3 mb-5 ftable" id="ciudadesContainer">
+     
+      
+      <div class="col">
+        <table id="tablaCiudades" class="table table-striped table-bordered" style="width: 100%">
+
+          <thead>
+            <tr>
+            
+              <th class="text-center">ID</th>
+              <th class="text-center">Nombre</th>
+              <th class="text-center" style="width: 150px;">ACCIONES</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% results.forEach(function(ciudad) { %>
+              <tr>
+                
+                <td class="text-center">
+                  <%= ciudad.ID_Ciudad %>
+                </td>
+                <td class="text-center">
+                  <%= ciudad.Nombre %>
+                </td>
+                <td>
+                  <div class="text-center">
+                    <div class="btn-group">
+                      <a href="#" class="btn btn-sm btnEditar"><img src="resources/images/iconos/edit.svg" alt="Editar"></a>
+                      <a href="#" class="btn btn-sm btnBorrar"><img src="resources/images/iconos/delete.svg" alt="Eliminar"></a>
+                      <a href="#" class="btn btn-sm btnCopiar"><img src="resources/images/iconos/copy.svg" alt="Copiar"></a>
+                    </div>
+                  
+                  </div>
+                  
+                </td>
+              </tr>
+              <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!--Modal para CRUD-->
+  <div id="modalCRUD" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel"></h5>
+        </div>
+        <form id="formCiudades">
+          <div class="modal-body">
+            <input id="ID_Ciudad" hidden />
+
+            <label for="" class="col-form-label">Nombre</label>
+            <input type="text" class="form-control" id="Nombre" />
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">
+              Cancelar
+            </button>
+            <button type="submit" id="btnGuardar" class="btn btn-success">
+              Guardar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.min.js"
+    integrity="sha384-5h4UG+6GOuV9qXh6HqOLwZMY4mnLPraeTrjT5v07o347pj6IkfuoASuGBhfDsp3d"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.all.min.js"></script>
+  <script type="text/javascript" language="javascript"
+    src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" language="javascript"
+    src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+
+  <script>
+    //#region ruta
+    $(document).ready(function () {
+      let url = "/ciudades/"; // Define la variable url aquí
+      let opcion = null;
+      let ID_Ciudad, Nombre;
+
+      let tablaCiudades = $("#tablaCiudades").DataTable({
+        json: {
+          url: url,
+          dataSrc: "",
+        },
+        columns: [
+          { data: "ID_Ciudad" },
+          { data: "Nombre" },
+          {
+            defaultContent:
+              "<div class='text-center'><div class='btn-group'><button class='btn btn-info btn-sm btnEditar'>Editar</button><button class='btn btn-danger btn-sm btnBorrar'>Borrar</button></div></div>",
+          },
+        ],
+        language: {
+                    url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json",
+                },
+      });
+//#endregion
+     
+//#region boton borrar
+
+      $("#tablaCiudades").on("click", ".btnBorrar", function () {
+        var data = tablaCiudades.row($(this).parents("tr")).data(); // Obtener datos de la fila
+        var id = data.ID_Ciudad;
+        opcion = "eliminar"; // Establecer la opción como eliminar
+        Swal.fire({
+          title: "¿Estás seguro?",
+          text: "¡No podrás revertir esto!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Sí, eliminarlo!",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Hacer la petición para eliminar
+            $.ajax({
+              type: "POST",
+              url: url + id,
+              data: { opcion: opcion },
+              success: function (data) {
+                Swal.fire(
+                  "¡Eliminado!",
+                  "El registro ha sido eliminado.",
+                  "success"
+                ).then((result) => {
+                  if (result.isConfirmed) {
+                    window.location.reload(); // Recarga la página si se confirma la acción
+                  }
+                });
+              },
+            });
+          }
+        });
+      });
+//#endregion
+     
+//#region boton editar
+      $("#tablaCiudades").on("click", ".btnEditar", function () {
+        var data = tablaCiudades.row($(this).parents("tr")).data(); // Obtener datos de la fila
+        $("#exampleModalLabel").text("Editar Ciudad"); // Cambiar el título del modal
+        $("#ID_Ciudad").val(data.ID_Ciudad); // Llenar el campo ID_Ciudad
+        $("#Nombre").val(data.Nombre); // Llenar el campo Nombre
+        $("#modalCRUD").modal("show"); // Mostrar el modal
+        opcion = "editar"; // Establecer la opción como editar
+      });
+//#endregion
+     
+//#region sumit - formulario crear
+
+      $("#formCiudades").submit(function (e) {
+        e.preventDefault(); // Evitar el envío del formulario por defecto
+
+        // Obtener los datos del formulario
+        var formData = {
+          ID_Ciudad: $("#ID_Ciudad").val(),
+          Nombre: $("#Nombre").val(),
+          opcion: opcion,
+        };
+
+        // Enviar la solicitud al servidor
+        $.ajax({
+          type: "POST",
+          url: url + formData.ID_Ciudad, // Utilizamos el ID para identificar la ciudad a editar
+          data: formData,
+          success: function (data) {
+            $("#modalCRUD").modal("hide"); // Ocultar el modal después de editar
+            window.location.reload();
+          },
+          error: function (err) {
+            console.error("Error al editar ciudad:", err);
+          },
+        });
+      });
+
+      $(document).ready(function () {
+        // Evento click para el botón de crear
+        $("#btnCrear").click(function () {
+          // Limpiar los campos del formulario de ciudades
+          $("#ID_Ciudad").val("");
+          $("#Nombre").val("");
+          $("#exampleModalLabel").text("Crear Ciudad"); // Cambiar el título del modal
+          $("#modalCRUD").modal("show"); // Mostrar el modal
+          opcion = "crear"; // Establecer la opción como crear
+        });
+      });
+    });
+//#endregion
+
+//#region boton actualizar
+$("#btnActualizar").click(function () {
+    // Recarga la página actual
+    location.reload();
+});
+
+//#endregion
+
+//#region boton exportar xlsx (exel)
+$(document).ready(function () {
+    // Evento clic para el botón de exportar
+    $("#btnExportar").click(function () {
+      // Crear un nuevo libro de Excel
+      var wb = XLSX.utils.book_new();
+
+      // Obtener los datos de la tabla incluyendo la columna de IDs y excluyendo la columna de acciones
+      var wsData = [];
+      $("#tablaCiudades tbody tr").each(function () {
+        var rowData = [];
+        $(this).find("td").each(function () { // Modificado para incluir todas las columnas
+          rowData.push($(this).text().trim());
+        });
+        wsData.push(rowData);
+      });
+
+      // Crear una hoja de trabajo con los datos obtenidos
+      var ws = XLSX.utils.aoa_to_sheet([["ID_ciudad", "nombre"]].concat(wsData));
+
+      // Agregar la hoja de trabajo al libro
+      XLSX.utils.book_append_sheet(wb, ws, "Ciudades");
+
+      // Guardar el libro como un archivo Excel
+      XLSX.writeFile(wb, "ciudades.xlsx");
+    });
+  });
+
+//#endregion
+ 
+//#region boton copiar
+
+$("#tablaCiudades").on("click", ".btnCopiar", function () {
+    // Obtener la fila correspondiente al botón de copiar
+    var fila = $(this).closest("tr");
+
+    // Obtener los datos de la fila
+    var datosFila = fila.find("td").map(function () {
+        return $(this).text();
+    }).get();
+
+    // Convertir los datos en una cadena separada por tabulaciones
+    var datosCopiar = datosFila.join("\t");
+
+    // Copiar los datos al portapapeles
+    navigator.clipboard.writeText(datosCopiar).then(function () {
+        console.log("Datos copiados al portapapeles:", datosCopiar);
+        // Mostrar un mensaje de éxito
+        alert("¡Datos copiados al portapapeles!");
+    }).catch(function (error) {
+        console.error("Error al copiar datos al portapapeles:", error);
+        // Mostrar un mensaje de error si es necesario
+        alert("Error al copiar datos al portapapeles");
+    });
+});
+
+//#endregion
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="shortcut icon" href="#" />
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>Control de Cajas</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
+    integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous" />
+  <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css" />
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: Arial, sans-serif;
+    }
+
+    .titulo {
+      text-align: left;
+      font-family: Arial, sans-serif;
+      font-size: 25px;
+      padding: 20px 0;
+      background-color: #485464;
+      color: #ffffff;
+    }
+
+    .container {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 30px;
+    }
+
+    .card {
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      background-color: #485464;
+      color: #ffffff;
+      font-size: 24px;
+      font-weight: bold;
+      padding: 15px 20px;
+      border-bottom: none;
+    }
+
+    .card-body {
+      background-color: #ffffff;
+      padding: 20px;
+    }
+
+    .btn-action {
+      background-color: #dddddd;
+      color: #000000;
+      border: none;
+      padding: 10px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+   
+
+    .btn-action:hover {
+      background-color: #cccecc;
+      color: rgb(0, 0, 0);
+    }
+
+ 
+   
+    .btn-group img {
+        max-width: 24px; /* Define el ancho máximo del icono */
+        max-height: 24px; /* Define el alto máximo del icono */
+    }
+    .btn-group {
+        margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <h1 class="titulo">&nbsp;&nbsp;&nbsp;&nbsp;Tablero de Cajas - Sucursal: <%= Nombre_Sucursal %></h1>
+    <div class="container">
+     <!-- Ventas Totales del Día -->
+    <div class="card">
+      <div class="card-header">
+        <span>Ventas Totales del Día</span>
+      </div>
+      <div class="card-body  d-flex justify-content-between align-items-center">
+        <h2>$<%= Ventas_Totales %></h2>
+        <div>
+          <a class="btn btn-action btn-group" onclick="confirmAction('abrir-todas', 'abrir')"><img src="resources/images/iconos/abrir.svg" alt="Crear"> &nbsp;Abrir Todas las Cajas</a>
+          <a class="btn btn-action btn-group" onclick="confirmAction('cerrar-todas', 'cerrar')"><img src="resources/images/iconos/cerra.svg" alt="Crear"> &nbsp;Cerrar Todas las Cajas</a>
+
+          <a class="btn btn-action btn-group" href="/reporte-ventas"><img src="resources/images/iconos/reporte.svg" alt="Crear"> &nbsp;Sacar Reporte del Día</a>
+        </div>
+      </div>
+    </div>
+
+
+      <!-- Detalles de Cajas -->
+<div class="row">
+  <% Cajas.forEach(function(caja) { %>
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        Caja <%= caja.Codigo %>
+      </div>
+      <div class="card-body">
+        <p><strong>Empleado:</strong> <%= caja.ID_Empleado || 'N/A' %></p>
+        <p><strong>Nombre del Empleado:</strong> <%= caja.Empleado_Nombre || 'N/A' %></p>
+        <p><strong>Venta Total:</strong> $<%= caja.Total_Venta %></p>
+        <p><strong>Fecha:</strong> <%= caja.Fecha_Venta ? caja.Fecha_Venta.toISOString().slice(0, 10) : 'N/A' %></p>
+        <p><strong>Estado:</strong> <%= caja.Estado === 1 ? 'Abierta' : 'Cerrada' %></p>
+        <a class="btn btn-action btn-group" onclick="confirmAction('<%= caja.ID_Caja %>', 'abrir')" <%= caja.Estado === 1 ? 'disabled' : '' %> >Abrir Caja &nbsp; <img src="resources/images/iconos/abrir.svg" alt="Crear"> </a>
+        <a class="btn btn-action btn-group" onclick="confirmAction('<%= caja.ID_Caja %>', 'cerrar')" <%= caja.Estado === 2 ? 'disabled' : '' %>>Cerrar Caja &nbsp;<img src="resources/images/iconos/cerra.svg" alt="Crear"></a>
+      </div>
+    </div>
+  </div>
+  <% }) %>
+</div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    function confirmAction(idCaja, action) {
+      if (idCaja === 'abrir-todas' || idCaja === 'cerrar-todas') {
+        const actionText = action === 'abrir' ? 'Abrir' : 'Cerrar';
+        const actionEndpoint = action === 'abrir' ? '/abrir-todas' : '/cerrar-todas';
+        
+        Swal.fire({
+          title: `¿Estás seguro de que deseas ${actionText.toLowerCase()} todas las cajas?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: `Sí, ${actionText} todas`,
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = actionEndpoint;
+            document.body.appendChild(form);
+            form.submit();
+          }
+        });
+      } else {
+        const actionText = action === 'abrir' ? 'Abrir' : 'Cerrar';
+        const actionEndpoint = action === 'abrir' ? '/abrir-caja' : '/cerrar-caja';
+        
+        Swal.fire({
+          title: `¿Estás seguro de que deseas ${actionText.toLowerCase()} esta caja?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: `Sí, ${actionText}`,
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = actionEndpoint;
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'idCaja';
+            input.value = idCaja;
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+          }
+        });
+      }
+    }
+  </script>
+  
+</body>
+</html>

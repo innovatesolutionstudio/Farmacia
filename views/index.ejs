@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- lick pora icnos  https://www.svgrepo.com/svg/460656/cashier-machine -->
+    <!-- basic -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- site metas -->
+    <title>Dashboard - Farmacia SjD</title>
+    <!-- site icon -->
+    <link rel="icon" href="resources/images/iconos/farmacia.ico">
+
+    <!-- bootstrap css -->
+    <link rel="stylesheet" href="resources/css/bootstrap.min.css" />
+    <!-- site css -->
+    <link rel="stylesheet" href="resources/css/style.css" />
+    <link rel="stylesheet" href="resources/css/responsive.css" />
+    <!-- color css -->
+    <link rel="stylesheet" href="resources/css/colors.css" />
+    <!-- select bootstrap -->
+    <link rel="stylesheet" href="resources/css/bootstrap-select.css" />
+    <!-- scrollbar css -->
+    <link rel="stylesheet" href="resources/css/perfect-scrollbar.css" />
+    <!-- custom css -->
+    <link rel="stylesheet" href="resources/css/custom.css" />
+    <!-- calendar file css -->
+    <link rel="stylesheet" href="resources/js/semantic.min.css" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+      .btn-group img {
+    width: 24px; 
+    height: 24px;
+    
+    }
+    .dropdown-item:hover {
+    background-color: #EDF1F5 !important;
+    cursor: pointer;
+  }
+    .badge {
+    background-color: #dc3545; /* Color rojo para el contador */
+    color: white;
+    border-radius: 12px;
+    padding: 5px 10px;
+    position: absolute; /* Para que se superponga al icono */
+    top: 10px;
+    right: 20px; /* Ajusta según sea necesario */
+    font-size: 14px;
+}
+</style>
+    </head>
+<body >
+
+    <div class="full_container" >
+        <div class="inner_container" >
+           <!-- menu  -->
+            <nav id="sidebar">
+                <!-- Nombre deel usuario / online  -->
+  
+                <div class="sidebar_blog_1" >
+                    <div class="sidebar-header">
+                        <div class="logo_section">
+                             <a href="index.html"><img class="logo_icon img-responsive" src="resources/images/logo/logo_fm2.png" alt="#" /></a>
+                         </div>
+                    </div>
+  
+                    <div class="sidebar_user_info">
+  
+                        <div class="user_profle_side">
+                            <div class="user_img"><img class="img-responsive" style="padding: 5px;" width="70px" height="70px" src="resources/images/logo/logo_fm2.png" alt="#" /></div>
+                            
+                            <div class="user_info">
+                              
+                                <h3 style="color: white;">
+                                FARMACIA 
+                                </h3>                             
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sidebar_user_info2">
+  
+                        <div class="user_profle_side">
+                            <div class="user_img2"><img class="img-responsive" width="80px" height="80px" src="resources/images/perfil/pato1.jpg" alt="#" /></div>
+                            
+                            <div class="col-sm-4" style="width: 300px; ">
+                                <h1 clash="justify-content-center" style="
+                                    font-size: 20px; 
+                                    margin: 5px 0 0 0 ;
+                                    width: 300px;
+                                    color: white;"
+                                ><%= Nombre %>&nbsp;<%= Apellido %>   </h1>
+                                <div class="d-flex align-items-center" style="position: relative;">
+                                    <!-- Encabezado H1 -->
+                                    <h1 class="justify-content-center" style="
+                                        font-size: 17px; 
+                                        margin: 5px 0 0 0;
+                                        width: 300px;
+                                        color: rgb(229, 206, 5);">
+                                        <% if(sesion === 1) { %>Administrador<% } %>
+                                    </h1>
+                                
+                                    <!-- Ícono de tres puntos -->
+                                    <div class="dropdown" style="margin-left: 10px;">
+                                        <button class="btn" type="button" id="dropdownMenuButton" 
+                                                data-bs-toggle="dropdown" aria-expanded="false" style="color: rgb(229, 206, 5);">
+                                            <!-- Ícono de tres puntos (cambiar a fa-ellipsis-v para vertical) -->
+                                            <i class="fa fa-ellipsis-v" style="font-size: 20px; margin-top: 10px;"></i> <!-- Correctamente cerrado -->
+                                        </button>
+                                
+                                        <!-- Menú desplegable -->
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" style="background-color:#ffffff; padding-right: 30px;">
+                                            <li><a class="dropdown-item btn-group" href="#" id="btnEmpleado" style="color: #000; font-family: myFirstFont; font-size: 18px;"> <i class="fa fa-id-card" style="font-size: 20px;"></i>&nbsp;&nbsp; &nbsp;Mi Perfil</a></li>                          
+                                            <li><a class="dropdown-item btn-group" href="/logout" style="color: red; font-family: myFirstFont; font-size: 18px;"><i class="fa fa-power-off" style="font-size: 20px;"></i>&nbsp;&nbsp;&nbsp;Cerrar Sesion</a></li>
+                                        </ul>
+                                        
+                                    </div>
+                                </div>
+                              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+  
+                 <!--  comienzo del menu -->
+                 <div class="sidebar_blog_2" class="panel">
+                    
+                    <% if (sesion === 1 || sesion === 2 || sesion === 3 || sesion === 4|| sesion === 5) { %>
+                        <ul class="list-unstyled components">
+                            <li><a href="#" onclick="cargarContenido('/graficos')" class="btn-group" style="font-size: 18px; font-family: monospace;"> <i class="fa fa-area-chart" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Dashboard</span></a></li>
+                        </ul>   
+                        <% if (sesion === 1 || sesion === 3 || sesion === 4) { %>
+                            <ul class="list-unstyled components">
+                                <li class="active">
+                                    <a href="#ventas" onclick="cargarContenido('/vista_ventas')"  data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group" style="font-size: 18px; font-family: monospace; "><i class="fa fa-money" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Ventas</span></a>
+                                    <ul class="collapse list-unstyled" id="ventas">
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 18px; font-family: monospace; ">> <span>Nueva Venta</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 16px; font-family: monospace; ">> <span>Productos Disponibles</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 18px; font-family: monospace; ">> <span>Cajas</span></a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        <% } %>   
+                        <% if (sesion === 1 || sesion === 3 || sesion === 4) { %>
+                            <ul class="list-unstyled components">
+                                <li class="active">
+                                    <a href="#finanzas" onclick="cargarContenido('/mantenimiento')"  data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group" style="font-size: 18px; font-family: monospace; "><i class="fas fa-donate" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Finanzas</span></a>
+                                    <ul class="collapse list-unstyled" id="finanzas">
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 18px; font-family: monospace; ">> <span>Cajas</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/ganancias_es')" style="font-size: 16px; font-family: monospace; ">> <span>Ganancias</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/reporte_tareas.ejs')" style="font-size: 18px; font-family: monospace; ">> <span>Reportes</span></a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        <% } %> 
+                        <% if (sesion === 1 || sesion === 3 || sesion === 4) { %>
+                            <ul class="list-unstyled components">
+                                <li class="active">
+                                    <a href="#compras" onclick="cargarContenido('/mantenimiento')"  data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group" style="font-size: 18px; font-family: monospace; "><i class="far fa-calendar-alt" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Compras</span></a>
+                                    <ul class="collapse list-unstyled" id="compras">
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 18px; font-family: monospace; ">> <span>...</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 16px; font-family: monospace; ">> <span>...</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 18px; font-family: monospace; ">> <span>...</span></a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        <% } %> 
+                      
+                        <% if (sesion === 1 || sesion === 3 || sesion === 4) { %>
+                            <ul class="list-unstyled components " style="border-bottom: 1px solid #ffffff69">
+                                <li class="active">
+                                    <a href="#recursos_h" onclick="cargarContenido('/mantenimiento')"  data-toggle="collapse" aria-expanded="false" class="dropdown-toggle btn-group" style="font-size: 18px; font-family: monospace; "><i class="fa fa-money" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Inventario</span></a>
+                                    <ul class="collapse list-unstyled" id="recursos_h">
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 18px; font-family: monospace; ">> <span>...</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 16px; font-family: monospace; ">> <span>...</span></a></li>
+                                        <li><a href="#" onclick="cargarContenido('/mantenimiento')" style="font-size: 18px; font-family: monospace; ">> <span>...</span></a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        <% } %> 
+                         <!-- Notificacion solo para administradores  -->
+                            <% if (sesion === 1) { %> 
+                                <ul class="list-unstyled components">
+                                    <li>
+                                        <a href="#" onclick="cargarContenido('/notificacion'); marcarComoLeidas();" class="btn-group" style="font-size: 18px; font-family: monospace;">
+                                            <i class="fa fa-bell" style="font-size: 30px;"></i>
+                                            <span>&nbsp;&nbsp;Notificaciones</span>
+                                            <span id="notification-count" class="badge">2</span> <!-- Contador de notificaciones -->
+                                        </a>
+                                    </li>
+                                </ul>
+                            <% } %>    
+                            <ul class="list-unstyled components">
+                                <li><a href="#" onclick="cargarContenido('/mantenimiento')" class="btn-group" style="font-size: 18px; font-family: monospace;"> <i class="far fa-sun" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Configuraciones</span></a></li>
+                            </ul> 
+                            <ul class="list-unstyled components">
+                                <li><a href="#" onclick="cargarContenido('/mantenimiento')" class="btn-group" style="font-size: 18px; font-family: monospace;"> <i class="fas fa-calendar-times" style="font-size: 30px;"></i> <span>&nbsp;&nbsp;Papeleria</span></a></li>
+                            </ul>                         
+                    <% } %>
+              </div>
+          </nav>
+          <!-- fin menu -->
+
+          <!-- cabecera -->
+            <div id="content">
+                <!-- topbar -->
+                <div class="topbar" >
+                    <nav class="navbar navbar-expand-lg navbar-light">
+                        <div class="full">
+    
+                            <!--  boton para esconder menu -->
+                            <button type="button" id="sidebarCollapse" class="sidebar_toggle"><i class="fa fa-angle-left"></i></button>
+                            <!-- logo  -->
+    
+                            
+                            
+                            
+                            
+                            <!-- menu de perfil  -->
+                            <div class="right_topbar">
+                                <div class="icon_info">
+                                    <ul>
+                                        <li style="margin: 10px 15px 0 15px; width: 350px;">
+                                            <div>
+                                                <p style="color: #000; font-family:sansserif ; text-align: right; font-size: 18px;"><span class='online_animation' style="margin-right: 5px;">  </span>En Linea</p>
+                                                <p  style="color: #000; font-family:math ; text-align: right;font-size: 18px;" id="fechaHora">16 de septiembre 2024 </p>
+                                            </div>
+                                        </li>
+
+                                    </ul>
+                                    
+                                    
+                                    <ul class="user_profile_dd">
+                                        <li>
+                                         <img   src=""  />
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+    
+                        </div>
+                    </nav>
+                    <div id="contenido">
+                        <% if ( sesion === 5) { %>
+                            <iframe id="contenidoFrame" src="/graficos" frameborder="0" ></iframe>
+                        <% } %>
+                        <% if ( sesion === 2) { %>
+                            <iframe id="contenidoFrame" src="/graficos" frameborder="0" ></iframe>
+                        <% } %>
+                        <% if ( sesion === 1 || sesion === 3 || sesion === 4) { %>
+                            <iframe id="contenidoFrame" src="/graficos" frameborder="0" ></iframe>
+                        <% } %>
+                    </div>
+                </div>
+              
+            </div>
+           
+        </div>
+        <!-- fin cabecera -->
+       
+    </div>
+
+<div id="myModal" class="modal" style="width: 400px; height: 500px; background-color: #fff; border-radius: 10px; padding: 20px;">
+
+    <h2 style="text-align: center; font-size: 18px; margin-bottom: 20px;">FARMACIA SAN JUAN DE DIOS</h2>
+    <div class="empleado-info" style="text-align: center;">
+        <img id="fotoEmpleado" src="fotos/img_empleados/<%= Fotografia %>" alt="Foto del empleado" style="width: 200px; height: 200px; margin-bottom: 10px;">
+        <p id="nombreEmpleado" style=" font-weight: bold; font-size: 20px;">Nombre: <%= Nombre %></p>
+        <p id="apellidoEmpleado" style="font-weight: bold; font-size: 20px;">Apellido: <%= Apellido %> </p>
+        <hr style="border-color: #000; margin: 10px 0;">
+        <p id="direccionEmpleado" style="margin: 0;">Direccion:  <%= Dirección %></p>
+        <p id="telefonoEmpleado" style="margin: 0;">Telefono:  <%= Teléfono %></p>
+        <p id="rolEmpleado" style="margin: 0;"> 
+            <% if (sesion === 1 ) { %>
+                Administrador
+            <% } %>
+            <% if (sesion === 2 ) { %>
+                Empleado - Ventas - Compras
+            <% } %>
+            <% if (sesion === 3 ) { %>
+                Empleado - Finanzas
+            <% } %>
+            <% if (sesion === 4 ) { %>
+                Gerencia
+            <% } %>
+        </p>
+    </div>  
+<br>
+    <button id="btnCerrar" style="width: 100%; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Esconder</button>
+  </div>
+
+         <!-- jQuery -->
+      <script src="resources/js/jquery.min.js"></script>
+      <script src="resources/js/popper.min.js"></script>
+      <script src="resources/js/bootstrap.min.js"></script>
+      <!-- wow animation -->
+      <script src="resources/js/animate.js"></script>
+      <!-- select country -->
+      <script src="resources/js/bootstrap-select.js"></script>
+      <!-- owl carousel -->
+      <script src="resources/js/owl.carousel.js"></script> 
+      <!-- chart js -->
+      <script src="resources/js/Chart.min.js"></script>
+      <script src="resources/js/Chart.bundle.min.js"></script>
+      <script src="resources/js/utils.js"></script>
+      <script src="resources/js/analyser.js"></script>
+      <!-- nice scrollbar -->
+      <script src="resources/js/perfect-scrollbar.min.js"></script>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     
+      <!-- custom js -->
+      <script src="resources/js/custom.js"></script>
+      <script src="resources/js/chart_custom_style1.js"></script>
+  </body>
+</html>
+<style>
+    
+/* Estilos comunes para #contenido */
+#contenido {
+    width: 100%; /* Ocupa todo el ancho disponible */
+}
+
+/* Estilos para modo PC */
+@media (min-width: 768px) {
+    #contenido {
+        height: calc(100vh - 50px); /* Ajusta la altura para dejar espacio para la barra de navegación */
+    }
+}
+
+/* Estilos para modo celular */
+@media (max-width: 767px) {
+    #contenido {
+        height: calc(91vh - 50px); /* Ajusta la altura para dejar espacio para la barra de navegación */
+    }
+}
+
+#contenido iframe {
+    
+    padding: 20px;
+    width: 100%;
+    height: 100%; /* Ocupa todo el alto disponible */
+    border: none; /* Elimina el borde del iframe */
+}
+
+
+    .switch{
+        margin-left: 25%;
+        position: relative;
+        width: 40px;
+        height: 20px;
+        border: 2px solid rgb(134 145 169);
+        display: flex;
+        border-radius: 35px;
+    }
+
+    .checkbox{
+        display: none;
+    }
+    .slider{
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        background-color: rgb(94,156,287);
+    }
+    input:checked + .slider{
+        translate:20px;
+    }
+
+  .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(255, 255, 255, 0.849);
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+</style>
+<script>
+    function actualizarHora() {
+        const ahora = new Date();
+        const fecha = ahora.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+        const hora = ahora.toLocaleTimeString('es-ES');
+        document.getElementById('fechaHora').innerText = `${fecha} -  ${hora}`;
+    }
+
+    setInterval(actualizarHora, 1000);  // Actualiza cada segundo
+    window.onload = actualizarHora;  // Actualiza al cargar la página
+</script>
+<script>
+    
+    $("#btnActualizar").click(function () {
+    // Recarga la página actual
+    location.reload();
+    });
+
+    function cargarContenido(ruta) {
+    var contenidoFrame = document.getElementById('contenidoFrame');
+    contenidoFrame.src = window.location.origin + ruta;
+    }
+
+
+    let chbox = document.querySelector('.checkbox');
+    let contenidoFrame = document.getElementById('contenidoFrame');
+    let fullContainer = document.querySelector('.full');
+    let textoBienvenida = document.querySelector('.logo_section h1');
+    let iconos = document.querySelectorAll('.icono');
+    let sidebarBlog2 = document.querySelector('.sidebar_blog_2');
+    let sidebar = document.querySelector('.ps');
+    let h4Elements = document.querySelectorAll('.components h4'); 
+    let aElements = document.querySelectorAll('.components a'); 
+    let ulElements = document.querySelectorAll('.components ul');
+
+$color = "#272a2d";
+chbox.addEventListener('change', function() {
+    if (this.checked) {
+        contenidoFrame.style.backgroundColor = $color;
+        contenidoFrame.style.color = 'white';
+        fullContainer.style.backgroundColor = $color;
+        textoBienvenida.style.color = 'white';
+        iconos.forEach(icono => {
+            icono.style.filter = 'invert(1)';
+        });
+        sidebarBlog2.style.backgroundColor = $color;
+        sidebar.style.backgroundColor = $color;
+        h4Elements.forEach(h4 => {
+            h4.style.color = 'white';
+            h4.style.backgroundColor  = $color;
+        });
+
+        aElements.forEach(a => {
+            a.style.color = 'white';
+            a.style.backgroundColor  = $color;
+        });
+        ulElements.forEach(ul => {
+            ul.style.backgroundColor =$color;
+        });
+    } else {
+        contenidoFrame.style.backgroundColor = 'white';
+        contenidoFrame.style.color = 'black';
+        fullContainer.style.backgroundColor = 'white';
+        textoBienvenida.style.color = 'black';
+        iconos.forEach(icono => {
+            icono.style.filter = 'none';
+        });
+        sidebarBlog2.style.backgroundColor = 'white';
+        sidebar.style.backgroundColor = 'white';
+        h4Elements.forEach(h4 => {
+            h4.style.color = 'black';
+            h4.style.backgroundColor = 'white';
+        });
+
+        aElements.forEach(a => {
+            a.style.color = 'black';
+            a.style.backgroundColor = 'white';
+        });
+        ulElements.forEach(ul => {
+            ul.style.backgroundColor = 'white';
+            ul.style.color = 'black';
+        });
+    }
+});
+
+ 
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Obtener referencia al enlace
+      const btnEmpleado = document.getElementById('btnEmpleado');
+      const btnCerrar = document.getElementById('btnCerrar');
+  
+      // Verificar que ambos elementos existen
+      if (btnEmpleado && btnCerrar) {
+        // Agregar evento de clic al enlace
+        btnEmpleado.addEventListener('click', function() {
+          // Mostrar la ventana emergente con el nombre del empleado
+          const modal = document.getElementById('myModal');
+          modal.style.display = 'block';
+        });
+  
+        // Agregar evento de clic al botón para cerrar el modal
+        btnCerrar.addEventListener('click', function() {
+          const modal = document.getElementById('myModal');
+          modal.style.display = 'none';
+        });
+      }
+    });
+  </script>
+  
