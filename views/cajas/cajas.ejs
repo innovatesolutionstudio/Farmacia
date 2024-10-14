@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" />
     <link rel="stylesheet" href="resources/css/cajas.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <title>Ventas - Finanzas</title>
 </head>
 <body>
@@ -14,15 +16,24 @@
 <!-- Encabezado -->
 <div class="header-container">
   <div class="breadcrumb">
-      <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Finanzas</h1>
+      <a href="/vista_Finanzas" class="reporte-link "><h1 style="color: #858B92; font-weight: bold; margin-right: 5px;" >Finanzas</h1></a>
       <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
       <h1 style="font-weight: bold;">Cajas</h1>
   </div>
  
   <div class="button-container">
-      <button class="btn btn-success">Abrir todas las Cajas</button>
-      <button class="btn btn-danger">Cerrar todas las Cajas</button>
-  </div>
+    <!-- Formulario para abrir todas las cajas -->
+    <form id="abrirCajasForm" action="/abrir-todas" method="POST">
+        <button type="button" id="abrirCajasBtn" class="btn btn-success">Abrir todas las Cajas</button>
+    </form>
+    
+    <!-- Formulario para cerrar todas las cajas -->
+    <form id="cerrarCajasForm" action="/cerrar-todas" method="POST">
+        <button type="submit" id="cerrarCajasBtn" class="btn btn-danger">Cerrar todas las Cajas</button>
+    </form>
+</div>
+
+
   
 </div>
 
@@ -35,11 +46,13 @@
             </div>
             <div class="content-card1">
                 <div>
-                    <h2 id="">Bs. 12,345</h2>
+                    <h2 id="ventasTotales">Bs. <%= Ventas_Totales %></h2>
+
                     <p>Venta total del dia</p>
                 </div>
                 <div style="margin: 25px;">
-                    <p>Ver reporte del dia >></p>
+                    <a href="/reporte-ventas" target="_blank" class="reporte-link">Ver reporte del día >></a>
+
                 </div>
             </div>
         </div>
@@ -52,56 +65,203 @@
         </div>
         <div class="content-card11">
             <div class="flex-row">
-                <p>Medicamentos vendidos en el mes</p>
-                <button class="btn btn-blue">Agregar</button>
+                <p>Administrar Sucursal</p>
+                <button class="btn btn-blue"><a href="/mantenimiento" class="reporte-link">Administrar</a></button>
             </div>
             <br>
             <div class="flex-row">
-                <p>Cantidad de productos en inventario</p>
-                <button class="btn btn-blue">Agregar</button>
+                <p>Administrar Cajas</p>
+                <button class="btn btn-blue"><a href="/mantenimiento" class="reporte-link">Administrar</a></button>
             </div>
         </div>
       </div>
 
 
-        <!-- Card 3: Pedidos -->
+      <!-- Card 3: estado cajas -->
         <div class="card2">
             <div class="header-card2">
-                <span>Pedidos</span>
-                <a href="#">Ver más &raquo;</a>
+                <span>Estado de Cajas</span>
             </div>
             <div class="content-card2">
-                <div>
-                    <h2 id="totalPedidos">04</h2>
-                    <p>Total pedidos</p>
-                </div>
-                <div>
-                    <h2 id="pedidosPendientes">05</h2>
-                    <p>Pedidos pendientes</p>
-                </div>
+                <!-- Caja 1: En una sola línea -->
+                <% Cajas.forEach(caja => { %>
+                    <div class="caja">
+                        <div class="info-caja-linea">
+                            <div class="info-estado">
+                                <span class="estado-caja"><%= caja.Codigo %></span> <!-- Aquí va el código de la caja -->
+                                <div class="indicador-caja verde"></div>
+                            </div>
+                            <!-- Pasar el ID_Caja en la URL -->
+                            <a href="/adminCaja?codigo=<%= caja.Codigo %>" class="administrar">+ Administrar</a>
+                        </div>
+                        <div class="info-caja-detalle">
+                            <div class="info-principal">
+                                <span class="responsable"><%= caja.Empleado_Nombre %></span> <!-- Nombre del empleado -->
+                                <span class="sub-info">Responsable</span>
+                            </div>
+                            <div class="info-principal">
+                                <span class="ganancia">Bs. <%= caja.Total_Venta %></span> <!-- Ventas del empleado -->
+                                <span class="sub-info">Ganancia del día</span>
+                            </div>
+                            <div class="accion-contenedor">
+                                <label class="switch">
+                                    <input type="checkbox" class="toggle-caja" data-id="<%= caja.ID_Caja %>" <%= caja.Estado == 1 ? 'checked' : '' %>>
+                                    <span class="slider"></span>
+                                </label>
+                                <span class="accion">Caja - Cerrado / Abierto</span>
+                            </div>                            
+                        </div>
+                    </div>
+                <% }) %>
+                
+                    
+                
+
             </div>
         </div>
 
-        <!-- Card 4: Compras -->
-        <div class="card2">
+
+        <!-- Card 4: historia
+          -->
+          <div class="card2">
             <div class="header-card2">
-                <span>Compras</span>
-                <a href="#">Ver más &raquo;</a>
+                <span>Historial</span>
             </div>
             <div class="content-card2">
-                <div>
-                    <h2 id="totalCompras">20</h2>
-                    <p>Número total de compras</p>
-                </div>
-                <div>
-                    <h2 id="proveedor">Laboratorios ACME</h2>
-                    <p>Proveedor</p>
-                </div>
+                <table class="tabla-historial">
+                    <thead>
+                        <tr>
+                            <th>Caja</th>
+                            <th>Total</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CS-228-24</td>
+                            <td>Bs.700</td>
+                            <td><a href="#" class="ver-detalles">+ Ver detalles</a></td>
+                        </tr>
+                        <tr>
+                            <td>CS-228-24</td>
+                            <td>Bs.700</td>
+                            <td><a href="#" class="ver-detalles">+ Ver detalles</a></td>
+                        </tr>
+                        <tr>
+                            <td>CS-228-24</td>
+                            <td>Bs.700</td>
+                            <td><a href="#" class="ver-detalles">+ Ver detalles</a></td>
+                        </tr>
+                        <tr>
+                            <td>CS-228-24</td>
+                            <td>Bs.700</td>
+                            <td><a href="#" class="ver-detalles">+ Ver detalles</a></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
+        
     </div>
 
    
 
 </body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="js/AbrirCerrar.js"></script>
+<script src="js/alertas.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Seleccionar el botón de abrir todas las cajas
+    document.getElementById('abrirCajasBtn').addEventListener('click', function(event) {
+        event.preventDefault();  // Evita el comportamiento predeterminado del botón
+
+        // Mostrar alerta de confirmación
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Seguro que deseas abrir todas las cajas?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, abrir cajas',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, envía el formulario
+                document.getElementById('abrirCajasForm').submit();
+            }
+        });
+    });
+});
+
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Seleccionar el botón de abrir todas las cajas
+    document.getElementById('cerrarCajasBtn').addEventListener('click', function(event) {
+        event.preventDefault();  // Evita el comportamiento predeterminado del botón
+
+        // Mostrar alerta de confirmación
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Seguro que deseas cerrar todas las cajas?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, cerrar cajas',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, envía el formulario
+                document.getElementById('cerrarCajasForm').submit();
+            }
+        });
+    });
+});
+
+</script>
+<script>
+    
+document.addEventListener('DOMContentLoaded', function() {
+    // Seleccionamos todos los checkboxes con la clase toggle-caja
+    const toggles = document.querySelectorAll('.toggle-caja');
+    
+    toggles.forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            const idCaja = this.getAttribute('data-id'); // Obtiene el ID de la caja
+            const isChecked = this.checked; // Verifica si está marcado o no
+            
+            // Define la URL a la cual se enviará la solicitud dependiendo del estado del checkbox
+            const url = isChecked ? '/abrir-caja' : '/cerrar-caja';
+            
+            // Envía la solicitud POST usando Fetch
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ idCaja: idCaja })
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Caja actualizada correctamente');
+                } else {
+                    console.error('Error al actualizar la caja');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+});
+
+</script>
 </html>
+

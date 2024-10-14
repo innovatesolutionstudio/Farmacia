@@ -22,7 +22,7 @@ router.get('/cajas', (req, res) => {
                 const nombreSucursal = results[0].Nombre;
                
 
-                connection.query('SELECT SUM(Total_Venta) AS Ventas_Totales FROM ventas WHERE ID_Sucursal = ? AND Fecha_Venta BETWEEN ? AND ?', [sucursalID, startOfDay, endOfDay], (error, results) => {
+                connection.query('SELECT SUM(Total_Venta) AS Ventas_Totales FROM ventas WHERE ID_Sucursal = ? AND Fecha_Venta BETWEEN CURDATE() AND NOW()', [sucursalID, startOfDay, endOfDay], (error, results) => {
                     if (error) {
                         console.error('Error al obtener las ventas totales:', error);
                         res.status(500).send('Error interno del servidor');
@@ -36,10 +36,10 @@ router.get('/cajas', (req, res) => {
                             IFNULL(SUM(v.Total_Venta), 0) AS Total_Venta, MAX(v.Fecha_Venta) AS Fecha_Venta 
                         FROM cajas c
                         LEFT JOIN empleados e ON c.ID_Caja = e.ID_Caja
-                        LEFT JOIN ventas v ON c.ID_Caja = v.ID_Caja AND v.Fecha_Venta BETWEEN ? AND ?
+                        LEFT JOIN ventas v ON c.ID_Caja = v.ID_Caja AND v.Fecha_Venta BETWEEN CURDATE() AND NOW()
                         WHERE c.ID_Sucursal = ? AND c.ID_Caja != 8
                         GROUP BY c.ID_Caja, e.ID_Empleado, e.Nombre
-                    `, [startOfDay, endOfDay, sucursalID], (error, results) => {
+                    `, [ sucursalID], (error, results) => {
                         if (error) {
                             console.error('Error al obtener los detalles de las cajas:', error);
                             res.status(500).send('Error interno del servidor');
@@ -66,54 +66,126 @@ router.get('/cajas', (req, res) => {
         res.render('./paginas/logout');
     }
 });
+
 // Ruta para abrir una caja
 router.post('/abrir-caja', (req, res) => {
     const { idCaja } = req.body;
+    const currentDateTime = new Date(); // Fecha y hora actual
+
+    // Actualizar el estado de la caja a '1' (abierto)
     connection.query('UPDATE cajas SET Estado = 1 WHERE ID_Caja = ?', [idCaja], (error, results) => {
         if (error) {
             console.error('Error al abrir la caja:', error);
             res.status(500).send('Error interno del servidor');
             return;
         }
-        res.redirect('/cajas');
+
+        // Insertar en el historial la fecha y hora de apertura de la caja
+        connection.query('INSERT INTO historial_caja_abierta (ID_Caja, Abertura) VALUES (?, ?)', [idCaja, currentDateTime], (error, results) => {
+            if (error) {
+                console.error('Error al registrar el historial de apertura:', error);
+            }
+
+            // Redirigir a /cajas después de abrir la caja y registrar el historial
+            res.redirect('/cajas');
+        });
     });
 });
+
 
 // Ruta para cerrar una caja
 router.post('/cerrar-caja', (req, res) => {
     const { idCaja } = req.body;
+    const currentDateTime = new Date(); // Fecha y hora actual
+
+    // Actualizar el estado de la caja a '2' (cerrado)
     connection.query('UPDATE cajas SET Estado = 2 WHERE ID_Caja = ?', [idCaja], (error, results) => {
         if (error) {
             console.error('Error al cerrar la caja:', error);
             res.status(500).send('Error interno del servidor');
             return;
         }
-        res.redirect('/cajas');
+
+        // Insertar en el historial la fecha y hora de cierre de la caja
+        connection.query('INSERT INTO historial_caja_cerrada (ID_Caja, Cierre) VALUES (?, ?)', [idCaja, currentDateTime], (error, results) => {
+            if (error) {
+                console.error('Error al registrar el historial de cierre:', error);
+            }
+
+            // Redirigir a /cajas después de cerrar la caja y registrar el historial
+            res.redirect('/cajas');
+        });
     });
 });
-// Ruta para abrir todas las cajas de una sucursal
+
 router.post('/abrir-todas', (req, res) => {
     const sucursalID = req.session.ID_Sucursal;
+    const currentDateTime = new Date(); // Fecha y hora actual
+    
+    // Actualizar el estado de todas las cajas de la sucursal a '1' (abierto)
     connection.query('UPDATE cajas SET Estado = 1 WHERE ID_Sucursal = ?', [sucursalID], (error, results) => {
         if (error) {
             console.error('Error al abrir todas las cajas:', error);
             res.status(500).send('Error interno del servidor');
             return;
         }
-        res.redirect('/cajas');
+        
+        // Selecciona todas las cajas de la sucursal para insertar su historial de apertura
+        connection.query('SELECT ID_Caja FROM cajas WHERE ID_Sucursal = ?', [sucursalID], (error, cajas) => {
+            if (error) {
+                console.error('Error al obtener las cajas:', error);
+                res.status(500).send('Error interno del servidor');
+                return;
+            }
+
+            // Inserta el registro de apertura en la tabla historial_caja
+            cajas.forEach(caja => {
+                connection.query('INSERT INTO historial_caja_abierta (ID_Caja, Abertura) VALUES (?, ?)', [caja.ID_Caja, currentDateTime], (error, results) => {
+                    if (error) {
+                        console.error('Error al registrar el historial de la caja:', error);
+                    }
+                });
+            });
+
+            // Redirecciona después de completar la operación
+            res.redirect('/cajas');
+        });
     });
 });
 
-// Ruta para cerrar todas las cajas de una sucursal
+
 router.post('/cerrar-todas', (req, res) => {
     const sucursalID = req.session.ID_Sucursal;
+    const currentDateTime = new Date(); // Fecha y hora actual
+
+    // Actualizar el estado de todas las cajas de la sucursal a '2' (cerrado)
     connection.query('UPDATE cajas SET Estado = 2 WHERE ID_Sucursal = ?', [sucursalID], (error, results) => {
         if (error) {
             console.error('Error al cerrar todas las cajas:', error);
             res.status(500).send('Error interno del servidor');
             return;
         }
-        res.redirect('/cajas');
+        
+        // Seleccionar todas las cajas de la sucursal para insertar el historial de cierre
+        connection.query('SELECT ID_Caja FROM cajas WHERE ID_Sucursal = ?', [sucursalID], (error, cajas) => {
+            if (error) {
+                console.error('Error al obtener las cajas:', error);
+                res.status(500).send('Error interno del servidor');
+                return;
+            }
+
+            // Inserta el registro de cierre en la tabla historial_caja_cerrada
+            cajas.forEach(caja => {
+                connection.query('INSERT INTO Historial_Caja_Cerrada (ID_Caja, Cierre) VALUES (?, ?)', [caja.ID_Caja, currentDateTime], (error, results) => {
+                    if (error) {
+                        console.error('Error al registrar el cierre de la caja:', error);
+                    }
+                });
+            });
+
+            // Redirecciona después de completar la operación
+            res.redirect('/cajas');
+        });
     });
 });
 

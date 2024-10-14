@@ -57,6 +57,17 @@ body {
     opacity: 0.9;
 }
 
+/* Estilo para el enlace del reporte */
+.reporte-link {
+    color: inherit; /* Usa el color del texto que tenga el contenedor padre */
+    text-decoration: none; /* Quita la subrayado */
+ 
+}
+
+.reporte-link:hover {
+    color: inherit; /* Mantiene el color al pasar el cursor */
+    text-decoration: none; /* Sin subrayado al hacer hover */
+}
 
 
 
@@ -119,12 +130,17 @@ body {
 .content-card1 {
     display: flex;
     justify-content: space-between;
-    padding: 25px 150px;
+    padding: 25px 60px;
 }
 
 .content-card1 h2, .content-card1 p {
     margin: 0;
 }
+.content-card1 h2{
+    margin: 0;
+    font-size: 30px;
+}
+
 
 .flex-row {
     display: flex;
@@ -146,67 +162,288 @@ body {
 .btn-blue {
     background-color: #03A9F5;
     height: 40px;
-    width: 120px;
+    width: 140px;
     font-size: 20px;
   
     
 }
 
+
 .card2 {
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    text-align: left;
+    padding: 20px; /* Reduce el padding general */
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start; /* Alinea los elementos al inicio */
     flex-direction: column;
-    width: auto;
     min-width: 350px;
     margin-right: 20px;
     border: 2px solid #E0E0E0;
     position: relative;
-    height: 200px;
-}
-
-.card2 h2 {
-    font-size: 48px;
-    margin: 10px 0;
-    color: #000;
-}
-
-.card2 p {
-    font-family: Arial, sans-serif;
-    font-size: 18px;
-    margin: 0;
-    color: #333;
+    height: 400px; /* Cambia el height a auto para evitar que fije una altura específica */
+    overflow: hidden; /* Para evitar que se expanda más allá del tamaño */
 }
 
 .header-card2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 18px;
+    font-size: 25px;
     font-weight: bold;
     color: #333;
     border-bottom: 1px solid #eaeaea;
-    padding-bottom: 10px;
-}
-
-.header-card2 a {
-    text-decoration: none;
-    color: #333;
-    font-size: 16px;
+    padding: 0px 30px;
+    margin-bottom: 10px; /* Ajusta el espacio entre el encabezado y el contenido */
 }
 
 .content-card2 {
+    padding: 10px 15px; /* Ajusta el padding general del contenido */
+    margin-top: 0;
+    height: calc(100% - 60px); /* Deja espacio para el header */
+    overflow-y: auto; /* Activa el scroll vertical si el contenido es mayor al espacio disponible */
+}
+
+/* Caja específica */
+.caja {
+    background: #f7f7f7;
+    border-radius: 10px;
+    padding: 22px;
+    margin-bottom: 12px;
+    border: 1px solid #e0e0e0;
+}
+
+/* Caja en una sola línea */
+.info-caja-linea {
     display: flex;
     justify-content: space-between;
-    padding: 10px 0;
+    align-items: center;
+    padding: 10px;
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    margin-bottom: 10px; /* Reduce el espacio entre la línea de estado y los detalles */
 }
 
-.content-card2 h2, .content-card2 p {
-    margin: 0;
+.info-estado {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre el código y el indicador */
+}
+
+.estado-caja {
+    font-weight: bold;
+    font-size: 26px; /* Ajusta el tamaño de fuente para evitar que ocupe mucho espacio */
+}
+
+.indicador-caja {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ccc;
+}
+
+.indicador-caja.verde {
+    background-color: #00bfa5; /* Verde para estado activo */
+}
+
+.administrar {
+    font-size: 22px; /* Ajusta el tamaño de la fuente para que no ocupe demasiado espacio */
+    text-decoration: none;
+    color: #007bff;
+}
+
+/* Segunda línea para detalles */
+.info-caja-detalle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 5px; /* Reduce el espacio entre la primera línea y la segunda */
+}
+
+.info-principal {
+    display: flex;
+    flex-direction: column;
+}
+
+.responsable, .ganancia {
+    font-weight: bold;
+    font-size: 34px; /* Ajusta el tamaño para que sea consistente */
+}
+
+.sub-info {
+    font-size: 18px;
+    color: #666;
+}
+
+/* Posiciona el toggle y el texto de acción debajo */
+.accion-contenedor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 30px;
+    
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 30px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 25px;
+    width: 30px;
+    border-radius: 50%;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #00bfa5;
+}
+
+input:checked + .slider:before {
+    transform: translateX(16px);
+}
+
+.accion {
+    font-size: 16px;
+    color: #333;
+    margin-top: 5px; /* Espacio entre el toggle y "Action" */
+}
+
+.tabla-historial {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.tabla-historial th, .tabla-historial td {
+    text-align: left;
+    padding: 20px 0;
+    font-size: 26px;
+}
+
+.tabla-historial th {
+    font-weight: bold;
+    color: #333;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.tabla-historial td {
+    color: #333;
+}
+
+.ver-detalles {
+    font-size: 24px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+/* Quita los bordes de la tabla */
+.tabla-historial td, .tabla-historial th {
+    border: none;
 }
 
 
+
+
+
+
+.card3 {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px; /* Reduce el padding general */
+    width: auto;
+    margin-right: 20px;
+    border: 2px solid #E0E0E0;
+    position: relative;
+    height: 400px; /* Cambia el height a auto para evitar que fije una altura específica */
+    overflow: hidden; /* Para evitar que se expanda más allá del tamaño */
+}
+
+
+/* Estilos generales de la tabla de clientes facturados */
+.table-clientes {
+   
+    border-collapse: collapse;
+  width: 100%;
+    font-size: 18px;
+    text-align: left;
+   
+}
+
+/* Estilo para las celdas del encabezado de la tabla de clientes facturados */
+.table-clientes thead th {
+    background-color: #ffffff;
+    color: #333;
+    font-weight: bold;
+    padding: 12px;
+    border-bottom: 2px solid #030303;
+}
+
+/* Estilo para las celdas del cuerpo de la tabla de clientes facturados */
+.table-clientes tbody td {
+    padding: 12px;
+    border-bottom: 1px solid #ffffff;
+    color: #333;
+}
+
+/* Alternar colores de las filas de la tabla de clientes facturados */
+.table-clientes tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Estilo para la columna de acción en la tabla de clientes facturados */
+.table-clientes tbody td a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.table-clientes tbody td a:hover {
+    text-decoration: underline;
+}
+
+/* Estilo para resaltar los totales en la tabla de clientes facturados */
+.table-clientes tbody td:last-child {
+    font-weight: bold;
+}
+
+/* Estilo para la cabecera de la tarjeta de clientes facturados */
+.card-clientes .header-card-clientes {
+    background-color: #ffffff;
+    padding: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #000000;
+    border-bottom: 2px solid #ffffff;
+}
+
+/* Margen en la tabla para separarla del contenido */
+.card-clientes .content-card-clientes {
+    padding: 20px;
+}

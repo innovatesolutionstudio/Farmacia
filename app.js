@@ -31,7 +31,7 @@ const rolesRoutes = require('./routes/roles');
 const sucursalesRoutes = require('./routes/sucursales');
 const vista_ventas = require('./routes/vista_ventas');
 const rutas_login = require('./routes/login');
-
+const adminCajas = require('./routes/admincajas');
 
 const vistafinanzas = require('./routes/vista_Finanzas');
 // Añade esta línea al principio de tu app.js
@@ -211,6 +211,7 @@ app.use(vista_ventas);
 app.use(rutas_login);
 app.use(notificacionesRoutes);
 app.use(vistafinanzas);
+app.use(adminCajas);
 
 //reportes
 
