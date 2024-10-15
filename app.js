@@ -149,6 +149,76 @@ app.get('/', (req, res) => {
     }
 });
 
+//Desbloqueamos las cuentas y ponemos en leido las notificaciones
+app.post('/notificaciones/desbloquear', (req, res) => {
+    const { correo } = req.body;
+
+    if (!correo) {
+        return res.status(400).json({ message: 'Correo es requerido' });
+    }
+
+    console.log('Correo recibido:', correo); // Para verificar que el correo llega correctamente
+
+    // Consulta SQL para actualizar el Grado en empleados
+    const queryGrado = `UPDATE empleados SET Grado = 0 WHERE Email = ?`;
+
+    // Consulta SQL para actualizar el Estado en notificaciones
+    const queryEstado = `UPDATE notificaciones SET Estado = 1 WHERE Correo = ?`;
+
+    // Ejecutar la primera consulta (actualización del Grado en empleados)
+    coneccion.query(queryGrado, [correo], (errorGrado, resultsGrado) => {
+        if (errorGrado) {
+            console.error('Error al ejecutar la consulta de grado:', errorGrado);
+            return res.status(500).json({ message: 'Error en la actualización del grado' });
+        }
+
+        // Verificar si se actualizó alguna fila en empleados
+        if (resultsGrado.affectedRows === 0) {
+            return res.status(404).json({ message: 'No se encontró un empleado con ese correo' });
+        }
+
+        // Solo ejecutar la segunda consulta si la primera fue exitosa
+        coneccion.query(queryEstado, [correo], (errorEstado, resultsEstado) => {
+            if (errorEstado) {
+                console.error('Error al ejecutar la consulta de estado:', errorEstado);
+                return res.status(500).json({ message: 'Error en la actualización del estado' });
+            }
+
+            // Verificar si se actualizó alguna fila en notificaciones
+            if (resultsEstado.affectedRows === 0) {
+                return res.status(404).json({ message: 'No se encontró una notificación con ese correo' });
+            }
+
+            // Recuperar la lista actualizada de notificaciones
+            const queryNotificaciones = 'SELECT Nombre, Correo, Descripcion, Fecha FROM notificaciones WHERE Estado = 0 ORDER BY Fecha DESC';
+            coneccion.query(queryNotificaciones, (error, results) => {
+                if (error) {
+                    return res.status(500).send('Error al obtener las notificaciones actualizadas');
+                }
+
+                res.json({ message: 'Actualización exitosa en grado y estado', notificaciones: results });
+            });
+        });
+    });
+});
+
+//validar correo de empleados y notificaiones
+app.post('/login/validar-correo', (req, res) => {
+    const { correo } = req.body;
+
+    // Consulta SQL para verificar si el correo existe en la tabla empleados
+    const query = 'SELECT COUNT(*) AS count FROM empleados WHERE Email = ?';
+    coneccion.query(query, [correo], (error, results) => {
+        if (error) {
+            console.error('Error al ejecutar la consulta:', error);
+            return res.status(500).json({ message: 'Error en la validación' });
+        }
+
+        // Verifica si el correo existe
+        const exists = results[0].count > 0;
+        res.json({ exists });
+    });
+});
 
 app.get('/logout', (req, res) => {
     const ID_Empleado = req.session.ID_Empleado;
