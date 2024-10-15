@@ -15,66 +15,101 @@
 
 <!-- Encabezado -->
 <div class="header-container">
-  <div class="breadcrumb">
-      <a href="/vista_Finanzas" class="reporte-link "><h1 style="color: #858B92; font-weight: bold; margin-right: 5px;" >Finanzas</h1></a>
-      <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
-      <h1 style="font-weight: bold;">Reportes</h1>
-  </div>
- 
-  <div class="button-container">
-    <!-- Formulario para abrir todas las cajas -->
-    <form id="abrirCajasForm" action="/abrir-todas" method="POST">
-        <button type="button" id="abrirCajasBtn" class="btn btn-success">Abrir todas las Cajas</button>
-    </form>
-    
-    <!-- Formulario para cerrar todas las cajas -->
-    <form id="cerrarCajasForm" action="/cerrar-todas" method="POST">
-        <button type="submit" id="cerrarCajasBtn" class="btn btn-danger">Cerrar todas las Cajas</button>
-    </form>
+    <div class="breadcrumb">
+        <a href="/vista_Finanzas" class="reporte-link">
+            <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Finanzas</h1>
+        </a>
+        <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+        <h1 style="font-weight: bold;">Reportes</h1>
+    </div>
+    <!-- Párrafo debajo del encabezado -->
+    <p class="subtext">Ingresa al reporte específico que deseas observar.</p>
 </div>
 
 
-  
-</div>
+
 
     <!-- Contenido de las tarjetas -->
     <div class="container2">
-        <!-- Card 1: Ventas Mensuales -->
-        <div class="card1">
-            <div class="header-card1">
-                <span>Tablero de Cajas - Sucursal Miraflores</span>
-            </div>
-            <div class="content-card1">
-                <div>
-                    <h2 id="ventasTotales">Bs. </h2>
+      <!-- Card 1: Reportes -->
+<!-- Card 1: Reportes -->
+<div class="card1">
+    <div class="header-card1">
+        <span>Reportes</span>
+    </div>
+    
+    <!-- Primera sección con texto grande y gráfico -->
+    <div class="content-card1">
+        <div>
+            <h2>Bs. 78,569</h2>
+            <p>Ganancia Anual</p>
+        </div>
+        <div>
+            <canvas id="grafico1" height="200px" width="450px"></canvas>
+        </div>
+    </div>
+    
+    <!-- Segunda sección con porcentaje y gráfico -->
+    <div class="content-card1">
+        <div>
+            <h2>56%</h2>
+            <p>Clientes Adolescentes</p>
+        </div>
+        <div>
+            <canvas id="grafico2" height="200px" width="450px"></canvas>
+        </div>
+    </div>
+</div>
 
-                    <p>Venta total del dia</p>
-                </div>
-                <div style="margin: 25px;">
-                    <a href="/reporte-ventas" target="_blank" class="reporte-link">Ver reporte del día >></a>
 
-                </div>
+
+     <!-- Tarjeta de Reportes -->
+    <div class="card-container">
+        <div class="card2">
+            <h2>Reporte de Productos</h2>
+            <p>Reporte de productos por gestiones.</p>
+            <div class="footer">
+                <a href="/reporte_productos">Ir a imprimir reporte</a>
+                <span>&#x27A4;</span>
             </div>
         </div>
 
-     <!-- Card 2: Productos -->
-      <div class="card1">
-        <div class="header-card1">
-            <span>Configurar Caja</span>
-            
-        </div>
-        <div class="content-card11">
-            <div class="flex-row">
-                <p>Administrar Sucursal</p>
-                <button class="btn btn-blue"><a href="/mantenimiento" class="reporte-link">Administrar</a></button>
-            </div>
-            <br>
-            <div class="flex-row">
-                <p>Administrar Cajas</p>
-                <button class="btn btn-blue"><a href="/mantenimiento" class="reporte-link">Administrar</a></button>
+        <div class="card2">
+            <h2>Reporte de ganancias</h2>
+            <p>Reporte de ganancias por gestiones.</p>
+            <div class="footer">
+                <a href="/mantenimiento">Ir a imprimir reporte</a>
+                <span>&#x27A4;</span>
             </div>
         </div>
-      </div>
+
+        <div class="card2">
+            <h2>Reporte de Ventas</h2>
+            <p>Reporte de ventas por gestiones.</p>
+            <div class="footer">
+                <a href="/mantenimiento">Ir a imprimir reporte</a>
+                <span>&#x27A4;</span>
+            </div>
+        </div>
+
+        <div class="card2">
+            <h2>Reporte de Proveedores</h2>
+            <p>Reporte general de proveedores.</p>
+            <div class="footer">
+                <a href="/mantenimiento">Ir a imprimir reporte</a>
+                <span>&#x27A4;</span>
+            </div>
+        </div>
+
+        <div class="card2">
+            <h2>Reporte de Recursos humanos</h2>
+            <p>Reporte general de recursos humanos.</p>
+            <div class="footer">
+                <a href="/mantenimiento">Ir a imprimir reporte</a>
+                <span>&#x27A4;</span>
+            </div>
+        </div>
+    </div>
 
 
    
@@ -90,6 +125,91 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="js/AbrirCerrar.js"></script>
 <script src="js/alertas.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Gráfico 1: Ventas y Ganancias por Gestión (Barras Apiladas)
+    var ctx1 = document.getElementById('grafico1').getContext('2d');
+    var grafico1 = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: ['Gestión 1', 'Gestión 2', 'Gestión 3', 'Gestión 4'],
+            datasets: [{
+                label: 'Ventas',
+                data: [50000, 60000, 70000, 80000],
+                backgroundColor: '#03A9F5'
+            },
+            {
+                label: 'Ganancias',
+                data: [20000, 30000, 40000, 50000],
+                backgroundColor: '#58C9F3'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    stacked: true,
+                    ticks: {
+                        color: '#FFFFFF' // Letras blancas
+                    }
+                },
+                y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#FFFFFF' // Letras blancas
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#FFFFFF' // Leyenda en blanco
+                    }
+                }
+            }
+        }
+    });
+</script>
+<script>
+    // Gráfico 2: Tipos de Pacientes (Barras Horizontales)
+    var ctx2 = document.getElementById('grafico2').getContext('2d');
+    var grafico2 = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: ['Adolescentes', 'Adultos', 'Niños', 'Ancianos'],
+            datasets: [{
+                label: 'Pacientes',
+                data: [56, 25, 10, 9],
+                backgroundColor: ['#03A9F5', '#58C9F3', '#B2EBF5', '#76D7C4']
+            }]
+        },
+        options: {
+            responsive: true,
+            indexAxis: 'y', // Esto hace que las barras sean horizontales
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#FFFFFF' // Letras blancas
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: '#FFFFFF' // Letras blancas
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#FFFFFF' // Leyenda en blanco
+                    }
+                }
+            }
+        }
+    });
+</script>
 
 
 </html>

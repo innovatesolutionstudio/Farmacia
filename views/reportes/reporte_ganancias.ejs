@@ -1,167 +1,253 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
-  <link rel="shortcut icon" href="#" />
-  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <title>DataTables estilo Bootstrap 5 - NodeJS y Express</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
-    integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous" />
-  <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap5.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css" />
- 
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="resources/css/reportes_espe.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <title>Ventas - Finanzas</title>
 </head>
 
-
 <body>
-    <div class="container-fluid">
-        <H1 class="titulo">&nbsp;&nbsp;&nbsp;&nbsp;Tablero de Reportes - Ganancias</H1>
-    
-    <div class="container">
-        
-        <div class="row">
-             <!--reporte 2 -->
-             <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        Reporte de ganancias de productos segun a sus areas por Gestiones
-                    </div>
-                    <div class="card-body">
-                        <form id="formPDF2" method="post" target="_blank">
-                            <div class="mb-3">
-                                <label for="anio" class="form-label">Ingrese el año:</label>
-                                <select id="anio" name="anio" class="form-select">
-                                    <% 
-                                    // Generar opciones del año desde 2012 hasta el año actual
-                                    var anioActual = new Date().getFullYear() - 1;
-                                    for (var i = 2012; i <= anioActual; i++) { %>
-                                        <option value="<%= i %>"><%= i %></option>
-                                    <% } %>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-generate">Generar Reporte</button>
-                        </form>
-                        
-                    </div>
-                </div>
-            </div>
-            <!--reporte 4 -->
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        Reporte de los 20 productos con mayor ganancias por gestiones
-                    </div>
-                    <div class="card-body">
-                        <form id="formPDF4"  method="post" target="_blank">
-                            <div class="mb-3">
-                                <label for="anio" class="form-label">Ingrese el año:</label>
-                                <select id="anio" name="anio" class="form-select">
-                                    <% 
-                                    // Generar opciones del año desde 2012 hasta el año actual
-                                    var anioActual = new Date().getFullYear() - 1;
-                                    for (var i = 2012; i <= anioActual; i++) { %>
-                                        <option value="<%= i %>"><%= i %></option>
-                                    <% } %>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-generate">Generar</button>
-                        </form>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-       
-        
+
+  <!-- Encabezado -->
+  <div class="header-container">
+    <div class="breadcrumb">
+      <a href="/vista_Finanzas" class="reporte-link ">
+        <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Finanzas</h1>
+      </a>
+      <h2 style="color: #858B92; font-weight: bold; margin-right: 5px;">›</h2>
+      <a href="/vista_reportes" class="reporte-link">
+        <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Reportes</h1>
+      </a>
+      <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+      <h1 style="font-weight: bold;">Productos</h1>
     </div>
+  </div>
+
+  <!-- Filtro de fecha y selección de opciones -->
+<div class="filters-container">
+  
+  <div class="filter">
+    <label for="fecha">Rango de reporte</label>
+    <input type="text" id="fecha" value="Reporte de " readonly>
+    <i class="fa fa-calendar"></i>
+  </div>
+
+  <div class="filter">
+    <label for="medicamento">Medicamento</label>
+    <select id="anio" name="anio" class="form-select">
+      <script>
+        const anioActual = new Date().getFullYear();
+        for (let i = 2012; i <= anioActual; i++) {
+          document.write(`<option value="${i}">${i}</option>`);
+        }
+      </script>
+    </select>
+  </div>
+
+  <div class="filter">
+    <label for="lote">Nombre de lote</label>
+    <select id="mes" name="mes" class="form-select">
+      <option value="1">Enero</option>
+      <option value="2">Febrero</option>
+      <option value="3">Marzo</option>
+      <option value="4">Abril</option>
+      <option value="5">Mayo</option>
+      <option value="6">Junio</option>
+      <option value="7">Julio</option>
+      <option value="8">Agosto</option>
+      <option value="9">Septiembre</option>
+      <option value="10">Octubre</option>
+      <option value="11">Noviembre</option>
+      <option value="12">Diciembre</option>
+    </select>
+  </div>
+
+  <!-- Botón de imprimir -->
+  <div class="filter">
+    <label for="lote">Imprimir en PDF</label>
+    <a class="print-btn" id="saveChartBtn">
+      <i class="fa fa-print"></i> Imprimir
+    </a>
+  </div>
+</div>
+
+
+  <!-- Contenido de las tarjetas -->
+  <div class="container2">
+    <!-- Card 1: Reportes -->
+    <div class="card1">
+      <div class="header-card1">
+        <div id="chartTitle">Reporte de productos más vendidos por mes y gestión</div>
+      </div>
+      <div>
+        <canvas id="ventasChart" width="300" height="200"></canvas>
+      </div>
+    </div>
+    <!-- Tarjeta de Reportes -->
+<div class="card-container">
+  <div class="card2">
+    <div class="header-card1">
+      <span>Tabla de productos más vendidos por mes y gestión</span>
+    </div>
+    <div class="table-container">
+      <table id="productosTable">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Total Vendido</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Los datos serán agregados aquí dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+  </div>
+
 </body>
 
-</html>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 <script>
-      
-        //reporte 2
-        document.getElementById('formPDF2').addEventListener('submit', function(event) {
-            // Obtener el año ingresado
-            var year = document.getElementById('anio').value;
-            // Agregar el año como un parámetro en la URL
-            this.action = 'http://localhost/farmacia_1/reportes/reporte_Areas_G.php?anio=' + encodeURIComponent(year);
-        });
-        
-        //reporte 4
-        document.getElementById('formPDF4').addEventListener('submit', function(event) {
-            // Obtener el año ingresado
-            var year = document.getElementById('anio').value;
-            // Agregar el año como un parámetro en la URL
-            this.action = 'http://localhost/farmacia_1/reportes/reporte_Ganancias_Anual.php?anio=' + encodeURIComponent(year);
-        });
-       
+  document.addEventListener('DOMContentLoaded', function () {
+    const anioSelect = document.getElementById('anio');
+    const mesSelect = document.getElementById('mes');
+    const saveChartBtn = document.getElementById('saveChartBtn');
+    const productosTableBody = document.querySelector('#productosTable tbody');
 
-        
+    function fetchAndRenderChart(year, month) {
+      fetch(`/ventas/productos_mas_vendidos/${year}/${month}`)
+        .then(response => response.json())
+        .then(data => {
+          const labels = data.map(item => item.Producto);
+          const totals = data.map(item => item.TotalVendido);
+
+          // Actualizar gráfico
+          const ctx = document.getElementById('ventasChart').getContext('2d');
+
+          if (window.myChart) {
+            window.myChart.destroy();
+          }
+
+          window.myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'Productos Vendidos',
+                data: totals,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+              }]
+            },
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+
+          // Actualizar tabla
+          productosTableBody.innerHTML = '';  // Limpiar tabla antes de agregar nuevos datos
+          data.forEach(item => {
+            const row = `
+              <tr>
+                <td>${item.Producto}</td>
+                <td>${item.TotalVendido}</td>
+              </tr>
+            `;
+            productosTableBody.insertAdjacentHTML('beforeend', row);
+          });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    }
+
+    fetchAndRenderChart(anioSelect.value, mesSelect.value);
+
+    anioSelect.addEventListener('change', function () {
+      fetchAndRenderChart(this.value, mesSelect.value);
+    });
+
+    mesSelect.addEventListener('change', function () {
+      fetchAndRenderChart(anioSelect.value, this.value);
+    });
+
+    saveChartBtn.addEventListener('click', function () {
+      const year = anioSelect.value;
+      const month = mesSelect.value;
+      const image = document.getElementById('ventasChart').toDataURL('image/png');
+
+      fetch('/save_chart_image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            image,
+            year,
+            month,
+            title: 'Productos más vendidos'
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.pdfUrl) {
+            window.open(data.pdfUrl, '_blank');
+          } else {
+            alert('Error al generar el PDF.');
+          }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+  });
 </script>
-<style>
-    body {
-        background-color: #f8f9fa;
-        font-family: Arial, sans-serif;
-    }
-    .titulo{
-        
-          text-align: left;
-          font-family: Arial,sans-serif;
-          font-size: 25px;
-          padding: 20px 0;
-          background-color:#485464; 
-      
-          color: #ffffff;
-    }
 
-    .container {
-        max-width: 100%;
-        margin: 0 auto;
-        padding: 30px;
-    }
 
-    .card {
-        margin-bottom: 20px;
-    }
+<script>
+  const anioSelect = document.getElementById('anio');
+  const mesSelect = document.getElementById('mes');
+  const fechaInput = document.getElementById('fecha');
 
-    .card-header {
-        background-color:#485464;
-        color: #ffffff;
-        font-size: 24px;
-        font-weight: bold;
-        padding: 15px 20px;
-        border-bottom: none;
-    }
+  // Nombres de los meses
+  const meses = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ];
 
-    .card-body {
-        background-color: #ffffff;
-        padding: 20px;
-    }
+  // Función para actualizar el campo de rango de reporte
+  function actualizarRangoReporte() {
+    const anioSeleccionado = anioSelect.value;
+    const mesSeleccionado = mesSelect.value;
 
-    .form-label {
-        font-weight: bold;
+    if (anioSeleccionado && mesSeleccionado) {
+      const nombreMes = meses[mesSeleccionado - 1];
+      fechaInput.value = `Reporte de la gestión ${anioSeleccionado} - Mes ${nombreMes}`;
+    } else if (anioSeleccionado) {
+      fechaInput.value = `Reporte de la gestión ${anioSeleccionado}`;
+    } else {
+      fechaInput.value = 'Reporte de ';
     }
+  }
 
-    .form-select,
-    .form-control {
-        width: 100%;
-        margin-bottom: 15px;
-    }
+  // Escuchar cambios en los select de año y mes
+  anioSelect.addEventListener('change', actualizarRangoReporte);
+  mesSelect.addEventListener('change', actualizarRangoReporte);
+</script>
 
-    .btn-generate {
-        background-color: #485464;
-        color: #ffffff;
-        border: none;
-        padding: 10px 20px;
-        font-size: 18px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .btn-generate:hover {
-        background-color: #485464;
-        color: beige;
-    }
-</style>
+</html>

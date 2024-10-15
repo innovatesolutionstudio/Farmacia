@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../database/db'); // Importar el pool
-
 router.post('/auth', async (req, res) => {
     const email = req.body.Email.toLowerCase(); 
     const password = req.body.pass;
@@ -107,8 +106,8 @@ router.post('/auth', async (req, res) => {
                     alertTitle: "Conexión exitosa",
                     alertMessage: "Inicio de sesión correcto",
                     alertIcon: "success",
-                    showConfirmButton: false,
-                    timer: 1500,
+                    showConfirmButton: true,  // Cambiado a true para que se requiera clic
+                    timer: false,             // Deshabilitado para que no se cierre automáticamente
                     ruta: ''
                 });
             }
