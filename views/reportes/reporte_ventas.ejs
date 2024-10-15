@@ -1,246 +1,192 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
-  <link rel="shortcut icon" href="#" />
-  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <title>DataTables estilo Bootstrap 5 - NodeJS y Express</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
-    integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous" />
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap5.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="resources/css/reportes_espe.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <title>Ventas - Finanzas</title>
 </head>
 
 <body>
-  <div class="container-fluid">
-    <H1 class="titulo">&nbsp;&nbsp;&nbsp;&nbsp;Tablero de Reportes - Ventas</H1>
-    <div class="container">
-      <div class="row">
-        <!-- Reporte 1 -->
-        <div class="col-md-6">
-          <div class="card">
-            <div class="card-header" id="chartTitle1">
-              Reporte de ventas por Gestiones
-            </div>
-            <canvas id="ventasChart1" width="300" height="200"></canvas>
-            <div class="card-body">
-              <form id="reporteForm1">
-                <div class="mb-3">
-                  <label for="anio1" class="form-label">Ingrese el año:</label>
-                  <select id="anio1" name="anio" class="form-select">
-                    <script>
-                      const anioActual1 = new Date().getFullYear();
-                      for (let i = 2012; i <= anioActual1; i++) {
-                        document.write(`<option value="${i}">${i}</option>`);
-                      }
-                    </script>
-                  </select>
-                </div>
-              </form>
-              
-              <button id="saveChartBtn1" class="btn btn-generate">Generar Reporte</button>
-            </div>
-          </div>
-        </div>
 
-        <!-- Reporte 2 -->
-       
-        <div class="col-md-6" >
-          <div class="card" >
-            <div class="card-header" id="chartTitle" style="height: auto;">
-              Reporte de ventas de productos por proveedores
-            </div>
-          
-              <canvas id="ventasChart" width="300" ></canvas>
-    
-          
-            <div class="card-body">
-              <form id="reporteForm">
-                <div class="mb-3">
-                  <label for="anio" class="form-label">Ingrese el año:</label>
-                  <select id="anio" name="anio" class="form-select">
-                    <script>
-                      const anioActual = new Date().getFullYear();
-                      for (let i = 2012; i <= anioActual; i++) {
-                        document.write(`<option value="${i}">${i}</option>`);
-                      }
-                    </script>
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label for="mes" class="form-label">Ingrese el mes:</label>
-                  <select id="mes" name="mes" class="form-select">
-                    <option value="1">Enero</option>
-                    <option value="2">Febrero</option>
-                    <option value="3">Marzo</option>
-                    <option value="4">Abril</option>
-                    <option value="5">Mayo</option>
-                    <option value="6">Junio</option>
-                    <option value="7">Julio</option>
-                    <option value="8">Agosto</option>
-                    <option value="9">Septiembre</option>
-                    <option value="10">Octubre</option>
-                    <option value="11">Noviembre</option>
-                    <option value="12">Diciembre</option>
-                  </select>
-                </div>
-              </form>
-              <button id="saveChartBtn" class="btn btn-generate">Generar Reporte</button> 
-            </div>
-          </div>
-        </div>
-      </div>
+  <!-- Encabezado -->
+  <div class="header-container">
+    <div class="breadcrumb">
+      <a href="/vista_Finanzas" class="reporte-link ">
+        <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Finanzas</h1>
+      </a>
+      <h2 style="color: #858B92; font-weight: bold; margin-right: 5px;">›</h2>
+      <a href="/vista_reportes" class="reporte-link">
+        <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Reportes</h1>
+      </a>
+      <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+      <h1 style="font-weight: bold;">Ventas</h1>
     </div>
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const anioSelect1 = document.getElementById('anio1');
-      const saveChartBtn1 = document.getElementById('saveChartBtn1');
-      const chartTitle1 = document.getElementById('chartTitle1').innerText;
-      function fetchAndRenderChart1(year) {
-  fetch(`/ventas/ventas_g/${year}`)
-    .then(response => response.json())
-    .then(data => {
-      const labels = data.map(item => item.Mes);
-      const totals = data.map(item => item.Total);
-      const ctx = document.getElementById('ventasChart1').getContext('2d');
+<!-- Filtro de fecha y selección de opciones -->
+<div class="filters-container">
 
-      if (window.myChart1) {
-        window.myChart1.destroy();
-      }
-      window.myChart1 = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Ventas por Mes',
-            data: totals,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
+  <div class="filter">
+    <label for="fecha">Rango de reporte</label>
+    <input type="text" id="fecha" value="Seleccione un año" readonly>
+    <i class="fa fa-calendar"></i>
+  </div>
+
+  <div class="filter">
+    <label for="medicamento">Año</label>
+    <select id="anio1" name="anio" class="form-select">
+      <script>
+        const anioActual1 = new Date().getFullYear();
+        for (let i = 2012; i <= anioActual1; i++) {
+          document.write(`<option value="${i}">${i}</option>`);
         }
-      });
-    })
-    .catch(error => console.error('Error fetching data:', error));
-}
+      </script>
+    </select>
+  </div>
 
-fetchAndRenderChart1(anioSelect1.value);
+  <!-- Botón de imprimir -->
+  <div class="filter">
+    <label for="lote">Imprimir en PDF</label>
+    <a class="print-btn" id="saveChartBtn1">
+      <i class="fa fa-print"></i> Imprimir
+    </a>
+  </div>
+</div>
 
-anioSelect1.addEventListener('change', function () {
-  fetchAndRenderChart1(this.value);
-});
+<!-- Contenido de las tarjetas -->
+<div class="container2">
+  <!-- Card 1: Reportes -->
+  <div class="card1">
+    <div class="header-card1">
+      <div id="chartTitle">Reporte de ventas por gestiones</div>
+    </div>
+    <div>
+      <canvas id="ventasChart1" width="300" height="200"></canvas>
+    </div>
+  </div>
 
-      
-      saveChartBtn1.addEventListener('click', function() {
-        const year = anioSelect1.value;
-        const image = document.getElementById('ventasChart1').toDataURL('image/png');
-        fetch('/save_chart_image', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ image, year, title: chartTitle1  })
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.pdfUrl) {
-            window.open(data.pdfUrl, '_blank');
-          } else {
-            alert('Error al generar el PDF.');
-          }
-        })
-        .catch(error => console.error('Error:', error));
-      });
-    });
-  </script>
- <script>
+  <!-- tabla de Reportes -->
+  <div class="card-container">
+    <div class="card2">
+      <div class="header-card1">
+        <span>Tabla de ventas por gestiones</span>
+      </div>
+      <div class="table-container">
+        <table id="productosTable">
+          <thead>
+            <tr>
+              <th>Mes</th>
+              <th>Total Vendido</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Los datos serán agregados aquí dinámicamente -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
   document.addEventListener('DOMContentLoaded', function () {
-    const anioSelect = document.getElementById('anio');
-    const mesSelect = document.getElementById('mes');
-    const saveChartBtn = document.getElementById('saveChartBtn');
-    const chartTitle = document.getElementById('chartTitle').innerText;
+    const anioSelect1 = document.getElementById('anio1');
+    const saveChartBtn1 = document.getElementById('saveChartBtn1');
+    const productosTableBody = document.querySelector('#productosTable tbody');
+    const chartTitle1 = document.getElementById('chartTitle').innerText;
 
-    function fetchAndRenderChart(year, month) {
-      fetch(`/ventas/ventas_p/${year}/${month}`)
+    // Nombres de los meses en español
+    const nombresMeses = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+
+    function fetchAndRenderChart1(year) {
+      fetch(`/ventas/ventas_g/${year}`)
         .then(response => response.json())
         .then(data => {
-          const labels = data.map(item => item.Proveedor);
-          const totals = data.map(item => item.Cantidad_Total);
-          const ctx = document.getElementById('ventasChart').getContext('2d');
+          // Reemplazar los números de los meses con los nombres de los meses
+          const labels = data.map(item => nombresMeses[item.Mes - 1]); // -1 para que el índice comience en 0
+          const totals = data.map(item => item.Total);
+          const ctx = document.getElementById('ventasChart1').getContext('2d');
 
-          if (window.myChart) {
-            window.myChart.destroy();
+          // Destruir el gráfico anterior si existe
+          if (window.myChart1) {
+            window.myChart1.destroy();
           }
 
-          window.myChart = new Chart(ctx, {
-            type: 'pie', // Cambiamos el tipo de gráfico a 'torta'
+          // Crear el nuevo gráfico
+          window.myChart1 = new Chart(ctx, {
+            type: 'line',
             data: {
-              labels: labels,
+              labels: labels, // Usamos los nombres de los meses
               datasets: [{
-                label: 'Ventas por Proveedor',
+                label: 'Ventas por Mes',
                 data: totals,
-                backgroundColor: [
-                  'rgba(255, 99, 132, 0.2)',
-                  'rgba(54, 162, 235, 0.2)',
-                  'rgba(255, 206, 86, 0.2)',
-                  'rgba(75, 192, 192, 0.2)',
-                  'rgba(153, 102, 255, 0.2)',
-                  'rgba(255, 159, 64, 0.2)'
-                  // Puedes agregar más colores si tienes más proveedores
-                ],
-                borderColor: [
-                  'rgba(255, 99, 132, 1)',
-                  'rgba(54, 162, 235, 1)',
-                  'rgba(255, 206, 86, 1)',
-                  'rgba(75, 192, 192, 1)',
-                  'rgba(153, 102, 255, 1)',
-                  'rgba(255, 159, 64, 1)'
-                  // Puedes agregar más colores si tienes más proveedores
-                ],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
               }]
             },
             options: {
-              responsive: true, // Desactivamos la responsividad
-              width: 600, // Establecemos el ancho del gráfico
-              height: 1000 // Establecemos la altura del gráfico
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
             }
+          });
+
+          // Actualizar la tabla de productos más vendidos
+          productosTableBody.innerHTML = ''; // Limpiar la tabla antes de añadir nuevos datos
+          data.forEach(item => {
+            const row = `
+              <tr>
+                <td>${nombresMeses[item.Mes - 1]}</td> <!-- Mostramos el nombre del mes -->
+                <td>Bs. ${item.Total}</td>
+              </tr>
+            `;
+            productosTableBody.insertAdjacentHTML('beforeend', row);
           });
         })
         .catch(error => console.error('Error fetching data:', error));
     }
 
-    fetchAndRenderChart(anioSelect.value, mesSelect.value);
+    // Llamar a la función para renderizar al inicio
+    fetchAndRenderChart1(anioSelect1.value);
 
-    anioSelect.addEventListener('change', function () {
-      fetchAndRenderChart(this.value, mesSelect.value);
+    // Actualizar el gráfico y la tabla cuando se cambie el año
+    anioSelect1.addEventListener('change', function () {
+      fetchAndRenderChart1(this.value);
     });
 
-    mesSelect.addEventListener('change', function () {
-      fetchAndRenderChart(anioSelect.value, this.value);
-    });
-
-    saveChartBtn.addEventListener('click', function () {
-      const year = anioSelect.value;
-      const month = mesSelect.value;
-      const image = document.getElementById('ventasChart').toDataURL('image/png');
+    // Funcionalidad del botón para guardar como PDF
+    saveChartBtn1.addEventListener('click', function () {
+      const year = anioSelect1.value;
+      const image = document.getElementById('ventasChart1').toDataURL('image/png');
 
       fetch('/save_chart_image', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ image, year, month, title: chartTitle })
+        body: JSON.stringify({
+          image,
+          year,
+          title: chartTitle1
+        })
       })
         .then(response => response.json())
         .then(data => {
@@ -255,62 +201,30 @@ anioSelect1.addEventListener('change', function () {
   });
 </script>
 
-</body>
 
-<style>
-    body {
-      background-color: #f8f9fa;
-      font-family: Arial, sans-serif;
+
+<script>
+  const anioSelect = document.getElementById('anio1');
+  const fechaInput = document.getElementById('fecha');
+
+
+
+  // Función para actualizar el campo de rango de reporte
+  function actualizarRangoReporte() {
+    const anioSeleccionado = anioSelect.value;
+    if (anioSeleccionado ) {
+      
+      fechaInput.value = `Reporte de la gestión ${anioSeleccionado}`;
+    } else if (anioSeleccionado) {
+      fechaInput.value = `Reporte de la gestión ${anioSeleccionado}`;
+    } else {
+      fechaInput.value = 'Seleccione la gestion para el reporte ';
     }
-    .titulo {
-      text-align: left;
-      font-family: Arial, sans-serif;
-      font-size: 25px;
-      padding: 20px 0;
-      background-color: #485464;
-      color: #ffffff;
-    }
-    .container {
-      max-width: 100%;
-      margin: 0 auto;
-      padding: 30px;
-    }
-    .card {
-      margin-bottom: 20px;
-    }
-    .card-header {
-      background-color: #485464;
-      color: #ffffff;
-      font-size: 24px;
-      font-weight: bold;
-      padding: 15px 20px;
-      border-bottom: none;
-    }
-    .card-body {
-      background-color: #ffffff;
-      padding: 20px;
-    }
-    .form-label {
-      font-weight: bold;
-    }
-    .form-select,
-    .form-control {
-      width: 100%;
-      margin-bottom: 15px;
-    }
-    .btn-generate {
-      background-color: #485464;
-      color: #ffffff;
-      border: none;
-      padding: 10px 20px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .btn-generate:hover {
-      background-color: #485464;
-      color: beige;
-    }
-    </style>
-    
+  }
+
+  // Escuchar cambios en los select de año y mes
+  anioSelect.addEventListener('change', actualizarRangoReporte);
+</script>
+
+
 </html>

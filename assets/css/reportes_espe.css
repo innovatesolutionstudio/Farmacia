@@ -175,12 +175,10 @@ body {
     border: 1px solid #E0E0E0;
     border-radius: 10px;
     padding: 15px;
-    display: flex;
     flex-direction: column;
     justify-content: space-between;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     position: relative;
-    
     overflow-y: auto; /* Activa la barra de desplazamiento vertical */
     height: 600px;
 }
@@ -188,7 +186,6 @@ body {
 /* Estilos para la tabla */
 .table-container {
     margin-top: 20px;
-   
     overflow-y: auto; /* Activa la barra de desplazamiento vertical si es necesario */
 }
 
@@ -209,4 +206,7 @@ th, td {
 th {
     background-color: #f2f2f2;
     font-weight: bold;
+}
+canvas {
+    height: 500px !important;
 }

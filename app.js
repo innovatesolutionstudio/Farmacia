@@ -48,6 +48,7 @@ const reporte_fut_ventasRoutes = require('./routes/reporte_fut_ventas');
 const reporte_compras_GRoutes = require('./routes/reporte_compras_G');
 const reporte_Productos_VRoutes = require('./routes/reporte_Productos_V');
 const reporte_ventasRoutes = require('./routes/reporte_ventas');
+const reporte_proveedoresRoutes = require('./routes/reporte_proveedores');
 
 //impresiones
 const impre_ciudades = require('./routes/impre_ciudades');
@@ -222,6 +223,7 @@ app.use(reportestareasRoutes);
 app.use(reporte_compras_GRoutes);
 app.use(reporte_Productos_VRoutes);
 app.use(reporte_ventasRoutes);
+app.use(reporte_proveedoresRoutes);
 //impresiones 
 app.use(impre_ciudades);
 app.use(impre_paises);
@@ -260,9 +262,10 @@ app.get('/reporte_productos',(req, res)=>{
     res.render('./reportes/reporte_productos');
 })
 app.get('/reporte_ventas',(req, res)=>{
-
-        res.render('./reportes/reporte_ventas');
-  
+    res.render('./reportes/reporte_ventas');
+})
+app.get('/reporte_proveedores',(req, res)=>{
+    res.render('./reportes/reporte_proveedores');
 })
 app.get('/reporte_compras',(req, res)=>{
     res.render('./reportes/reporte_compras');
