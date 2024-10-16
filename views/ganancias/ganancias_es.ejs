@@ -1,202 +1,239 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
-  <link rel="shortcut icon" href="#" />
-  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <title>DataTables estilo Bootstrap 5 - NodeJS y Express</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
-    integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous" />
-  <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap5.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css" />
-  <style>
-    table.dataTable thead {
-      background-color: #485464;
-    color: white;
-    }
- 
-    .ftable{
-      background-color: rgba(224, 223, 223, 0.433);
-      color: rgb(0, 0, 0);
-    }
-    .btn-group img {
-    max-width: 24px; /* Define el ancho máximo del icono */
-    max-height: 24px; /* Define el alto máximo del icono */
-    }
-    body{
-      background-color: #00000000;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="resources/css/cajas.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Cargamos Chart.js para poder crear gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <title>Ventas - Finanzas</title>
 </head>
-
 <body>
-  <div class="container-fluid">
-    <H1 id="tituloImpresion"  style="
-      text-align: left;
-      font-family: Arial,sans-serif;
-      font-size: 25px;
-      padding: 20px 0;
-      background-color: #485464; 
-      color: #ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;Tablero de control - Ganancias</H1>
 
-<a id="btnActualizar" class="btn btn-group btn-light mt-2" style="font-size: 20px;">
-  <img src="resources/images/iconos/refresh.svg" alt="Actualizar"> &nbsp;Actualizar
-</a>
+<!-- Encabezado -->
+<div class="header-container">
+  <div class="breadcrumb">
+    <a href="/vista_Finanzas" class="reporte-link">
+        <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Finanzas</h1>
+    </a>
+    <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+    <h1 style="font-weight: bold;">Ganancias</h1>
+  </div>
+</div>
 
-<a id="btnExportar" class="btn btn-group btn-light mt-2" style="font-size: 20px;">
-  <img src="resources/images/iconos/export.svg" alt="Exportar"> &nbsp;Exportar CSV 
-</a>
+<div class="container2">
+    <!-- Card 1: Información del Empleado -->
+    <div class="card1">
+        <div class="header-card1">
+            <span>Grafico de Futuras Gananacias</span>
+            <a href="#" onclick="verGrafico()">Ver más &raquo;</a>
+        </div>
+        <div class="content-card1">
+            <div>
+                <h2 id="">Cargando...</h2>
+                <p>Sucursal</p>
+            </div> 
+            <div>
+                <h2 id="prodconmayorganancias">Cargando..</h2>
+                <p>Producto con mayor ganancias</p>
+            </div>
+        </div>
+    </div>
 
-<a href="/impre_ganancias" class="btn btn-group btn-light mt-2" style="font-size: 20px;" target="_blank">
-  <img src="resources/images/iconos/print.svg" alt="Imprimir"> &nbsp;Imprimir
-</a>
+    <!-- Card 2: Estado Actual de la Caja -->
+    <div class="card1">
+        <div class="header-card1">
+            <span>Ganancias</span>
+        </div>
+        <div class="content-card1">
+            <div>
+                <h2 id="gananciaAnual">Cargando...</h2>
+                <p>Gananacia Anual</p>
+            </div>
+            <div>
+                <h2 id="gananciaMensual">Cargando...</h2>
+                <p>Ganancias Mensual</p>
+            </div>
+        </div>
+    </div>
+</div>
 
-<div class="row shadow-lg p-3 mb-5 ftable" id="gananciasContainer">
-      
-      <div class="col">
-        <table id="tablaGanancias" class="table table-striped table-bordered" style="width: 100%">
+<br>
 
-          <thead>
-            <tr>
-                <th class="text-center">Año</th>
-                <th class="text-center">Ganancia Total Anual</th>
-                <th class="text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
+<!-- Tabla de ventas y clientes facturados -->
+<div class="card3">
+    <div class="header-card1">
+        <span>Historia de Clientes Facturados</span>
+    </div>
+    <div class="content-card-clientes">
+        <table class="table-clientes">
+            <thead>
+                <tr>
+                    <th>Año</th>
+                    <th>Ganancia</th>
+                </tr>
+            </thead>
             <% results.forEach(function(ganancia) { %>
               <tr>
                 
                 <td class="text-center"><%= ganancia.Ano %></td>
                 <td class="text-center"><%= ganancia.Ganancia_Total_Anual %></td>
-                <td>
-                  <div class="text-center">
-                    <div class="btn-group">
-                      <a href="#" class="btn btn-sm btnCopiar"><img src="resources/images/iconos/copy.svg" alt="Copiar"></a>
-                    </div>
-                  
-                  </div>
-                  
-                </td>
+          
               </tr>
               <% }); %>
-          </tbody>
         </table>
-      </div>
     </div>
-  </div>
+</div>
+<script>
+  // Definimos las variables globalmente para la regresión
+  let m, b;
+  
+  // Función para abrir el gráfico en una ventana emergente de SweetAlert2
+  function verGrafico() {
+      // Datos que vienen desde el servidor (incrustados en la plantilla EJS)
+      const resultados = <%- JSON.stringify(results) %>;
+  
+      // Extraemos los años y las ganancias de los resultados para trabajar con ellos
+      const anos = resultados.map(item => item.Ano);
+      const ganancias = resultados.map(item => item.Ganancia_Total_Anual);
+  
+      // Calculamos la regresión lineal y almacenamos m y b globalmente
+      const regresion = calcularRegresionLineal(anos, ganancias);
+      m = regresion.m;
+      b = regresion.b;
+  
+      // Configuración de los datos para el gráfico
+      var datiedu3 = {
+          labels: anos, // Etiquetas de los años para el eje X
+          datasets: [
+              {
+                  label: 'Ganancia Total Anual',
+                  data: anos.map((ano, index) => ({ x: ano, y: ganancias[index] })),
+                  backgroundColor: 'rgb(255, 99, 132)', // Color de los puntos de ganancia
+                  borderWidth: 1,
+                  showLine: false // No conectar los puntos, es un gráfico de dispersión
+              },
+              {
+                  label: 'Línea de Regresión',
+                  data: anos.map(x => ({ x: x, y: m * x + b })), // Puntos de la línea de regresión
+                  borderColor: 'rgb(54, 162, 235)', // Color de la línea de regresión
+                  fill: false,
+                  type: 'line', // Tipo de gráfico: línea
+                  pointRadius: 0 // No mostrar puntos en la línea de regresión
+              }
+          ]
+      };
+  
+      // Opciones de configuración del gráfico, incluyendo etiquetas para los ejes
+      var opzioni = {
+          scales: {
+              x: {
+                  title: {
+                      display: true,
+                      text: 'Año' // Etiqueta del eje X
+                  }
+              },
+              y: {
+                  title: {
+                      display: true,
+                      text: 'Ganancia Total Anual' // Etiqueta del eje Y
+                  }
+              }
+          }
+      };
+  
+      // Mostrar el gráfico dentro de una ventana emergente de SweetAlert2
+      Swal.fire({
+          title: 'Gráfico de Regresión Lineal',
+          html: `
+           <canvas id="Chartline" width="400" height="200"></canvas>
+            <br>
+            <!-- Select con las opciones de año -->
+            <select id="yearSelect">
+                <option value="${new Date().getFullYear() - 1}">${new Date().getFullYear() - 1}</option> <!-- Año pasado -->
+                <option value="${new Date().getFullYear()}" selected>${new Date().getFullYear()}</option> <!-- Año actual, seleccionado por defecto -->
+                <option value="${new Date().getFullYear() + 1}">${new Date().getFullYear() + 1}</option> <!-- Siguiente año -->
+            </select>
+            <button onclick="predecirGanancia()">Predecir Ganancia</button>
+            <p id="resultadoPrediccion">Cargando.../ selecciona el Año</p>
 
-  <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.min.js"
-    integrity="sha384-5h4UG+6GOuV9qXh6HqOLwZMY4mnLPraeTrjT5v07o347pj6IkfuoASuGBhfDsp3d"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.all.min.js"></script>
-  <script type="text/javascript" language="javascript"
-    src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
-  <script type="text/javascript" language="javascript"
-    src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+          
 
-  <script>
-    //#region ruta
-    $(document).ready(function () {
-      let url = "/ganancias/"; // Define la variable url aquí
-      let opcion = null;
-      let ID_Ganancia, Ganancia_Total, ID_Detalle_Venta;
-
-      let tablaGanancias = $("#tablaGanancias").DataTable({
-        json: {
-          url: url,
-          dataSrc: "",
-        },
-        columns: [
-          { data: "Ano" },
-          { data: "Ganancia_Total_Anual" },
-          {
-            defaultContent:
-              "<div class='text-center'><div class='btn-group'><button class='btn btn-info btn-sm btnEditar'>Editar</button><button class='btn btn-danger btn-sm btnBorrar'>Borrar</button></div></div>",
-          },
-        ],
-        language: {
-                    url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json",
-                },
-      });
-//#endregion
+          `,
+          showCloseButton: true,
+          width: '60%',
      
-    });
-
-
-//#region boton actualizar
-$("#btnActualizar").click(function () {
-    // Recarga la página actual
-    location.reload();
-});
-
-//#endregion
-
-//#region boton exportar xlsx (exel)
-$(document).ready(function () {
-    // Evento clic para el botón de exportar
-    $("#btnExportar").click(function () {
-      // Crear un nuevo libro de Excel
-      var wb = XLSX.utils.book_new();
-
-      // Obtener los datos de la tabla incluyendo la columna de IDs y excluyendo la columna de acciones
-      var wsData = [];
-      $("#tablaGanancias tbody tr").each(function () {
-        var rowData = [];
-        $(this).find("td").each(function () { // Modificado para incluir todas las columnas
-          rowData.push($(this).text().trim());
-        });
-        wsData.push(rowData);
+          showConfirmButton: false,
+          didOpen: () => {
+              // Renderizar el gráfico después de que se abre la ventana
+              const ctx = document.getElementById('Chartline').getContext('2d');
+              grafo2(datiedu3, opzioni, ctx);
+          }
       });
-
-      // Crear una hoja de trabajo con los datos obtenidos
-      var ws = XLSX.utils.aoa_to_sheet([["ID_Ganancia", "Ganancia_Total", "ID_Detalle_Venta"]].concat(wsData));
-
-      // Agregar la hoja de trabajo al libro
-      XLSX.utils.book_append_sheet(wb, ws, "Ganancias");
-
-      // Guardar el libro como un archivo Excel
-      XLSX.writeFile(wb, "ganancias.xlsx");
-    });
-  });
-
-//#endregion
- 
-//#region boton copiar
-
-$("#tablaGanancias").on("click", ".btnCopiar", function () {
-    // Obtener la fila correspondiente al botón de copiar
-    var fila = $(this).closest("tr");
-
-    // Obtener los datos de la fila
-    var datosFila = fila.find("td").map(function () {
-        return $(this).text();
-    }).get();
-
-    // Convertir los datos en una cadena separada por tabulaciones
-    var datosCopiar = datosFila.join("\t");
-
-    // Copiar los datos al portapapeles
-    navigator.clipboard.writeText(datosCopiar).then(function () {
-        console.log("Datos copiados al portapapeles:", datosCopiar);
-        // Mostrar un mensaje de éxito
-        alert("¡Datos copiados al portapapeles!");
-    }).catch(function (error) {
-        console.error("Error al copiar datos al portapapeles:", error);
-        // Mostrar un mensaje de error si es necesario
-        alert("Error al copiar datos al portapapeles");
-    });
-});
-
-//#endregion
+  }
+  
+  // Función para crear el gráfico usando Chart.js
+  function grafo2(dati, opzioni, ctx) {
+      new Chart(ctx, {
+          type: 'scatter',
+          data: dati,
+          options: opzioni || {} // Opciones adicionales, si hay
+      });
+  }
+  
+  // Función para calcular la regresión lineal (pendiente 'm' e intercepto 'b')
+  function calcularRegresionLineal(x, y) {
+      const n = x.length;
+      const sumX = x.reduce((acc, val) => acc + val, 0);
+      const sumY = y.reduce((acc, val) => acc + val, 0);
+      const sumXY = x.reduce((acc, val, i) => acc + val * y[i], 0);
+      const sumX2 = x.reduce((acc, val) => acc + val * val, 0);
+  
+      const m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+      const b = (sumY - m * sumX) / n;
+  
+      return { m, b };
+  }
+  
+  function predecirGanancia() {
+      // Tomamos el año ingresado por el usuario
+      const yearInput = document.getElementById('yearInput').value;
+      const year = parseInt(yearInput);
+  
+      // Validamos que el valor ingresado sea un número
+      if (isNaN(year)) {
+          document.getElementById('resultadoPrediccion').textContent = 'Por favor, ingresa un año válido.';
+          return;
+      }
+  
+      // Calculamos la ganancia estimada usando la ecuación de la recta: y = m * x + b
+      const gananciaEstimada = m * year + b;
+  
+      // Mostramos el resultado de la predicción en el párrafo
+      document.getElementById('resultadoPrediccion').textContent = 
+          `La ganancia estimada para el año ${year} es de ${gananciaEstimada.toFixed(2)} unidades monetarias.`;
+  }
   </script>
-</body>
+  <script>
+    // Función para predecir la ganancia basada en el año seleccionado
+    function predecirGanancia() {
+        // Tomamos el año seleccionado por el usuario
+        const yearSelect = document.getElementById('yearSelect').value;
+        const year = parseInt(yearSelect);
+    
+        // Calculamos la ganancia estimada usando la ecuación de la recta: y = m * x + b
+        const gananciaEstimada = m * year + b;
+    
+        // Mostramos el resultado de la predicción en el párrafo
+        document.getElementById('resultadoPrediccion').textContent = 
+            `La ganancia estimada para el año ${year} es de ${gananciaEstimada.toFixed(2)} unidades monetarias.`;
+    }
+    </script>
 
+</body>
 </html>
