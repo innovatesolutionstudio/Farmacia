@@ -35,7 +35,7 @@
         </div>
         <div class="content-card1">
             <div>
-                <h2 id="">Cargando...</h2>
+                <h2 id="nombreSuc">Cargando...</h2>
                 <p>Sucursal</p>
             </div> 
             <div>
@@ -70,8 +70,8 @@
     <div class="header-card1">
         <span>Historia de Clientes Facturados</span>
     </div>
-    <div class="content-card-clientes">
-        <table class="table-clientes">
+    <div class="content-card2">
+        <table class="tabla-historial">
             <thead>
                 <tr>
                     <th>Año</th>
@@ -81,8 +81,8 @@
             <% results.forEach(function(ganancia) { %>
               <tr>
                 
-                <td class="text-center"><%= ganancia.Ano %></td>
-                <td class="text-center"><%= ganancia.Ganancia_Total_Anual %></td>
+                <td><%= ganancia.Ano %></td>
+                <td><%= ganancia.Ganancia_Total_Anual %></td>
           
               </tr>
               <% }); %>
@@ -166,7 +166,7 @@
 
           `,
           showCloseButton: true,
-          width: '60%',
+          width: '70%',
      
           showConfirmButton: false,
           didOpen: () => {
@@ -234,6 +234,22 @@
             `La ganancia estimada para el año ${year} es de ${gananciaEstimada.toFixed(2)} unidades monetarias.`;
     }
     </script>
-
+<script>
+       
+// Hacer una solicitud al servidor para obtener los datos
+fetch('/datosgananciasmetricas')
+  .then(response => response.json())
+  .then(data => {
+    // Actualizar los divs con los datos recibidos
+    document.getElementById('prodconmayorganancias').innerText =  data.prodconmayorganancias;
+    document.getElementById('gananciaAnual').innerText = ' Bs. '+  data.gananciaAnual;
+    document.getElementById('gananciaMensual').innerText = ' Bs. '+  data.gananciaMensual;
+    document.getElementById('nombreSuc').innerText = data.nombreSuc;
+    
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+  });
+</script>
 </body>
 </html>
