@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Medicamentos</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 30px;
+        }
+        .search-form {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Buscador de Medicamentos</h1>
+
+        <!-- Buscador de Medicamentos por Nombre -->
+        <div class="search-form">
+            <h2>1. Buscar Medicamento por Nombre</h2>
+            <form id="buscador-form" class="form-inline">
+                <input type="text" id="medicamento" class="form-control mr-2" placeholder="Ingrese el nombre del medicamento" required>
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
+            <div id="resultado" class="mt-3"></div>
+        </div>
+
+       
+    </div>
+
+    <script>
+   
+        document.getElementById('buscador-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const medicamento = document.getElementById('medicamento').value;
+            const response = await fetch('/buscar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ medicamento }),
+            });
+
+            const data = await response.json();
+            document.getElementById('resultado').innerText = data.informacion;
+        });
+
+       
+    </script>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

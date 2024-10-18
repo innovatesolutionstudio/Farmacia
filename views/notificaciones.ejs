@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificaciones</title>
+    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #1c1e21;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        .notification {
+            background-color: #ffffff;
+            border: 1px solid #dddfe2;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+        }
+        .notification-icon {
+            color: #65676b;
+            font-size: 20px;
+            margin-right: 12px;
+        }
+        .notification-content {
+            flex-grow: 1;
+        }
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #1c1e21;
+        }
+        .notification-description {
+            color: #65676b;
+            font-size: 14px;
+            margin: 0;
+        }
+        .notification-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .notification-time {
+            color: #4CAF50;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        .notification-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .no-notifications {
+            text-align: center;
+            color: #868e96;
+            padding: 20px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <h1>Notificaciones</h1>
+        <div class="notification-container">
+            <div class="notification-container">
+                <ul class="notifications-list">
+                    <% if (notificaciones && notificaciones.length > 0) { %>
+                        <% notificaciones.forEach(notification => { %>
+                            <li class="notification">
+                                <i class="fa fa-info-circle notification-icon" aria-hidden="true"></i>
+                                <div class="notification-content">
+                                    <div class="notification-title">
+                                        <%= notification.Nombre %> 
+                                        <br>
+                                        <small style="color: #000000;"><%= notification.Correo %></small>
+                                    </div>
+                                    <p class="notification-description"><%= notification.Descripcion %></p>
+                                </div>
+                                <div class="notification-right">
+                                    <div class="notification-time">
+                                        <%= new Date(notification.Fecha).toLocaleString([], {day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'}) %>
+                                    </div>
+                                    <button class="notification-button" data-correo="<%= notification.Correo %>" onclick="actualizarGradoA0(this)">Desbloquear</button>
+                                </div>
+                            </li>
+                        <% }); %>
+                    <% } else { %>
+                        <li class="no-notifications">No hay notificaciones no leídas.</li>
+                    <% } %>                
+                </ul>
+            </div>            
+        </div>
+    </div>    
+    <script>
+        function actualizarGradoA0(button) {
+            const correo = button.getAttribute('data-correo'); // Obtener el correo del botón
+    
+            // Crear un objeto con los datos a enviar
+            const data = { correo: correo };
+    
+            // Enviar la solicitud POST
+            fetch('/notificaciones/desbloquear', { // Ruta del endpoint que manejará la solicitud
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data) 
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en el desbloqueo del usuario');
+                }
+                return response.json(); 
+            })
+            .then(data => {
+                alert('Se desbloqueo el correo: ' + correo);
+                button.parentElement.parentElement.remove(); // Esto eliminará la notificación de la lista
+            })
+
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un problema al actualizar el grado. Inténtalo nuevamente.');
+            });
+        }
+    </script>
+</body>
+</html>
