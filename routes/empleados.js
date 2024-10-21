@@ -35,6 +35,7 @@ router.post('/fotos', upload.single('Fotografia'), (req, res) => {
   
 
 router.get('/empleados', function(req, res) {
+    const sucursalID = req.session.ID_Sucursal;
     // Realiza la consulta a la base de datos para obtener los datos de la tabla "empleados"
     conexion.query('SELECT * FROM empleados', (error, results) => {
         if (error) {
@@ -47,7 +48,9 @@ router.get('/empleados', function(req, res) {
                 'SELECT ID_Departamento, Nombre AS NombreDepartamento FROM departamentos',
                 'SELECT ID_Generos, Nombre AS NombreGenero FROM generos',
                 'SELECT ID_Rol, Nombre AS NombreRol FROM roles',
-                'SELECT ID_Sucursal, Nombre AS NombreSucursal FROM sucursales'
+                'SELECT ID_Sucursal, Nombre AS NombreSucursal FROM sucursales',
+                
+
             ];
 
             // Ejecuta las consultas en paralelo
@@ -66,7 +69,7 @@ router.get('/empleados', function(req, res) {
                 const generosMap = new Map(generos.map(genero => [genero.ID_Generos, genero.NombreGenero]));
                 const rolesMap = new Map(roles.map(rol => [rol.ID_Rol, rol.NombreRol]));
                 const sucursalesMap = new Map(sucursales.map(sucursal => [sucursal.ID_Sucursal, sucursal.NombreSucursal]));
-
+                
                 // Mapea los resultados de la consulta de empleados y agrega los nombres correspondientes
                 const empleados = results.map(empleado => ({
                     ...empleado,
@@ -190,7 +193,148 @@ router.post('/empleados/:id?', function(req, res) {
             res.status(400).send('Opción no válida');
             break;
     }
+    
 });
 
 
+const obtenerEmpleadoDestacado = () => {
+    return new Promise((resolve, reject) => {
+      const sql = `
+        SELECT e.Nombre
+            FROM empleados e
+            JOIN ventas v ON e.ID_Empleado = v.ID_Empleado
+            WHERE v.Fecha_Venta BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW()
+            GROUP BY e.ID_Empleado, e.Nombre
+            ORDER BY COUNT(v.ID_Venta) DESC
+            LIMIT 1;
+      `;
+      conexion.query(sql, (err, results) => {
+        if (err) return reject(err);
+        resolve(results[0]
+            
+         );
+      });
+    });
+  };
+  const obtenerTotalVentasEmpleado = () => {
+    return new Promise((resolve, reject) => {
+      const sql = `
+      
+  SELECT COUNT(v.ID_Venta) AS Total_Ventas
+FROM empleados e
+JOIN ventas v ON e.ID_Empleado = v.ID_Empleado
+WHERE v.Fecha_Venta BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW()
+GROUP BY e.ID_Empleado
+ORDER BY Total_Ventas DESC
+LIMIT 1;
+
+      `;
+      conexion.query(sql, (err, results) => {
+        if (err) return reject(err);
+        resolve(results[0]
+            
+         );
+      });
+    });
+  };
+
+  const obtenerCodigoEmpleado = () => {
+    return new Promise((resolve, reject) => {
+      const sql = `
+      
+  SELECT c.Codigo AS CodigoCaja
+  FROM empleados e
+  JOIN ventas v ON e.ID_Empleado = v.ID_Empleado
+  JOIN cajas c ON e.ID_Caja = c.ID_Caja
+  WHERE v.Fecha_Venta BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW()
+  GROUP BY e.ID_Empleado, c.Codigo
+  ORDER BY COUNT(v.ID_Venta) DESC
+  LIMIT 1;
+
+      `;
+      conexion.query(sql, (err, results) => {
+        if (err) return reject(err);
+        resolve(results[0]
+            
+         );
+      });
+    });
+  };
+  
+  const empleadosactivos = () => {
+    return new Promise((resolve, reject) => {
+      const sql = `
+      
+  SELECT COUNT(*) AS Total_Empleados_Activos
+FROM empleados
+WHERE Situacion = 1;
+
+      `;
+      conexion.query(sql, (err, results) => {
+        if (err) return reject(err);
+        resolve(results[0]
+            
+         );
+      });
+    });
+  };
+  
+
+  const cajasactivas = () => {
+    return new Promise((resolve, reject) => {
+      const sql = `
+      
+  SELECT COUNT(*) AS Total_Cajas_Activas FROM cajas WHERE Estado = 1;
+
+      `;
+      conexion.query(sql, (err, results) => {
+        if (err) return reject(err);
+        resolve(results[0]
+            
+         );
+      });
+    });
+  };
+  
+
+  router.get('/datoEmpleadoDestacado20s', async (req, res) => {
+    try {
+        const empleadoDestacado = await obtenerEmpleadoDestacado();
+        const totalventas = await obtenerTotalVentasEmpleado();
+        const codigoempleado = await obtenerCodigoEmpleado();
+        const empleadoactivos = await empleadosactivos();
+        const cajaactiva = await cajasactivas();
+        res.json({
+            empleadoDestacado: empleadoDestacado ? empleadoDestacado.Nombre : "no hay datos", // Enviando solo el nombre
+            totalventas: totalventas ? totalventas.Total_Ventas : "no hay datos", // Enviando solo el nombre
+            codigoempleado: codigoempleado ? codigoempleado.CodigoCaja : "no hay datos", // Enviando solo el nombre
+            empleadoactivos: empleadoactivos ? empleadoactivos.Total_Empleados_Activos : "no hay datos", // Enviando solo el nombre
+            cajaactiva: cajaactiva ? cajaactiva.Total_Cajas_Activas : "no hay datos" // Enviando solo el nombre
+        });
+    } catch (err) {
+        console.error('Error al obtener los datos:', err);
+        res.status(500).send('Error al obtener los datos');
+    }
+});
+
+router.get('/detallesempleados/:id', async (req, res) => {
+    const id = req.params.id; // Obtener el ID del empleado de la URL
+    const nombre = req.params.nombre; // Obtener el ID del empleado de la URL
+    console.log("Id del empleado " + id);
+    conexion.query('SELECT * FROM empleados WHERE ID_Empleado = ?',[id], (error, results) => {
+        if (error) {
+            console.error('Error al obtener datos de la tabla del empleado:', error);
+            
+        } else {
+            // Renderiza la vista EJS y pasa los resultados de la consulta como variable
+            res.render('./empleados/detallesempleados', { results: results });
+        }
+    });
+});
+
+
+
+
+
+  
 module.exports = router;
