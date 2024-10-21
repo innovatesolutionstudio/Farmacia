@@ -31,127 +31,127 @@
 
     <% results.forEach(function(empleado) { %>
 
-    <div class="container2">
-
-        <!-- Primera Columna: Información Personal -->
-        <div class="card1">
-
-            <div class="header-card1">
-                <span>Información Personal</span>
+        <div class="container2">
+    
+            <!-- Primera Columna: Información Personal -->
+            <div class="card1">
+    
+                <div class="header-card1">
+                    <span>Información Personal</span>
+                </div>
+        
+                <div class="content-card1">
+                    <div class="profile-pic">
+                        <span class="profile-initial"></span>
+                    </div>
+                    <h2><%= empleado.Nombre %> <%= empleado.Apellido %></h2>
+                    <p><%= empleado.Email %></p>
+        
+                    <div class="info">
+                        <div class="info-item">
+                            <p><strong><%= empleado.ID_Empleado %></strong></p>
+                            <p>ID</p>
+                        </div>
+                        <div class="info-item">
+                            <p>CI</p>
+                        </div>
+                    </div>
+        
+                    <div class="actions">
+                        <a href="/formularioEmpleados" class="btn btn-edit">Editar</a>
+                        <a class="btn btn-delete">Eliminar</a>
+                    </div>
+                </div>
             </div>
-    
-            <div class="content-card1">
-                <div class="profile-pic">
-                    <span class="profile-initial"></span>
-                </div>
-                <h2><%= empleado.Nombre %> <%= empleado.Apellido %></h2>
-                <p><%= empleado.Email %></p>
-    
-                <div class="info">
-                    <div class="info-item">
-                        <p><strong><%= empleado.ID_Empleado %></strong></p>
-                        <p>ID</p>
+        
+            <!-- Segunda Columna dividida en 3 filas -->
+            <div class="column2">
+                <!-- Tarjeta de Datos -->
+                <div class="card-data">
+                    <div class="header-card1">
+                        <span>Datos</span>
                     </div>
-                    <div class="info-item">
-                        <p><strong><%= empleado.CI %></strong></p>
-                        <p>CI</p>
+        
+                    <div class="content-data">
+                        <div class="data-group">
+                            <p><strong><%= empleado.Genero %></strong></p>
+                            <p>Género</p>
+                        </div>
+                        <div class="data-group">
+                            <p><strong><%= empleado.Teléfono %></strong></p>
+                            <p>Teléfono</p>
+                        </div>
+                        <div class="data-group">
+                            <p><strong><%= empleado.Telefono_referencia %></strong></p>
+                            <p>Teléfono Referencia</p>
+                        </div>
+                        <div class="data-group">
+                            <p><strong><%= empleado.Fecha_Nacimiento %></strong></p>
+                            <p>Fecha Nacimiento</p>
+                        </div>
+                        <div class="data-group">
+                            <p><strong><%= empleado.Departamento %></strong></p>
+                            <p>Departamento</p>
+                        </div>
+                        <div class="data-group">
+                            <p><strong><%= empleado.Dirección %></strong></p>
+                            <p>Dirección</p>
+                        </div>
                     </div>
                 </div>
-    
-                <div class="actions">
-                    <button class="btn btn-edit">Editar</button>
-                    <button class="btn btn-delete">Eliminar</button>
+        
+                <!-- Tarjeta de Datos Administrativos -->
+                <div class="card-data2">
+                    <div class="header-card1">
+                        <span>Datos Administrativos</span>
+                    </div>
+        
+                    <div class="content-data2">
+                        <div class="data-group">
+                            <p><strong><%= empleado.Rol %></strong></p>
+                            <p>Rol</p>
+                        </div>
+                        <div class="data-group">
+                            <p><strong><%= empleado.Ciudad %></strong></p>
+                            <p>Ciudad</p>
+                        </div>
+                        <div class="data-group">
+                            <p><strong><%= empleado.Sucursal %></strong></p>
+                            <p>Sucursal</p>
+                        </div>
+                        <div class="data-group">
+                            <p><strong><%= empleado.Caja %></strong></p>
+                            <p>Nº Cajas</p>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Tarjeta de Datos Adicionales -->
+                <div class="card-data3">
+                    <div class="header-card1">
+                        <span>Datos Adicionales</span>
+                    </div>
+        
+                    <div class="content-data">
+                        <div class="data-group">
+                            <p><strong><%= empleado.Contrasena %></strong></p>
+                            <p>Contraseña</p>
+                        </div>
+                        <div class="data-group">
+                            <p><strong><%= empleado.Grado %></strong></p>
+                            <p>Grado</p>
+                        </div>
+                        <div class="data-group">
+                            <p><strong><%= empleado.Estado %></strong></p>
+                            <p>Estado</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    
-        <!-- Segunda Columna dividida en 3 filas -->
-        <div class="column2">
-            <!-- Tarjeta de Datos -->
-            <div class="card-data">
-                <div class="header-card1">
-                    <span>Datos</span>
-                </div>
-    
-                <div class="content-data">
-                    <div class="data-group">
-                        <p><strong><%= empleado.ID_Genero %></strong></p>
-                        <p>Género</p>
-                    </div>
-                    <div class="data-group">
-                        <p><strong><%= empleado.Teléfono %></strong></p>
-                        <p>Teléfono</p>
-                    </div>
-                    <div class="data-group">
-                        <p><strong><%= empleado.Telefono_referencia %></strong></p>
-                        <p>Teléfono Referencia</p>
-                    </div>
-                    <div class="data-group">
-                        <p><strong><%= empleado.Fecha_Nacimiento %></strong></p>
-                        <p>Fecha Nacimiento</p>
-                    </div>
-                    <div class="data-group">
-                        <p><strong><%= empleado.ID_Departamento %></strong></p>
-                        <p>Departamento</p>
-                    </div>
-                    <div class="data-group">
-                        <p><strong><%= empleado.Dirección %></strong></p>
-                        <p>Dirección</p>
-                    </div>
-                </div>
-            </div>
-    
-            <!-- Tarjeta de Datos Administrativos -->
-            <div class="card-data2">
-                <div class="header-card1">
-                    <span>Datos Administrativos</span>
-                </div>
-    
-                <div class="content-data2">
-                    <div class="data-group">
-                        <p><strong><%= empleado.ID_Rol %></strong></p>
-                        <p>Rol</p>
-                    </div>
-                    <div class="data-group">
-                        <p><strong><%= empleado.ID_Ciudad %></strong></p>
-                        <p>Ciudad</p>
-                    </div>
-                    <div class="data-group">
-                        <p><strong><%= empleado.ID_Sucursal %></strong></p>
-                        <p>Sucursal</p>
-                    </div>
-                    <div class="data-group">
-                        <p><strong><%= empleado.ID_Caja %></strong></p>
-                        <p>Nº Cajas</p>
-                    </div>
-                </div>
-            </div>
-    
-            <!-- Tarjeta de Datos Adicionales -->
-            <div class="card-data3">
-                <div class="header-card1">
-                    <span>Datos Adicionales</span>
-                </div>
-    
-                <div class="content-data">
-                    <div class="data-group">
-                        <p><strong><%= empleado.Contraseña %></strong></p>
-                        <p>Contraseña</p>
-                    </div>
-                    <div class="data-group">
-                        <p><strong><%= empleado.Grado %></strong></p>
-                        <p>Grado</p>
-                    </div>
-                    <div class="data-group">
-                        <p><strong><%= empleado.Estado %></strong></p>
-                        <p>Estado</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
+        
     <% }); %>
+    
 </body>
 
 

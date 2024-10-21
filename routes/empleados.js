@@ -196,6 +196,38 @@ router.post('/empleados/:id?', function(req, res) {
     
 });
 
+router.get('/detallesempleados/:id', async (req, res) => {
+    const id = req.params.id;
+   // Establecer el idioma para los nombres de mes y día en español
+
+
+    const query = `
+        SELECT e.ID_Empleado, e.Nombre, e.Apellido, e.Email, e.CI, e.Teléfono, e.Telefono_referencia, 
+       DATE_FORMAT(e.Fecha_Nacimiento, '%d/%m/%Y') AS Fecha_Nacimiento, e.Dirección,
+        g.Nombre AS Genero, d.Nombre AS Departamento, c.Nombre AS Ciudad, r.Nombre AS Rol, 
+        s.Nombre AS Sucursal, e.Contrasena, e.Grado, e.Estado, a.Codigo AS Caja
+    FROM empleados e
+    JOIN generos g ON e.ID_Genero = g.ID_Generos
+    JOIN departamentos d ON e.ID_Departamento = d.ID_Departamento
+    JOIN ciudades c ON e.ID_Ciudad = c.ID_Ciudad
+    JOIN roles r ON e.ID_Rol = r.ID_Rol
+    JOIN sucursales s ON e.ID_Sucursal = s.ID_Sucursal
+    JOIN cajas a ON a.ID_Caja = a.ID_Caja
+    WHERE e.ID_Empleado = ?
+    LIMIT 1;
+
+    `;
+
+    conexion.query(query, [id], (error, results) => {
+        if (error) {
+            console.error('Error al obtener datos de la tabla del empleado:', error);
+            res.status(500).send('Error en la consulta');
+        } else {
+            res.render('./empleados/detallesempleados', { results: results });
+        }
+    });
+});
+
 
 const obtenerEmpleadoDestacado = () => {
     return new Promise((resolve, reject) => {
@@ -332,8 +364,12 @@ router.get('/detallesempleados/:id', async (req, res) => {
     });
 });
 
-
-
+router.get('/formularioEmpleados', async (req, res) => {
+    const id = req.params.id; // Obtener el ID del empleado de la URL
+    const nombre = req.params.nombre; // Obtener el ID del empleado de la URL
+    
+            res.render('./empleados/editarempleado');
+});
 
 
   

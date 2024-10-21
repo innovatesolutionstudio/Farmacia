@@ -1,101 +1,102 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="/resources/css/Formulario.css" />
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="resources/css/cajas.css" /> <!-- Ruta a tu CSS -->
 
-    <title>Detalles del Empleado</title>
-    <style>    
-       
-    </style>
+    <title>Formulario</title>
 </head>
+
 <body>
-    <div style="max-width: 800px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9;">
-        <h2 style="font-size: 1.5em; font-weight: bold; margin-bottom: 20px;">Recursos Humanos > Gestión Empleados > Ver Detalles > <span style="color: #333;">Editar</span></h2>
-        <p style="font-size: 0.9em; color: #888; margin-bottom: 20px;">*Todos los campos son obligatorios, excepto los mencionados como (opcional), para crear una nueva sucursal.</p>
+
+    <!-- Encabezado -->
+    <div class="header-container">
+        <div class="breadcrumb">
+            <a href="/empleados" class="reporte-link "><h1 style="color: #858B92; font-weight: bold; margin-right: 5px;" >Recursos Humanos</h1></a>
+            <h2 style="color: #858B92; font-weight: bold; margin-right: 5px;">›</h2>
+            <a href="/empleados" class="reporte-link"><h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Gestion Empleados</h1></a>
+            <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+            <h1 style="font-weight: bold;">Formulario de edicion</h1> <!--recuperar nombre de la caja seleccionada-->
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-group">
+            <label class="text" for="nombre">Nombre</label>
+            <input type="text" id="nombre" class="form-control" placeholder="Nombre">
+        </div>
+        <div class="form-group">
+            <label class="text" for="apellido">Apellido</label>
+            <input type="text" id="apellido" class="form-control" placeholder="Apellido">
+        </div>
     
-        <form action="/empleados/editar" method="post">
-            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                <div style="flex: 1;">
-                    <label for="nombre" style="display: block; font-weight: bold; margin-bottom: 5px;">Nombre</label>
-                    <input type="text" id="nombre" name="nombre" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-                <div style="flex: 1;">
-                    <label for="apellido" style="display: block; font-weight: bold; margin-bottom: 5px;">Apellido</label>
-                    <input type="text" id="apellido" name="apellido" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-            </div>
+        <div class="form-group">
+            <label class="text" for="ciudad">Ciudad</label>
+            <select id="ciudad" class="form-select">
+                <option value="">- Selecciona Ciudad -</option>
+                <!-- Agregar más opciones -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="text" for="departamento">Departamento</label>
+            <select id="departamento" class="form-select">
+                <option value="">- Selecciona Departamento -</option>
+                <!-- Agregar más opciones -->
+            </select>
+        </div>
     
-            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                <div style="flex: 1;">
-                    <label for="ciudad" style="display: block; font-weight: bold; margin-bottom: 5px;">Ciudad</label>
-                    <select id="ciudad" name="ciudad" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                        <option>- Selecciona Ciudad -</option>
-                        <!-- Agrega las ciudades aquí -->
-                    </select>
-                </div>
-                <div style="flex: 1;">
-                    <label for="departamento" style="display: block; font-weight: bold; margin-bottom: 5px;">Departamento</label>
-                    <select id="departamento" name="departamento" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                        <option>- Selecciona Departamento -</option>
-                        <!-- Agrega los departamentos aquí -->
-                    </select>
-                </div>
-            </div>
+        <div class="form-group">
+            <label class="text" for="ci">CI</label>
+            <input type="text" id="ci" class="form-control" placeholder="CI">
+        </div>
+        <div class="form-group">
+            <label class="text" for="fecha_nacimiento">Fecha de Nacimiento</label>
+            <input type="date" id="fecha_nacimiento" class="form-control" placeholder="Fecha de Nacimiento">
+        </div>
     
-            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                <div style="flex: 1;">
-                    <label for="ci" style="display: block; font-weight: bold; margin-bottom: 5px;">CI</label>
-                    <input type="text" id="ci" name="ci" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-                <div style="flex: 1;">
-                    <label for="fecha_nacimiento" style="display: block; font-weight: bold; margin-bottom: 5px;">Fecha de Nacimiento</label>
-                    <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-            </div>
+        <div class="form-group">
+            <label class="text" for="direccion">Direccion</label>
+            <input type="text" id="direccion" class="form-control" placeholder="Direccion">
+        </div>
+        <div class="form-group">
+            <label class="text" for="correo">Correo</label>
+            <input type="email" id="correo" class="form-control" placeholder="Correo">
+        </div>
     
-            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                <div style="flex: 1;">
-                    <label for="direccion" style="display: block; font-weight: bold; margin-bottom: 5px;">Dirección</label>
-                    <input type="text" id="direccion" name="direccion" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-                <div style="flex: 1;">
-                    <label for="correo" style="display: block; font-weight: bold; margin-bottom: 5px;">Correo</label>
-                    <input type="email" id="correo" name="correo" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-            </div>
+        <div class="form-group">
+            <label class="text" for="telefono">Telefono</label>
+            <input type="text" id="telefono" class="form-control" placeholder="Telefono">
+        </div>
+        <div class="form-group">
+            <label class="text" for="telefono_referencia">Telefono Referencia</label>
+            <input type="text" id="telefono_referencia" class="form-control" placeholder="Telefono Referencia">
+        </div>
     
-            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                <div style="flex: 1;">
-                    <label for="telefono" style="display: block; font-weight: bold; margin-bottom: 5px;">Teléfono</label>
-                    <input type="text" id="telefono" name="telefono" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-                <div style="flex: 1;">
-                    <label for="telefono_referencia" style="display: block; font-weight: bold; margin-bottom: 5px;">Teléfono Referencia</label>
-                    <input type="text" id="telefono_referencia" name="telefono_referencia" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-            </div>
+        <div class="form-group">
+            <label class="text" for="rol">Rol</label>
+            <input type="text" id="rol" class="form-control" placeholder="Rol">
+        </div>
+        <div class="form-group">
+            <label class="text" for="contrasena">Contraseña</label>
+            <input type="password" id="contrasena" class="form-control" placeholder="Contraseña">
+        </div>
     
-            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                <div style="flex: 1;">
-                    <label for="rol" style="display: block; font-weight: bold; margin-bottom: 5px;">Rol</label>
-                    <input type="text" id="rol" name="rol" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-                <div style="flex: 1;">
-                    <label for="contrasena" style="display: block; font-weight: bold; margin-bottom: 5px;">Contraseña</label>
-                    <input type="password" id="contrasena" name="contrasena" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-            </div>
-    
-            <div style="text-align: right; margin-top: 20px;">
-                <button type="submit" style="background-color: #f44336; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 1.2em;">Guardar</button>
-            </div>
-        </form>
+        <div class="form-group" style="grid-column: span 1;">
+            <button class="btn-danger" type="submit">Guardar</button>
+        </div>
     </div>
     
+        
+
+    
 </body>
+
+
 </html>
