@@ -63,6 +63,9 @@ const impre_categoria = require('./routes/impre_categoria');
 const impre_tipo_paciente = require('./routes/impre_tipo_paciente');
 const impre_clientes = require('./routes/impre_clientes');
 
+const api_datos = require('./routes/apis');
+
+
 
 //papeleria
 const ventas_pRouter = require('./papeleria/ventas');
@@ -91,6 +94,9 @@ const path = require('path');
 
 //#endregion
 
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 //#region estilos - js - css 
 app.use('/resources',express.static('assets'));
@@ -214,6 +220,8 @@ app.use(notificacionesRoutes);
 app.use(vistafinanzas);
 app.use(adminCajas);
 app.use(vistareportes);
+
+app.use(api_datos);
 //reportes
 
 app.use(generador_reportesRoutes);

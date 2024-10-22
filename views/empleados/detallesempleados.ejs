@@ -42,7 +42,7 @@
         
                 <div class="content-card1">
                     <div class="profile-pic">
-                        <span class="profile-initial"></span>
+                        <img class="img-perfil" src="/fotos/img_empleados/<%= empleado.Fotografia%>" alt="">
                     </div>
                     <h2><%= empleado.Nombre %> <%= empleado.Apellido %></h2>
                     <p><%= empleado.Email %></p>
@@ -53,17 +53,17 @@
                             <p>ID</p>
                         </div>
                         <div class="info-item">
+                            <p><strong><%= empleado.CI %></strong></p>
                             <p>CI</p>
                         </div>
                     </div>
         
                     <div class="actions">
-                        <a href="/formularioEmpleados" class="btn btn-edit">Editar</a>
+                        <a href="/EditEmpleados/<%= empleado.ID_Empleado %>" class="btn btn-edit">Editar</a>
                         <a class="btn btn-delete">Eliminar</a>
                     </div>
                 </div>
             </div>
-        
             <!-- Segunda Columna dividida en 3 filas -->
             <div class="column2">
                 <!-- Tarjeta de Datos -->
@@ -154,5 +154,34 @@
     
 </body>
 
+
+
+<script>
+    $(document).ready(function () {
+      
+      let url2 = "/EditEmpleados/";
+      $("#tablaEmpleados").on("click", ".btnEdit", function () {
+      
+        var id = data.ID_Empleado;
+  
+        Swal.fire({
+          title: "¿Quieres ver detalles?",
+          text: "Detalles del empleado",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Sí, ver!",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Redirigir a la URL de detallesempleados con el ID
+            window.location.href = url2 + id;
+  
+          }
+        });
+      });
+    });
+  
+    obtenerOpciones('/api/roles', '#ID_Rol');
+  </script>
 
 </html>

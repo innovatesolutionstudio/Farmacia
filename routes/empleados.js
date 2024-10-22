@@ -90,111 +90,6 @@ router.get('/empleados', function(req, res) {
     });
 });
 
-router.post('/empleados/:id?', function(req, res) {
-    const id = req.params.id; // Obtener el ID del empleado, si se proporciona
-    const opcion = req.body.opcion; // Obtener la opción (crear, editar, eliminar)
-   
-    switch(opcion) {
-        case 'crear':
-            const nuevoEmpleado = {
-                Nombre: req.body.Nombre,
-                Apellido: req.body.Apellido,
-                Fecha_Nacimiento: req.body.Fecha_Nacimiento,
-                Dirección: req.body.Dirección,
-                Teléfono: req.body.Teléfono,
-                Email: req.body.Email,
-                CI: req.body.CI,
-                Telefono_referencia: req.body.Telefono_referencia,
-                ID_Departamento: req.body.ID_Departamento,
-                ID_Ciudad: req.body.ID_Ciudad,
-                ID_Genero: req.body.ID_Genero,
-                ID_Rol: req.body.ID_Rol,
-                Contrasena: req.body.Contrasena,
-                Fotografia: fotoRuta, // Agrega la foto del empleado
-                Estado: req.body.Estado, // Agrega el estado del empleado
-                Grado: req.body.Grado, // Agrega el grado del empleado
-                ID_Sucursal: req.body.ID_Sucursal, // Agrega el ID de la sucursal
-                ID_Caja: req.body.ID_Caja // Agrega el ID de la caja
-            };
-            
-            // Verificar si el correo electrónico ya existe en la base de datos
-            conexion.query('SELECT COUNT(*) AS count FROM empleados WHERE Email = ?', nuevoEmpleado.Email, (error, result) => {
-                if (error) {
-                    console.error('Error al buscar el correo electrónico en la base de datos:', error);
-                    res.status(500).send('Error al crear un nuevo empleado');
-                } else {
-                    const count = result[0].count;
-                    if (count > 0) {
-                        // Si el correo electrónico ya existe, enviar una alerta al cliente
-                        res.render('tu_pagina', {
-                            alert: true,
-                            alertTitle: "Error",
-                            alertMessage: "El correo electrónico ya está registrado. Por favor, ingresa otro.",
-                            alertIcon: "error",
-                            showConfirmButton: false, // No mostrar el botón de confirmación
-                            timer: 3000, // Cerrar automáticamente la alerta después de 3 segundos
-                            ruta: '/' // Ruta a la que redirigir después de cerrar la alerta (opcional)
-                        });
-                    } else {
-                        // Si el correo electrónico no existe, insertar el nuevo empleado en la base de datos
-                        conexion.query('INSERT INTO empleados SET ?', nuevoEmpleado, (error, result) => {
-                            if (error) {
-                                console.error('Error al crear un nuevo empleado:', error);
-                                res.status(500).send('Error al crear un nuevo empleado');
-                            } else {
-                                res.send('Empleado creado correctamente');
-                            }
-                        });
-                    }
-                }
-            });
-        break;
-        case 'editar':
-            const empleadoEditado = {
-                Nombre: req.body.Nombre,
-                Apellido: req.body.Apellido,
-                Fecha_Nacimiento: req.body.Fecha_Nacimiento,
-                Dirección: req.body.Dirección,
-                Teléfono: req.body.Teléfono,
-                Email: req.body.Email,
-                CI: req.body.CI,
-                Telefono_referencia: req.body.Telefono_referencia,
-                ID_Departamento: req.body.ID_Departamento,
-                ID_Ciudad: req.body.ID_Ciudad,
-                ID_Genero: req.body.ID_Genero,
-                ID_Rol: req.body.ID_Rol,
-                Contrasena: req.body.Contrasena,
-                Fotografia: fotoRuta, // Agrega la foto del empleado
-                Estado: req.body.Estado, // Agrega el estado del empleado
-                Grado: req.body.Grado, // Agrega el grado del empleado
-                ID_Sucursal: req.body.ID_Sucursal, // Agrega el ID de la sucursal
-                ID_Caja: req.body.ID_Caja // Agrega el ID de la caja
-            };
-            conexion.query('UPDATE empleados SET ? WHERE ID_Empleado = ?', [empleadoEditado, id], (error, result) => {
-                if (error) {
-                    console.error('Error al editar el empleado:', error);
-                    res.status(500).send('Error al editar el empleado');
-                } else {
-                    res.send('Empleado editado correctamente');
-                }
-            });
-            break;
-        case 'eliminar':
-            conexion.query('DELETE FROM empleados WHERE ID_Empleado = ?', id, (error, result) => {
-                if (error) {
-                    console.error('Error al eliminar el empleado:', error);
-                    res.status(500).send('Error al eliminar el empleado');
-                } else {
-                    res.send('Empleado eliminado correctamente');
-                }
-            });
-            break;
-        default:
-            res.status(400).send('Opción no válida');
-            break;
-    }
-    
-});
 
 router.get('/detallesempleados/:id', async (req, res) => {
     const id = req.params.id;
@@ -202,7 +97,7 @@ router.get('/detallesempleados/:id', async (req, res) => {
 
 
     const query = `
-        SELECT e.ID_Empleado, e.Nombre, e.Apellido, e.Email, e.CI, e.Teléfono, e.Telefono_referencia, 
+        SELECT e.ID_Empleado, e.Nombre, e.Apellido, e.Email, e.CI, e.Teléfono, e.Telefono_referencia,  e.Fotografia AS Fotografia,
        DATE_FORMAT(e.Fecha_Nacimiento, '%d/%m/%Y') AS Fecha_Nacimiento, e.Dirección,
         g.Nombre AS Genero, d.Nombre AS Departamento, c.Nombre AS Ciudad, r.Nombre AS Rol, 
         s.Nombre AS Sucursal, e.Contrasena, e.Grado, e.Estado, a.Codigo AS Caja
@@ -364,13 +259,122 @@ router.get('/detallesempleados/:id', async (req, res) => {
     });
 });
 
-router.get('/formularioEmpleados', async (req, res) => {
-    const id = req.params.id; // Obtener el ID del empleado de la URL
-    const nombre = req.params.nombre; // Obtener el ID del empleado de la URL
-    
-            res.render('./empleados/editarempleado');
+router.get('/EditEmpleados/:id', async (req, res) => {
+    const empleadoId = req.params.id;
+    const sql = `SELECT DATE_FORMAT(Fecha_Nacimiento, '%Y-%m-%d') AS Fecha_Nacimiento,
+                  Nombre, Apellido, Dirección, Teléfono, Email, CI, Telefono_referencia, ID_Departamento,
+                  ID_Ciudad, ID_Genero, ID_Rol, Contrasena, Fotografia, Estado, Grado, ID_Sucursal, ID_Caja, Situacion
+                  FROM empleados 
+                  WHERE ID_Empleado = ?`; 
+
+    conexion.query(sql, [empleadoId], (err, results) => {
+        if (err) {
+            console.error('Error al obtener empleado:', err);
+            res.status(500).json({ error: 'Error interno del servidor' });
+            return;
+        }
+
+        if (results.length > 0) {
+            const empleado = results[0]; // Obtenemos el primer (y único) resultado
+            res.render('empleados/editarempleado', { empleado }); // Aquí pasamos el objeto 'empleado'
+        } else {
+            res.status(404).send('Empleado no encontrado');
+        }
+    });
+});
+
+router.post('/empleados/:id?', function(req, res) {
+    const id = req.params.id;
+    const opcion = req.body.opcion;
+
+    console.log("Datos recibidos del formulario:", req.body); // Para ver los datos enviados
+
+    switch(opcion) {
+        case 'crear':
+            const { nombre, apellido, fecha_nacimiento, direccion, telefono, correo, ci, telefono_referencia, 
+                    estado, grado, situacion, contrasena, departamento, ciudad, genero, rol, sucursal, caja } = req.body;
+
+            const sqlInsert = `
+                INSERT INTO empleados 
+                (Nombre, Apellido, Fecha_Nacimiento, Dirección, Teléfono, Email, CI, Telefono_referencia, 
+                Estado, Grado, Situacion, Contrasena, ID_Departamento, ID_Ciudad, ID_Genero, ID_Rol, ID_Sucursal, ID_Caja) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+            conexion.query(sqlInsert, [nombre, apellido, fecha_nacimiento, direccion, telefono, correo, ci, telefono_referencia, 
+                                       estado, grado, situacion, contrasena, departamento, ciudad, genero, rol, sucursal, caja], 
+            (err, result) => {
+                if (err) {
+                    console.error('Error al crear empleado:', err);
+                    res.status(500).send('Error al crear empleado');
+                } else {
+                    console.log("Empleado creado:", result); // Confirmar que se ha creado el empleado
+                    res.redirect('/empleados');
+                }
+            });
+            break;
+
+        case 'editar':
+            const { nombre: nombreEdit, apellido: apellidoEdit, fecha_nacimiento: fechaNacimientoEdit, 
+                    direccion: direccionEdit, telefono: telefonoEdit, correo: correoEdit, ci: ciEdit, 
+                    telefono_referencia: telefonoReferenciaEdit, estado: estadoEdit, grado: gradoEdit, 
+                    situacion: situacionEdit, contrasena: contrasenaEdit, departamento: departamentoEdit, 
+                    ciudad: ciudadEdit, genero: generoEdit, rol: rolEdit, sucursal: sucursalEdit, caja: cajaEdit } = req.body;
+
+            const sqlUpdate = `
+                UPDATE empleados 
+                SET 
+                    Nombre = ?, 
+                    Apellido = ?, 
+                    Fecha_Nacimiento = ?, 
+                    Dirección = ?, 
+                    Teléfono = ?, 
+                    Email = ?, 
+                    CI = ?, 
+                    Telefono_referencia = ?, 
+                    Estado = ?, 
+                    Grado = ?, 
+                    Situacion = ?, 
+                    Contrasena = ?, 
+                    ID_Departamento = ?, 
+                    ID_Ciudad = ?, 
+                    ID_Genero = ?, 
+                    ID_Rol = ?, 
+                    ID_Sucursal = ?, 
+                    ID_Caja = ?
+                WHERE ID_Empleado = ?`;
+
+            conexion.query(sqlUpdate, [nombreEdit, apellidoEdit, fechaNacimientoEdit, direccionEdit, telefonoEdit, correoEdit, 
+                                       ciEdit, telefonoReferenciaEdit, estadoEdit, gradoEdit, situacionEdit, contrasenaEdit, 
+                                       departamentoEdit, ciudadEdit, generoEdit, rolEdit, sucursalEdit, cajaEdit, id], 
+            (err, result) => {
+                if (err) {
+                    console.error('Error al actualizar empleado:', err);
+                    res.status(500).send('Error al actualizar empleado');
+                } else {
+                    console.log("Empleado actualizado:", result); // Confirmar que se ha actualizado el empleado
+                    res.redirect('/empleados');
+                }
+            });
+            break;
+
+        case 'eliminar':
+            const sqlDelete = `DELETE FROM empleados WHERE ID_Empleado = ?`;
+            conexion.query(sqlDelete, [id], (err, result) => {
+                if (err) {
+                    console.error('Error al eliminar empleado:', err);
+                    res.status(500).send('Error al eliminar empleado');
+                } else {
+                    console.log("Empleado eliminado:", result); // Confirmar que se ha eliminado el empleado
+                    res.redirect('/empleados');
+                }
+            });
+            break;
+
+        default:
+            res.status(400).send('Opción no válida');
+            break;
+    }
 });
 
 
-  
 module.exports = router;

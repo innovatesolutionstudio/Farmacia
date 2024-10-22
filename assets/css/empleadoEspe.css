@@ -129,20 +129,11 @@ body {
     align-items: center;
 }
 
-.profile-initial {
-    background-color: #20863f;
-    color: white;
-    font-size: 24px;
-    width: 35px;
-    height: 35px;
+
+ .img-perfil{
+    width: 100%;
+    height: auto;
     border-radius: 50%;
-    position: absolute;
-    bottom: 0;
-    right: -10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid white;
 }
 
 .content-card1 h2 {

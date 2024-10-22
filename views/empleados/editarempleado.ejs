@@ -19,84 +19,233 @@
     <!-- Encabezado -->
     <div class="header-container">
         <div class="breadcrumb">
-            <a href="/empleados" class="reporte-link "><h1 style="color: #858B92; font-weight: bold; margin-right: 5px;" >Recursos Humanos</h1></a>
+            <a href="/empleados" class="reporte-link ">
+                <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Recursos Humanos</h1>
+            </a>
             <h2 style="color: #858B92; font-weight: bold; margin-right: 5px;">›</h2>
-            <a href="/empleados" class="reporte-link"><h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Gestion Empleados</h1></a>
+            <a href="/empleados" class="reporte-link">
+                <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Gestion Empleados</h1>
+            </a>
             <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
-            <h1 style="font-weight: bold;">Formulario de edicion</h1> <!--recuperar nombre de la caja seleccionada-->
+            <h1 style="font-weight: bold;">Formulario de edicion</h1>
+            <!--recuperar nombre de la caja seleccionada-->
         </div>
     </div>
+    <h1>
+        Datos personales
+    </h1>
 
-    <div class="container">
-        <div class="form-group">
-            <label class="text" for="nombre">Nombre</label>
-            <input type="text" id="nombre" class="form-control" placeholder="Nombre">
+    <form action="/empleados/<%= empleado ? empleado.ID_Empleado : '' %>?opcion=editar" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="opcion" value="editar">
+    
+        <div class="container-img">
+            <img id="uploadedImage" src="/fotos/img_empleados/<%= empleado.Fotografia %>">
         </div>
-        <div class="form-group">
-            <label class="text" for="apellido">Apellido</label>
-            <input type="text" id="apellido" class="form-control" placeholder="Apellido">
+        <p id="fileName">No se ha seleccionado ningún archivo</p>
+        <input type="file" name="fotografia" id="fileInput" style="display:none;" accept="image/*">
+        <button id="uploadButton">Agregar Fotografía</button>
+    
+        <div class="container">
+            <div class="form-group">
+                <label class="text" for="nombre">Nombre</label>
+                <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Nombre" value="<%= empleado.Nombre %>">
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="apellido">Apellido</label>
+                <input type="text" name="apellido" id="apellido" class="form-control" placeholder="Apellido" value="<%= empleado.Apellido %>">
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="fecha_nacimiento">Fecha de Nacimiento</label>
+                <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" class="form-control" value="<%= empleado.Fecha_Nacimiento %>">
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="direccion">Dirección</label>
+                <input type="text" name="direccion" id="direccion" class="form-control" placeholder="Dirección" value="<%= empleado.Dirección %>">
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="telefono">Teléfono</label>
+                <input type="text" name="telefono" id="telefono" class="form-control" placeholder="Teléfono" value="<%= empleado.Teléfono %>">
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="correo">Correo</label>
+                <input type="email" name="correo" id="correo" class="form-control" placeholder="Correo" value="<%= empleado.Email %>">
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="ci">CI</label>
+                <input type="text" name="ci" id="ci" class="form-control" placeholder="CI" value="<%= empleado.CI %>">
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="telefono_referencia">Teléfono Referencia</label>
+                <input type="text" name="telefono_referencia" id="telefono_referencia" class="form-control" placeholder="Teléfono Referencia" value="<%= empleado.Telefono_referencia %>">
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="departamento">Departamento</label>
+                <select name="departamento" id="departamento" class="form-select">
+                    <option value=""></option>
+                    <!-- Agregar opciones aquí -->
+                </select>
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="ciudad">Ciudad</label>
+                <select name="ciudad" id="ciudad" class="form-select">
+                    <option value="">- Selecciona Ciudad -</option>
+                    <!-- Agregar opciones aquí -->
+                </select>
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="genero">Género</label>
+                <select name="genero" id="genero" class="form-select">
+                    <option value="">- Selecciona Género -</option>
+                    <!-- Agregar opciones aquí -->
+                </select>
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="contrasena">Contraseña</label>
+                <input type="text" name="contrasena" id="contrasena" class="form-control" placeholder="Contraseña" value="<%= empleado.Contrasena %>">
+            </div>
         </div>
     
-        <div class="form-group">
-            <label class="text" for="ciudad">Ciudad</label>
-            <select id="ciudad" class="form-select">
-                <option value="">- Selecciona Ciudad -</option>
-                <!-- Agregar más opciones -->
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="text" for="departamento">Departamento</label>
-            <select id="departamento" class="form-select">
-                <option value="">- Selecciona Departamento -</option>
-                <!-- Agregar más opciones -->
-            </select>
-        </div>
+        <h1>Datos Administrativos</h1>
     
-        <div class="form-group">
-            <label class="text" for="ci">CI</label>
-            <input type="text" id="ci" class="form-control" placeholder="CI">
-        </div>
-        <div class="form-group">
-            <label class="text" for="fecha_nacimiento">Fecha de Nacimiento</label>
-            <input type="date" id="fecha_nacimiento" class="form-control" placeholder="Fecha de Nacimiento">
-        </div>
+        <div class="container">
+            <div class="form-group">
+                <label class="text" for="rol">Rol</label>
+                <select name="rol" id="rol" class="form-select">
+                    <option value="">- Selecciona Rol -</option>
+                    <!-- Agregar opciones aquí -->
+                </select>
+            </div>
     
-        <div class="form-group">
-            <label class="text" for="direccion">Direccion</label>
-            <input type="text" id="direccion" class="form-control" placeholder="Direccion">
-        </div>
-        <div class="form-group">
-            <label class="text" for="correo">Correo</label>
-            <input type="email" id="correo" class="form-control" placeholder="Correo">
-        </div>
+            <div class="form-group">
+                <label class="text" for="sucursal">Sucursal</label>
+                <select name="sucursal" id="sucursal" class="form-select">
+                    <option value="">- Selecciona Sucursal -</option>
+                    <!-- Agregar opciones aquí -->
+                </select>
+            </div>
     
-        <div class="form-group">
-            <label class="text" for="telefono">Telefono</label>
-            <input type="text" id="telefono" class="form-control" placeholder="Telefono">
-        </div>
-        <div class="form-group">
-            <label class="text" for="telefono_referencia">Telefono Referencia</label>
-            <input type="text" id="telefono_referencia" class="form-control" placeholder="Telefono Referencia">
-        </div>
+            <div class="form-group">
+                <label class="text" for="caja">Caja</label>
+                <select name="caja" id="caja" class="form-select">
+                    <option value="">- Selecciona Caja -</option>
+                    <!-- Agregar opciones aquí -->
+                </select>
+            </div>
     
-        <div class="form-group">
-            <label class="text" for="rol">Rol</label>
-            <input type="text" id="rol" class="form-control" placeholder="Rol">
-        </div>
-        <div class="form-group">
-            <label class="text" for="contrasena">Contraseña</label>
-            <input type="password" id="contrasena" class="form-control" placeholder="Contraseña">
-        </div>
+            <div class="form-group">
+                <label class="text" for="estado">Estado</label>
+                <select name="estado" id="estado" class="form-select">
+                    <option value="1" <%= empleado.Estado == 1 ? 'selected' : '' %>>Activo</option>
+                    <option value="2" <%= empleado.Estado == 2 ? 'selected' : '' %>>Bloqueado</option>
+                </select>
+            </div>
     
-        <div class="form-group" style="grid-column: span 1;">
-            <button class="btn-danger" type="submit">Guardar</button>
-        </div>
-    </div>
+            <div class="form-group">
+                <label class="text" for="grado">Grado</label>
+                <select name="grado" id="grado" class="form-select">
+                    <option value="1" <%= empleado.Grado == 1 ? 'selected' : '' %>>Activa - intentos fallidos 1</option>
+                    <option value="2" <%= empleado.Grado == 2 ? 'selected' : '' %>>Activa - intentos fallidos 2</option>
+                    <option value="3" <%= empleado.Grado == 3 ? 'selected' : '' %>>Activo - intentos fallidos 3</option>
+                    <option value="4" <%= empleado.Grado == 4 ? 'selected' : '' %>>Bloqueada - sin intentos fallidos</option>
+                </select>
+            </div>
     
-        
+            <div class="form-group">
+                <label class="text" for="situacion">Situación</label>
+                <select name="situacion" id="situacion" class="form-select">
+                    <option value="1" <%= empleado.Situacion == 1 ? 'selected' : '' %>>Cuenta cerrada sesión</option>
+                    <option value="2" <%= empleado.Situacion == 2 ? 'selected' : '' %>>Cuenta en inicio de sesión</option>
+                </select>
+            </div>
+    
+            <div class="form-group" style="grid-column: span 1;">
+                <button class="btn-danger" type="submit">Guardar</button>
+            </div>
+        </div>
+    </form>
+    
 
-    
 </body>
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const uploadButton = document.getElementById('uploadButton');
+    const uploadedImage = document.getElementById('uploadedImage');
+    const fileNameDisplay = document.getElementById('fileName');
+
+    uploadButton.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                uploadedImage.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+
+            // Mostrar el nombre del archivo
+            fileNameDisplay.textContent = `Archivo seleccionado: ${file.name}`;
+        } else {
+            fileNameDisplay.textContent = 'No se ha seleccionado ningún archivo';
+        }
+    });
+</script>
+<script>
+    // Función para cargar datos en el select
+    function cargarSelect(url, selectId, defaultText, selectedId = null) {
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const select = document.getElementById(selectId);
+                select.innerHTML = `<option value="">${defaultText}</option>`; // Opción por defecto
+
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = item.nombre; // Usar item.nombre o item.codigo según sea necesario
+                    select.appendChild(option);
+                });
+
+                // Si se pasa un ID para seleccionar
+                if (selectedId) {
+                    select.value = selectedId;
+                }
+            })
+            .catch(error => console.error('Error al cargar los datos:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Valores obtenidos del servidor
+        const departamentoSeleccionado = "<%= empleado.ID_Departamento %>";
+        const ciudadSeleccionada = "<%= empleado.ID_Ciudad %>";
+        const generoSeleccionado = "<%= empleado.ID_Genero %>";
+        const rolSeleccionado = "<%= empleado.ID_Rol %>";
+        const sucursalSeleccionada = "<%= empleado.ID_Sucursal %>";
+        const cajaSeleccionada = "<%= empleado.ID_Caja %>";
+
+        // Llamar a la función cargarSelect para cada select
+        cargarSelect('/api/departamentos', 'departamento', "- Selecciona Departamento -",
+            departamentoSeleccionado);
+        cargarSelect('/api/ciudades', 'ciudad', "- Selecciona Ciudad -", ciudadSeleccionada);
+        cargarSelect('/api/generos', 'genero', "- Selecciona Género -", generoSeleccionado);
+        cargarSelect('/api/roles', 'rol', "- Selecciona Rol -", rolSeleccionado);
+        cargarSelect('/api/sucursales', 'sucursal', "- Selecciona Sucursal -", sucursalSeleccionada);
+        cargarSelect('/api/cajas', 'caja', "- Selecciona Caja -", cajaSeleccionada);
+    });
+</script>
 
 
 </html>
