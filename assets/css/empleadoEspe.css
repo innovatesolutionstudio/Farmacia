@@ -132,7 +132,7 @@ body {
 
  .img-perfil{
     width: 100%;
-    height: auto;
+    height: 100%;
     border-radius: 50%;
 }
 
@@ -181,6 +181,7 @@ body {
 .btn-edit {
     background-color: #007bff;
     color: white;
+    text-decoration: none; /* Quita la subrayado */
 }
 .btn-delete {
     background-color: transparent; /* Sin fondo */
@@ -194,6 +195,7 @@ body {
     display: flex; /* Para alinear el ícono y el texto */
     align-items: center;
     gap: 5px; /* Espacio entre ícono y texto */
+    text-decoration: none; /* Quita la subrayado */
 }
 
 .btn-delete i {

@@ -1,101 +1,395 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="/resources/css/Formulario.css" />
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="resources/css/cajas.css" /> <!-- Ruta a tu CSS -->
 
-    <title>Detalles del Empleado</title>
-    <style>    
-       
-    </style>
+    <title>Formulario</title>
 </head>
+
 <body>
-    <div style="max-width: 800px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9;">
-        <h2 style="font-size: 1.5em; font-weight: bold; margin-bottom: 20px;">Recursos Humanos > Gestión Empleados >  <span style="color: #333;">Nuevo Empleado</span></h2>
-        <p style="font-size: 0.9em; color: #888; margin-bottom: 20px;">*Todos los campos son obligatorios, excepto los mencionados como (opcional), para crear una nueva sucursal.</p>
-    
-        <form action="/empleados/editar" method="post">
-            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                <div style="flex: 1;">
-                    <label for="nombre" style="display: block; font-weight: bold; margin-bottom: 5px;">Nombre</label>
-                    <input type="text" id="nombre" name="nombre" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-                <div style="flex: 1;">
-                    <label for="apellido" style="display: block; font-weight: bold; margin-bottom: 5px;">Apellido</label>
-                    <input type="text" id="apellido" name="apellido" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-            </div>
-    
-            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                <div style="flex: 1;">
-                    <label for="ciudad" style="display: block; font-weight: bold; margin-bottom: 5px;">Ciudad</label>
-                    <select id="ciudad" name="ciudad" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                        <option>- Selecciona Ciudad -</option>
-                        <!-- Agrega las ciudades aquí -->
-                    </select>
-                </div>
-                <div style="flex: 1;">
-                    <label for="departamento" style="display: block; font-weight: bold; margin-bottom: 5px;">Departamento</label>
-                    <select id="departamento" name="departamento" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                        <option>- Selecciona Departamento -</option>
-                        <!-- Agrega los departamentos aquí -->
-                    </select>
-                </div>
-            </div>
-    
-            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                <div style="flex: 1;">
-                    <label for="ci" style="display: block; font-weight: bold; margin-bottom: 5px;">CI</label>
-                    <input type="text" id="ci" name="ci" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-                <div style="flex: 1;">
-                    <label for="fecha_nacimiento" style="display: block; font-weight: bold; margin-bottom: 5px;">Fecha de Nacimiento</label>
-                    <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-            </div>
-    
-            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                <div style="flex: 1;">
-                    <label for="direccion" style="display: block; font-weight: bold; margin-bottom: 5px;">Dirección</label>
-                    <input type="text" id="direccion" name="direccion" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-                <div style="flex: 1;">
-                    <label for="correo" style="display: block; font-weight: bold; margin-bottom: 5px;">Correo</label>
-                    <input type="email" id="correo" name="correo" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-            </div>
-    
-            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                <div style="flex: 1;">
-                    <label for="telefono" style="display: block; font-weight: bold; margin-bottom: 5px;">Teléfono</label>
-                    <input type="text" id="telefono" name="telefono" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-                <div style="flex: 1;">
-                    <label for="telefono_referencia" style="display: block; font-weight: bold; margin-bottom: 5px;">Teléfono Referencia</label>
-                    <input type="text" id="telefono_referencia" name="telefono_referencia" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-            </div>
-    
-            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                <div style="flex: 1;">
-                    <label for="rol" style="display: block; font-weight: bold; margin-bottom: 5px;">Rol</label>
-                    <input type="text" id="rol" name="rol" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-                <div style="flex: 1;">
-                    <label for="contrasena" style="display: block; font-weight: bold; margin-bottom: 5px;">Contraseña</label>
-                    <input type="password" id="contrasena" name="contrasena" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-            </div>
-    
-            <div style="text-align: right; margin-top: 20px;">
-                <button type="submit" style="background-color: #f44336; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 1.2em;">Guardar</button>
-            </div>
-        </form>
+
+    <!-- Encabezado -->
+    <div class="header-container">
+        <div class="breadcrumb">
+            <a href="/empleados" class="reporte-link ">
+                <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Recursos Humanos</h1>
+            </a>
+            <h2 style="color: #858B92; font-weight: bold; margin-right: 5px;">›</h2>
+            <a href="/empleados" class="reporte-link">
+                <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Gestion Empleados</h1>
+            </a>
+            <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+            <h1 style="font-weight: bold;">Formulario de edicion</h1>
+            <!--recuperar nombre de la caja seleccionada-->
+        </div>
     </div>
+    <h1>
+        Datos personales
+    </h1>
+
+    <form id="formEmpleado" action="/EditEmpleados/" enctype="multipart/form-data" method="POST">
+        <input type="hidden" name="opcion" value="crear">
+        <div class="container-img">
+            <img id="uploadedImage" src="/fotos/img_empleados/">
+        </div>
+        <p id="fileName" style="color: red;">No se ha seleccionado ningún archivo para hacer el cambio, Solo se puede seleccionar archivos .jpg</p>
+        
+        <!-- Campo de fotografía -->
+        <input type="file" name="fotografia" id="fileInput" style="display:none;" accept=".jpg,image/jpeg">
+
+        <input type="hidden" name="fotografia" id="fotografiaNombre" value="">
+        <button id="uploadButton">Agregar Fotografía</button>
     
+        
+
+
+        <div class="container">
+            <div class="form-group">
+                <label class="text" for="nombre">Nombre</label>
+                <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Nombre" >
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="apellido">Apellido</label>
+                <input type="text" name="apellido" id="apellido" class="form-control" placeholder="Apellido" >
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="fecha_nacimiento">Fecha de Nacimiento</label>
+                <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" class="form-control" >
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="direccion">Dirección</label>
+                <input type="text" name="direccion" id="direccion" class="form-control" placeholder="Dirección" >
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="telefono">Teléfono</label>
+                <input type="text" name="telefono" id="telefono" class="form-control" placeholder="Teléfono" >
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="correo">Correo</label>
+                <input type="email" name="correo" id="correo" class="form-control" placeholder="Correo" >
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="ci">CI</label>
+                <input type="text" name="ci" id="ci" class="form-control" placeholder="CI" >
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="telefono_referencia">Teléfono Referencia</label>
+                <input type="text" name="telefono_referencia" id="telefono_referencia" class="form-control" placeholder="Teléfono Referencia" >
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="departamento">Departamento</label>
+                <select name="departamento" id="departamento" class="form-select">
+                    <option value=""></option>
+                    <!-- Agregar opciones aquí -->
+                </select>
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="ciudad">Ciudad</label>
+                <select name="ciudad" id="ciudad" class="form-select">
+                    <option value="">- Selecciona Ciudad -</option>
+                    <!-- Agregar opciones aquí -->
+                </select>
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="genero">Género</label>
+                <select name="genero" id="genero" class="form-select">
+                    <option value="">- Selecciona Género -</option>
+                    <!-- Agregar opciones aquí -->
+                </select>
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="contrasena">Contraseña</label>
+                <input type="text" name="contrasena" id="contrasena" class="form-control" placeholder="Contraseña" >
+            </div>
+        </div>
+    
+        <h1>Datos Administrativos</h1>
+    
+        <div class="container">
+            <div class="form-group">
+                <label class="text" for="rol">Rol</label>
+                <select name="rol" id="rol" class="form-select">
+                    <option value="">- Selecciona Rol -</option>
+                    <!-- Agregar opciones aquí -->
+                </select>
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="sucursal">Sucursal</label>
+                <select name="sucursal" id="sucursal" class="form-select">
+                    <option value="">- Selecciona Sucursal -</option>
+                    <!-- Agregar opciones aquí -->
+                </select>
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="caja">Caja</label>
+                <select name="caja" id="caja" class="form-select">
+                    <option value="">- Selecciona Caja -</option>
+                    <!-- Agregar opciones aquí -->
+                </select>
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="estado">Estado</label>
+                <select name="estado" id="estado" class="form-select">
+                    <option value="1">Activo</option>
+                    <option value="2">Bloqueado</option>
+                </select>
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="grado">Grado</label>
+                <select name="grado" id="grado" class="form-select">
+                    <option value="1" >Activa - intentos fallidos 1</option>
+                    <option value="2" >Activa - intentos fallidos 2</option>
+                    <option value="3" >Activo - intentos fallidos 3</option>
+                    <option value="4" >Bloqueada - sin intentos fallidos</option>
+                </select>
+            </div>
+    
+            <div class="form-group">
+                <label class="text" for="situacion">Situación</label>
+                <select name="situacion" id="situacion" class="form-select">
+                    <option value="1">Cuenta cerrada sesión</option>
+                    <option value="2">Cuenta en inicio de sesión</option>
+                </select>
+            </div>
+    
+            
+    <div class="form-group" style="grid-column: span 1;">
+        <button class="btn-danger" type="submit" id="submitButton">Guardar</button>
+
+    </div>
+        </div>
+    </form>
+    
+
 </body>
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const uploadButton = document.getElementById('uploadButton');
+    const uploadedImage = document.getElementById('uploadedImage');
+    const fileNameDisplay = document.getElementById('fileName');
+
+    uploadButton.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                uploadedImage.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+
+            // Mostrar el nombre del archivo
+            fileNameDisplay.textContent = `Archivo seleccionado: ${file.name}`;
+        } else {
+            fileNameDisplay.textContent = 'No se ha seleccionado ningún archivo';
+        }
+    });
+</script>
+<script>
+    // Función para cargar datos en el select
+    function cargarSelect(url, selectId, defaultText, selectedId = null) {
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const select = document.getElementById(selectId);
+                select.innerHTML = `<option value="">${defaultText}</option>`; // Opción por defecto
+
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = item.nombre; // Usar item.nombre o item.codigo según sea necesario
+                    select.appendChild(option);
+                });
+
+                // Si se pasa un ID para seleccionar
+                if (selectedId) {
+                    select.value = selectedId;
+                }
+            })
+            .catch(error => console.error('Error al cargar los datos:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Valores obtenidos del servidor
+        const departamentoSeleccionado = "";
+        const ciudadSeleccionada = "";
+        const generoSeleccionado = "";
+        const rolSeleccionado = "";
+        const sucursalSeleccionada = "";
+        const cajaSeleccionada = "";
+
+        // Llamar a la función cargarSelect para cada select
+        cargarSelect('/api/departamentos', 'departamento', "- Selecciona Departamento -",
+            departamentoSeleccionado);
+        cargarSelect('/api/ciudades', 'ciudad', "- Selecciona Ciudad -", ciudadSeleccionada);
+        cargarSelect('/api/generos', 'genero', "- Selecciona Género -", generoSeleccionado);
+        cargarSelect('/api/roles', 'rol', "- Selecciona Rol -", rolSeleccionado);
+        cargarSelect('/api/sucursales', 'sucursal', "- Selecciona Sucursal -", sucursalSeleccionada);
+        cargarSelect('/api/cajas', 'caja', "- Selecciona Caja -", cajaSeleccionada);
+    });
+</script>
+
+<script>
+    document.getElementById('submitForm').addEventListener('click', function(e) {
+        e.preventDefault(); // Evitar el envío del formulario por defecto
+
+        // Mostrar la alerta de confirmación antes de realizar el cambio
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Los cambios realizados se guardarán.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, guardar cambios',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Crear un objeto FormData con los datos del formulario
+                var formData = new FormData(document.getElementById('formEmpleado'));
+
+                // Enviar datos usando AJAX
+                fetch('/EditEmpleados/?opcion=editar', {
+                    method: 'POST',
+                    body: new URLSearchParams(formData) // Convierte FormData a URLSearchParams para evitar multipart/form-data
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Datos recibidos:', data);
+                    
+                    // Mostrar alerta de éxito
+                    Swal.fire({
+                        title: '¡Actualización exitosa!',
+                        text: 'Los datos del empleado han sido actualizados correctamente.',
+                        icon: 'success'
+                    }).then(() => {
+                        // Redirigir o actualizar la página después de la alerta
+                        window.location.href = '/empleados';
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+
+                    // Mostrar alerta de error
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un problema al actualizar los datos. Inténtalo de nuevo.',
+                        icon: 'error'
+                    });
+                });
+            }
+        });
+    });
+</script>
+
+
+<script>
+  document.getElementById('fileInput').addEventListener('change', function() {
+    var fileInput = document.getElementById('fileInput');
+    var fileName = fileInput.files[0].name; // Obtener el nombre del archivo
+    document.getElementById('fotografiaNombre').value = fileName; // Asignar el nombre al campo oculto
+    document.getElementById('fileName').textContent = fileName; // Mostrar el nombre del archivo en el formulario
+});
+
+document.getElementById('uploadButton').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('fileInput').click(); // Simular un clic en el input file
+});
+
+document.getElementById('submitForm').addEventListener('click', function(e) {
+    e.preventDefault();
+
+    // Crear un objeto FormData con los datos del formulario
+    var formData = new FormData(document.getElementById('formEmpleado'));
+
+    // Enviar datos usando AJAX
+    fetch('/EditEmpleados/?opcion=editar', {
+        method: 'POST',
+        body: new URLSearchParams(formData) // Convierte FormData a URLSearchParams para evitar multipart/form-data
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Datos recibidos:', data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+
+</script>
+
+<script>
+    document.getElementById('fileInput').addEventListener('change', function() {
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0];
+        var fileName = file.name;
+        var fileExtension = fileName.split('.').pop().toLowerCase();
+        
+        // Solo permitir archivos .jpg
+        if (fileExtension !== 'jpg') {
+            alert('Solo se permiten archivos con formato .jpg');
+            fileInput.value = ''; // Limpiar el input
+            document.getElementById('fileName').textContent = 'No se ha seleccionado ningún archivo';
+            return;
+        }
+
+        // Si es válido, mostrar el nombre del archivo
+        document.getElementById('fileName').textContent = fileName;
+    });
+
+    // Mostrar el campo de selección de archivo cuando se hace clic en el botón
+    document.getElementById('uploadButton').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('fileInput').click();
+    });
+</script> 
+<script>
+    document.getElementById('submitButton').addEventListener('click', function(e) {
+        e.preventDefault(); // Evitar el envío del formulario por defecto
+
+        // Mostrar la alerta de confirmación antes de realizar el cambio
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Los cambios realizados se guardarán.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, guardar cambios',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Enviar el formulario manualmente si el usuario confirma
+                document.getElementById('formEmpleado').submit();
+            }
+        });
+    });
+</script>
+
 </html>

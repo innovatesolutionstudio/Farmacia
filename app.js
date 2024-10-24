@@ -88,15 +88,22 @@ app.use(express.json());
 // invocamos a dotenv
 const dotenv = require('dotenv');
 dotenv.config({path: './env/.env'})
+
 // motor de plantillas
 app.set('view engine','ejs');
 const path = require('path');
 
-//#endregion
-
+// Middleware para manejo de datos Json
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// Middleware para procesar datos de formularios
+app.use(express.urlencoded({ extended: true }));
+
+//#endregion
+
+
 
 //#region estilos - js - css 
 app.use('/resources',express.static('assets'));

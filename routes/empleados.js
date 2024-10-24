@@ -6,30 +6,8 @@ const router = express.Router();
 const conexion = require('../database/db');
 const multer = require('multer');
 const path = require('path');
-// Configuración de Multer para almacenar archivos en la carpeta "resources/Fotografias"
+const { Console } = require('console');
 
-let fotoRuta = ''; // Variable para almacenar la ruta de la foto
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './storage/img_empleados');
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        fotoRuta = file.fieldname + '-' + uniqueSuffix + '.' + file.originalname.split('.').pop();
-        cb(null, fotoRuta);
-    }
-});
-// Middleware de Multer para manejar la carga de archivos
-const upload = multer({ storage });
-
-router.post('/fotos', upload.single('Fotografia'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).send('No se ha proporcionado ninguna imagen');
-    }
-    console.log("Imagen del empleado subida con éxito");
-    res.send('Imagen subida correctamente');
-});
 
 
   
@@ -37,7 +15,7 @@ router.post('/fotos', upload.single('Fotografia'), (req, res) => {
 router.get('/empleados', function(req, res) {
     const sucursalID = req.session.ID_Sucursal;
     // Realiza la consulta a la base de datos para obtener los datos de la tabla "empleados"
-    conexion.query('SELECT * FROM empleados', (error, results) => {
+    conexion.query('SELECT * FROM empleados WHERE Figura = 1', (error, results) => {
         if (error) {
             console.error('Error al obtener datos de la tabla empleados:', error);
             res.status(500).send('Error al obtener datos de la tabla empleados');
@@ -261,7 +239,7 @@ router.get('/detallesempleados/:id', async (req, res) => {
 
 router.get('/EditEmpleados/:id', async (req, res) => {
     const empleadoId = req.params.id;
-    const sql = `SELECT DATE_FORMAT(Fecha_Nacimiento, '%Y-%m-%d') AS Fecha_Nacimiento,
+    const sql = `SELECT ID_Empleado, DATE_FORMAT(Fecha_Nacimiento, '%Y-%m-%d') AS Fecha_Nacimiento,
                   Nombre, Apellido, Dirección, Teléfono, Email, CI, Telefono_referencia, ID_Departamento,
                   ID_Ciudad, ID_Genero, ID_Rol, Contrasena, Fotografia, Estado, Grado, ID_Sucursal, ID_Caja, Situacion
                   FROM empleados 
@@ -283,43 +261,69 @@ router.get('/EditEmpleados/:id', async (req, res) => {
     });
 });
 
-router.post('/empleados/:id?', function(req, res) {
+//codigo para el guardado de las imagenes
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, path.join(__dirname, '../storage/img_empleados')); // Ruta corregida
+    },
+    filename: function(req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const ext = path.extname(file.originalname);
+        cb(null, 'Fotografia-' + uniqueSuffix + ext); // Guardar con un nombre único
+    }
+});
+
+
+const upload = multer({ storage: storage });
+
+
+router.get('/CrearEmpleado',(req, res)=>{
+    res.render('./empleados/nuevoempleado');
+})
+
+
+router.post('/EditEmpleados/:id?', upload.single('fotografia'), function(req, res) {
     const id = req.params.id;
     const opcion = req.body.opcion;
+    const nombreArchivo = req.file ? req.file.filename : req.body.fotografia; // Usar el nuevo archivo si se sube uno
 
-    console.log("Datos recibidos del formulario:", req.body); // Para ver los datos enviados
+    console.log("ID recibido:", id);
+    console.log("Datos recibidos:", req.body);
+    console.log("Nombre del archivo de fotografía:", nombreArchivo);
 
-    switch(opcion) {
+    const { nombre, apellido, fecha_nacimiento, direccion, telefono, correo, ci, telefono_referencia, 
+        estado, grado, situacion, contrasena, departamento, ciudad, genero, rol, sucursal, caja } = req.body;
+
+    switch (opcion) {
         case 'crear':
-            const { nombre, apellido, fecha_nacimiento, direccion, telefono, correo, ci, telefono_referencia, 
-                    estado, grado, situacion, contrasena, departamento, ciudad, genero, rol, sucursal, caja } = req.body;
-
+        
+            // Consulta SQL para insertar un nuevo empleado
             const sqlInsert = `
                 INSERT INTO empleados 
-                (Nombre, Apellido, Fecha_Nacimiento, Dirección, Teléfono, Email, CI, Telefono_referencia, 
-                Estado, Grado, Situacion, Contrasena, ID_Departamento, ID_Ciudad, ID_Genero, ID_Rol, ID_Sucursal, ID_Caja) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-            conexion.query(sqlInsert, [nombre, apellido, fecha_nacimiento, direccion, telefono, correo, ci, telefono_referencia, 
-                                       estado, grado, situacion, contrasena, departamento, ciudad, genero, rol, sucursal, caja], 
+                (Nombre, Apellido, Fecha_Nacimiento, Dirección, Teléfono, Email, CI, Telefono_referencia, Estado, 
+                 Grado, Situacion, Contrasena, ID_Departamento, ID_Ciudad, ID_Genero, ID_Rol, ID_Sucursal, 
+                 ID_Caja, Fotografia, Figura) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`;
+  
+            // Ejecutar la consulta con los datos y la foto
+            conexion.query(sqlInsert, [nombre, apellido, fecha_nacimiento, direccion, telefono, correo, ci, 
+                                       telefono_referencia, estado, grado, situacion, contrasena, 
+                                       departamento, ciudad, genero, rol, sucursal, caja, nombreArchivo], 
             (err, result) => {
                 if (err) {
                     console.error('Error al crear empleado:', err);
                     res.status(500).send('Error al crear empleado');
                 } else {
-                    console.log("Empleado creado:", result); // Confirmar que se ha creado el empleado
+                    console.log("Empleado creado:", result);
                     res.redirect('/empleados');
                 }
             });
             break;
 
         case 'editar':
-            const { nombre: nombreEdit, apellido: apellidoEdit, fecha_nacimiento: fechaNacimientoEdit, 
-                    direccion: direccionEdit, telefono: telefonoEdit, correo: correoEdit, ci: ciEdit, 
-                    telefono_referencia: telefonoReferenciaEdit, estado: estadoEdit, grado: gradoEdit, 
-                    situacion: situacionEdit, contrasena: contrasenaEdit, departamento: departamentoEdit, 
-                    ciudad: ciudadEdit, genero: generoEdit, rol: rolEdit, sucursal: sucursalEdit, caja: cajaEdit } = req.body;
 
+            // Consulta SQL para actualizar los datos del empleado
             const sqlUpdate = `
                 UPDATE empleados 
                 SET 
@@ -340,34 +344,42 @@ router.post('/empleados/:id?', function(req, res) {
                     ID_Genero = ?, 
                     ID_Rol = ?, 
                     ID_Sucursal = ?, 
-                    ID_Caja = ?
+                    ID_Caja = ?, 
+                    Fotografia = ?
                 WHERE ID_Empleado = ?`;
 
-            conexion.query(sqlUpdate, [nombreEdit, apellidoEdit, fechaNacimientoEdit, direccionEdit, telefonoEdit, correoEdit, 
-                                       ciEdit, telefonoReferenciaEdit, estadoEdit, gradoEdit, situacionEdit, contrasenaEdit, 
-                                       departamentoEdit, ciudadEdit, generoEdit, rolEdit, sucursalEdit, cajaEdit, id], 
+            // Ejecutar la consulta con los datos y la foto
+            conexion.query(sqlUpdate, [nombre, apellido, fecha_nacimiento, direccion, telefono, correo, 
+                                       ci, telefono_referencia, estado, grado, situacion, contrasena, 
+                                       departamento, ciudad, genero, rol, sucursal, caja, nombreArchivo, id], 
             (err, result) => {
                 if (err) {
                     console.error('Error al actualizar empleado:', err);
                     res.status(500).send('Error al actualizar empleado');
                 } else {
-                    console.log("Empleado actualizado:", result); // Confirmar que se ha actualizado el empleado
+                    console.log("Empleado actualizado:", result);
                     res.redirect('/empleados');
                 }
             });
             break;
 
         case 'eliminar':
-            const sqlDelete = `DELETE FROM empleados WHERE ID_Empleado = ?`;
-            conexion.query(sqlDelete, [id], (err, result) => {
-                if (err) {
-                    console.error('Error al eliminar empleado:', err);
-                    res.status(500).send('Error al eliminar empleado');
-                } else {
-                    console.log("Empleado eliminado:", result); // Confirmar que se ha eliminado el empleado
-                    res.redirect('/empleados');
-                }
-            });
+            if (id) {
+                // Consulta SQL para eliminar el empleado por ID
+                const sqlDelete = 'UPDATE empleados  SET  Figura = 2 WHERE ID_Empleado = ?';
+                
+                conexion.query(sqlDelete, [id], (err, result) => {
+                    if (err) {
+                        console.error('Error al eliminar empleado:', err);
+                        res.status(500).json({ success: false, message: 'Error al eliminar empleado' });
+                    } else {
+                        console.log("Empleado eliminado:", result);
+                        res.json({ success: true, message: 'Empleado eliminado con éxito' });
+                    }
+                });
+            } else {
+                res.status(400).json({ success: false, message: 'ID no proporcionado' });
+            }
             break;
 
         default:

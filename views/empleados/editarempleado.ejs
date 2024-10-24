@@ -35,16 +35,23 @@
         Datos personales
     </h1>
 
-    <form action="/empleados/<%= empleado ? empleado.ID_Empleado : '' %>?opcion=editar" method="POST" enctype="multipart/form-data">
+    <form id="formEmpleado" enctype="multipart/form-data" method="POST">
         <input type="hidden" name="opcion" value="editar">
     
         <div class="container-img">
             <img id="uploadedImage" src="/fotos/img_empleados/<%= empleado.Fotografia %>">
         </div>
-        <p id="fileName">No se ha seleccionado ningún archivo</p>
-        <input type="file" name="fotografia" id="fileInput" style="display:none;" accept="image/*">
+        <p id="fileName" style="color: red;">No se ha seleccionado ningún archivo para hacer el cambio, Solo se puede seleccionar archivos .jpg</p>
+        
+        <!-- Campo de fotografía -->
+        <input type="file" name="fotografia" id="fileInput" style="display:none;" accept=".jpg,image/jpeg">
+
+        <input type="hidden" name="fotografia" id="fotografiaNombre" value="<%= empleado.Fotografia %>">
         <button id="uploadButton">Agregar Fotografía</button>
     
+        
+
+
         <div class="container">
             <div class="form-group">
                 <label class="text" for="nombre">Nombre</label>
@@ -169,9 +176,11 @@
                 </select>
             </div>
     
-            <div class="form-group" style="grid-column: span 1;">
-                <button class="btn-danger" type="submit">Guardar</button>
-            </div>
+            
+    <div class="form-group" style="grid-column: span 1;">
+        <button class="btn-danger" type="submit" id="submitButton">Guardar</button>
+
+    </div>
         </div>
     </form>
     
@@ -247,5 +256,141 @@
     });
 </script>
 
+<script>
+    document.getElementById('submitForm').addEventListener('click', function(e) {
+        e.preventDefault(); // Evitar el envío del formulario por defecto
+
+        // Mostrar la alerta de confirmación antes de realizar el cambio
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Los cambios realizados se guardarán.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, guardar cambios',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Crear un objeto FormData con los datos del formulario
+                var formData = new FormData(document.getElementById('formEmpleado'));
+
+                // Enviar datos usando AJAX
+                fetch('/EditEmpleados/<%= empleado.ID_Empleado %>?opcion=editar', {
+                    method: 'POST',
+                    body: new URLSearchParams(formData) // Convierte FormData a URLSearchParams para evitar multipart/form-data
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Datos recibidos:', data);
+                    
+                    // Mostrar alerta de éxito
+                    Swal.fire({
+                        title: '¡Actualización exitosa!',
+                        text: 'Los datos del empleado han sido actualizados correctamente.',
+                        icon: 'success'
+                    }).then(() => {
+                        // Redirigir o actualizar la página después de la alerta
+                        window.location.href = '/empleados';
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+
+                    // Mostrar alerta de error
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un problema al actualizar los datos. Inténtalo de nuevo.',
+                        icon: 'error'
+                    });
+                });
+            }
+        });
+    });
+</script>
+
+
+<script>
+  document.getElementById('fileInput').addEventListener('change', function() {
+    var fileInput = document.getElementById('fileInput');
+    var fileName = fileInput.files[0].name; // Obtener el nombre del archivo
+    document.getElementById('fotografiaNombre').value = fileName; // Asignar el nombre al campo oculto
+    document.getElementById('fileName').textContent = fileName; // Mostrar el nombre del archivo en el formulario
+});
+
+document.getElementById('uploadButton').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('fileInput').click(); // Simular un clic en el input file
+});
+
+document.getElementById('submitForm').addEventListener('click', function(e) {
+    e.preventDefault();
+
+    // Crear un objeto FormData con los datos del formulario
+    var formData = new FormData(document.getElementById('formEmpleado'));
+
+    // Enviar datos usando AJAX
+    fetch('/EditEmpleados/<%= empleado.ID_Empleado %>?opcion=editar', {
+        method: 'POST',
+        body: new URLSearchParams(formData) // Convierte FormData a URLSearchParams para evitar multipart/form-data
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Datos recibidos:', data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+
+</script>
+
+<script>
+    document.getElementById('fileInput').addEventListener('change', function() {
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0];
+        var fileName = file.name;
+        var fileExtension = fileName.split('.').pop().toLowerCase();
+        
+        // Solo permitir archivos .jpg
+        if (fileExtension !== 'jpg') {
+            alert('Solo se permiten archivos con formato .jpg');
+            fileInput.value = ''; // Limpiar el input
+            document.getElementById('fileName').textContent = 'No se ha seleccionado ningún archivo';
+            return;
+        }
+
+        // Si es válido, mostrar el nombre del archivo
+        document.getElementById('fileName').textContent = fileName;
+    });
+
+    // Mostrar el campo de selección de archivo cuando se hace clic en el botón
+    document.getElementById('uploadButton').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('fileInput').click();
+    });
+</script> 
+<script>
+    document.getElementById('submitButton').addEventListener('click', function(e) {
+        e.preventDefault(); // Evitar el envío del formulario por defecto
+
+        // Mostrar la alerta de confirmación antes de realizar el cambio
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Los cambios realizados se guardarán.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, guardar cambios',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Enviar el formulario manualmente si el usuario confirma
+                document.getElementById('formEmpleado').submit();
+            }
+        });
+    });
+</script>
 
 </html>
