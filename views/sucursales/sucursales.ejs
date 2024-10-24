@@ -1,106 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
-  <link rel="shortcut icon" href="#" />
-  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <title>DataTables estilo Bootstrap 5 - NodeJS y Express</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
-    integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="resources/css/recursosH.css" />
+  
+
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap5.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css" />
-  <style>
-    table.dataTable thead {
-      background-color: #485464;
-      color: white;
-    }
 
-    .ftable {
-      background-color: rgba(224, 223, 223, 0.433);
-      color: rgb(0, 0, 0);
-    }
-
-    .btn-group img {
-      max-width: 24px;
-      max-height: 24px;
-    }
-
-    body {
-      background-color: #00000000;
-    }
-  </style>
+  <title>Ventas - Finanzas</title>
 </head>
 
 <body>
-  <div class="container-fluid">
-    <H1 id="tituloImpresion" style="
-      text-align: left;
-      font-family: Arial,sans-serif;
-      font-size: 25px;
-      padding: 20px 0;
-      background-color: #485464; 
-      color: #ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;Tablero de control - Sucursales</H1>
-
-    <a id="btnCrear" class="btn btn-group btn-light mt-2" style="font-size: 20px;">
-      <img src="resources/images/iconos/create.svg" alt="Crear"> &nbsp;Crear
-    </a>
-    <a id="btnActualizar" class="btn btn-group btn-light mt-2" style="font-size: 20px;">
-      <img src="resources/images/iconos/refresh.svg" alt="Crear"> &nbsp;Actualizar
-    </a>
-
-    <a id="btnExportar" class="btn btn-group btn-light mt-2" style="font-size: 20px;">
-      <img src="resources/images/iconos/export.svg" alt="Crear"> &nbsp;Exportar CSV 
-    </a>
-
-    <a href="/impre_ciudades" class="btn btn-group btn-light mt-2" style="font-size: 20px;" target="_blank">
-      <img src="resources/images/iconos/print.svg" alt="Crear"> &nbsp;Imprimir
-    </a>
-
-    <div class="row shadow-lg p-3 mb-5 ftable" id="sucursalesContainer">
-      <div class="col">
-        <table id="tablaSucursales" class="table table-striped table-bordered" style="width: 100%">
-
-          <thead>
-            <tr>
-              <th class="text-center">ID</th>
-              <th class="text-center">Nombre</th>
-              <th class="text-center">Dirección</th>
-              <th class="text-center">Teléfono</th>
-              <th class="text-center">Encargado</th>
-              <th class="text-center">Ciudad</th>
-              <th class="text-center">Departamento</th>
-              <th class="text-center">País</th>
-              <th class="text-center" style="width: 150px;">ACCIONES</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% results.forEach(function(sucursal) { %>
-              <tr>
-                <td class="text-center"><%= sucursal.ID_Sucursal %></td>
-                <td class="text-center"><%= sucursal.Nombre %></td>
-                <td class="text-center"><%= sucursal.Direccion %></td>
-                <td class="text-center"><%= sucursal.Telefono %></td>
-                <td class="text-center"><%= sucursal.Encargado %></td>
-                <td class="text-center"><%= sucursal.CiudadNombre %></td>
-                <td class="text-center"><%= sucursal.DepartamentoNombre %></td>
-                <td class="text-center"><%= sucursal.PaisNombre %></td>
-                <td>
-                  <div class="text-center">
-                    <div class="btn-group">
-                      <a href="#" class="btn btn-sm btnEditar"><img src="resources/images/iconos/edit.svg" alt="Editar"></a>
-                      <a href="#" class="btn btn-sm btnBorrar"><img src="resources/images/iconos/delete.svg" alt="Eliminar"></a>
-                      <a href="#" class="btn btn-sm btnCopiar"><img src="resources/images/iconos/copy.svg" alt="Copiar"></a>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            <% }); %>
-          </tbody>
-          
-        </table>
-      </div>
+  <!-- Encabezado -->
+  <div class="header-container">
+    <div class="breadcrumb">
+      <a href="/vista_finanzas" class="reporte-link ">
+        <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Finanzas</h1>
+      </a>
+      <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+      <a href="/cajas" class="reporte-link ">
+        <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Cajas</h1>
+      </a>
+      <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+      <h1 style="font-weight: bold;">Administrar Sucursales </h1>
     </div>
+
+    <div class="button-container">
+      <select id="opciones" class="form-select" onchange="redirectToPage(this.value)">
+        <option value="" style="color: #888;" disabled selected>Seleccionar</option>
+        <option value="actualizar">Actualuzar</option>
+        <option value="exportar">Exportar Csv</option>
+        <option value="Imprimir">Imprimir</option>
+      </select>
+      <a type="submit" id="btnCrear" href="#" class="btn btn-danger">Añadir Nuevo</a>
+    </div>
+
+  </div>
+
+
+  <div class="card3">
+    <div class="header-card1">
+      <span>Registro de Sucursales</span>
+    </div>
+    <div class="content-card-tabla">
+
+      <table id="tablaSucursales" class="table-registro" style="width: 100%">
+
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Dirección</th>
+            <th>Teléfono</th>
+            <th>Encargado</th>
+            <th>Ciudad</th>
+            <th>Departamento</th>
+            <th>País</th>
+            <th style="width: 150px;">ACCIONES</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% results.forEach(function(sucursal) { %>
+            <tr>
+              <td >
+                <%= sucursal.ID_Sucursal %>
+              </td>
+              <td>
+                <%= sucursal.Nombre %>
+              </td>
+              <td>
+                <%= sucursal.Direccion %>
+              </td>
+              <td >
+                <%= sucursal.Telefono %>
+              </td>
+              <td>
+                <%= sucursal.Encargado %>
+              </td>
+              <td>
+                <%= sucursal.CiudadNombre %>
+              </td>
+              <td >
+                <%= sucursal.DepartamentoNombre %>
+              </td>
+              <td >
+                <%= sucursal.PaisNombre %>
+              </td>
+              <td>
+                <div >
+                  <div>
+                    <a href="#" class="btnAcciones btnEditar">Editar</a>
+                    <a href="#" class="btnAcciones btnBorrar">Borrar</a>
+                    <a href="#" class="btnAcciones btnCopiar">Copiar</a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <% }); %>
+        </tbody>
+
+      </table>
+    </div>
+  </div>
   </div>
 
   <!-- Modal para CRUD -->
@@ -124,20 +130,20 @@
             <input type="text" class="form-control" id="Encargado" name="Encargado" />
             <label for="ID_Ciudad" class="col-form-label">Ciudad</label>
             <select class="form-select" id="ID_Ciudad" name="ID_Ciudad">
-            <option value="">Seleccionar Ciudad</option>
-            <!-- Opciones de ciudades se llenarán dinámicamente -->
+              <option value="">Seleccionar Ciudad</option>
+              <!-- Opciones de ciudades se llenarán dinámicamente -->
             </select>
 
             <label for="ID_Departamento" class="col-form-label">Departamento</label>
             <select class="form-select" id="ID_Departamento" name="ID_Departamento">
-            <option value="">Seleccionar Departamento</option>
-            <!-- Opciones de departamentos se llenarán dinámicamente -->
+              <option value="">Seleccionar Departamento</option>
+              <!-- Opciones de departamentos se llenarán dinámicamente -->
             </select>
 
             <label for="ID_Pais" class="col-form-label">País</label>
             <select class="form-select" id="ID_Pais" name="ID_Pais">
-            <option value="">Seleccionar País</option>
-            <!-- Opciones de países se llenarán dinámicamente -->
+              <option value="">Seleccionar País</option>
+              <!-- Opciones de países se llenarán dinámicamente -->
             </select>
 
           </div>
@@ -150,20 +156,11 @@
     </div>
   </div>
 
-  <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.min.js"
-    integrity="sha384-5h4UG+6GOuV9qXh6HqOLwZMY4mnLPraeTrjT5v07o347pj6IkfuoASuGBhfDsp3d"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.all.min.js"></script>
-  <script type="text/javascript" language="javascript"
-    src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
-  <script type="text/javascript" language="javascript"
-    src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap5.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
 
+  <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+  
   <script>
     $(document).ready(function () {
       let url = "/sucursales/";
@@ -327,36 +324,36 @@
         opcion = "crear";
       });
 
-    $(document).ready(function() {
-    // Función para obtener opciones de un endpoint
-    function obtenerOpciones(endpoint, selector) {
-        $.ajax({
-        url: endpoint,
-        method: 'GET',
-        dataType: 'json',
-        success: function(data) {
-            // Limpiar opciones previas
-            $(selector).empty();
-            // Agregar opción por defecto
-            $(selector).append('<option value="">Seleccionar</option>');
-            // Llenar opciones con datos recibidos
-            data.forEach(function(item) {
-            $(selector).append(`<option value="${item.id}">${item.nombre}</option>`);
-            });
-        },
-        error: function(err) {
-            console.error('Error al obtener datos:', err);
+      $(document).ready(function () {
+        // Función para obtener opciones de un endpoint
+        function obtenerOpciones(endpoint, selector) {
+          $.ajax({
+            url: endpoint,
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+              // Limpiar opciones previas
+              $(selector).empty();
+              // Agregar opción por defecto
+              $(selector).append('<option value="">Seleccionar</option>');
+              // Llenar opciones con datos recibidos
+              data.forEach(function (item) {
+                $(selector).append(`<option value="${item.id}">${item.nombre}</option>`);
+              });
+            },
+            error: function (err) {
+              console.error('Error al obtener datos:', err);
+            }
+          });
         }
-        });
-    }
 
-    // Cargar opciones para Ciudad
-    obtenerOpciones('/api/ciudades', '#ID_Ciudad');
-    // Cargar opciones para Departamento
-    obtenerOpciones('/api/departamentos', '#ID_Departamento');
-    // Cargar opciones para País
-    obtenerOpciones('/api/paises', '#ID_Pais');
-    });
+        // Cargar opciones para Ciudad
+        obtenerOpciones('/api/ciudades', '#ID_Ciudad');
+        // Cargar opciones para Departamento
+        obtenerOpciones('/api/departamentos', '#ID_Departamento');
+        // Cargar opciones para País
+        obtenerOpciones('/api/paises', '#ID_Pais');
+      });
 
 
     });
