@@ -46,14 +46,29 @@ body {
 .text{
     font-size: 20px;
 }
+
 .form-control {
     padding: 10px;
+    padding-right: 40px; /* Asegurando espacio para el ícono a la derecha */
     border-radius: 5px;
     border: 1px solid #d1d1d1;
     font-size: 18px;
     background-color: #E3EBF3;
-    height: 35px;
+    height: 50px;
+    width: 100%; /* Ocupar todo el ancho del contenedor */
+    box-sizing: border-box; /* Para que el padding no afecte el ancho */
 }
+
+#show_password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 20px;
+    color: #555;
+}
+
 
 
 .form-select {

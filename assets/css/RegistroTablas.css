@@ -32,7 +32,7 @@ body {
 }
 
 .form-select {
-    font-size: 18px;
+    font-size: 20px;
     padding: 10px 15px; /* Ajusta el espacio interno del selector */
     border-radius: 5px;
     border: 1px solid #ccc; /* Border suave para el selector */
@@ -42,6 +42,18 @@ body {
     background-color: #fff;
 }
 
+.form-select-action {
+    font-size: 16px;
+    padding: 10px 15px; /* Ajusta el espacio interno del selector */
+    border-radius: 5px;
+    width: 260px;
+    height: 50px;
+    outline: none;
+    background-color: #ffffff;
+    border: 1px solid #ccc
+}
+
+
 .btn {
     font-size: 18px;
     padding: 10px 20px;
@@ -49,7 +61,7 @@ body {
     display: flex;
     align-items: center; /* Alinea el contenido del botón */
     justify-content: center;
-    color: rgb(14, 141, 163);
+    color: rgb(255, 255, 255);
     border: none;
     cursor: pointer;
     font-weight: bold;
@@ -250,7 +262,7 @@ body {
 
 
 /* Estilo del contenedor de la tabla */
-.content-card-tabla {
+.content-card-registro {
     padding: 20px;
 }
 
@@ -286,10 +298,13 @@ body {
     margin-bottom: 10px;
 }
 
-/* Estilo del buscador */
+
+/* Asegura que el contenedor del buscador esté alineado a la derecha */
 .dataTables_filter {
+    float: right; /* Coloca el buscador a la derecha */
     display: flex;
     align-items: center;
+    margin-bottom: 10px; /* Agrega un margen inferior para separar */
 }
 
 .dataTables_filter input {
@@ -300,11 +315,15 @@ body {
     margin-left: 10px;
 }
 
-/* Estilo del selector de paginación */
+/* Asegura que el selector de paginación esté a la izquierda */
 .dataTables_length {
+    float: left; /* Alinea el selector de paginación a la izquierda */
     display: flex;
     align-items: center;
+    margin-bottom: 10px;
 }
+
+
 
 .dataTables_length select {
     border-radius: 5px;
@@ -382,3 +401,5 @@ body {
     display: block;
     clear: both;
 }
+
+

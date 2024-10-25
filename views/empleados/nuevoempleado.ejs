@@ -1,187 +1,248 @@
 <!DOCTYPE html>
 <html lang="es">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-        crossorigin="anonymous" />
-    <link rel="stylesheet" href="/resources/css/Formulario.css" />
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+            crossorigin="anonymous" />
+        <link rel="stylesheet" href="/resources/css/Formulario.css" />
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <title>Formulario</title>
-</head>
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-<body>
+        <script
+            src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-    <!-- Encabezado -->
-    <div class="header-container">
-        <div class="breadcrumb">
-            <a href="/empleados" class="reporte-link ">
-                <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Recursos Humanos</h1>
-            </a>
-            <h2 style="color: #858B92; font-weight: bold; margin-right: 5px;">›</h2>
-            <a href="/empleados" class="reporte-link">
-                <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Gestion Empleados</h1>
-            </a>
-            <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
-            <h1 style="font-weight: bold;">Formulario de edicion</h1>
-            <!--recuperar nombre de la caja seleccionada-->
-        </div>
-    </div>
-    <h1>
-        Datos personales
-    </h1>
+        <title>Formulario</title>
+    </head>
 
-    <form id="formEmpleado" action="/EditEmpleados/" enctype="multipart/form-data" method="POST">
-        <input type="hidden" name="opcion" value="crear">
-        
-        <div class="container-img">
-            <img id="uploadedImage" src="/fotos/img_empleados/" alt="Imagen del empleado" style="max-width: 200px;">
-        </div>
-        <p id="fileName" style="color: red;">No se ha seleccionado ningún archivo para hacer el cambio, Solo se puede seleccionar archivos .jpg</p>
-        
-        <!-- Campo de fotografía -->
-        <input type="file" name="fotografia" id="fileInput" style="display:none;" accept=".jpg,image/jpeg" required>
-        <input type="hidden" name="fotografia" id="fotografiaNombre" value="">
-        <button type="button" id="uploadButton" onclick="document.getElementById('fileInput').click();">Agregar Fotografía</button>
+    <body>
 
-        <div class="container mt-3">
-            <div class="form-group">
-                <label for="nombre">Nombre</label>
-                <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Nombre" required minlength="2" maxlength="50">
-            </div>
-    
-            <div class="form-group">
-                <label for="apellido">Apellido</label>
-                <input type="text" name="apellido" id="apellido" class="form-control" placeholder="Apellido" required minlength="2" maxlength="50">
-            </div>
-    
-            <div class="form-group">
-                <label for="fecha_nacimiento">Fecha de Nacimiento</label>
-                <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" class="form-control" required>
-            </div>
-    
-            <div class="form-group">
-                <label for="direccion">Dirección</label>
-                <input type="text" name="direccion" id="direccion" class="form-control" placeholder="Dirección" required minlength="5" maxlength="100">
-            </div>
-    
-            <div class="form-group">
-                <label for="telefono">Teléfono</label>
-                <input type="text" name="telefono" id="telefono" class="form-control" placeholder="Teléfono" required pattern="[0-9]{10}">
-            </div>
-    
-            <div class="form-group">
-                <label for="correo">Correo</label>
-                <input type="email" name="correo" id="correo" class="form-control" placeholder="Correo" required>
-            </div>
-    
-            <div class="form-group">
-                <label for="ci">CI</label>
-                <input type="text" name="ci" id="ci" class="form-control" placeholder="CI" required pattern="[0-9]{6,8}">
-            </div>
-    
-            <div class="form-group">
-                <label for="telefono_referencia">Teléfono Referencia</label>
-                <input type="text" name="telefono_referencia" id="telefono_referencia" class="form-control" placeholder="Teléfono Referencia" required pattern="[0-9]{10}">
-            </div>
-    
-            <div class="form-group">
-                <label for="departamento">Departamento</label>
-                <select name="departamento" id="departamento" class="form-select" required>
-                    <option value="">- Selecciona Departamento -</option>
-                    <!-- Agregar opciones aquí -->
-                </select>
-            </div>
-    
-            <div class="form-group">
-                <label for="ciudad">Ciudad</label>
-                <select name="ciudad" id="ciudad" class="form-select" required>
-                    <option value="">- Selecciona Ciudad -</option>
-                    <!-- Agregar opciones aquí -->
-                </select>
-            </div>
-    
-            <div class="form-group">
-                <label for="genero">Género</label>
-                <select name="genero" id="genero" class="form-select" required>
-                    <option value="">- Selecciona Género -</option>
-                    <!-- Agregar opciones aquí -->
-                </select>
-            </div>
-    
-            <div class="form-group">
-                <label for="contrasena">Contraseña</label>
-                <input type="password" name="contrasena" id="contrasena" class="form-control" placeholder="Contraseña" required minlength="6" maxlength="20">
+        <!-- Encabezado -->
+        <div class="header-container">
+            <div class="breadcrumb">
+                <a href="/empleados" class="reporte-link ">
+                    <h1
+                        style="color: #858B92; font-weight: bold; margin-right: 5px;">Recursos
+                        Humanos</h1>
+                </a>
+                <h2
+                    style="color: #858B92; font-weight: bold; margin-right: 5px;">›</h2>
+                <a href="/empleados" class="reporte-link">
+                    <h1
+                        style="color: #858B92; font-weight: bold; margin-right: 5px;">Gestion
+                        Empleados</h1>
+                </a>
+                <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+                <h1 style="font-weight: bold;">Formulario de edicion</h1>
+                <!--recuperar nombre de la caja seleccionada-->
             </div>
         </div>
+        <h1>
+            Datos personales
+        </h1>
 
-        <h1>Datos Administrativos</h1>
+        <form id="formEmpleado" action="/EditEmpleados/"
+            enctype="multipart/form-data" method="POST">
+            <input type="hidden" name="opcion" value="crear">
 
-        <div class="container">
-            <div class="form-group">
-                <label for="rol">Rol</label>
-                <select name="rol" id="rol" class="form-select" required>
-                    <option value="">- Selecciona Rol -</option>
-                    <!-- Agregar opciones aquí -->
-                </select>
+            <div class="container-img">
+                <img id="uploadedImage" src="/fotos/img_empleados/"
+                    alt="Agrega una Imagen">
             </div>
-    
-            <div class="form-group">
-                <label for="sucursal">Sucursal</label>
-                <select name="sucursal" id="sucursal" class="form-select" required>
-                    <option value="">- Selecciona Sucursal -</option>
-                    <!-- Agregar opciones aquí -->
-                </select>
-            </div>
-    
-            <div class="form-group">
-                <label for="caja">Caja</label>
-                <select name="caja" id="caja" class="form-select" required>
-                    <option value="">- Selecciona Caja -</option>
-                    <!-- Agregar opciones aquí -->
-                </select>
-            </div>
-    
-            <div class="form-group">
-                <label for="estado">Estado</label>
-                <select name="estado" id="estado" class="form-select" required>
-                    <option value="1">Activo</option>
-                    <option value="2">Bloqueado</option>
-                </select>
-            </div>
-    
-            <div class="form-group">
-                <label for="grado">Grado</label>
-                <select name="grado" id="grado" class="form-select" required>
-                    <option value="1">Activa - intentos fallidos 1</option>
-                    <option value="2">Activa - intentos fallidos 2</option>
-                    <option value="3">Activo - intentos fallidos 3</option>
-                    <option value="4">Bloqueada - sin intentos fallidos</option>
-                </select>
-            </div>
-    
-            <div class="form-group">
-                <label for="situacion">Situación</label>
-                <select name="situacion" id="situacion" class="form-select" required>
-                    <option value="1">Cuenta cerrada sesión</option>
-                    <option value="2">Cuenta en inicio de sesión</option>
-                </select>
-            </div>
-    
-            <div class="form-group">
-                <button class="btn-danger" type="submit" id="submitButton">Guardar</button>
-            </div>
-        </div>
-    </form>
-    
+            <p id="fileName" style="color: red;">No se ha seleccionado ningún
+                archivo para hacer el cambio, Solo se puede seleccionar archivos
+                .jpg</p>
 
-</body>
+            <!-- Campo de fotografía -->
+            <input type="file" name="fotografia" id="fileInput"
+                style="display:none;" accept=".jpg,image/jpeg" required>
+            <input type="hidden" name="fotografia" id="fotografiaNombre" value>
+            <button type="button" id="uploadButton"
+                onclick="document.getElementById('fileInput').click();">Agregar
+                Fotografía</button>
 
-<script>
+            <div class="container mt-3">
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" name="nombre" id="nombre"
+                        class="form-control" placeholder="Nombre" required
+                        minlength="2" maxlength="50">
+                </div>
+
+                <div class="form-group">
+                    <label for="apellido">Apellido</label>
+                    <input type="text" name="apellido" id="apellido"
+                        class="form-control" placeholder="Apellido" required
+                        minlength="2" maxlength="50">
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+                    <input type="date" name="fecha_nacimiento"
+                        id="fecha_nacimiento" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="direccion">Dirección</label>
+                    <input type="text" name="direccion" id="direccion"
+                        class="form-control" placeholder="Dirección" required
+                        minlength="5" maxlength="100">
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="number" name="telefono" id="telefono"
+                        class="form-control" placeholder="Teléfono" required
+                        pattern="[0-9]{10}">
+                </div>
+
+                <div class="form-group">
+                    <label for="correo">Correo</label>
+                    <input type="email" name="correo" id="correo"
+                        class="form-control" placeholder="Correo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="ci">CI</label>
+                    <input type="text" name="ci" id="ci" class="form-control"
+                        placeholder="CI" required pattern="[0-9]{6,8}">
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono_referencia">Teléfono Referencia</label>
+                    <input type="number" name="telefono_referencia"
+                        id="telefono_referencia" class="form-control"
+                        placeholder="Teléfono Referencia" required
+                        pattern="[0-9]{10}">
+                </div>
+
+                <div class="form-group">
+                    <label for="departamento">Departamento</label>
+                    <select name="departamento" id="departamento"
+                        class="form-select" required>
+                        <option value>- Selecciona Departamento -</option>
+                        <!-- Agregar opciones aquí -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="ciudad">Ciudad</label>
+                    <select name="ciudad" id="ciudad" class="form-select"
+                        required>
+                        <option value>- Selecciona Ciudad -</option>
+                        <!-- Agregar opciones aquí -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="genero">Género</label>
+                    <select name="genero" id="genero" class="form-select"
+                        required>
+                        <option value>- Selecciona Género -</option>
+                        <!-- Agregar opciones aquí -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="contrasena">Contraseña</label>
+                    <div style="position: relative; width: 100%;"> 
+                        <input 
+                            type="password" 
+                            name="contrasena" 
+                            id="contrasena" 
+                            class="form-control" 
+                            placeholder="Contraseña" 
+                            required 
+                            minlength="6" 
+                            maxlength="20"
+                            style="padding-right: 40px; width: 100%;"
+                        >
+                        <i 
+                            class="fa fa-smile-o" 
+                            onclick="mostrarPassword()" 
+                            id="show_password" 
+                            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 20px; color: #555;"
+                        ></i>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <h1>Datos Administrativos</h1>
+
+            <div class="container">
+                <div class="form-group">
+                    <label for="rol">Rol</label>
+                    <select name="rol" id="rol" class="form-select" required>
+                        <option value>- Selecciona Rol -</option>
+                        <!-- Agregar opciones aquí -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="sucursal">Sucursal</label>
+                    <select name="sucursal" id="sucursal" class="form-select"
+                        required>
+                        <option value>- Selecciona Sucursal -</option>
+                        <!-- Agregar opciones aquí -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="caja">Caja</label>
+                    <select name="caja" id="caja" class="form-select" required>
+                        <option value>- Selecciona Caja -</option>
+                        <!-- Agregar opciones aquí -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="estado">Estado</label>
+                    <select name="estado" id="estado" class="form-select"
+                        required>
+                        <option value="1">Activo</option>
+                        <option value="2">Bloqueado</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="grado">Grado</label>
+                    <select name="grado" id="grado" class="form-select"
+                        required>
+                        <option value="1">Activa - intentos fallidos 1</option>
+                        <option value="2">Activa - intentos fallidos 2</option>
+                        <option value="3">Activo - intentos fallidos 3</option>
+                        <option value="4">Bloqueada - sin intentos
+                            fallidos</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="situacion">Situación</label>
+                    <select name="situacion" id="situacion" class="form-select"
+                        required>
+                        <option value="1">Cuenta cerrada sesión</option>
+                        <option value="2">Cuenta en inicio de sesión</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn-danger" type="submit"
+                        id="submitButton">Guardar</button>
+                </div>
+            </div>
+        </form>
+
+    </body>
+
+    <script>
     const fileInput = document.getElementById('fileInput');
     const uploadButton = document.getElementById('uploadButton');
     const uploadedImage = document.getElementById('uploadedImage');
@@ -207,7 +268,7 @@
         }
     });
 </script>
-<script>
+    <script>
     // Función para cargar datos en el select
     function cargarSelect(url, selectId, defaultText, selectedId = null) {
         fetch(url)
@@ -251,9 +312,7 @@
     });
 </script>
 
-
-
-<script>
+    <script>
     document.getElementById('fileInput').addEventListener('change', function() {
         var fileInput = document.getElementById('fileInput');
         var file = fileInput.files[0];
@@ -277,9 +336,22 @@
         e.preventDefault();
         document.getElementById('fileInput').click();
     });
-</script> 
+</script>
 
-
-
+    <script type="text/javascript">
+    function mostrarPassword(){
+        var cambio = document.getElementById("contrasena");
+        var icono = document.getElementById("show_password"); // Selecciona el ícono por ID
+        if(cambio.type === "password"){
+            cambio.type = "text";
+            icono.classList.remove('far', 'fa-smile-o'); // Asegúrate de usar las clases correctas
+            icono.classList.add('far', 'fa-frown-o'); // Cambia al ícono deseado
+        } else {
+            cambio.type = "password";
+            icono.classList.remove('far', 'fa-frown-o');
+            icono.classList.add('far', 'fa-smile-o');
+        }
+    }
+</script>
 
 </html>
