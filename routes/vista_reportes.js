@@ -6,7 +6,12 @@ const router = express.Router();
 const connection = require('../database/db');
 
 router.get('/vista_reportes',(req,res)=>{
+    if(req.session.loggedin){
     res.render('./reportes/vista_reportes')
-})
+} else {
+    res.render('./paginas/logout');
+}
+});
+
 
 module.exports = router;

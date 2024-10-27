@@ -1,92 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
-    <link rel="shortcut icon" href="#" />
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <meta name="viewport"
-      content="width=device-width,initial-scale=1,user-scalable=no" />
-    <title>DataTables estilo Bootstrap 5 - NodeJS y Express</title>
-    <link rel="stylesheet" href="resources/css/RegistroTablas.css" />
-    <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
-    <link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  </head>
+    <head>
+        <link rel="shortcut icon" href="#" />
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport"
+            content="width=device-width,initial-scale=1,user-scalable=no" />
+        <title>DataTables estilo Bootstrap 5 - NodeJS y Express</title>
+        <link rel="stylesheet" href="resources/css/RegistroTablas.css" />
+        <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </head>
 
-  <body>
+    <body>
 
-    <!-- Encabezado -->
-    <div class="header-container">
-      <div class="breadcrumb">
+        <!-- Encabezado -->
+        <div class="header-container">
+            <div class="breadcrumb">
+             
+                <a href="/empleados" class="reporte-link ">
+                    <h1
+                        style="color: #858B92; font-weight: bold; margin-right: 5px;">Gestion Empleados</h1>
+                </a>
+                <h2 style="font-size: 40px; margin: 0 10px;">›</h2>\
+                <a href="/departamentos" class="reporte-link ">
+                    <h1
+                        style="color: #858B92; font-weight: bold; margin-right: 5px;">Departamentos</h1>
+                </a>
+                <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
 
-        <a href="/empleados" class="reporte-link ">
-          <h1
-            style="color: #858B92; font-weight: bold; margin-right: 5px;">Gestion Empleados</h1>
-        </a>
-        <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
-        <h1 style="font-weight: bold;">Ciudades</h1>
-      </div>
+                <h1 style="font-weight: bold;">Papeleria</h1>
+            </div>
+           
 
+        </div>
 
+        <div class="card3">
+            <div class="header-card1">
+                <span>Registro de departamentos</span>
+            </div>
 
+            <div class="content-card-registro">
+                <table id="tablaDepartamentos" class="table-registro">
 
-      <div class="button-container">
-        <!-- Select con opciones -->
-        <select id="opciones" class="form-select">
-          <option value style="color: #ffffff;" disabled selected>Exportar
-            documento</option>
-          <option value="pdf">Imprimir PDF</option>
-          <option value="excel">Exportar CSV</option>
-          <option value="Papeleria">Papeleria</option>
-        </select>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% results.forEach(function(departamento) { %>
+                        <tr>
 
-        <!-- Botón Añadir Nuevo con SweetAlert2 -->
-        <a type="submit" href="#" class="btn btnCrear btn-danger"
-          style="font-size: 20px;">Añadir Nuevo</a>
-      </div>
+                            <td>
+                                <%= departamento.ID_Departamento %>
+                            </td>
+                            <td>
+                                <%= departamento.Nombre %>
+                            </td>
+                            <td style="width: 200px;">
+                                <select
+                                    class="form-select-action acciones-select"
+                                    aria-label="Acciones">
+                                    <option selected disabled>Selecciona una
+                                        acción</option>
+                                    <option value="editar">Editar</option>
+                                    <option value="restaurar">Restaurar</option>
+                                    <option value="copiar">Copiar</option>
+                                </select>
 
-
-
+                            </td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <div class="card3">
-      <div class="header-card1">
-        <span>Registro de Ciudades</span>
-      </div>
-
-      <div class="content-card-registro">
-        <table id="tablaCiudades" class="table-registro">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>ACCIONES</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Generación dinámica de filas con datos de ciudades -->
-            <% results.forEach(function(ciudad) { %>
-            <tr>
-              <td><%= ciudad.ID_Ciudad %></td>
-              <td><%= ciudad.Nombre %></td>
-              <td style="width: 200px;">
-                <select class="form-select-action acciones-select"
-                  aria-label="Acciones">
-                  <option selected disabled>Selecciona una acción</option>
-                  <option value="editar">Editar</option>
-                  <option value="eliminar">Eliminar</option>
-                  <option value="copiar">Copiar</option>
-                </select>
-              </td>
-
-            </tr>
-            <% }); %>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
     <script type="text/javascript" language="javascript"
       src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script type="text/javascript" language="javascript"
@@ -95,60 +89,59 @@
       src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
 
     <script>
-      $(document).ready(function () {
-          let url = "/ciudades/"; // Define la URL para las operaciones CRUD
-          let opcion = null;
-  
-          // Inicializa DataTable
-          let tablaCiudades = $("#tablaCiudades").DataTable({
-              json: {
-                  url: url,
-                  dataSrc: "",
-              },
-              columns: [
-                  { data: "ID_Ciudad" },
-                  { data: "Nombre" },
-                  {
-                      defaultContent: `
+    $(document).ready(function () {
+        let url = "/departamentos/"; // Define la variable url aquí
+        let opcion = null;
+        let ID_Departamento, Nombre;
+
+        let tablaDepartamentos = $("#tablaDepartamentos").DataTable({
+            json: {
+                url: url,
+                dataSrc: "",
+            },
+            columns: [
+                { data: "ID_Departamento" },
+                { data: "Nombre" },
+                {
+                    defaultContent: `
                           <td style="width: 200px;">
                               <select class="form-select acciones-select">
                                   <option selected disabled>Selecciona una acción</option>
                                   <option value="editar">Editar</option>
-                                  <option value="eliminar">Eliminar</option>
+                                  <option value="restaurar">Restaurar</option>
                                   <option value="copiar">Copiar</option>
                               </select>
                           </td>`
-                  },
-              ],
-              language: {
-                  url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json",
-              },
-          });
-          // Manejar el evento del select para Imprimir PDF o Exportar CSV
-          $("#opciones").change(function () {
+                },
+            ],
+            language: {
+                    url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json",
+                },
+        });
+
+        // Manejar el evento del select para Imprimir PDF o Exportar CSV
+        $("#opciones").change(function () {
               let selectedOption = $(this).val();
 
               if (selectedOption === "pdf") {
                   // Abrir en una nueva ventana/pestaña
-                  window.open("/impre_ciudades", '_blank');
+                  window.open("/impre_departamentos", '_blank');
               } else if (selectedOption === "excel") {
                   // Llamar la función para exportar a CSV
                   exportToExcel();
               } else if(selectedOption ==="Papeleria"){
-                window.location.href = "/Papeleria_Ciudades";
+                window.location.href = "/Papeleria_departamentos";
                
               }
           });
-
-
-            // Función para exportar los datos a Excel
-          function exportToExcel() {
+           // Función para exportar los datos a Excel
+           function exportToExcel() {
                 // Crear un nuevo libro de Excel
                 var wb = XLSX.utils.book_new();
 
                 // Obtener los datos de la tabla incluyendo la columna de IDs y excluyendo la columna de acciones
                 var wsData = [];
-                $("#tablaCiudades tbody tr").each(function () {
+                $("#tablaDepartamentos tbody tr").each(function () {
                     var rowData = [];
                     $(this).find("td").each(function () {
                         rowData.push($(this).text().trim());
@@ -157,25 +150,26 @@
                 });
 
                 // Crear una hoja de trabajo con los datos obtenidos
-                var ws = XLSX.utils.aoa_to_sheet([["ID_ciudad", "nombre"]].concat(wsData));
+                var ws = XLSX.utils.aoa_to_sheet([["ID_Departamento", "nombre"]].concat(wsData));
 
                 // Agregar la hoja de trabajo al libro
-                XLSX.utils.book_append_sheet(wb, ws, "Ciudades");
+                XLSX.utils.book_append_sheet(wb, ws, "Departamentos");
 
                 // Guardar el libro como un archivo Excel
-                XLSX.writeFile(wb, "ciudades.xlsx");
+                XLSX.writeFile(wb, "Departamentos.xlsx");
           }
-          // Manejar las acciones del select
-          $('#tablaCiudades tbody').on('change', '.acciones-select', function () {
-              var data = tablaCiudades.row($(this).parents('tr')).data(); // Obtener datos de la fila actual
+
+        // Manejar las acciones del select
+        $('#tablaDepartamentos tbody').on('change', '.acciones-select', function () {
+              var data = tablaDepartamentos.row($(this).parents('tr')).data(); // Obtener datos de la fila actual
               var accion = $(this).val(); // Obtener la acción seleccionada
   
               if (accion === 'editar') {
                   // Acción para editar
                   Swal.fire({
-                      title: 'Editar Ciudad',
+                      title: 'Editar Departamento',
                       html: `
-                          <input type="text" id="ID_Ciudad" hidden value="${data.ID_Ciudad}" />
+                          <input type="text" id="ID_Departamento" hidden value="${data.ID_Departamento}" />
                           <label for="Nombre" class="col-form-label">Nombre</label>
                           <input type="text" id="Nombre" class="swal2-input" value="${data.Nombre}">
                       `,
@@ -191,10 +185,10 @@
                       }
                   }).then((result) => {
                       if (result.isConfirmed) {
-                          const formData = { ID_Ciudad: data.ID_Ciudad, Nombre: result.value.Nombre, opcion: 'editar' };
+                          const formData = { ID_Departamento: data.ID_Departamento, Nombre: result.value.Nombre, opcion: 'editar' };
                           $.ajax({
                               type: 'POST',
-                              url: url + data.ID_Ciudad,
+                              url: url + data.ID_Departamento,
                               data: formData,
                               success: function () {
                                   Swal.fire('¡Guardado!', 'Ciudad editada con éxito', 'success').then(() => {
@@ -204,23 +198,23 @@
                           });
                       }
                   });
-              } else if (accion === 'eliminar') {
+              } else if (accion === 'restaurar') {
                   // Acción para eliminar
                   Swal.fire({
                       title: '¿Estás seguro?',
                       text: "¡No podrás revertir esto!",
                       icon: 'warning',
                       showCancelButton: true,
-                      confirmButtonText: 'Sí, eliminarlo',
+                      confirmButtonText: 'Sí, restaurar',
                       cancelButtonText: 'Cancelar',
                   }).then((result) => {
                       if (result.isConfirmed) {
                           $.ajax({
                               type: 'POST',
-                              url: url + data.ID_Ciudad,
-                              data: { opcion: 'eliminar' },
+                              url: url + data.ID_Departamento,
+                              data: { opcion: 'restaurar' },
                               success: function () {
-                                  Swal.fire('¡Eliminado!', 'La ciudad ha sido eliminada.', 'success').then(() => {
+                                  Swal.fire('restaurar!', 'La ciudad ha sido restaurada.', 'success').then(() => {
                                       window.location.reload();
                                   });
                               }
@@ -241,14 +235,14 @@
               $(this).val('Selecciona una acción');
           });
   
-          // Función para crear ciudad
-          $(".btnCrear").click(function () {
+            // Función para crear ciudad
+            $(".btnCrear").click(function () {
               Swal.fire({
-                  title: 'Crear Ciudad',
+                  title: 'Crear Departamento',
                   html: `
-                      <input type="text" id="ID_Ciudad" hidden />
+                      <input type="text" id="ID_Departamento" hidden />
                       <label for="Nombre" class="col-form-label">Nombre</label>
-                      <input type="text" id="Nombre" class="swal2-input" placeholder="Ingrese el nombre de la ciudad">
+                      <input type="text" id="Nombre" class="swal2-input" placeholder="Ingrese el nombre del departamento">
                   `,
                   showCancelButton: true,
                   confirmButtonText: 'Guardar',
@@ -268,7 +262,7 @@
                           url: url,
                           data: formData,
                           success: function () {
-                              Swal.fire('¡Guardado!', 'Ciudad creada con éxito', 'success').then(() => {
+                              Swal.fire('¡Guardado!', 'Departamento creada con éxito', 'success').then(() => {
                                   window.location.reload();
                               });
                           }
@@ -276,9 +270,8 @@
                   }
               });
           });
-  
-          // Botón copiar (opcional)
-          $("#tablaCiudades").on("click", ".btnCopiar", function () {
+        // Botón copiar (opcional)
+        $("#tablaDepartamentos").on("click", ".btnCopiar", function () {
               var fila = $(this).closest("tr");
               var datosFila = fila.find("td").map(function () {
                   return $(this).text();
@@ -291,9 +284,5 @@
                   alert("Error al copiar datos al portapapeles");
               });
           });
-      });
-  </script>
-
-  </body>
-
-</html>
+        });
+</script>

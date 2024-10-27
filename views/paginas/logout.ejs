@@ -12,57 +12,115 @@
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap5.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css" />
 
-  <style>
-     body {
+  <!DOCTYPE html>
+  <html lang="es">
+  
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Vista Restringida</title>
+  
+    
+      <style>
+        body {
             font-family: Arial, sans-serif;
-            background-color: #f2f2f200;
+            background-color: #f2f2f2;
             margin: 0;
             padding: 0;
-          
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-.texto{
-  text-align: justify;
-}
-    .maintenance-container {
-      text-align: center;
-      margin-top: 50px;
-      border: 2px solid #ccc;
-      border-radius: 10px;
-      padding: 20px;
-      max-width: 800px;
-      background-color:rgba(255, 255, 255, 0.87);
-      margin-left: auto;
-      margin-right: auto;
-    }
 
-    .maintenance-title {
-      font-size: 30px;
-      color: rgb(0, 0, 0);
-      font-weight: bold;
-    }
+        .container {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.87);
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            padding: 20px;
+        }
 
-    .maintenance-image {
-      max-width: 100%;
-      height: 600px;
-    }
-    .boton{
-        width: 300px;
-        margin-top: 40px;
-        margin-left: 30%;
-     
-    }
-  </style>
+        .left-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .maintenance-image {
+            max-width: 250px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .boton {
+            width: 100%;
+            max-width: 150px;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .boton:hover {
+
+            background-color: #258eff;
+            color: #fff;
+
+        }
+    
+
+        .right-section {
+            max-width: 500px;
+        }
+
+        .maintenance-title {
+            font-size: 30px;
+            color: rgb(0, 0, 0);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .maintenance-text {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .footer-warning {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #ffffff;
+        }
+
+        .footer-warning p {
+            margin: 5px 0;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="maintenance-container row">
-      <h1 class="maintenance-title">RESTRINGIDO</h1>
-      <p class="texto">Debe iniciar sesión de nuevo.</p>
-      <img src="resources/images/logo/stop.png" alt="Imagen de mantenimiento" class="maintenance-image">
-      <a href="/logout" class="btn btn-primary boton">Iniciar Sesión</a>
+    <div class="container">
+        <div class="left-section">
+            <img src="resources/images/logo/policia.png" alt="Imagen de restricción" class="maintenance-image">
+            <a href="/logout" class="boton">Iniciar Sesión</a>
+        </div>
+        <div class="right-section">
+            <h1 class="maintenance-title">RESTRINGIDO</h1>
+            <p class="maintenance-text">Debe iniciar sesión de nuevo para acceder a esta vista. Esta página está restringida y solo es accesible para usuarios autorizados.</p>
+            <p class="maintenance-text">Advertencia: El acceso no autorizado puede resultar en sanciones. Respetamos la privacidad y los derechos de autor en todo el contenido aquí mostrado.</p>
+        </div>
     </div>
-    <div>
-      
-    </div>
+
+    
 </body>
-</html>
+  </html>
+  

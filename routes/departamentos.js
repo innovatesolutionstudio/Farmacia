@@ -7,17 +7,46 @@ const connection = require('../database/db');
 
 // Ruta para obtener todos los departamentos
 router.get('/departamentos', function(req, res) {
-    // Realiza la consulta a la base de datos para obtener los datos de la tabla "departamentos"
-    connection.query('SELECT * FROM departamentos', (error, results) => {
-        if (error) {
-            console.error('Error al obtener datos de la tabla departamentos:', error);
-            res.status(500).send('Error al obtener datos de la tabla departamentos');
-        } else {
-            // Renderiza la vista EJS y pasa los resultados de la consulta como variable
-            res.render('./departamentos/departamentos', { results: results });
-        }
-    });
+    if (req.session.loggedin) {
+
+        // Realiza la consulta a la base de datos para obtener los datos de la tabla "departamentos"
+        connection.query('SELECT * FROM departamentos WHERE Figura = 1', (error, results) => {
+            if (error) {
+                console.error('Error al obtener datos de la tabla departamentos:', error);
+                res.status(500).send('Error al obtener datos de la tabla departamentos');
+            } else {
+                // Renderiza la vista EJS y pasa los resultados de la consulta como variable
+                res.render('./departamentos/departamentos', { results: results });
+            }
+        });
+
+    } else {
+        res.render('./paginas/logout');
+    }
 });
+
+
+// Ruta para obtener todos los departamentos
+router.get('/Papeleria_departamentos', function(req, res) {
+    if (req.session.loggedin) {
+
+        // Realiza la consulta a la base de datos para obtener los datos de la tabla "departamentos"
+        connection.query('SELECT * FROM departamentos WHERE Figura = 2', (error, results) => {
+            if (error) {
+                console.error('Error al obtener datos de la tabla departamentos:', error);
+                res.status(500).send('Error al obtener datos de la tabla departamentos');
+            } else {
+                // Renderiza la vista EJS y pasa los resultados de la consulta como variable
+                res.render('./departamentos/Papeleria_departamentos', { results: results });
+            }
+        });
+
+    } else {
+        res.render('./paginas/logout');
+    }
+});
+
+
 
 // Ruta para gestionar la creación, edición y eliminación de departamentos
 router.post('/departamentos/:id?', function(req, res) {
@@ -52,7 +81,7 @@ router.post('/departamentos/:id?', function(req, res) {
             });
             break;
         case 'eliminar':
-            connection.query('DELETE FROM departamentos WHERE ID_Departamento = ?', id, (error, result) => {
+            connection.query('UPDATE departamentos SET Figura = 2 WHERE ID_Departamento = ?', id, (error, result) => {
                 if (error) {
                     console.error('Error al eliminar el departamento:', error);
                     res.status(500).send('Error al eliminar el departamento');
@@ -61,6 +90,17 @@ router.post('/departamentos/:id?', function(req, res) {
                 }
             });
             break;
+        case 'restaurar':
+            connection.query('UPDATE departamentos SET Figura = 1 WHERE ID_Departamento = ?', id, (error, result) => {
+                if (error) {
+                    console.error('Error al eliminar el departamento:', error);
+                    res.status(500).send('Error al eliminar el departamento');
+                } else {
+                    res.send('Departamento eliminado correctamente');
+                }
+            });
+            break;
+
         default:
             res.status(400).send('Opción no válida');
             break;

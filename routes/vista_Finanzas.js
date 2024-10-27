@@ -4,16 +4,21 @@ const connection = require('../database/db'); // Asegúrate de que la ruta es co
 
 // Ruta para renderizar la vista de finanzas
 router.get('/vista_Finanzas', (req, res) => {
-  const { ID_Empleado, ID_Sucursal } = req.session;
-  
-  if (!ID_Sucursal) {
-    return res.status(400).send('Sucursal no especificada en la sesión.');
-  }
+  if (req.session.loggedin) {
+      
+    const { ID_Empleado, ID_Sucursal } = req.session;
+    
+    if (!ID_Sucursal) {
+      return res.status(400).send('Sucursal no especificada en la sesión.');
+    }
 
-  res.render('./finanzas/finanzas', {
-    ID_Empleado,
-    ID_Sucursal
-  });
+    res.render('./finanzas/finanzas', {
+      ID_Empleado,
+      ID_Sucursal
+    });
+  } else {
+    res.render('./paginas/logout');
+  }
 });
 
 // Función para obtener el número total de cajas activas
@@ -52,26 +57,30 @@ const ObtenerGananciasDelMesActual = (ID_Sucursal) => {
 
 // Ruta para obtener los datos en formato JSON
 router.get('/datos2', async (req, res) => {
-  const { ID_Sucursal } = req.session;
+  if(req.session.loggedin){
+    const { ID_Sucursal } = req.session;
 
-  if (!ID_Sucursal) {
-    return res.status(400).send('Sucursal no especificada en la sesión.');
-  }
+    if (!ID_Sucursal) {
+      return res.status(400).send('Sucursal no especificada en la sesión.');
+    }
 
-  try {
-    const [Cajastotales, GananciasDelMesActual] = await Promise.all([
-      ObtenerCajas(ID_Sucursal),
-      ObtenerGananciasDelMesActual(ID_Sucursal)
-    ]);
+    try {
+      const [Cajastotales, GananciasDelMesActual] = await Promise.all([
+        ObtenerCajas(ID_Sucursal),
+        ObtenerGananciasDelMesActual(ID_Sucursal)
+      ]);
 
 
-    res.json({
-      Cajastotales,
-      GananciasDelMesActual
-    });
-  } catch (err) {
-    console.error('Error al obtener los datos:', err);
-    res.status(500).send('Error al obtener los datos');
+      res.json({
+        Cajastotales,
+        GananciasDelMesActual
+      });
+    } catch (err) {
+      console.error('Error al obtener los datos:', err);
+      res.status(500).send('Error al obtener los datos');
+    }
+  } else {
+    res.render('./paginas/logout');
   }
 });
 

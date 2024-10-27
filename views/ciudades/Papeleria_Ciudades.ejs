@@ -19,34 +19,19 @@
     <!-- Encabezado -->
     <div class="header-container">
       <div class="breadcrumb">
-
+      
         <a href="/empleados" class="reporte-link ">
           <h1
             style="color: #858B92; font-weight: bold; margin-right: 5px;">Gestion Empleados</h1>
         </a>
         <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
-        <h1 style="font-weight: bold;">Ciudades</h1>
+        <a href="/ciudades" class="reporte-link ">
+          <h1
+            style="color: #858B92; font-weight: bold; margin-right: 5px;">Ciudades</h1>
+        </a>
+        <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+        <h1 style="font-weight: bold;">Papeleria</h1>
       </div>
-
-
-
-
-      <div class="button-container">
-        <!-- Select con opciones -->
-        <select id="opciones" class="form-select">
-          <option value style="color: #ffffff;" disabled selected>Exportar
-            documento</option>
-          <option value="pdf">Imprimir PDF</option>
-          <option value="excel">Exportar CSV</option>
-          <option value="Papeleria">Papeleria</option>
-        </select>
-
-        <!-- Botón Añadir Nuevo con SweetAlert2 -->
-        <a type="submit" href="#" class="btn btnCrear btn-danger"
-          style="font-size: 20px;">Añadir Nuevo</a>
-      </div>
-
-
 
     </div>
 
@@ -75,7 +60,7 @@
                   aria-label="Acciones">
                   <option selected disabled>Selecciona una acción</option>
                   <option value="editar">Editar</option>
-                  <option value="eliminar">Eliminar</option>
+                  <option value="Restaurar">Restaurar</option>
                   <option value="copiar">Copiar</option>
                 </select>
               </td>
@@ -114,7 +99,7 @@
                               <select class="form-select acciones-select">
                                   <option selected disabled>Selecciona una acción</option>
                                   <option value="editar">Editar</option>
-                                  <option value="eliminar">Eliminar</option>
+                                  <option value="Restaurar">Restaurar</option>
                                   <option value="copiar">Copiar</option>
                               </select>
                           </td>`
@@ -134,9 +119,6 @@
               } else if (selectedOption === "excel") {
                   // Llamar la función para exportar a CSV
                   exportToExcel();
-              } else if(selectedOption ==="Papeleria"){
-                window.location.href = "/Papeleria_Ciudades";
-               
               }
           });
 
@@ -204,23 +186,23 @@
                           });
                       }
                   });
-              } else if (accion === 'eliminar') {
+              } else if (accion === 'Restaurar') {
                   // Acción para eliminar
                   Swal.fire({
                       title: '¿Estás seguro?',
-                      text: "¡No podrás revertir esto!",
+                      text: "¡Vamos a Restaurar este dato",
                       icon: 'warning',
                       showCancelButton: true,
-                      confirmButtonText: 'Sí, eliminarlo',
+                      confirmButtonText: 'Sí, Restaurar',
                       cancelButtonText: 'Cancelar',
                   }).then((result) => {
                       if (result.isConfirmed) {
                           $.ajax({
                               type: 'POST',
                               url: url + data.ID_Ciudad,
-                              data: { opcion: 'eliminar' },
+                              data: { opcion: 'Restaurar' },
                               success: function () {
-                                  Swal.fire('¡Eliminado!', 'La ciudad ha sido eliminada.', 'success').then(() => {
+                                  Swal.fire('Restaurar!', 'La ciudad ha sido Restaurada.', 'success').then(() => {
                                       window.location.reload();
                                   });
                               }

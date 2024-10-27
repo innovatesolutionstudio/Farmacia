@@ -87,6 +87,36 @@ router.get('/api/paises', (req, res) => {
     });
   });
 
+  router.get('/api/verificar-duplicados-Empleados', async (req, res) => {
+    const { correo, ci, empleadoID } = req.query;
+
+    try {
+        let existeCorreo = false;
+        let existeCI = false;
+
+        // Consultas condicionales
+        if (correo) {
+            const [resultCorreo] = await coneccion.query(
+                'SELECT COUNT(*) as count FROM empleados WHERE Email = ? AND ID_Empleado != ?',
+                [correo, empleadoID]
+            );
+            existeCorreo = resultCorreo[0].count > 0;
+        }
+
+        if (ci) {
+            const [resultCI] = await coneccion.query(
+                'SELECT COUNT(*) as count FROM empleados WHERE CI = ? AND ID_Empleado != ?',
+                [ci, empleadoID]
+            );
+            existeCI = resultCI[0].count > 0;
+        }
+
+        res.json({ existeCorreo, existeCI });
+    } catch (error) {
+        console.error('Error al verificar duplicados:', error);
+        res.status(500).json({ error: 'Error en el servidor' });
+    }
+});
 
 
 

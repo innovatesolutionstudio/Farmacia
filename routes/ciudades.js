@@ -7,16 +7,42 @@ const coneccion = require('../database/db');
 
 
 router.get('/ciudades', function(req, res) {
-    // Realiza la consulta a la base de datos para obtener los datos de la tabla "ciudades"
-    coneccion.query('SELECT * FROM ciudades', (error, results) => {
-        if (error) {
-            console.error('Error al obtener datos de la tabla ciudades:', error);
-            res.status(500).send('Error al obtener datos de la tabla ciudades');
-        } else {
-            // Renderiza la vista EJS y pasa los resultados de la consulta como variable
-            res.render('./ciudades/ciudades', { results: results });
-        }
-    });
+    if (req.session.loggedin) {
+
+        // Realiza la consulta a la base de datos para obtener los datos de la tabla "ciudades"
+        coneccion.query('SELECT * FROM ciudades WHERE figura = 1', (error, results) => {
+            if (error) {
+                console.error('Error al obtener datos de la tabla ciudades:', error);
+                res.status(500).send('Error al obtener datos de la tabla ciudades');
+            } else {
+                // Renderiza la vista EJS y pasa los resultados de la consulta como variable
+                res.render('./ciudades/ciudades', { results: results });
+            }
+        });
+
+    } else {
+        res.render('./paginas/logout');
+    }
+});
+
+router.get('/Papeleria_Ciudades', function(req, res) {
+    if (req.session.loggedin) {
+
+        // Realiza la consulta a la base de datos para obtener los datos de la tabla "ciudades"
+        coneccion.query('SELECT * FROM ciudades WHERE figura = 2', (error, results) => {
+            if (error) {
+                console.error('Error al obtener datos de la tabla ciudades:', error);
+                res.status(500).send('Error al obtener datos de la tabla ciudades');
+            } else {
+                // Renderiza la vista EJS y pasa los resultados de la consulta como variable
+                res.render('./ciudades/Papeleria_Ciudades', { results: results });
+            }
+        });
+    } else {
+        res.render('./paginas/logout');
+    }
+    
+
 });
 
 router.post('/ciudades/:id?', function(req, res) {
@@ -51,7 +77,7 @@ router.post('/ciudades/:id?', function(req, res) {
             });
             break;
         case 'eliminar':
-            coneccion.query('DELETE FROM ciudades WHERE ID_Ciudad = ?', id, (error, result) => {
+            coneccion.query('UPDATE ciudades SET Figura = 2 WHERE ID_Ciudad = ?', id, (error, result) => {
                 if (error) {
                     console.error('Error al eliminar la ciudad:', error);
                     res.status(500).send('Error al eliminar la ciudad');
@@ -60,6 +86,16 @@ router.post('/ciudades/:id?', function(req, res) {
                 }
             });
             break;
+        case 'Restaurar':
+            coneccion.query('UPDATE ciudades SET Figura = 1 WHERE ID_Ciudad = ?', id, (error, result) => {
+                if (error) {
+                    console.error('Error al eliminar la ciudad:', error);
+                    res.status(500).send('Error al eliminar la ciudad');
+                } else {
+                    res.send('Ciudad eliminada correctamente');
+                }
+            });
+                break;
         default:
             res.status(400).send('Opción no válida');
             break;

@@ -8,7 +8,7 @@ const PDFDocument = require('pdfkit');
 
 function obtenerDatosCiudades() {
     return new Promise((resolve, reject) => {
-      const query = 'SELECT * FROM ciudades';
+      const query = 'SELECT * FROM ciudades WHERE Figura = 1';
       conneccion.query(query, (error, results, fields) => {
         if (error) {
           reject(error);

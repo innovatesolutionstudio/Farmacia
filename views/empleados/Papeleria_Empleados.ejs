@@ -23,17 +23,11 @@
         <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Recursos Humanos</h1>
       </a>
       <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
-      <h1 style="font-weight: bold;">Gestion Empleados</h1>
-    </div>
-
-    <div class="button-container">
-      <select id="opciones" class="form-select" onchange="redirectToPage(this.value)">
-        <option value="" style="color: #888;" disabled selected>Seleccionar</option>
-        <option value="/departamentos">Departamento</option>
-        <option value="/ciudades">Ciudad</option>
-        <option value="/Papeleria_Empleados">Papeleria</option>
-      </select>
-      <a  type="submit" href="/CrearEmpleado" class="btn btn-danger">Añadir Nuevo</a>
+      <a href="/empleados" class="reporte-link ">
+        <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Empleados</h1>
+      </a>
+      <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+      <h1 style="font-weight: bold;">Papeleria</h1>
     </div>
 
   </div>
@@ -168,7 +162,7 @@
         dom: '<"table-toolbar"lf>tip',  // 'l' = length, 'f' = filter (search), 'tip' = table, info, pagination
         lengthMenu: [10, 25, 50, 100]
     });
-    let url2 = "/detallesempleados/";
+    let url2 = "/detallesempleadosP/";
     $("#tablaEmpleados").on("click", ".btndetalles", function () {
       var data = tablaEmpleados.row($(this).parents("tr")).data();
       var id = data.ID_Empleado;

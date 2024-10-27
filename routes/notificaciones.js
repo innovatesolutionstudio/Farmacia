@@ -3,6 +3,7 @@ const router = express.Router();
 const coneccion = require('../database/db'); 
 
 router.get('/notificacion', (req, res) => {
+    if(req.session.loggedin){
     coneccion.query('SELECT * FROM notificaciones WHERE Estado = 0', (err, notificaciones) => {
         if (err) {
             console.error(err); // Muestra el error en consola
@@ -11,6 +12,10 @@ router.get('/notificacion', (req, res) => {
         console.log(notificaciones); // Log de las notificaciones obtenidas
         res.render('notificaciones', { notificaciones });
     });
+} else {
+    res.render('./paginas/logout');
+}
+    
 });
 
 
@@ -49,13 +54,17 @@ router.post('/notificar', (req, res) => {
 
 // Ruta para obtener notificaciones
 router.get('/notificaciones', (req, res) => {
-    connection.query('SELECT * FROM notificaciones', (err, results) => {
-        if (err) {
-            console.error("Error en la base de datos:", err); // Log para depuración
-            return res.status(500).send('Error en la base de datos');
-        }
-        res.json(results);
-    });
+    if(req.session.loggedin){
+        connection.query('SELECT * FROM notificaciones', (err, results) => {
+            if (err) {
+                console.error("Error en la base de datos:", err); // Log para depuración
+                return res.status(500).send('Error en la base de datos');
+            }
+            res.json(results);
+        });
+    } else {
+        res.render('./paginas/logout');
+    }
 });
 
 
