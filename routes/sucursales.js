@@ -5,25 +5,58 @@ const router = express.Router();
 // Invocamos a la conexión de la base de datos
 const coneccion = require('../database/db');
 
-// Ruta para obtener todas las sucursales
+// Ruta para obtener todas las sucursales y los datos de países, departamentos y ciudades
 router.get('/sucursales', (req, res) => {
-    coneccion.query(`
+    const querySucursales = `
          SELECT s.ID_Sucursal, s.Nombre, s.Direccion, s.Telefono, s.Encargado, 
-             c.Nombre as CiudadNombre, d.Nombre as DepartamentoNombre, p.Nombre as PaisNombre
-      FROM sucursales s
-      INNER JOIN ciudades c ON s.ID_Ciudad = c.ID_Ciudad
-      INNER JOIN departamentos d ON s.ID_Departamento = d.ID_Departamento
-      INNER JOIN paises p ON s.ID_Pais = p.ID_Pais
-    `, (error, results) => {
+                s.ID_Ciudad, s.ID_Departamento, s.ID_Pais,
+                c.Nombre as CiudadNombre, d.Nombre as DepartamentoNombre, p.Nombre as PaisNombre
+         FROM sucursales s
+         LEFT JOIN ciudades c ON s.ID_Ciudad = c.ID_Ciudad
+         LEFT JOIN departamentos d ON s.ID_Departamento = d.ID_Departamento
+         LEFT JOIN paises p ON s.ID_Pais = p.ID_Pais
+    `;
+
+    const queryCiudades = `SELECT ID_Ciudad, Nombre FROM ciudades`;
+    const queryDepartamentos = `SELECT ID_Departamento, Nombre FROM departamentos`;
+    const queryPaises = `SELECT ID_Pais, Nombre FROM paises`;
+
+    // Ejecutar las consultas de manera paralela para obtener todos los datos
+    coneccion.query(querySucursales, (error, sucursales) => {
         if (error) {
-            console.error('Error al obtener datos de la tabla sucursales:', error);
-            res.status(500).send('Error al obtener datos de la tabla sucursales');
+            console.error('Error al obtener sucursales:', error);
+            res.status(500).send('Error al obtener datos de sucursales');
         } else {
-            res.render('./sucursales/sucursales', { results: results }); // Renderiza la vista EJS con los datos de sucursales
+            coneccion.query(queryCiudades, (error, ciudades) => {
+                if (error) {
+                    console.error('Error al obtener ciudades:', error);
+                    res.status(500).send('Error al obtener datos de ciudades');
+                } else {
+                    coneccion.query(queryDepartamentos, (error, departamentos) => {
+                        if (error) {
+                            console.error('Error al obtener departamentos:', error);
+                            res.status(500).send('Error al obtener datos de departamentos');
+                        } else {
+                            coneccion.query(queryPaises, (error, paises) => {
+                                if (error) {
+                                    console.error('Error al obtener países:', error);
+                                    res.status(500).send('Error al obtener datos de países');
+                                } else {
+                                    res.render('./sucursales/sucursales', {
+                                        results: sucursales,
+                                        ciudades: ciudades,
+                                        departamentos: departamentos,
+                                        paises: paises
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
         }
     });
 });
-
 
 
 // Ruta para operaciones CRUD de sucursales

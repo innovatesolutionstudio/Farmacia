@@ -1,21 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="stylesheet" href="resources/css/recursosH.css" />
-  
-
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap5.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css" />
-
-  <title>Ventas - Finanzas</title>
+  <link rel="shortcut icon" href="#" />
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+  <title>DataTables estilo Bootstrap 5 - NodeJS y Express</title>
+  <link rel="stylesheet" href="resources/css/RegistroTablas.css" />
+  <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-
 <body>
+
   <!-- Encabezado -->
   <div class="header-container">
     <div class="breadcrumb">
@@ -27,30 +23,27 @@
         <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Cajas</h1>
       </a>
       <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
-      <h1 style="font-weight: bold;">Administrar Sucursales </h1>
+      <h1 style="font-weight: bold;">Sucursales</h1>
     </div>
 
     <div class="button-container">
-      <select id="opciones" class="form-select" onchange="redirectToPage(this.value)">
-        <option value="" style="color: #888;" disabled selected>Seleccionar</option>
-        <option value="actualizar">Actualuzar</option>
-        <option value="exportar">Exportar Csv</option>
-        <option value="Imprimir">Imprimir</option>
+      <select id="opciones" class="form-select">
+        <option value="" style="color: #ffffff;" disabled selected>Exportar documento</option>
+        <option value="pdf">Imprimir PDF</option>
+        <option value="excel">Exportar CSV</option>
+        <option value="papeleria">Papelería</option>
       </select>
-      <a type="submit" id="btnCrear" href="#" class="btn btn-danger">Añadir Nuevo</a>
+      <a type="submit" href="#" class="btn btnCrear btn-danger" style="font-size: 20px;">Añadir Nuevo</a>
     </div>
-
   </div>
-
 
   <div class="card3">
     <div class="header-card1">
       <span>Registro de Sucursales</span>
     </div>
-    <div class="content-card-tabla">
 
-      <table id="tablaSucursales" class="table-registro" style="width: 100%">
-
+    <div class="content-card-registro">
+      <table id="tablaSucursales" class="table-registro">
         <thead>
           <tr>
             <th>ID</th>
@@ -61,218 +54,83 @@
             <th>Ciudad</th>
             <th>Departamento</th>
             <th>País</th>
-            <th style="width: 150px;">ACCIONES</th>
+            <th>ACCIONES</th>
           </tr>
         </thead>
         <tbody>
+          <!-- Generación dinámica de filas con datos de sucursales -->
           <% results.forEach(function(sucursal) { %>
-            <tr>
-              <td >
-                <%= sucursal.ID_Sucursal %>
-              </td>
-              <td>
-                <%= sucursal.Nombre %>
-              </td>
-              <td>
-                <%= sucursal.Direccion %>
-              </td>
-              <td >
-                <%= sucursal.Telefono %>
-              </td>
-              <td>
-                <%= sucursal.Encargado %>
-              </td>
-              <td>
-                <%= sucursal.CiudadNombre %>
-              </td>
-              <td >
-                <%= sucursal.DepartamentoNombre %>
-              </td>
-              <td >
-                <%= sucursal.PaisNombre %>
-              </td>
-              <td>
-                <div >
-                  <div>
-                    <a href="#" class="btnAcciones btnEditar">Editar</a>
-                    <a href="#" class="btnAcciones btnBorrar">Borrar</a>
-                    <a href="#" class="btnAcciones btnCopiar">Copiar</a>
-                  </div>
-                </div>
-              </td>
-            </tr>
-            <% }); %>
+          <tr>
+            <td><%= sucursal.ID_Sucursal %></td>
+            <td><%= sucursal.Nombre %></td>
+            <td><%= sucursal.Direccion %></td>
+            <td><%= sucursal.Telefono %></td>
+            <td><%= sucursal.Encargado %></td>
+            <td><%= sucursal.CiudadNombre %></td>
+            <td><%= sucursal.DepartamentoNombre %></td>
+            <td><%= sucursal.PaisNombre %></td>
+            <td style="width: 200px;">
+              <select class="form-select-action acciones-select" aria-label="Acciones">
+                <option selected disabled>Selecciona una acción</option>
+                <option value="editar">Editar</option>
+                <option value="eliminar">Eliminar</option>
+                <option value="copiar">Copiar</option>
+              </select>
+            </td>
+          </tr>
+          <% }); %>
         </tbody>
-
       </table>
     </div>
   </div>
-  </div>
 
-  <!-- Modal para CRUD -->
-  <div id="modalCRUD" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"></h5>
-        </div>
-        <form id="formSucursales">
-          <div class="modal-body">
-            <input id="ID_Sucursal" hidden />
-            <label for="Nombre" class="col-form-label">Nombre</label>
-            <input type="text" class="form-control" id="Nombre" name="Nombre" />
-            <label for="Direccion" class="col-form-label">Dirección</label>
-            <input type="text" class="form-control" id="Direccion" name="Direccion" />
-            <label for="Telefono" class="col-form-label">Teléfono</label>
-            <input type="text" class="form-control" id="Telefono" name="Telefono" />
-            <label for="Encargado" class="col-form-label">Encargado</label>
-            <input type="text" class="form-control" id="Encargado" name="Encargado" />
-            <label for="ID_Ciudad" class="col-form-label">Ciudad</label>
-            <select class="form-select" id="ID_Ciudad" name="ID_Ciudad">
-              <option value="">Seleccionar Ciudad</option>
-              <!-- Opciones de ciudades se llenarán dinámicamente -->
-            </select>
-
-            <label for="ID_Departamento" class="col-form-label">Departamento</label>
-            <select class="form-select" id="ID_Departamento" name="ID_Departamento">
-              <option value="">Seleccionar Departamento</option>
-              <!-- Opciones de departamentos se llenarán dinámicamente -->
-            </select>
-
-            <label for="ID_Pais" class="col-form-label">País</label>
-            <select class="form-select" id="ID_Pais" name="ID_Pais">
-              <option value="">Seleccionar País</option>
-              <!-- Opciones de países se llenarán dinámicamente -->
-            </select>
-
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-            <button type="submit" id="btnGuardar" class="btn btn-success">Guardar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-
-  <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-  <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
-  
+
   <script>
     $(document).ready(function () {
-      let url = "/sucursales/";
-      let opcion = null;
-      let ID_Sucursal, Nombre, Direccion, Telefono, Encargado, ID_Ciudad, ID_Departamento, ID_Pais;
-
+      let url = "/sucursales/"; 
       let tablaSucursales = $("#tablaSucursales").DataTable({
-        JSON: {
-          url: url,
-          dataSrc: ""
-        },
+        json: { url: url, dataSrc: "" },
         columns: [
           { data: "ID_Sucursal" },
           { data: "Nombre" },
           { data: "Direccion" },
           { data: "Telefono" },
           { data: "Encargado" },
-          { data: "ID_Ciudad" },
-          { data: "ID_Departamento" },
-          { data: "ID_Pais" },
+          { data: "CiudadNombre" },
+          { data: "DepartamentoNombre" },
+          { data: "PaisNombre" },
           {
-            defaultContent:
-              "<div class='text-center'><div class='btn-group'><button class='btn btn-info btn-sm btnEditar'>Editar</button><button class='btn btn-danger btn-sm btnBorrar'>Borrar</button><button class='btn btn-secondary btn-sm btnCopiar'>Copiar</button></div></div>"
-          }
+            defaultContent: `
+              <td style="width: 200px;">
+                <select class="form-select acciones-select">
+                  <option selected disabled>Selecciona una acción</option>
+                  <option value="editar">Editar</option>
+                  <option value="eliminar">Eliminar</option>
+                  <option value="copiar">Copiar</option>
+                </select>
+              </td>`
+          },
         ],
-        language: {
-          url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+        language: { url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json" }
+      });
+  
+      // Opciones de exportación e impresión
+      $("#opciones").change(function () {
+        let selectedOption = $(this).val();
+        if (selectedOption === "pdf") {
+          window.open("/impre_sucursales", '_blank'); // Abre el PDF en una nueva ventana
+        } else if (selectedOption === "excel") {
+          exportToExcel(); // Llama a la función para exportar a CSV
+        } else if (selectedOption === "papeleria") {
+          window.location.href = "/Papeleria_Sucursales"; // Redirige a la página de papelería
         }
       });
-
-      // Botón para borrar sucursal
-      $("#tablaSucursales").on("click", ".btnBorrar", function () {
-        let data = tablaSucursales.row($(this).parents("tr")).data();
-        let id = data.ID_Sucursal;
-        opcion = "eliminar";
-        Swal.fire({
-          title: "¿Estás seguro?",
-          text: "¡No podrás revertir esto!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Sí, eliminarlo!"
-        }).then((result) => {
-          if (result.isConfirmed) {
-            $.ajax({
-              type: "POST",
-              url: url + id,
-              data: { opcion: opcion },
-              success: function (data) {
-                Swal.fire(
-                  "¡Eliminado!",
-                  "El registro ha sido eliminado.",
-                  "success"
-                ).then((result) => {
-                  if (result.isConfirmed) {
-                    window.location.reload();
-                  }
-                });
-              }
-            });
-          }
-        });
-      });
-
-      // Botón para editar sucursal
-      $("#tablaSucursales").on("click", ".btnEditar", function () {
-        let data = tablaSucursales.row($(this).parents("tr")).data();
-        $("#exampleModalLabel").text("Editar Sucursal");
-        $("#ID_Sucursal").val(data.ID_Sucursal);
-        $("#Nombre").val(data.Nombre);
-        $("#Direccion").val(data.Direccion);
-        $("#Telefono").val(data.Telefono);
-        $("#Encargado").val(data.Encargado);
-        $("#ID_Ciudad").val(data.ID_Ciudad);
-        $("#ID_Departamento").val(data.ID_Departamento);
-        $("#ID_Pais").val(data.ID_Pais);
-        $("#modalCRUD").modal("show");
-        opcion = "editar";
-      });
-
-      // Formulario para crear o editar sucursal
-      $("#formSucursales").submit(function (e) {
-        e.preventDefault();
-        let formData = {
-          ID_Sucursal: $("#ID_Sucursal").val(),
-          Nombre: $("#Nombre").val(),
-          Direccion: $("#Direccion").val(),
-          Telefono: $("#Telefono").val(),
-          Encargado: $("#Encargado").val(),
-          ID_Ciudad: $("#ID_Ciudad").val(),
-          ID_Departamento: $("#ID_Departamento").val(),
-          ID_Pais: $("#ID_Pais").val(),
-          opcion: opcion
-        };
-
-        $.ajax({
-          type: "POST",
-          url: url + formData.ID_Sucursal,
-          data: formData,
-          success: function (data) {
-            $("#modalCRUD").modal("hide");
-            window.location.reload();
-          },
-          error: function (err) {
-            console.error("Error al guardar sucursal:", err);
-          }
-        });
-      });
-
-      // Botón para exportar a CSV
-      $("#btnExportar").click(function () {
+  
+      // Función para exportar a Excel (CSV)
+      function exportToExcel() {
         let wb = XLSX.utils.book_new();
         let wsData = [];
         $("#tablaSucursales tbody tr").each(function () {
@@ -282,82 +140,200 @@
           });
           wsData.push(rowData);
         });
-
-        let ws = XLSX.utils.aoa_to_sheet([["ID_Sucursal", "Nombre", "Direccion", "Telefono", "Encargado", "ID_Ciudad", "ID_Departamento", "ID_Pais"]].concat(wsData));
+        let ws = XLSX.utils.aoa_to_sheet([["ID_Sucursal", "Nombre", "Direccion", "Telefono", "Encargado", "CiudadNombre", "DepartamentoNombre", "PaisNombre"]].concat(wsData));
         XLSX.utils.book_append_sheet(wb, ws, "Sucursales");
         XLSX.writeFile(wb, "sucursales.xlsx");
-      });
-
-      // Botón para copiar datos
-      $("#tablaSucursales").on("click", ".btnCopiar", function () {
-        let fila = $(this).closest("tr");
-        let datosFila = fila.find("td").map(function () {
-          return $(this).text();
-        }).get();
-        let datosCopiar = datosFila.join("\t");
-        navigator.clipboard.writeText(datosCopiar).then(function () {
-          console.log("Datos copiados al portapapeles:", datosCopiar);
-          alert("¡Datos copiados al portapapeles!");
-        }).catch(function (error) {
-          console.error("Error al copiar datos al portapapeles:", error);
-          alert("Error al copiar datos al portapapeles");
+      }
+  
+      // Acción para el botón de crear
+      $('.btnCrear').click(function () {
+        Swal.fire({
+          title: 'Crear Sucursal',
+          html: `
+            <label for="Nombre" class="col-form-label">Nombre</label>
+            <input type="text" id="Nombre" class="swal2-input">
+            <label for="Direccion" class="col-form-label">Dirección</label>
+            <input type="text" id="Direccion" class="swal2-input">
+            <label for="Telefono" class="col-form-label">Teléfono</label>
+            <input type="text" id="Telefono" class="swal2-input">
+            <label for="Encargado" class="col-form-label">Encargado</label>
+            <input type="text" id="Encargado" class="swal2-input">
+            
+            <!-- Select de País -->
+            <label for="ID_Pais" class="col-form-label">País</label>
+            <select id="ID_Pais" class="swal2-input">
+              <option value="">Selecciona un país</option>
+              <% paises.forEach(pais => { %>
+                <option value="<%= pais.ID_Pais %>"><%= pais.Nombre %></option>
+              <% }); %>
+            </select>
+  
+            <!-- Select de Departamento -->
+            <label for="ID_Departamento" class="col-form-label">Departamento</label>
+            <select id="ID_Departamento" class="swal2-input">
+              <option value="">Selecciona un departamento</option>
+              <% departamentos.forEach(depto => { %>
+                <option value="<%= depto.ID_Departamento %>"><%= depto.Nombre %></option>
+              <% }); %>
+            </select>
+  
+            <!-- Select de Ciudad -->
+            <label for="ID_Ciudad" class="col-form-label">Ciudad</label>
+            <select id="ID_Ciudad" class="swal2-input">
+              <option value="">Selecciona una ciudad</option>
+              <% ciudades.forEach(ciudad => { %>
+                <option value="<%= ciudad.ID_Ciudad %>"><%= ciudad.Nombre %></option>
+              <% }); %>
+            </select>
+          `,
+          showCancelButton: true,
+          confirmButtonText: 'Guardar',
+          cancelButtonText: 'Cancelar',
+          preConfirm: () => {
+            return {
+              Nombre: $('#Nombre').val(),
+              Direccion: $('#Direccion').val(),
+              Telefono: $('#Telefono').val(),
+              Encargado: $('#Encargado').val(),
+              ID_Pais: $('#ID_Pais').val(),
+              ID_Departamento: $('#ID_Departamento').val(),
+              ID_Ciudad: $('#ID_Ciudad').val()
+            };
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            $.ajax({
+              type: 'POST',
+              url: url,
+              data: { ...result.value, opcion: 'crear' },
+              success: function () {
+                Swal.fire('¡Guardado!', 'Sucursal creada con éxito', 'success').then(() => {
+                  window.location.reload();
+                });
+              }
+            });
+          }
         });
       });
-
-      // Botón para actualizar la tabla
-      $("#btnActualizar").click(function () {
-        location.reload();
-      });
-
-      // Botón para mostrar el modal de crear
-      $("#btnCrear").click(function () {
-        $("#ID_Sucursal").val("");
-        $("#Nombre").val("");
-        $("#Direccion").val("");
-        $("#Telefono").val("");
-        $("#Encargado").val("");
-        $("#ID_Ciudad").val("");
-        $("#ID_Departamento").val("");
-        $("#ID_Pais").val("");
-        $("#exampleModalLabel").text("Crear Sucursal");
-        $("#modalCRUD").modal("show");
-        opcion = "crear";
-      });
-
-      $(document).ready(function () {
-        // Función para obtener opciones de un endpoint
-        function obtenerOpciones(endpoint, selector) {
-          $.ajax({
-            url: endpoint,
-            method: 'GET',
-            dataType: 'json',
-            success: function (data) {
-              // Limpiar opciones previas
-              $(selector).empty();
-              // Agregar opción por defecto
-              $(selector).append('<option value="">Seleccionar</option>');
-              // Llenar opciones con datos recibidos
-              data.forEach(function (item) {
-                $(selector).append(`<option value="${item.id}">${item.nombre}</option>`);
-              });
+  
+      // Acción para el botón de edición y copiar datos
+      $('#tablaSucursales tbody').on('change', '.acciones-select', function () {
+        var data = tablaSucursales.row($(this).parents('tr')).data();
+        var accion = $(this).val();
+  
+        if (accion === 'editar') {
+          Swal.fire({
+            title: 'Editar Sucursal',
+            html: `
+              <input type="text" id="ID_Sucursal" hidden value="${data.ID_Sucursal}" />
+              <label for="Nombre" class="col-form-label">Nombre</label>
+              <input type="text" id="Nombre" class="swal2-input" value="${data.Nombre}">
+              <label for="Direccion" class="col-form-label">Dirección</label>
+              <input type="text" id="Direccion" class="swal2-input" value="${data.Direccion}">
+              <label for="Telefono" class="col-form-label">Teléfono</label>
+              <input type="text" id="Telefono" class="swal2-input" value="${data.Telefono}">
+              <label for="Encargado" class="col-form-label">Encargado</label>
+              <input type="text" id="Encargado" class="swal2-input" value="${data.Encargado}">
+              
+              <!-- Select de País -->
+              <label for="ID_Pais" class="col-form-label">País</label>
+              <select id="ID_Pais" class="swal2-input">
+                <option value="">Selecciona un país</option>
+                <% paises.forEach(pais => { %>
+                  <option value="<%= pais.ID_Pais %>"><%= pais.Nombre %></option>
+                <% }); %>
+              </select>
+  
+              <!-- Select de Departamento -->
+              <label for="ID_Departamento" class="col-form-label">Departamento</label>
+              <select id="ID_Departamento" class="swal2-input">
+                <option value="">Selecciona un departamento</option>
+                <% departamentos.forEach(depto => { %>
+                  <option value="<%= depto.ID_Departamento %>"><%= depto.Nombre %></option>
+                <% }); %>
+              </select>
+  
+              <!-- Select de Ciudad -->
+              <label for="ID_Ciudad" class="col-form-label">Ciudad</label>
+              <select id="ID_Ciudad" class="swal2-input">
+                <option value="">Selecciona una ciudad</option>
+                <% ciudades.forEach(ciudad => { %>
+                  <option value="<%= ciudad.ID_Ciudad %>"><%= ciudad.Nombre %></option>
+                <% }); %>
+              </select>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Guardar',
+            cancelButtonText: 'Cancelar',
+            didOpen: () => {
+              $('#ID_Pais').val(data.ID_Pais);
+              $('#ID_Departamento').val(data.ID_Departamento);
+              $('#ID_Ciudad').val(data.ID_Ciudad);
             },
-            error: function (err) {
-              console.error('Error al obtener datos:', err);
+            preConfirm: () => {
+              return {
+                ID_Sucursal: $('#ID_Sucursal').val(),
+                Nombre: $('#Nombre').val(),
+                Direccion: $('#Direccion').val(),
+                Telefono: $('#Telefono').val(),
+                Encargado: $('#Encargado').val(),
+                ID_Pais: $('#ID_Pais').val(),
+                ID_Departamento: $('#ID_Departamento').val(),
+                ID_Ciudad: $('#ID_Ciudad').val()
+              };
+            }
+          }).then((result) => {
+            if (result.isConfirmed) {
+              $.ajax({
+                type: 'POST',
+                url: url + data.ID_Sucursal,
+                data: { ...result.value, opcion: 'editar' },
+                success: function () {
+                  Swal.fire('¡Guardado!', 'Sucursal editada con éxito', 'success').then(() => {
+                    window.location.reload();
+                  });
+                }
+              });
             }
           });
+        } else if (accion === 'eliminar') {
+          Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¡No podrás revertir esto!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminarlo',
+            cancelButtonText: 'Cancelar',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              $.ajax({
+                type: 'POST',
+                url: `${url}${data.ID_Sucursal}`,
+                data: { opcion: 'eliminar' },
+                success: function () {
+                  Swal.fire('¡Eliminado!', 'La sucursal ha sido eliminada.', 'success').then(() => {
+                    window.location.reload();
+                  });
+                }
+              });
+            }
+          });
+        } else if (accion === 'copiar') {
+          var datosFila = [
+            data.ID_Sucursal, data.Nombre, data.Direccion,
+            data.Telefono, data.Encargado, data.CiudadNombre,
+            data.DepartamentoNombre, data.PaisNombre
+          ].join("\t");
+          navigator.clipboard.writeText(datosFila).then(function () {
+            alert("¡Datos copiados al portapapeles!");
+          }).catch(function (error) {
+            alert("Error al copiar datos al portapapeles");
+          });
         }
-
-        // Cargar opciones para Ciudad
-        obtenerOpciones('/api/ciudades', '#ID_Ciudad');
-        // Cargar opciones para Departamento
-        obtenerOpciones('/api/departamentos', '#ID_Departamento');
-        // Cargar opciones para País
-        obtenerOpciones('/api/paises', '#ID_Pais');
       });
-
-
     });
   </script>
+  
+  
 </body>
-
 </html>

@@ -390,7 +390,6 @@ const upload = multer({ storage: storage });
 
 router.get('/CrearEmpleado',(req, res)=>{
     if (req.session.loggedin) {
-        if(re)
         res.render('./empleados/nuevoempleado');
     } else {
         res.render('./paginas/logout');
