@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="shortcut icon" href="#" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport"
+      content="width=device-width,initial-scale=1,user-scalable=no" />
+    <title>Registro de Cajas - NodeJS y Express</title>
+    <link rel="stylesheet" href="resources/css/RegistroTablas.css" />
+    <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+  <body>
+
+    <!-- Encabezado -->
+    <div class="header-container">
+      <div class="breadcrumb">
+        <a href="/vista_finanzas" class="reporte-link">
+          <h1
+            style="color: #858B92; font-weight: bold; margin-right: 5px;">Finanzas</h1>
+        </a>
+        <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+        <h1 style="font-weight: bold;">Registro de Cajas</h1>
+      </div>
+
+      <div class="button-container">
+        <select id="opciones" class="form-select">
+          <option value style="color: #ffffff;" disabled selected>Exportar
+            documento</option>
+          <option value="excel">Exportar CSV</option>
+          <option value="papeleria">Papelería</option>
+        </select>
+        <a type="submit" href="#" class="btn btnCrear btn-danger"
+          style="font-size: 20px;">Añadir Nueva Caja</a>
+      </div>
+    </div>
+
+    <div class="card3">
+      <div class="header-card1">
+        <span>Registro de Cajas</span>
+      </div>
+
+      <div class="content-card-registro">
+        <table id="tablaCajas" class="table-registro">
+          <thead>
+            <tr>
+              <th>ID Caja</th>
+              <th>Código</th>
+              <th>Sucursal</th>
+              <th>Estado</th>
+              <th>ACCIONES</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% results.forEach(function(caja) { %>
+            <tr>
+              <td><%= caja.ID_Caja %></td>
+              <td><%= caja.Codigo %></td>
+              <td><%= caja.NombreSucursal %></td>
+              <td><%= caja.Estado === 1 ? 'Caja abierta' : 'Caja cerrada'
+                %></td>
+              <td style="width: 200px;">
+                <select class="form-select acciones-select"
+                  aria-label="Acciones">
+                  <option selected disabled>Selecciona una acción</option>
+                  <option value="editar">Editar</option>
+                  <option value="eliminar">Eliminar</option>
+                </select>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script type="text/javascript"
+      src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript"
+      src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+
+    <script>
+    $(document).ready(function () {
+      let url = "/Rcajas/";
+
+      let tablaCajas = $("#tablaCajas").DataTable({
+        json: { url: url, dataSrc: "" },
+        columns: [
+          { data: "ID_Caja" },
+          { data: "Codigo" },
+          { data: "NombreSucursal" },
+          { data: "Estado" },
+          {
+            defaultContent: `
+              <td style="width: 200px;">
+                <select class="form-select acciones-select">
+                  <option selected disabled>Selecciona una acción</option>
+                  <option value="editar">Editar</option>
+                  <option value="eliminar">Eliminar</option>
+                </select>
+              </td>`
+          },
+        ],
+        language: { url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json" }
+      });
+
+      // Exportación de datos
+      $("#opciones").change(function () {
+        let selectedOption = $(this).val();
+        if (selectedOption === "excel") {
+          exportToExcel(); // Llama a la función para exportar a CSV
+        } else if (selectedOption === "papeleria") {
+          window.location.href = "/Rcajas-P"; // Redirige a la página de papelería
+        }
+      });
+
+      function exportToExcel() {
+        let wb = XLSX.utils.book_new();
+        let wsData = [];
+        $("#tablaCajas tbody tr").each(function () {
+          let rowData = [];
+          $(this).find("td").each(function () {
+            rowData.push($(this).text().trim());
+          });
+          wsData.push(rowData);
+        });
+        let ws = XLSX.utils.aoa_to_sheet([["ID_Caja", "Código", "Sucursal", "Estado"]].concat(wsData));
+        XLSX.utils.book_append_sheet(wb, ws, "Cajas");
+        XLSX.writeFile(wb, "cajas.xlsx");
+      }
+
+      $('.btnCrear').click(function () {
+    Swal.fire({
+        title: 'Crear Caja',
+        html: `
+            <div class="form-container">
+                <label for="Codigo" class="col-form-label">Código</label>
+                <input type="text" id="Codigo" class="form-input swal2-input" 
+                       maxlength="10" required oninput="this.value = this.value.trimStart()" placeholder="Ingrese el código">
+                
+                <label for="ID_Sucursal" class="col-form-label">Sucursal</label>
+                <select id="ID_Sucursal" class="form-select-form swal2-input" required>
+                    <option value="">Selecciona una sucursal</option>
+                    <% sucursales.forEach(sucursal => { %>
+                        <option value="<%= sucursal.ID_Sucursal %>"><%= sucursal.Nombre %></option>
+                    <% }); %>
+                </select>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Guardar',
+        cancelButtonText: 'Cancelar',
+
+        preConfirm: () => {
+            // Validación de campos
+            const codigo = $('#Codigo').val().trim();
+            const sucursal = $('#ID_Sucursal').val();
+
+            // Verificar campos vacíos
+            if (!codigo || !sucursal) {
+                Swal.showValidationMessage(`Por favor, completa todos los campos.`);
+                return false;
+            }
+
+            // Validación de formato para el código (si aplica alguna restricción específica)
+            if (!/^[A-Za-z0-9]+$/.test(codigo)) {
+                Swal.showValidationMessage(`El código solo puede contener letras y números.`);
+                return false;
+            }
+
+            return {
+                Codigo: codigo,
+                ID_Sucursal: sucursal
+            };
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: { ...result.value, opcion: 'crear' },
+                success: function () {
+                    Swal.fire('¡Guardado!', 'Caja creada con éxito', 'success').then(() => {
+                        window.location.reload(); // Recarga la página después de guardar
+                    });
+                }
+            });
+        }
+    });
+});
+
+
+$('#tablaCajas tbody').on('change', '.acciones-select', function () {
+    const data = tablaCajas.row($(this).parents('tr')).data();
+    const accion = $(this).val();
+
+    if (accion === 'editar') {
+        Swal.fire({
+            title: 'Editar Caja',
+            html: `
+                <div class="form-container">
+                    <input type="text" id="ID_Caja" hidden value="${data.ID_Caja}" />
+                    
+                    <label for="Codigo" class="col-form-label">Código</label>
+                    <input type="text" id="Codigo" class="form-input swal2-input" value="${data.Codigo}"
+                    maxlength="10" required oninput="this.value = this.value.trimStart()" placeholder="Ingrese el código">
+                    <p style="color: red;">sucursal: ${data.NombreSucursal}}</p>
+                    
+                    <label for="ID_Sucursal" class="col-form-label">Sucursal</label>
+                    <select id="ID_Sucursal" class="form-select-form swal2-input" required>
+                        <option value="">Selecciona una sucursal</option>
+                        <% sucursales.forEach(sucursal => { %>
+                            <option value="<%= sucursal.ID_Sucursal %>"><%= sucursal.Nombre %></option>
+                        <% }); %>
+                    </select>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Guardar',
+            cancelButtonText: 'Cancelar',
+            didOpen: () => {
+                // Preseleccionar la sucursal correcta
+                $('#ID_Sucursal').val(data.ID_Sucursal);
+            },
+            preConfirm: () => {
+                // Validación de campos
+                const codigo = $('#Codigo').val().trim();
+                const sucursal = $('#ID_Sucursal').val();
+
+                // Verificar campos vacíos
+                if (!codigo || !sucursal) {
+                    Swal.showValidationMessage(`Por favor, completa todos los campos.`);
+                    return false;
+                }
+
+                // Validación de formato para el código (solo letras y números)
+                if (!/^[A-Za-z0-9]+$/.test(codigo)) {
+                    Swal.showValidationMessage(`El código solo puede contener letras y números.`);
+                    return false;
+                }
+
+                return {
+                    ID_Caja: $('#ID_Caja').val(),
+                    Codigo: codigo,
+                    ID_Sucursal: sucursal
+                };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+                    url: url + data.ID_Caja,
+                    data: { ...result.value, opcion: 'editar' },
+                    success: function () {
+                        Swal.fire('¡Guardado!', 'Caja editada con éxito', 'success').then(() => {
+                            window.location.reload(); // Recarga la página después de guardar
+                        });
+                    }
+                });
+            }
+        });
+    } else if (accion === 'eliminar') {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¡No podrás revertir esto!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+                    url: `${url}${data.ID_Caja}`,
+                    data: { opcion: 'eliminar' },
+                    success: function () {
+                        Swal.fire('¡Eliminado!', 'La caja ha sido eliminada.', 'success').then(() => {
+                            window.location.reload(); // Recarga la página después de eliminar
+                        });
+                    }
+                });
+            }
+        });
+    }
+});
+
+    });
+  </script>
+  </body>
+</html>

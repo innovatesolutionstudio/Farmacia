@@ -17,29 +17,20 @@
     <!-- Encabezado -->
     <div class="header-container">
       <div class="breadcrumb">
-        <a href="/vista_finanzas" class="reporte-link ">
-          <h1
-            style="color: #858B92; font-weight: bold; margin-right: 5px;">Finanzas</h1>
-        </a>
-        <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+
         <a href="/cajas" class="reporte-link ">
           <h1
             style="color: #858B92; font-weight: bold; margin-right: 5px;">Cajas</h1>
         </a>
         <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
-        <h1 style="font-weight: bold;">Sucursales</h1>
+        <a href="/sucursales" class="reporte-link ">
+          <h1
+            style="color: #858B92; font-weight: bold; margin-right: 5px;">Sucursales</h1>
+        </a>
+        <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+        <h1 style="font-weight: bold;">Papeleria</h1>
       </div>
 
-      <div class="button-container">
-        <select id="opciones" class="form-select">
-          <option value style="color: #ffffff;" disabled selected>Exportar
-            documento</option>
-          <option value="excel">Exportar CSV</option>
-          <option value="papeleria">Papelería</option>
-        </select>
-        <a type="submit" href="#" class="btn btnCrear btn-danger"
-          style="font-size: 20px;">Añadir Nuevo</a>
-      </div>
     </div>
 
     <div class="card3">
@@ -79,7 +70,7 @@
                   aria-label="Acciones">
                   <option selected disabled>Selecciona una acción</option>
                   <option value="editar">Editar</option>
-                  <option value="eliminar">Eliminar</option>
+                  <option value="restaurar">Restaurar</option>
                   <option value="copiar">Copiar</option>
                 </select>
               </td>
@@ -117,7 +108,7 @@
                 <select class="form-select acciones-select">
                   <option selected disabled>Selecciona una acción</option>
                   <option value="editar">Editar</option>
-                  <option value="eliminar">Eliminar</option>
+                  <option value="restaurar">restaurar</option>
                   <option value="copiar">Copiar</option>
                 </select>
               </td>`
@@ -134,7 +125,7 @@
         } else if (selectedOption === "excel") {
           exportToExcel(); // Llama a la función para exportar a CSV
         } else if (selectedOption === "papeleria") {
-          window.location.href = "/sucursalesP"; // Redirige a la página de papelería
+          window.location.href = "/Papeleria_Sucursales"; // Redirige a la página de papelería
         }
       });
   
@@ -154,108 +145,7 @@
         XLSX.writeFile(wb, "sucursales.xlsx");
       }
   
-      $('.btnCrear').click(function () {
-    Swal.fire({
-        title: 'Crear Sucursal',
-        html: `
-            <div class="form-container">
-                <label for="Nombre" class="col-form-label">Nombre</label>
-                <input type="text" id="Nombre" class="form-input swal2-input" 
-                       maxlength="50" required oninput="this.value = this.value.trimStart()" placeholder="Ingrese el nombre">
-
-                <label for="Direccion" class="col-form-label">Dirección</label>
-                <input type="text" id="Direccion" class="form-input swal2-input" 
-                       maxlength="100" required oninput="this.value = this.value.trimStart()" placeholder="Ingrese la dirección">
-
-                <label for="Telefono" class="col-form-label">Teléfono</label>
-                <input type="tel" id="Telefono" class="form-input swal2-input" 
-                       maxlength="15" pattern="[0-9]+" required oninput="this.value = this.value.trimStart()" placeholder="Ingrese el teléfono">
-
-                <label for="Encargado" class="col-form-label">Encargado</label>
-                <input type="text" id="Encargado" class="form-input swal2-input" 
-                       maxlength="50" required oninput="this.value = this.value.trimStart()" placeholder="Ingrese el nombre del encargado">
-                
-                <!-- Select de País -->
-                <label for="ID_Pais" class="col-form-label">País</label>
-                <select id="ID_Pais" class="form-select-form swal2-input" required>
-                    <option value="">Selecciona un país</option>
-                    <% paises.forEach(pais => { %>
-                        <option value="<%= pais.ID_Pais %>"><%= pais.Nombre %></option>
-                    <% }); %>
-                </select>
-
-                <!-- Select de Departamento -->
-                <label for="ID_Departamento" class="col-form-label">Departamento</label>
-                <select id="ID_Departamento" class="form-select-form swal2-input" required>
-                    <option value="">Selecciona un departamento</option>
-                    <% departamentos.forEach(depto => { %>
-                        <option value="<%= depto.ID_Departamento %>"><%= depto.Nombre %></option>
-                    <% }); %>
-                </select>
-
-                <!-- Select de Ciudad -->
-                <label for="ID_Ciudad" class="col-form-label">Ciudad</label>
-                <select id="ID_Ciudad" class="form-select-form swal2-input" required>
-                    <option value="">Selecciona una ciudad</option>
-                    <% ciudades.forEach(ciudad => { %>
-                        <option value="<%= ciudad.ID_Ciudad %>"><%= ciudad.Nombre %></option>
-                    <% }); %>
-                </select>
-            </div>
-        `,
-        showCancelButton: true,
-        confirmButtonText: 'Guardar',
-        cancelButtonText: 'Cancelar',
-        
-        preConfirm: () => {
-            // Validación de campos
-            const nombre = $('#Nombre').val().trim();
-            const direccion = $('#Direccion').val().trim();
-            const telefono = $('#Telefono').val().trim();
-            const encargado = $('#Encargado').val().trim();
-            const pais = $('#ID_Pais').val();
-            const departamento = $('#ID_Departamento').val();
-            const ciudad = $('#ID_Ciudad').val();
-
-            // Verificar campos vacíos o inválidos
-            if (!nombre || !direccion || !telefono || !encargado || !pais || !departamento || !ciudad) {
-                Swal.showValidationMessage(`Por favor, completa todos los campos.`);
-                return false;
-            }
-
-            // Verificar que el teléfono solo contenga números
-            if (!/^\d+$/.test(telefono)) {
-                Swal.showValidationMessage(`El teléfono debe contener solo números.`);
-                return false;
-            }
-
-            return {
-                Nombre: nombre,
-                Direccion: direccion,
-                Telefono: telefono,
-                Encargado: encargado,
-                ID_Pais: pais,
-                ID_Departamento: departamento,
-                ID_Ciudad: ciudad
-            };
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: { ...result.value, opcion: 'crear' },
-                success: function () {
-                    Swal.fire('¡Guardado!', 'Sucursal creada con éxito', 'success').then(() => {
-                        window.location.reload(); // Recarga la página después de guardar
-                    });
-                }
-            });
-        }
-    });
-});
-
-  
+    
       $('#tablaSucursales tbody').on('change', '.acciones-select', function () {
     var data = tablaSucursales.row($(this).parents('tr')).data();
     var accion = $(this).val();
@@ -367,41 +257,43 @@
                 });
             }
         });
-    } else if (accion === 'eliminar') {
-        Swal.fire({
+    }  else if (accion === 'restaurar') {
+          Swal.fire({
             title: '¿Estás seguro?',
             text: "¡No podrás revertir esto!",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Sí, eliminarlo',
+            confirmButtonText: 'Sí, restaurar',
             cancelButtonText: 'Cancelar',
-        }).then((result) => {
+          }).then((result) => {
             if (result.isConfirmed) {
-                $.ajax({
-                    type: 'POST',
-                    url: `${url}${data.ID_Sucursal}`,
-                    data: { opcion: 'eliminar' },
-                    success: function () {
-                        Swal.fire('¡Eliminado!', 'La sucursal ha sido eliminada.', 'success').then(() => {
-                            window.location.reload(); // Recarga la página después de eliminar
-                        });
-                    }
-                });
+              $.ajax({
+                type: 'POST',
+                url: `${url}${data.ID_Sucursal}`,
+                data: { opcion: 'restaurar' },
+                success: function () {
+                  Swal.fire('restaurar!', 'La sucursal ha sido restaurada.', 'success').then(() => {
+                    window.location.reload();
+                  });
+                }
+              });
             }
-        });
-    } else if (accion === 'copiar') {
-        var datosFila = [
+          });
+        } else if (accion === 'copiar') {
+          var datosFila = [
             data.ID_Sucursal, data.Nombre, data.Direccion,
             data.Telefono, data.Encargado, data.CiudadNombre,
             data.DepartamentoNombre, data.PaisNombre
-        ].join("\t");
-        navigator.clipboard.writeText(datosFila).then(function () {
+          ].join("\t");
+          navigator.clipboard.writeText(datosFila).then(function () {
             alert("¡Datos copiados al portapapeles!");
-        }).catch(function (error) {
+          }).catch(function (error) {
             alert("Error al copiar datos al portapapeles");
-        });
-    }
-});
+          });
+        }
+      });
+
+
 
     // Función para cargar opciones en un select y seleccionar un valor predeterminado
 function cargarSelect(url, selectElement, defaultText, selectedId = null) {

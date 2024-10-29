@@ -1,158 +1,191 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/kMVqz1K3lJu3g4C2yOt6nfx1NNMRdyz0HXov9pGi3mXKjbl2XFK9xZPd9XyG6XTB/8x8es5X+Xw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://kit.fontawesome.com/a076d05399.js"
+            crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" integrity="sha384-UzomW2R7c1D7vo/vSjtyUlbhlmJ8LZ+DRjW/zhbKUp7AWGzZQL57/bjH5CV2N2zJ" crossorigin="anonymous">
-    <!-- custom css -->
-    <link rel="stylesheet" href="resources/css/graficos.css" />
-    <!-- SweetAlert2 CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+            integrity="sha512-Fo3rlrZj/kMVqz1K3lJu3g4C2yOt6nfx1NNMRdyz0HXov9pGi3mXKjbl2XFK9xZPd9XyG6XTB/8x8es5X+Xw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <title>Ventas</title>
-</head>
-<body>
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"
+            integrity="sha384-UzomW2R7c1D7vo/vSjtyUlbhlmJ8LZ+DRjW/zhbKUp7AWGzZQL57/bjH5CV2N2zJ"
+            crossorigin="anonymous">
+        <!-- custom css -->
+        <link rel="stylesheet" href="resources/css/graficos.css" />
+        <!-- SweetAlert2 CSS -->
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-    <div class="header-container">
-        <h1>Dashboard</h1>
-    </div>
+        <title>Ventas</title>
+    </head>
+    <body>
 
-    <div class="container">
-        <div class="card" style="border: 2px solid #01A768;">
-            <a href="/ganancias_es" onclick="cargarContenido('/ventas')" class="btn-group">
-              <img class="icono" src="resources/images/iconos/money-ventas.svg" alt="Productos">
-            </a>
-          
-            <h2 id="ventasMes"></h2>
-            <p>Ventas del mes</p>
-            <div class="details">
-              <a href="#" onclick="verDetallesVentas()" style="background-color: #A6DBCB; color: black;">Ver Detalle Ventas &raquo;</a>
-            </div>
-          </div>
-          
-    
-        <div class="card" style="border: 2px solid #FED600;">
-            <a href="#" onclick="cargarContenido('/ganancias_es')" class="btn-group"><img class="icono" src="resources/images/iconos/person.svg" alt="Cajas"></a>
-
-            <h2 id="clientesRegistradosMes"></h2>
-            <p>Total de clientes</p>
-            <div class="details">
-                <a href="#" onclick="verDetallesClientes()"  style="background-color: #F2E9AC; color: #000;">Ver Registro &raquo;</a>
-            </div>
+        <div class="header-container">
+            <h1>Dashboard</h1>
         </div>
-    
-        <div class="card" style="border: 2px solid #03A9F5;">
-            <a href="#" onclick="cargarContenido('/ganancias_es')" class="btn-group"><img class="icono" src="resources/images/iconos/recursos-h.svg" alt="Ventas"></a>
 
-            <h2 id="ventasSemana"></h2>
-            <p>Ventas de la semana</p>
-            <div class="details">
-                <a href="#" onclick=" verDetallesCompras()"  style="background-color: #A7DCF5; color: #000;">Ver Ventas &raquo;</a>
-            </div>
-        </div>
-        <div class="card" style="border: 2px solid #F0483E;">
-            <a href="#" onclick="cargarContenido('/ganancias_es')" class="btn-group"><img class="icono" src="resources/images/iconos/inventory.svg" alt="Ventas"></a>
+        <div class="container">
+            <div class="card" style="border: 2px solid #01A768;">
+                <a href="/ganancias_es" onclick="cargarContenido('/ventas')"
+                    class="btn-group">
+                    <img class="icono"
+                        src="resources/images/iconos/money-ventas.svg"
+                        alt="Productos">
+                </a>
 
-            <h2 id="medicamentosapuntovencer">01</h2>
-            <p>Escasez de Medicamentos</p>
-            <div class="details">
-                <a href="#"  onclick=" verDetallesInventario()"   style="background-color: #EEBFBF; color: #000;">Ver Inventario &raquo;</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="container2">
-
-        <!-- Card 1: Ventas Mensuales -->
-        <div class="card2">
-            <div class="header-card2">
-                <span>Ventas Mensuales</span>
-                <a href="#" onclick="verDetallesVentasG()">Ver más &raquo;</a>
-            </div>
-            <div class="content-card2">
-                <div>
-                    <h2 id="obtenerVentasMest"></h2>
-                    <p>Número total de ventas</p>
-                </div>
-                <div>
-                    <h2 id="obtenerProductoMasVendido"></h2>
-                    <p>Producto mas vendido de la gestion</p>
+                <h2 id="ventasMes"></h2>
+                <p>Ventas del mes</p>
+                <div class="details">
+                    <a href="#" onclick="verDetallesVentas()"
+                        style="background-color: #A6DBCB; color: black;">Ver
+                        Detalle Ventas &raquo;</a>
                 </div>
             </div>
-        </div>
 
-        <!-- Card 2: Productos -->
-        <div class="card2">
-            <div class="header-card2">
-                <span>Productos</span>
-                <a href="#" onclick="verProductosVendidosMes()">Ver más &raquo;</a>
-            </div>
-            <div class="content-card2">
-                <div>
-                    <h2 id="obtenerTotalProductosVendidosMesSucursal"></h2>
-                    <p>Medicamentos vendidos en el mes</p>
+            <div class="card" style="border: 2px solid #FED600;">
+                <a href="#" onclick="cargarContenido('/ganancias_es')"
+                    class="btn-group"><img class="icono"
+                        src="resources/images/iconos/person.svg"
+                        alt="Cajas"></a>
+
+                <h2 id="clientesRegistradosMes"></h2>
+                <p>Total de clientes</p>
+                <div class="details">
+                    <a href="#" onclick="verDetallesClientes()"
+                        style="background-color: #F2E9AC; color: #000;">Ver
+                        Registro &raquo;</a>
                 </div>
-                <div>
-                    <h2 id="obtenerCantidadTotalInventario">5,288</h2>
-                    <p>Cantidad Productos en inventario</p>
+            </div>
+
+            <div class="card" style="border: 2px solid #03A9F5;">
+                <a href="#" onclick="cargarContenido('/ganancias_es')"
+                    class="btn-group"><img class="icono"
+                        src="resources/images/iconos/recursos-h.svg"
+                        alt="Ventas"></a>
+
+                <h2 id="ventasSemana"></h2>
+                <p>Ventas de la semana</p>
+                <div class="details">
+                    <a href="#" onclick=" verDetallesCompras()"
+                        style="background-color: #A7DCF5; color: #000;">Ver
+                        Ventas &raquo;</a>
+                </div>
+            </div>
+            <div class="card" style="border: 2px solid #F0483E;">
+                <a href="#" onclick="cargarContenido('/ganancias_es')"
+                    class="btn-group"><img class="icono"
+                        src="resources/images/iconos/inventory.svg"
+                        alt="Ventas"></a>
+
+                <h2 id="medicamentosapuntovencer">01</h2>
+                <p>Escasez de Medicamentos</p>
+                <div class="details">
+                    <a href="#" onclick=" verDetallesInventario()"
+                        style="background-color: #EEBFBF; color: #000;">Ver
+                        Inventario &raquo;</a>
                 </div>
             </div>
         </div>
 
-        <!-- Card 3: Pedidos -->
-        <div class="card2">
-            <div class="header-card2">
-                <span>Pedidos</span>
-                <a href="#">Ver más &raquo;</a>
-            </div>
-            <div class="content-card2">
-                <div>
-                    <h2>04</h2>
-                    <p>Total pedidos</p>
+        <div class="container2">
+
+            <!-- Card 1: Ventas Mensuales -->
+            <div class="card2">
+                <div class="header-card2">
+                    <span>Ventas Mensuales</span>
+                    <a href="#" onclick="verDetallesVentasG()">Ver más
+                        &raquo;</a>
                 </div>
-                <div>
-                    <h2>5</h2>
-                    <p>Pedidos pendientes</p>
+                <div class="content-card2">
+                    <div>
+                        <h2 id="obtenerVentasMest"></h2>
+                        <p>Número total de ventas</p>
+                    </div>
+                    <div>
+                        <h2 id="obtenerProductoMasVendido"></h2>
+                        <p>Producto mas vendido de la gestion</p>
+                    </div>
                 </div>
             </div>
+
+            <!-- Card 2: Productos -->
+            <div class="card2">
+                <div class="header-card2">
+                    <span>Productos</span>
+                    <a href="#" onclick="verProductosVendidosMes()">Ver más
+                        &raquo;</a>
+                </div>
+                <div class="content-card2">
+                    <div>
+                        <h2 id="obtenerTotalProductosVendidosMesSucursal"></h2>
+                        <p>Medicamentos vendidos en el mes</p>
+                    </div>
+                    <div>
+                        <h2 id="obtenerCantidadTotalInventario">5,288</h2>
+                        <p>Cantidad Productos en inventario</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Pedidos -->
+            <div class="card2">
+                <div class="header-card2">
+                    <span>Pedidos</span>
+                    <a href="#">Ver más &raquo;</a>
+                </div>
+                <div class="content-card2">
+                    <div>
+                        <h2>04</h2>
+                        <p>Total pedidos</p>
+                    </div>
+                    <div>
+                        <h2>5</h2>
+                        <p>Pedidos pendientes</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Compras -->
+            <div class="card2">
+                <div class="header-card2">
+                    <span>Compras</span>
+                    <a href="#" onclick="verProductosCompradosMes()">Ver más
+                        &raquo;</a>
+                </div>
+                <div class="content-card2">
+                    <div>
+                        <h2 id="obtenerTotalComprasC"></h2>
+                        <p>Número total de compras</p>
+                    </div>
+                    <div>
+                        <h2 style="font-size: 34px;"
+                            id="obtenerProveedorMasComprado"></h2>
+                        <p>Proveedor</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <!-- Card 4: Compras -->
-        <div class="card2">
-            <div class="header-card2">
-                <span>Compras</span>
-                <a href="#" onclick="verProductosCompradosMes()">Ver más &raquo;</a>
-            </div>
-            <div class="content-card2">
-                <div>
-                    <h2 id="obtenerTotalComprasC"></h2>
-                    <p>Número total de compras</p>
-                </div>
-                <div>
-                    <h2 style="font-size: 34px;" id="obtenerProveedorMasComprado"></h2>
-                    <p>Proveedor</p>
-                </div>
-            </div>
-        </div>
-        
-    </div>
-  
-</body>
-<!-- SweetAlert2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </body>
+    <!-- SweetAlert2 JS -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script src="js/ventasmensuales.js"></script>
-<script src="js/datos.js"></script>
-<script src="js/clientesmensuales.js"></script>
-<script src="js/comprasMensuales.js"></script>
-<script src="js/InventarioTabla.js"></script>
-<script src="js/graficoventas.js"></script>
-<script src="js/graficoproductos.js"></script>
-<script src="js/gaficoCompras.js"></script>
+    <script src="js/ventasmensuales.js"></script>
+    <script src="js/datos.js"></script>
+    <script src="js/clientesmensuales.js"></script>
+    <script src="js/comprasMensuales.js"></script>
+    <script src="js/InventarioTabla.js"></script>
+    <script src="js/graficoventas.js"></script>
+    <script src="js/graficoproductos.js"></script>
+    <script src="js/gaficoCompras.js"></script>
 </html>

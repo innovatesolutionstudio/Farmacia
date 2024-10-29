@@ -22,14 +22,12 @@
 
         <a href="/empleados" class="reporte-link ">
           <h1
-            style="color: #858B92; font-weight: bold; margin-right: 5px;">Gestion Empleados</h1>
+            style="color: #858B92; font-weight: bold; margin-right: 5px;">Gestion
+            Empleados</h1>
         </a>
         <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
         <h1 style="font-weight: bold;">Ciudades</h1>
       </div>
-
-
-
 
       <div class="button-container">
         <!-- Select con opciones -->
@@ -45,8 +43,6 @@
         <a type="submit" href="#" class="btn btnCrear btn-danger"
           style="font-size: 20px;">Añadir Nuevo</a>
       </div>
-
-
 
     </div>
 
@@ -165,133 +161,146 @@
                 // Guardar el libro como un archivo Excel
                 XLSX.writeFile(wb, "ciudades.xlsx");
           }
-          // Manejar las acciones del select
           $('#tablaCiudades tbody').on('change', '.acciones-select', function () {
-              var data = tablaCiudades.row($(this).parents('tr')).data(); // Obtener datos de la fila actual
-              var accion = $(this).val(); // Obtener la acción seleccionada
-  
-              if (accion === 'editar') {
-                  // Acción para editar
-                  Swal.fire({
-                      title: 'Editar Ciudad',
-                      html: `
-                          <input type="text" id="ID_Ciudad" hidden value="${data.ID_Ciudad}" />
-                          <label for="Nombre" class="col-form-label">Nombre</label>
-                          <input type="text" id="Nombre" class="swal2-input" value="${data.Nombre}">
-                      `,
-                      showCancelButton: true,
-                      confirmButtonText: 'Guardar',
-                      cancelButtonText: 'Cancelar',
-                      preConfirm: () => {
-                          const nombre = Swal.getPopup().querySelector('#Nombre').value;
-                          if (!nombre) {
-                              Swal.showValidationMessage('Por favor, ingrese el nombre');
-                          }
-                          return { Nombre: nombre };
-                      }
-                  }).then((result) => {
-                      if (result.isConfirmed) {
-                          const formData = { ID_Ciudad: data.ID_Ciudad, Nombre: result.value.Nombre, opcion: 'editar' };
-                          $.ajax({
-                              type: 'POST',
-                              url: url + data.ID_Ciudad,
-                              data: formData,
-                              success: function () {
-                                  Swal.fire('¡Guardado!', 'Ciudad editada con éxito', 'success').then(() => {
-                                      window.location.reload();
-                                  });
-                              }
-                          });
-                      }
-                  });
-              } else if (accion === 'eliminar') {
-                  // Acción para eliminar
-                  Swal.fire({
-                      title: '¿Estás seguro?',
-                      text: "¡No podrás revertir esto!",
-                      icon: 'warning',
-                      showCancelButton: true,
-                      confirmButtonText: 'Sí, eliminarlo',
-                      cancelButtonText: 'Cancelar',
-                  }).then((result) => {
-                      if (result.isConfirmed) {
-                          $.ajax({
-                              type: 'POST',
-                              url: url + data.ID_Ciudad,
-                              data: { opcion: 'eliminar' },
-                              success: function () {
-                                  Swal.fire('¡Eliminado!', 'La ciudad ha sido eliminada.', 'success').then(() => {
-                                      window.location.reload();
-                                  });
-                              }
-                          });
-                      }
-                  });
-              } else if (accion === 'copiar') {
-                  // Acción para copiar
-                  var datosFila = [data.ID_Ciudad, data.Nombre].join("\t");
-                  navigator.clipboard.writeText(datosFila).then(function () {
-                      alert("¡Datos copiados al portapapeles!");
-                  }).catch(function (error) {
-                      alert("Error al copiar datos al portapapeles");
-                  });
+    var data = tablaCiudades.row($(this).parents('tr')).data(); // Obtener datos de la fila actual
+    var accion = $(this).val(); // Obtener la acción seleccionada
+
+    if (accion === 'editar') {
+        // Acción para editar
+        Swal.fire({
+            title: 'Editar Ciudad',
+            html: `
+                <div class="form-container">
+                    <input type="text" id="ID_Ciudad" hidden value="${data.ID_Ciudad}" />
+                    
+                    <label for="Nombre" class="col-form-label">Nombre</label>
+                    <input type="text" id="Nombre" class="form-input swal2-input" value="${data.Nombre}" 
+                           maxlength="50" required oninput="this.value = this.value.trimStart()" placeholder="Ingrese el nombre">
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Guardar',
+            cancelButtonText: 'Cancelar',
+
+            preConfirm: () => {
+                const nombre = Swal.getPopup().querySelector('#Nombre').value.trim();
+
+                // Validación del campo Nombre
+                if (!nombre) {
+                    Swal.showValidationMessage('Por favor, ingrese el nombre');
+                    return false;
+                }
+
+                // Verificar si el nombre contiene solo letras y espacios
+                if (!/^[A-Za-z\s]+$/.test(nombre)) {
+                    Swal.showValidationMessage('El nombre solo debe contener letras y espacios');
+                    return false;
+                }
+
+                return { Nombre: nombre };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const formData = { ID_Ciudad: data.ID_Ciudad, Nombre: result.value.Nombre, opcion: 'editar' };
+                $.ajax({
+                    type: 'POST',
+                    url: url + data.ID_Ciudad,
+                    data: formData,
+                    success: function () {
+                        Swal.fire('¡Guardado!', 'Ciudad editada con éxito', 'success').then(() => {
+                            window.location.reload(); // Recarga la página después de guardar
+                        });
+                    }
+                });
+            }
+        });
+    } else if (accion === 'eliminar') {
+        // Acción para eliminar
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¡No podrás revertir esto!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminarlo',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+                    url: url + data.ID_Ciudad,
+                    data: { opcion: 'eliminar' },
+                    success: function () {
+                        Swal.fire('¡Eliminado!', 'La ciudad ha sido eliminada.', 'success').then(() => {
+                            window.location.reload(); // Recarga la página después de eliminar
+                        });
+                    }
+                });
+            }
+        });
+    } else if (accion === 'copiar') {
+        // Acción para copiar
+        var datosFila = [data.ID_Ciudad, data.Nombre].join("\t");
+        navigator.clipboard.writeText(datosFila).then(function () {
+            alert("¡Datos copiados al portapapeles!");
+        }).catch(function (error) {
+            alert("Error al copiar datos al portapapeles");
+        });
+    }
+
+    // Reiniciar el select después de la acción
+    $(this).val('Selecciona una acción');
+});
+
+$(".btnCrear").click(function () {
+    Swal.fire({
+        title: 'Crear Ciudad',
+        html: `
+            <div class="form-container">
+                <input type="text" id="ID_Ciudad" hidden />
+                
+                <label for="Nombre" class="col-form-label">Nombre</label>
+                <input type="text" id="Nombre" class="form-input swal2-input" 
+                       maxlength="50" required oninput="this.value = this.value.trimStart()" placeholder="Ingrese el nombre de la ciudad">
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Guardar',
+        cancelButtonText: 'Cancelar',
+
+        preConfirm: () => {
+            const nombre = Swal.getPopup().querySelector('#Nombre').value.trim();
+
+            // Validación del campo Nombre
+            if (!nombre) {
+                Swal.showValidationMessage('Por favor, ingrese el nombre');
+                return false;
+            }
+
+            // Verificar que el nombre solo contenga letras y espacios
+            if (!/^[A-Za-z\s]+$/.test(nombre)) {
+                Swal.showValidationMessage('El nombre solo debe contener letras y espacios');
+                return false;
+            }
+
+            return { Nombre: nombre };
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+          const formData = { Nombre: result.value.Nombre, opcion: 'crear' };
+          $.ajax({
+              type: 'POST',
+              url: url,
+              data: formData,
+              success: function () {
+                   Swal.fire('¡Guardado!', 'Ciudad creada con éxito', 'success').then(() => {
+                      window.location.reload(); // Recarga la página después de guardar
+              });
               }
-  
-              // Reiniciar el select después de la acción
-              $(this).val('Selecciona una acción');
           });
-  
-          // Función para crear ciudad
-          $(".btnCrear").click(function () {
-              Swal.fire({
-                  title: 'Crear Ciudad',
-                  html: `
-                      <input type="text" id="ID_Ciudad" hidden />
-                      <label for="Nombre" class="col-form-label">Nombre</label>
-                      <input type="text" id="Nombre" class="swal2-input" placeholder="Ingrese el nombre de la ciudad">
-                  `,
-                  showCancelButton: true,
-                  confirmButtonText: 'Guardar',
-                  cancelButtonText: 'Cancelar',
-                  preConfirm: () => {
-                      const nombre = Swal.getPopup().querySelector('#Nombre').value;
-                      if (!nombre) {
-                          Swal.showValidationMessage('Por favor, ingrese el nombre');
-                      }
-                      return { Nombre: nombre };
-                  }
-              }).then((result) => {
-                  if (result.isConfirmed) {
-                      const formData = { Nombre: result.value.Nombre, opcion: 'crear' };
-                      $.ajax({
-                          type: 'POST',
-                          url: url,
-                          data: formData,
-                          success: function () {
-                              Swal.fire('¡Guardado!', 'Ciudad creada con éxito', 'success').then(() => {
-                                  window.location.reload();
-                              });
-                          }
-                      });
-                  }
-              });
-          });
-  
-          // Botón copiar (opcional)
-          $("#tablaCiudades").on("click", ".btnCopiar", function () {
-              var fila = $(this).closest("tr");
-              var datosFila = fila.find("td").map(function () {
-                  return $(this).text();
-              }).get();
-              var datosCopiar = datosFila.join("\t");
-  
-              navigator.clipboard.writeText(datosCopiar).then(function () {
-                  alert("¡Datos copiados al portapapeles!");
-              }).catch(function (error) {
-                  alert("Error al copiar datos al portapapeles");
-              });
-          });
-      });
+        }
+    });
+  })
+});
   </script>
 
   </body>

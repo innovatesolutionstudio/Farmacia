@@ -42,6 +42,8 @@ body {
     background-color: #fff;
 }
 
+
+
 .form-select-action {
     font-size: 16px;
     padding: 10px 15px; /* Ajusta el espacio interno del selector */
@@ -52,6 +54,39 @@ body {
     background-color: #ffffff;
     border: 1px solid #ccc
 }
+
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    
+}
+
+.form-input {
+    font-size: 18px;
+    padding: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+    max-width: 300px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.form-select-form {
+    font-size: 18px;
+    padding: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+    max-width: 300px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    outline: none;
+}
+
+
 
 
 .btn {

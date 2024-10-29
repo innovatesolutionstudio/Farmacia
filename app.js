@@ -33,9 +33,9 @@ const vista_ventas = require('./routes/vista_ventas');
 const rutas_login = require('./routes/login');
 const adminCajas = require('./routes/admincajas');
 const vistareportes = require('./routes/vista_reportes');
-
+const registrocagas = require('./routes/registro_cajas');
 const vistafinanzas = require('./routes/vista_Finanzas');
-// Añade esta línea al principio de tu app.js
+
 const notificacionesRoutes = require('./routes/notificaciones');
 
 //#endregion
@@ -140,19 +140,32 @@ app.get('/login',(req, res)=>{
 
 app.get('/', (req, res) => {
     if (req.session.loggedin) {
-        
         const primerNombre = req.session.Nombre.split(' ')[0];
         const primerApellido = req.session.Apellido.split(' ')[0];
+        const ID_Sucursal = req.session.ID_Sucursal;
 
-        res.render('index', {
-            login: true,
-            Nombre: primerNombre,
-            Apellido: primerApellido,
-            Fotografia: req.session.Fotografia,
-            Dirección: req.session.Dirección,
-            Teléfono: req.session.Teléfono,
-            sesion: req.session.ID_Rol,
-            Situacion: req.session.Situacion
+        // Consulta para obtener el nombre de la sucursal usando el ID_Sucursal de la sesión
+        const sucursalQuery = 'SELECT Nombre FROM sucursales WHERE ID_Sucursal = ?';
+        coneccion.query(sucursalQuery, [ID_Sucursal], (error, results) => {
+            if (error) {
+                console.error("Error al obtener el nombre de la sucursal:", error);
+                return res.status(500).send("Error al obtener el nombre de la sucursal");
+            }
+
+            const nombreSucursal = results[0]?.Nombre || 'Sucursal no encontrada';
+
+            // Renderizar la vista index con el nombre de la sucursal
+            res.render('index', {
+                login: true,
+                Nombre: primerNombre,
+                Apellido: primerApellido,
+                Fotografia: req.session.Fotografia,
+                Dirección: req.session.Dirección,
+                Teléfono: req.session.Teléfono,
+                sesion: req.session.ID_Rol,
+                NombreSucursal: nombreSucursal,  
+                Situacion: req.session.Situacion
+            });
         });
     } else {
         res.render('login', {
@@ -161,6 +174,7 @@ app.get('/', (req, res) => {
         });
     }
 });
+
 
 
 app.get('/logout', (req, res) => {
@@ -227,7 +241,7 @@ app.use(notificacionesRoutes);
 app.use(vistafinanzas);
 app.use(adminCajas);
 app.use(vistareportes);
-
+app.use(registrocagas);
 app.use(api_datos);
 //reportes
 

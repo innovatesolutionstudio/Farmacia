@@ -49,13 +49,14 @@ router.get('/cajas', (req, res) => {
 
                         // Tercera consulta: Obtener los detalles de las cajas
                         connection.query(`
-                            SELECT c.ID_Caja, c.Codigo, c.Estado, e.ID_Empleado, e.Nombre AS Empleado_Nombre, 
+                           SELECT c.ID_Caja, c.Codigo, c.Estado, e.ID_Empleado, e.Nombre AS Empleado_Nombre, 
                                 IFNULL(SUM(v.Total_Venta), 0) AS Total_Venta, MAX(v.Fecha_Venta) AS Fecha_Venta 
                             FROM cajas c
                             LEFT JOIN empleados e ON c.ID_Caja = e.ID_Caja
                             LEFT JOIN ventas v ON c.ID_Caja = v.ID_Caja AND v.Fecha_Venta BETWEEN CURDATE() AND NOW()
-                            WHERE c.ID_Sucursal = ? AND c.ID_Caja != 8
-                            GROUP BY c.ID_Caja, e.ID_Empleado, e.Nombre
+                            WHERE c.ID_Sucursal = ? AND c.ID_Caja != 8 AND c.Figura = 1
+                            GROUP BY c.ID_Caja, e.ID_Empleado, e.Nombre;
+
                         `, [sucursalID], (error, cajasResults) => {
                             if (error) {
                                 console.error('Error al obtener los detalles de las cajas:', error);
@@ -142,7 +143,7 @@ router.post('/abrir-todas', (req, res) => {
     const currentDateTime = new Date(); // Fecha y hora actual
     
     // Actualizar el estado de todas las cajas de la sucursal a '1' (abierto)
-    connection.query('UPDATE cajas SET Estado = 1 WHERE ID_Sucursal = ?', [sucursalID], (error, results) => {
+    connection.query('UPDATE cajas SET Estado = 1 WHERE ID_Sucursal = ? AND Figura = 1', [sucursalID], (error, results) => {
         if (error) {
             console.error('Error al abrir todas las cajas:', error);
             res.status(500).send('Error interno del servidor');
@@ -178,7 +179,7 @@ router.post('/cerrar-todas', (req, res) => {
     const currentDateTime = new Date(); // Fecha y hora actual
 
     // Actualizar el estado de todas las cajas de la sucursal a '2' (cerrado)
-    connection.query('UPDATE cajas SET Estado = 2 WHERE ID_Sucursal = ?', [sucursalID], (error, results) => {
+    connection.query('UPDATE cajas SET Estado = 2 WHERE ID_Sucursal = ? AND Figura = 1', [sucursalID], (error, results) => {
         if (error) {
             console.error('Error al cerrar todas las cajas:', error);
             res.status(500).send('Error interno del servidor');
@@ -246,5 +247,6 @@ router.get('/reporte-ventas', (req, res) => {
         doc.end();
     });
 });
+
 
 module.exports = router;

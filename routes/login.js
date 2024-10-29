@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../database/db'); // Importar el pool
+
+
+
 router.post('/auth', async (req, res) => {
     const email = req.body.Email.toLowerCase(); 
     const password = req.body.pass;
