@@ -40,7 +40,7 @@ router.post('/notificar', (req, res) => {
         });
     }
 
-    const query = 'INSERT INTO notificaciones (Nombre, Correo, Descripcion) VALUES (?, ?, ?)';
+    const query = 'INSERT INTO notificaciones (Nombre, Correo, Descripcion, Estado) VALUES (?, ?, ?, 0)';
     coneccion.query(query, [nombre, correo, descripcion], (error, results) => {
         if (error) {
             console.error('Error al insertar la notificación:', error);
