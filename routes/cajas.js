@@ -368,9 +368,6 @@ router.get('/reporte-ventas', async (req, res) => {
         // Llamar a la función para crear la tabla en el PDF
         crearTablaVentas(doc, results); // Usa los resultados de la consulta
 
-        // Agregar firmas
-        agregarFirmas(doc, doc.y);
-
         // Finalizar el documento PDF
         doc.end();
     });
@@ -419,31 +416,15 @@ function crearTablaVentas(doc, dataVentas) {
 }
 
 
-// Función para dibujar una fila (similar a la función que ya tienes)
 function drawRow(doc, rowData, y, bold, textColor) {
-    const cellWidth = (doc.page.width - 200) / rowData.length; // Calcular el ancho de cada celda
-    rowData.forEach((cellData, index) => {
-        const cellX = 100 + index * cellWidth;
-        doc.rect(cellX, y, cellWidth, 20).fillAndStroke('#fff', '#000'); // Dibuja el rectángulo de la celda
-        doc.fillColor(textColor).fontSize(12);
-        doc.text(cellData.toString(), cellX, y + 5, { width: cellWidth, align: 'center' });
-    });
+  const cellWidth = (doc.page.width - 200) / rowData.length; // Calcular el ancho de cada celda
+  rowData.forEach((cellData, index) => {
+      const cellX = 100 + index * cellWidth;
+      doc.rect(cellX, y, cellWidth, 20).fillAndStroke('#fff', '#000'); // Dibuja el rectángulo de la celda
+      doc.fillColor(textColor).fontSize(12);
+      doc.text(cellData != null ? cellData.toString() : '', cellX, y + 5, { width: cellWidth, align: 'center' });
+  });
 }
 
-// Función para agregar firmas al PDF
-function agregarFirmas(doc, yPos) {
-    // Insertamos la primera imagen
-    doc.image('assets/images/firmas/firma_A.png', 140, yPos + 35, { width: 120, height: 120 });
-    // Insertamos la segunda imagen
-    doc.image('assets/images/firmas/firma_f.png', 370, yPos + 30, { width: 120, height: 120 });
-
-    // Agregamos una fila con los nombres
-    doc.text("Abigail Rodriguez Fernandez", 140, yPos + 120);
-    doc.text("Fernanda Mamani P.", 370, yPos + 120);
-    doc.fillColor('red');
-    // Agregamos una fila con los títulos
-    doc.text("Lic. Farmaceutica", 160, yPos + 140);
-    doc.text("Enfermera", 400, yPos + 140);
-}
 
 module.exports = router;

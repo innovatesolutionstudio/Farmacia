@@ -381,7 +381,7 @@ input:checked + .slider:before {
     margin-right: 20px;
     border: 2px solid #E0E0E0;
     position: relative;
-    height: 400px; /* Cambia el height a auto para evitar que fije una altura específica */
+    height: 600apx; /* Cambia el height a auto para evitar que fije una altura específica */
     overflow: hidden; /* Para evitar que se expanda más allá del tamaño */
 }
 
@@ -390,7 +390,7 @@ input:checked + .slider:before {
 .table-clientes {
    
     border-collapse: collapse;
-  width: 100%;
+    width: 100%;
     font-size: 18px;
     text-align: left;
    
