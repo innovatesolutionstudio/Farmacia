@@ -1,58 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <link rel="shortcut icon" href="#" />
-  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <title>DataTables estilo Bootstrap 5 - NodeJS y Express</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
-    integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous" />
-  <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap5.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css" />
+    <head>
+        <link rel="shortcut icon" href="#" />
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport"
+            content="width=device-width,initial-scale=1,user-scalable=no" />
+        <title>DataTables estilo Bootstrap 5 - NodeJS y Express</title>
+        <link rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
+            integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK"
+            crossorigin="anonymous" />
+        <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
+        <link rel="stylesheet" type="text/css"
+            href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap5.min.css" />
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css" />
 
-</head>
+    </head>
 
+    <body>
+        <div class="container-fluid">
+            <h1 class="titulo">&nbsp;&nbsp;&nbsp;&nbsp;Tablero de Reportes -
+                Ganancias</h1>
 
-<body>
-    <div class="container-fluid">
-        <H1 class="titulo">&nbsp;&nbsp;&nbsp;&nbsp;Tablero de Reportes - Ganancias</H1>
-    
-    <div class="container">
-        
-        <div class="row">
-            <!--reporte 3 -->
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        Reporte de tareas semanales 
-                    </div>
-                    <div class="card-body">
-                        
-                            <div class="mb-3">
-                                <label for="anio" class="form-label">Exportar tarea:</label>
-                                <br>
-                               <a href="/reporte_tareas" target="_blank">
-                                <button type="submit" class="btn btn-generate" style="margin: 0 0 0 70px;">exportar</button>
-                               </a>
+            <div class="container">
+
+                <div class="row">
+                    <!--reporte 3 -->
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                Reporte de tareas semanales
                             </div>
-                           
-                        
-                        
+                            <div class="card-body">
+
+                                <div class="mb-3">
+                                    <label for="anio"
+                                        class="form-label">Exportar
+                                        tarea:</label>
+                                    <br>
+                                    <a href="/reporte_tareas" target="_blank">
+                                        <button type="submit"
+                                            class="btn btn-generate"
+                                            style="margin: 0 0 0 70px;">exportar</button>
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
+
                 </div>
+
             </div>
-          
-        </div>
-       
-    </div>
-</body>
+        </body>
 
-</html>
+    </html>
 
-
-<style>
+    <style>
     body {
         background-color: #f8f9fa;
         font-family: Arial, sans-serif;

@@ -1,51 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <link rel="shortcut icon" href="#" />
-  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <title>DataTables estilo Bootstrap 5 - NodeJS y Express</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
-    integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous" />
-  <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap5.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-  <div class="container-fluid">
-    <H1 class="titulo">&nbsp;&nbsp;&nbsp;&nbsp;Tablero de Reportes - Compras</H1>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6">
-          <div class="card">
-            <div class="card-header" id="chartTitle">
-              Reporte de compras de productos a proveedores por gestiones
-            </div>
-            <canvas id="comprasChart" width="300" height="200"></canvas>
-            <div class="card-body">
-              <form id="reporteForm">
-                <div class="mb-3">
-                  <label for="anio" class="form-label">Ingrese el año:</label>
-                  <select id="anio" name="anio" class="form-select">
-                    <script>
+  <head>
+    <link rel="shortcut icon" href="#" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport"
+      content="width=device-width,initial-scale=1,user-scalable=no" />
+    <title>DataTables estilo Bootstrap 5 - NodeJS y Express</title>
+    <link rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
+      integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK"
+      crossorigin="anonymous" />
+    <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
+    <link rel="stylesheet" type="text/css"
+      href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <h1 class="titulo">&nbsp;&nbsp;&nbsp;&nbsp;Tablero de Reportes -
+        Compras</h1>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header" id="chartTitle">
+                Reporte de compras de productos a proveedores por gestiones
+              </div>
+              <canvas id="comprasChart" width="300" height="200"></canvas>
+              <div class="card-body">
+                <form id="reporteForm">
+                  <div class="mb-3">
+                    <label for="anio" class="form-label">Ingrese el año:</label>
+                    <select id="anio" name="anio" class="form-select">
+                      <script>
                       const anioActual = new Date().getFullYear();
-                      for (let i = 2012; i <= anioActual; i++) {
+                      for (let i = 2015; i <= anioActual; i++) {
                         document.write(`<option value="${i}">${i}</option>`);
                       }
                     </script>
-                  </select>
-                </div>
-              </form>
-              <button id="saveChartBtn" class="btn btn-generate">Generar Reporte</button>
+                    </select>
+                  </div>
+                </form>
+                <button id="saveChartBtn" class="btn btn-generate">Generar
+                  Reporte</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-<script>
+    <script>
 document.addEventListener('DOMContentLoaded', function() {
   const anioSelect = document.getElementById('anio');
   const saveChartBtn = document.getElementById('saveChartBtn');
@@ -119,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<style>
+    <style>
 body {
   background-color: #f8f9fa;
   font-family: Arial, sans-serif;
@@ -175,4 +182,4 @@ body {
 }
 </style>
 
-</html>
+  </html>

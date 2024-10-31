@@ -1,106 +1,112 @@
 <!DOCTYPE html>
 <html lang="es">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    crossorigin="anonymous" />
-  <link rel="stylesheet" href="resources/css/reportes_espe.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"></script>
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      crossorigin="anonymous" />
+    <link rel="stylesheet" href="resources/css/reportes_espe.css" />
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <title>Ventas - Finanzas</title>
-</head>
+    <title>Ventas - Finanzas</title>
+  </head>
 
-<body>
+  <body>
 
-  <!-- Encabezado -->
-  <div class="header-container">
-    <div class="breadcrumb">
-      <a href="/vista_Finanzas" class="reporte-link ">
-        <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Finanzas</h1>
-      </a>
-      <h2 style="color: #858B92; font-weight: bold; margin-right: 5px;">›</h2>
-      <a href="/vista_reportes" class="reporte-link">
-        <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Reportes</h1>
-      </a>
-      <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
-      <h1 style="font-weight: bold;">Ventas</h1>
+    <!-- Encabezado -->
+    <div class="header-container">
+      <div class="breadcrumb">
+        <a href="/vista_Finanzas" class="reporte-link ">
+          <h1
+            style="color: #858B92; font-weight: bold; margin-right: 5px;">Finanzas</h1>
+        </a>
+        <h2 style="color: #858B92; font-weight: bold; margin-right: 5px;">›</h2>
+        <a href="/vista_reportes" class="reporte-link">
+          <h1
+            style="color: #858B92; font-weight: bold; margin-right: 5px;">Reportes</h1>
+        </a>
+        <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+        <h1 style="font-weight: bold;">Ventas</h1>
+      </div>
     </div>
-  </div>
 
-<!-- Filtro de fecha y selección de opciones -->
-<div class="filters-container">
+    <!-- Filtro de fecha y selección de opciones -->
+    <div class="filters-container">
 
-  <div class="filter">
-    <label for="fecha">Rango de reporte</label>
-    <input type="text" id="fecha" value="Seleccione un año" readonly>
-    <i class="fa fa-calendar"></i>
-  </div>
+      <div class="filter">
+        <label for="fecha">Rango de reporte</label>
+        <input type="text" id="fecha" value="Seleccione un año" readonly>
+        <i class="fa fa-calendar"></i>
+      </div>
 
-  <div class="filter">
-    <label for="medicamento">Año</label>
-    <select id="anio1" name="anio" class="form-select">
-      <script>
+      <div class="filter">
+        <label for="medicamento">Año</label>
+        <select id="anio1" name="anio" class="form-select">
+          <script>
         const anioActual1 = new Date().getFullYear();
-        for (let i = 2012; i <= anioActual1; i++) {
+        for (let i = 2015; i <= anioActual1; i++) {
           document.write(`<option value="${i}">${i}</option>`);
         }
       </script>
-    </select>
-  </div>
-
-  <!-- Botón de imprimir -->
-  <div class="filter">
-    <label for="lote">Imprimir en PDF</label>
-    <a class="print-btn" id="saveChartBtn1">
-      <i class="fa fa-print"></i> Imprimir
-    </a>
-  </div>
-</div>
-
-<!-- Contenido de las tarjetas -->
-<div class="container2">
-  <!-- Card 1: Reportes -->
-  <div class="card1">
-    <div class="header-card1">
-      <div id="chartTitle">Reporte de ventas por gestiones</div>
-    </div>
-    <div>
-      <canvas id="ventasChart1" width="300" height="200"></canvas>
-    </div>
-  </div>
-
-  <!-- tabla de Reportes -->
-  <div class="card-container">
-    <div class="card2">
-      <div class="header-card1">
-        <span>Tabla de ventas por gestiones</span>
+        </select>
       </div>
-      <div class="table-container">
-        <table id="productosTable">
-          <thead>
-            <tr>
-              <th>Mes</th>
-              <th>Total Vendido</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Los datos serán agregados aquí dinámicamente -->
-          </tbody>
-        </table>
+
+      <!-- Botón de imprimir -->
+      <div class="filter">
+        <label for="lote">Imprimir en PDF</label>
+        <a class="print-btn" id="saveChartBtn1">
+          <i class="fa fa-print"></i> Imprimir
+        </a>
       </div>
     </div>
-  </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Contenido de las tarjetas -->
+    <div class="container2">
+      <!-- Card 1: Reportes -->
+      <div class="card1">
+        <div class="header-card1">
+          <div id="chartTitle">Reporte de ventas por gestiones</div>
+        </div>
+        <div>
+          <canvas id="ventasChart1" width="300" height="200"></canvas>
+        </div>
+      </div>
 
-<script>
+      <!-- tabla de Reportes -->
+      <div class="card-container">
+        <div class="card2">
+          <div class="header-card1">
+            <span>Tabla de ventas por gestiones</span>
+          </div>
+          <div class="table-container">
+            <table id="productosTable">
+              <thead>
+                <tr>
+                  <th>Mes</th>
+                  <th>Total Vendido</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Los datos serán agregados aquí dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
   document.addEventListener('DOMContentLoaded', function () {
     const anioSelect1 = document.getElementById('anio1');
     const saveChartBtn1 = document.getElementById('saveChartBtn1');
@@ -201,9 +207,7 @@
   });
 </script>
 
-
-
-<script>
+    <script>
   const anioSelect = document.getElementById('anio1');
   const fechaInput = document.getElementById('fecha');
 
@@ -226,5 +230,4 @@
   anioSelect.addEventListener('change', actualizarRangoReporte);
 </script>
 
-
-</html>
+  </html>
