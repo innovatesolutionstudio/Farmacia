@@ -278,60 +278,172 @@ router.post("/cerrar-todas", (req, res) => {
   );
 });
 
-router.get("/reporte-ventas", (req, res) => {
-  const sucursalID = req.session.ID_Sucursal;
-  const today = new Date();
-  const startOfDay = new Date(today.setHours(0, 0, 0, 0))
-    .toISOString()
-    .slice(0, 19)
-    .replace("T", " ");
-  const endOfDay = new Date(today.setHours(23, 59, 59, 999))
-    .toISOString()
-    .slice(0, 19)
-    .replace("T", " ");
 
-  connection.query(
-    "SELECT * FROM ventas WHERE Fecha_Venta BETWEEN ? AND ? AND ID_Sucursal = ?",
-    [startOfDay, endOfDay, sucursalID],
-    (error, results) => {
-      if (error) {
-        console.error("Error al obtener las ventas del día:", error);
-        res.status(500).send("Error interno del servidor");
-        return;
-      }
-
-      // Crear un nuevo documento PDF
-      const doc = new PDFDocument();
-
-      // Establecer el nombre del archivo PDF
-      const fileName = "reporte_ventas.pdf";
-      const filePath = path.join(__dirname, "..", "public", "pdf", fileName);
-
-      // Establecer las cabeceras para indicar que se envía un archivo PDF
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
-
-      // Pipe el documento PDF a la respuesta HTTP
-      doc.pipe(res);
-
-      // Agregar el contenido al PDF (ventas del día)
-      doc
-        .fontSize(20)
-        .text("Informe de Ventas del Día", { align: "center" })
-        .moveDown();
-
-      results.forEach((venta, index) => {
-        doc
-          .fontSize(14)
-          .text(`Venta ${index + 1}: ${venta.Total_Venta}`, { align: "left" })
-          .moveDown();
-        // Puedes agregar más información de la venta si lo necesitas
+function obtenerMensajeReporte(id) {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT ID_Mensaje, Texto FROM mensajes WHERE ID_Mensaje = ?', [id], (error, results, fields) => {
+        if (error) {
+          reject(error);
+        } else {
+          if (results.length > 0) {
+            resolve(results[0].Texto);
+          } else {
+            resolve('No se encontró el mensaje para el ID especificado');
+          }
+        }
       });
+    });
+  }
 
-      // Finalizar el documento PDF
-      doc.end();
-    }
-  );
+// Función para obtener la fecha actual
+function obtenerFechaActual() {
+    const ahora = new Date();
+
+    // Obtener el año, mes, día, hora, minuto y segundo
+    const year = ahora.getFullYear();
+    const month = String(ahora.getMonth() + 1).padStart(2, '0'); // El mes es 0-indexado, por lo que sumamos 1
+    const day = String(ahora.getDate()).padStart(2, '0');
+    const hour = String(ahora.getHours()).padStart(2, '0');
+    const minute = String(ahora.getMinutes()).padStart(2, '0');
+    const second = String(ahora.getSeconds()).padStart(2, '0');
+
+    // Formatear la fecha y la hora en una sola cadena
+    const fechaHora = `${year}-${month}-${day}-${hour}-${minute}-${second}`;
+
+    return fechaHora;
+}
+
+router.get('/reporte-ventas', async (req, res) => {
+    const today = new Date();
+    const startOfDay = new Date(today.setHours(0, 0, 0, 0)).toISOString().slice(0, 19).replace('T', ' ');
+    const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString().slice(0, 19).replace('T', ' ');
+
+    connection.query(`
+        SELECT c.Codigo AS Codigo_Caja, v.Total_Venta, v.Fecha_Venta
+        FROM ventas v
+        JOIN cajas c ON v.ID_Caja = c.ID_Caja
+        WHERE c.ID_Sucursal = 1 AND Fecha_Venta BETWEEN CURDATE() AND NOW()
+        ORDER BY v.Fecha_Venta DESC
+    `, [startOfDay, endOfDay], async (error, results) => {
+        if (error) {
+            console.error('Error al obtener las ventas del día:', error);
+            res.status(500).send('Error interno del servidor');
+            return;
+        }
+        const fecha = obtenerFechaActual(); // Utiliza la función que ya tienes para obtener la fecha actual
+        const doc = new PDFDocument();
+        const fileName = 'reporte_ventas.pdf';
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `inline; filename="${fileName}"`);
+
+        // Pipe el documento PDF a la respuesta HTTP
+        doc.pipe(res);
+
+        // Cabecera del PDF
+        doc.image("assets/images/logo/logo_fm.png", 35, 20, { width: 70 });
+        doc.image("assets/images/logo/fnqr.png", 450, 10, { width: 110 });
+        doc.fontSize(27).font("Helvetica-Bold").text("FARMACIA", 120, 40);
+        doc.fontSize(15).text("25 de Julio", 127, 70);
+        doc.moveDown(); // Espacio vertical
+
+        // Título del reporte
+        doc.fontSize(13).font("Helvetica-Bold").text(
+            `                      REPORTE DEL DIA`,
+            160,
+            130 // Alineado a la izquierda
+        );
+        doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+        doc.rect(50, doc.y, 235, 30).stroke();
+
+        // Escribir la fecha dentro del cuadro
+        doc.fontSize(12).font("Helvetica-Bold").text(`Fecha de reporte: ${fecha}`, 55, doc.y + 10);
+        doc.moveDown();
+
+        const mensaje = await obtenerMensajeReporte(26);
+        // Imprimir el mensaje en el documento PDF
+       doc.fontSize(10).font("Helvetica").text(`${mensaje}`, { align: "justify" });
+        
+
+        // Llamar a la función para crear la tabla en el PDF
+        crearTablaVentas(doc, results); // Usa los resultados de la consulta
+
+        // Agregar firmas
+        agregarFirmas(doc, doc.y);
+
+        // Finalizar el documento PDF
+        doc.end();
+    });
 });
+// Función para crear la tabla en el PDF
+function crearTablaVentas(doc, dataVentas) {
+    const tableTop = 250; // Altura de inicio de la tabla
+    const cellPadding = 10; // Espaciado interno de las celdas
+    const fontSize = 12; // Tamaño de fuente
+    const textColor = '#333'; // Color del texto
+    const headerColor = '#28A787'; // Color del encabezado
+    const rowColors = ['#f3f3f3', '#ffffff']; // Colores de las filas
+    const tableHeaders = ["Código Caja", "Total Venta", "Fecha Venta"]; // Encabezados de la tabla
+
+    const cellWidth = (doc.page.width - 200) / tableHeaders.length; // Calcular el ancho de las celdas
+
+    // Dibujar las líneas horizontales
+    doc.lineWidth(1).strokeColor('#000'); // Grosor de línea y color negro
+    for (let i = 0; i <= dataVentas.length + 1; i++) {
+        doc.moveTo(100, tableTop + i * (fontSize + cellPadding))
+           .lineTo(100 + tableHeaders.length * cellWidth, tableTop + i * (fontSize + cellPadding))
+           .stroke();
+    }
+    // Dibujar las líneas verticales
+    for (let i = 0; i <= tableHeaders.length; i++) {
+        doc.moveTo(100 + i * cellWidth, tableTop)
+           .lineTo(100 + i * cellWidth, tableTop + (fontSize + cellPadding) * (dataVentas.length + 1))
+           .stroke();
+    }
+
+    // Dibujar el contenido de la tabla
+    let y = tableTop;
+    doc.fillColor(headerColor).fontSize(fontSize).font("Helvetica-Bold");
+    tableHeaders.forEach((header, index) => {
+        doc.text(header, 100 + index * cellWidth, y);
+    });
+
+    y += fontSize + cellPadding; // Mover a la siguiente línea
+
+    dataVentas.forEach((venta, index) => {
+        const fillColor = rowColors[index % rowColors.length];
+        const fechaVenta = venta.Fecha_Venta.toISOString().slice(0, 10); // Solo obtener la fecha sin la hora
+        drawRow(doc, [venta.Codigo_Caja, venta.Total_Venta, fechaVenta], y, false, textColor); // Dibuja cada fila
+        y += fontSize + cellPadding;
+    });
+}
+
+
+// Función para dibujar una fila (similar a la función que ya tienes)
+function drawRow(doc, rowData, y, bold, textColor) {
+    const cellWidth = (doc.page.width - 200) / rowData.length; // Calcular el ancho de cada celda
+    rowData.forEach((cellData, index) => {
+        const cellX = 100 + index * cellWidth;
+        doc.rect(cellX, y, cellWidth, 20).fillAndStroke('#fff', '#000'); // Dibuja el rectángulo de la celda
+        doc.fillColor(textColor).fontSize(12);
+        doc.text(cellData.toString(), cellX, y + 5, { width: cellWidth, align: 'center' });
+    });
+}
+
+// Función para agregar firmas al PDF
+function agregarFirmas(doc, yPos) {
+    // Insertamos la primera imagen
+    doc.image('assets/images/firmas/firma_A.png', 140, yPos + 35, { width: 120, height: 120 });
+    // Insertamos la segunda imagen
+    doc.image('assets/images/firmas/firma_f.png', 370, yPos + 30, { width: 120, height: 120 });
+
+    // Agregamos una fila con los nombres
+    doc.text("Abigail Rodriguez Fernandez", 140, yPos + 120);
+    doc.text("Fernanda Mamani P.", 370, yPos + 120);
+    doc.fillColor('red');
+    // Agregamos una fila con los títulos
+    doc.text("Lic. Farmaceutica", 160, yPos + 140);
+    doc.text("Enfermera", 400, yPos + 140);
+}
 
 module.exports = router;
