@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://kit.fontawesome.com/a076d05399.js"
+            crossorigin="anonymous"></script>
+
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+            integrity="sha512-Fo3rlrZj/kMVqz1K3lJu3g4C2yOt6nfx1NNMRdyz0HXov9pGi3mXKjbl2XFK9xZPd9XyG6XTB/8x8es5X+Xw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"
+            integrity="sha384-UzomW2R7c1D7vo/vSjtyUlbhlmJ8LZ+DRjW/zhbKUp7AWGzZQL57/bjH5CV2N2zJ"
+            crossorigin="anonymous">
+        <link rel="stylesheet" href="resources/css/graficos.css" />
+
+        <title>Ventas</title>
+        \
+    </head>
+    <body>
+
+        <div class="header-container">
+            <h1>Compras</h1>
+        </div>
+
+        <p>Listas y configuración de compras.</p>
+
+        <div class="container">
+            <div class="card" style="border: 2px solid #A7DCF5;">
+                <a href="#" onclick="cargarContenido('/ganancias_es')"
+                    class="btn-group"><img class="icono"
+                        src="resources/images/iconos/registro.svg"></a>
+                <h2>.</h2>
+                <p>Registro de nueva compra</p>
+                <div class="details">
+                    <a href="#"
+                        style="background-color: #A7DCF5; color: black;">Agregar
+                        Nueva
+                        Compra
+                        &raquo;</a>
+                </div>
+            </div>
+
+            <div class="card" style="border: 2px solid #A6DBCB;">
+                <a href="#" onclick="cargarContenido('/ganancias_es')"
+                    class="btn-group"><img class="icono"
+                        src="resources/images/iconos/compras.svg"></a>
+
+                <h2 id="comprasmensual">Cargando...</h2>
+                <p>Compras Registradas</p>
+                <div class="details">
+                    <a href="/compras"
+                        style="background-color: #A6DBCB; color: black;">Ver
+                        Registro de Compras
+                        &raquo;</a>
+                </div>
+            </div>
+
+            <div class="card" style="border: 2px solid #68C8A6;">
+                <a href="#" onclick="cargarContenido('/ganancias_es')"
+                    class="btn-group"><img class="icono"
+                        src="resources/images/iconos/person.svg"></a>
+
+                <h2 id="proveedorestotales">Cargando...</h2>
+                <p>Proveedores Registrados</p>
+                <div class="details">
+                    <a href="/proveedores"
+                        style="background-color: #68C8A6; color: black;"> Ver
+                        Registro de Proveedores
+                        &raquo;</a>
+                </div>
+            </div>
+
+            <div class="card" style="border: 2px solid #68C8A6;">
+                <a href="#" onclick="cargarContenido('/ganancias_es')"
+                    class="btn-group"><img class="icono"
+                        src="resources/images/iconos/product.svg"></a>
+
+                <h2 id="productostotales">Cargando...</h2>
+                <p>Productos Registrados</p>
+                <div class="details">
+                    <a href="/productos"
+                        style="background-color: #68C8A6; color: black;">Ver
+                        Registro de Productos
+                        &raquo;</a>
+                </div>
+            </div>
+        </div>
+
+    </body>
+    <script>
+ 
+        document.addEventListener('DOMContentLoaded', () => {
+  // Hacer una solicitud al servidor para obtener los datos
+  fetch('/datos3')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error en la respuesta del servidor');
+      }
+      return response.json();
+    })
+    .then(data => {
+      document.getElementById('comprasmensual').innerText = data.comprasmensual !== undefined ? data.comprasmensual +' Bs.' : 'No se encuentran compras';   
+      document.getElementById('proveedorestotales').innerText = data.proveedorestotales!== undefined ? data.proveedorestotales  : 'No hay proveedores';
+      document.getElementById('productostotales').innerText = data.productostotales!== undefined ? data.productostotales  : 'No hay productos';
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+      // Opcional: Mostrar un mensaje de error en la interfaz
+      document.getElementById('comprasmensual').innerText = 'Error al cargar datos';
+      document.getElementById('proveedorestotales').innerText = 'Error al cargar datos';
+      document.getElementById('productostotales').innerText = 'Error al cargar datos';
+      
+    });
+});
+
+
+</script>
+</html>
