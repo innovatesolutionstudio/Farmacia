@@ -1,260 +1,168 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <link rel="shortcut icon" href="#" />
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"/>
-    <title>Registro de Compras</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css" integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous"/>
-    <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap5.min.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        table.dataTable thead {
-            background-color: #485464;
-            color: white;
-        }
-        .ftable {
-            background-color: rgba(224, 223, 223, 0.433);
-            color: rgb(0, 0, 0);
-        }
-        .btn-group img {
-            max-width: 24px;
-            max-height: 24px;
-        }
-        body {
-            background-color: #01010100;
-            width: 100%;
-        }
-        .contenedor {
-            background-color: #dcd6d689;
-            width: 90%;
-            height: auto;
-            padding: 40px 20px 40px 10px;
-            margin: 30px 90px;
-        }
-        .h2 {
-            padding-block: 15px;
-            text-align: center;
-        }
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-        }
-        #iframe-container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        #externalAppIframe {
-            width: 80%;
-            height: 1000px;
-            border: 1px solid #ccc;
-        }
-        .dropdown-menu {
-            max-height: 200px;
-            overflow-y: auto;
-            display: none;
-            position: absolute;
-            z-index: 1000;
-            width: 100%;
-        }
-        .show {
-            display: block;
-        }
-        .btn-group img {
-            max-width: 24px;
-            max-height: 24px;
-        }
-        .btn-group {
-            margin-top: 5px;
-        }
-        .icono {
-            max-width: 24px;
-            max-height: 24px;
-        }
-        @media screen and (max-width: 768px) {
-            #tablaProductosAgregados {
-                display: block;
-                overflow-x: auto;
-            }
-            #tablaProductosAgregados thead th,
-            #tablaProductosAgregados tbody td {
-                text-align: left;
-                white-space: nowrap;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="contenedor row">
-        <div>
-            <div class="justify-content-between align-items-center" style="padding-bottom: 40px;">
-                <h2 class="h2 me-3">Registro de Nueva Compra</h2>
-                <div>
-                    <a href="/compras" class="btn btn-light btn-group me-3"><img src="resources/images/iconos/registro.svg" alt="Crear"> &nbsp;Registro de compras</a>
-                    <a href="/productos" class="btn btn-light btn-group me-3"><img src="resources/images/iconos/registro.svg" alt="Crear"> &nbsp;Registro de productos</a>
+    <head>
+        <link rel="shortcut icon" href="#" />
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport"
+            content="width=device-width,initial-scale=1,user-scalable=no" />
+        <title>Registro de Compras</title>
+
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <link rel="stylesheet" href="resources/css/FormularioComVen.css" />
+
+        <script src="js/FiltroBusqueda.js"></script>
+    </head>
+    <body>
+        <form id="detallesCompraForm" action="/nueva_compra"  method="POST"></form>
+            <div class="header-container">
+                <div class="breadcrumb">
+                    <a href="/vista_Finanzas" class="reporte-link "><h1
+                            style="color: #858B92; font-weight: bold; margin-right: 5px;">Finanzas</h1></a>
+                    <h2
+                        style="color: #858B92; font-weight: bold; margin-right: 5px;">›</h2>
+                    <a href="/cajas" class="reporte-link"><h1
+                            style="color: #858B92; font-weight: bold; margin-right: 5px;">Cajas</h1></a>
+                    <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+                    <h1 style="font-weight: bold;">Adm. Caja de</h1>
+                    <!--recuperar nombre de la caja seleccionada-->
+                </div>
+                <div class="button-container">
+                    <a  type="button"  onclick="confirmarCompra()" class="btn btn-group btn-success">
+                        <img src="resources/images/iconos/venta.svg" alt="Crear">&nbsp;Registrar compra</a>
+                    <a  type="button"  class="btn btn-group btn-danger">
+                        <img src="resources/images/iconos/cancel.svg" alt="Crear">&nbsp;Registrar compra</a>
                 </div>
             </div>
-            <form id="detallesCompraForm" action="/nueva_compra" method="POST">
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label for="ID_Empleado" class="form-label">Codigo del empleado :</label>
-                        <input type="text" class="form-control" id="ID_Empleado" name="ID_Empleado" maxlength="30" required value="<%= ID_Empleado %>" readonly style="background-color:#ffffff; color: rgb(0, 0, 0);">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="ID_Sucursal" class="form-label">Sucursal :</label>
-                        <select class="form-control" id="ID_Sucursal" name="ID_Sucursal" required>
-                            <!-- Opciones se añadirán dinámicamente aquí -->
-                        </select>
-                    </div>
-                    
-                    <div class="col-md-4">
-                        <label for="ID_Proveedor" class="form-label">Proveedor:</label>
-                        <select class="form-control" id="ID_Proveedor" name="ID_Proveedor" required>
-                            <!-- Las opciones serán llenadas por JavaScript -->
-                        </select>
-                    </div>
-                    
+        
+            <div class="container mt-3">
+                <div class="form-group">
+                    <label for="ID_Empleado">Codigo del empleado: </label>
+                    <input type="text"
+                        id="ID_Empleado" name="ID_Empleado" class="form-control"
+                        maxlength="30" required  style="background-color:#ffffff; color: rgb(0, 0, 0);"
+                        value="<%= ID_Empleado %>" readonly>
                 </div>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="fechaCompra" class="form-label">Fecha:</label>
-                        <input type="date" class="form-control" style="background-color:#ffffff; color: rgb(0, 0, 0);" id="fechaCompra" name="fechaCompra" readonly>
+                <div class="form-group">
+                    <label for="fechaCompra">Fecha:</label>
+                    <input type="date" class="form-control"
+                            style="background-color:#ffffff; color: rgb(0, 0, 0);"
+                            id="fechaCompra" name="fechaCompra" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="ID_Sucursal" class="form-label">Sucursal
+                        :</label>
+                    <select id="ID_Sucursal" class="form-select"
+                        name="ID_Sucursal" required>
+
+                    </select>
+                </div>
+                <div class="form-group">
+
+                    <label for="ID_Proveedor"
+                        class="form-label">Proveedor:</label>
+                    <select class="form-control" id="ID_Proveedor"
+                        class="form-select"
+                        name="ID_Proveedor" required>
+                        <!-- Las opciones serán llenadas por JavaScript -->
+                    </select>
+                </div>
+      
+            </div>
+            <br>
+            <h2>Detalles de la compra</h2>
+            <div class="container">
+                <div class="form-group">
+                    <div  id="detallesCompra">
+                        <label for="productoFiltro">Buscar Producto:</label>
+                        <input type="text" class="form-control"
+                                id="productoFiltro"
+                                placeholder="Buscar producto..."
+                                autocomplete="off" />
+                        <div  id="dropdownProductos"
+                                style="display: none;">
+                        </div>
                     </div>
                 </div>
-                <a type="button" class="btn btn-success btn-group mb-3" onclick="confirmarCompra()"><img src="resources/images/iconos/venta.svg" alt="Crear"> &nbsp;Registrar compra</a>
-                <a type="button" class="btn btn-danger btn-group mb-3"><img src="resources/images/iconos/cancel.svg" alt="Crear"> &nbsp;Cancelar Compra</a>
-                <h2>Detalles de la compra</h2>
-                <div class="row mb-3" id="detallesCompra">
-                    <div class="col-md-4" style="width: 550px; position: relative">
-                        <label for="productoFiltro" class="form-label">Buscar Producto:</label>
-                        <input type="text" class="form-control" id="productoFiltro" placeholder="Buscar producto..." autocomplete="off" />
-                        <div class="dropdown-menu" id="dropdownProductos" style="display: none;"></div>
-                    </div>
-                    <div class="col-md-2" style="width: 250px">
-                        <label for="unidad_empaque" class="form-label">Unidad de empaque:</label>
-                        <select class="form-control" id="unidad_empaque" aria-label="Cargando...">
-                            <option value="Cargando...">Seleccionar</option>
-                         
-                        </select>
-                    </div>
-                    <div class="col-md-2" style="width: 250px">
-                        <label for="cantidadEmpaque" class="form-label">Cantidad de Empaque:</label>
-                        <input type="number" class="form-control" id="cantidadEmpaque" min="1" placeholder="Cantidad Empaque" />
-                    </div>
-                    <div class="col-md-2" style="width: 250px">
-                        <label for="cantidadUnitario" class="form-label">Cantidad Unitario:</label>
-                        <input type="number" class="form-control" id="cantidadUnitario" min="1" placeholder="Cantidad Unitario" />
-                    </div>
-                    <div class="col-md-2" style="width: 250px">
-                        <label for="precio" class="form-label">Precio unitario:</label>
-                        <input type="number" class="form-control" id="precio" min="1" placeholder="Precio" />
-                    </div>
-                    <div class="col-md-2" style="width: 250px">
-                        <label for="fecha_vencimiento" class="form-label">Fecha de vencimiento:</label>
-                        <input type="date" class="form-control" id="fecha_vencimiento" placeholder="Fecha de vencimiento" />
-                    </div>
-                    <div class="col-md-2" style="margin-top: 32px">
-                        <button type="button" class="btn btn-light btn-group mb-3" id="agregarProducto"> <img src="resources/images/iconos/agregar.svg" alt="Crear"> &nbsp; Agregar Prod </button>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="total" class="form-label">Total de la Compra:</label>
-                        <input type="text" class="form-control" style="background-color:#407787; color: rgb(255, 255, 255);" id="total" name="total" readonly>
-                    </div>
+               
+                <div class="form-group">
+                    <label for="unidad_empaque" >Unidad de empaque:</label>
+                    <select class="form-control" id="unidad_empaque" aria-label="Cargando...">
+                        <option value="Cargando...">Seleccionar</option>
+                    </select>
+                </div>
+            </div>
+            <div class="container2">
+                <div class="form-group">
+                    <label for="cantidadEmpaque">Cantidad de Empaque:</label>
+                    <input type="number" class="form-control" id="cantidadEmpaque" min="1" placeholder="Cantidad Empaque U." />
+                </div>
+                <div class="form-group">
+                    <label for="cantidadUnitario" >Cantidad Unitario:</label>
+                    <input type="number" class="form-control"id="cantidadUnitario" min="1"placeholder="Cantidad Unitario U." />
                 </div>
 
-                <h3>Productos Agregados</h3>
-                <div class="table-responsive">
-                    <table class="table table-bordered" style="background-color: white;" id="tablaProductosAgregados">
-                        <thead style="background-color: #485464; color: white;">
-                            <tr>
-                                <th>ID_Producto</th>
-                                <th>Unidad de Empaque</th>
-                                <th>Cantidad Empaque</th>
-                                <th>Cantidad Unitario</th>
-                                <th>Precio</th>
-                                <th>Fecha Vencimiento</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Aquí se agregarán los productos -->
-                        </tbody>
-                    </table>
+                <div class="form-group">
+                    <label for="precio" >Precio unitario:</label>
+                    <input type="number" class="form-control" id="precio" min="1" placeholder="Precio" />
                 </div>
-            </form>
+                <div class="form-group">
+                    <label for="fecha_vencimiento" >Fecha de vencimiento:</label>
+                    <input type="date" class="form-control" id="fecha_vencimiento" placeholder="Fecha de vencimiento" />
+                </div>
+                <div class="form-group">
+                    <label for="total" >Total de la Compra:</label>
+                        <input type="text" class="form-control" style="background-color:#407787; color: rgb(255, 255, 255);"
+                                id="total" name="total" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="total" >Agregar producto:</label>
+
+                    
+                    <button type="button" class="button" id="agregarProducto">
+                        <span class="button__text">Agregar Producto</span>
+                        <span class="button__icon"><svg xmlns="http://www.w3.org/2000/svg" width="" viewBox="0 0 24 24" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke="currentColor" fill="none" class="svg"><line y2="19" y1="5" x2="12" x1="12"></line><line y2="12" y1="12" x2="19" x1="5"></line></svg></span>
+                    </button>
+
+                   
+                </div>
+
+            </div>
+            <br>
+            <div class="card3">
+                <div class="header-card1">
+                    <span>Productos Agregados</span>
+                </div>
+                <div class="content-card-formulario">
+                    <table class="table-formulario" id="tablaProductosAgregados">
+                            <thead>
+                                <tr>
+                                    <th>ID_Producto</th>
+                                    <th>Unidad de Empaque</th>
+                                    <th>Cantidad Empaque</th>
+                                    <th>Cantidad Unitario</th>
+                                    <th>Precio</th>
+                                    <th>Fecha Vencimiento</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Aquí se agregarán los productos -->
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
 
-<script>
-    const fechaCompraInput = document.getElementById('fechaCompra');
-    fechaCompraInput.value = new Date().toISOString().slice(0, 10);
-
-    const productoFiltro = document.getElementById('productoFiltro');
-    const dropdownProductos = document.getElementById('dropdownProductos');
-
-    productoFiltro.addEventListener('input', async function() {
-        const searchTerm = productoFiltro.value.trim();
-
-        if (searchTerm.length === 0) {
-            dropdownProductos.style.display = 'none';
-            dropdownProductos.innerHTML = '';
-            return;
-        }
-
-        const url = `/buscar_productos?q=${encodeURIComponent(searchTerm)}`;
-
-        try {
-            const response = await fetch(url);
-            if (response.ok) {
-                const data = await response.json();
-                mostrarResultados(data);
-            } else {
-                throw new Error('Error al buscar productos');
-            }
-        } catch (error) {
-            console.error('Error al obtener productos:', error);
-        }
-    });
-
-    function mostrarResultados(productos) {
-        dropdownProductos.innerHTML = '';
-
-        if (productos.length === 0) {
-            dropdownProductos.style.display = 'none';
-            return;
-        }
-
-        productos.forEach(producto => {
-            const option = document.createElement('div');
-            option.classList.add('dropdown-item');
-            option.textContent = `${producto.NombreProducto} - ${producto.UnidadVenta}`;
-            option.addEventListener('click', function() {
-                productoFiltro.value = `${producto.NombreProducto} - ${producto.UnidadVenta}`;
-                dropdownProductos.style.display = 'none';
-            });
-            dropdownProductos.appendChild(option);
-        });
-
-        dropdownProductos.style.display = 'block';
-    }
-
-    // Cerrar el menú desplegable al hacer clic fuera de él
-    document.addEventListener('click', function(event) {
-        const isClickInside = dropdownProductos.contains(event.target) || productoFiltro.contains(event.target);
-        if (!isClickInside) {
-            dropdownProductos.style.display = 'none';
-        }
-    });
-</script>
-<script>
+    
+        <script>
+  
+        </script>
+        <script>
     const unidadEmpaqueSelect = document.getElementById('unidad_empaque');
 
     document.addEventListener('DOMContentLoaded', async function() {
@@ -282,7 +190,7 @@
         });
     }
 </script>
-<script>
+        <script>
      document.addEventListener('DOMContentLoaded', function() {
     const unidadEmpaqueSelect = document.getElementById('unidad_empaque');
     const cantidadEmpaqueInput = document.getElementById('cantidadEmpaque');
@@ -402,7 +310,6 @@ async function obtenerIDUnidadEmpaque(nombreUnidadEmpaque) {
     }
 }
 
-
 // Función para confirmar la compra y enviar los datos al servidor
 async function confirmarCompra() {
     try {
@@ -412,9 +319,28 @@ async function confirmarCompra() {
         const ID_Proveedor = document.getElementById('ID_Proveedor').value;
         const fechaCompra = document.getElementById('fechaCompra').value;
 
+        // Validar que los campos principales no estén vacíos
+        if (!ID_Empleado || !ID_Sucursal || !ID_Proveedor || !fechaCompra) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campos incompletos',
+                text: 'Por favor, completa todos los campos obligatorios antes de registrar la compra.'
+            });
+            return;
+        }
+
         // Obtener detalles de los productos de la tabla
         const productos = [];
         const filasProductos = document.querySelectorAll('#tablaProductosAgregados tbody tr');
+
+        if (filasProductos.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Sin productos',
+                text: 'Por favor, agrega al menos un producto antes de registrar la compra.'
+            });
+            return;
+        }
 
         for (const fila of filasProductos) {
             const nombreProducto = fila.cells[0].textContent.trim();
@@ -461,7 +387,6 @@ async function confirmarCompra() {
         if (response.ok) {
             const responseData = await response.json();
             console.log('Respuesta del servidor:', responseData);
-            // Manejar la respuesta del servidor si es necesario
             Swal.fire({
                 icon: 'success',
                 title: 'Compra registrada',
@@ -480,7 +405,7 @@ async function confirmarCompra() {
     }
 }
 </script>
-<script>
+        <script>
 document.addEventListener('DOMContentLoaded', async function() {
     const ID_SucursalSelect = document.getElementById('ID_Sucursal');
 
@@ -513,7 +438,7 @@ function mostrarSucursales(sucursales) {
 
 </script>
 
-<script>
+        <script>
     document.addEventListener('DOMContentLoaded', function() {
         fetch('/obtener_proveedores')
             .then(response => response.json())
@@ -531,6 +456,6 @@ function mostrarSucursales(sucursales) {
             });
     });
     </script>
-    
-</body>
+
+    </body>
 </html>
