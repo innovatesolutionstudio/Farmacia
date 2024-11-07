@@ -3,23 +3,24 @@ fetch("/datos")
   .then((response) => response.json())
   .then((data) => {
     // Actualizar los divs con los datos recibidos
-    document.getElementById("ventasMes").innerText = " Bs. " + data.ventasMes;
+    document.getElementById("ventasMes").innerText = data.ventasMes + " Bs. ";
     document.getElementById("ventasSemana").innerText =
-      data.ventasSemana + " ventas";
+      data.ComprasMesActual + " Comp.";
     document.getElementById("clientesRegistradosMes").innerText =
       data.clientesRegistradosMes;
     document.getElementById("medicamentosapuntovencer").innerText =
-      data.medicamentosapuntovencer;
+      data.medicamentosapuntovencer + " Prod. ";
     document.getElementById("obtenerVentasMest").innerText =
-      data.obtenerVentasMest;
+      data.obtenerVentasMest + " Ven. ";
     document.getElementById("obtenerProductoMasVendido").innerText =
       data.obtenerProductoMasVendido || "No hay ventas este año"; // Manejar el caso null
     document.getElementById(
       "obtenerTotalProductosVendidosMesSucursal"
     ).innerText =
-      data.obtenerTotalProductosVendidosMesSucursal || "No hay ventas este mes";
+      data.obtenerTotalProductosVendidosMesSucursal + " Prod." ||
+      "No hay ventas este mes";
     document.getElementById("obtenerCantidadTotalInventario").innerText =
-      data.obtenerCantidadTotalInventario || "Inventario vacio"; // Manejar el caso null
+      data.obtenerCantidadTotalInventario + " Prod." || "Inventario vacio"; // Manejar el caso null
     document.getElementById("obtenerProveedorMasComprado").innerText =
       data.obtenerProveedorMasComprado || "no hay proveedores"; // Manejar el caso null
     document.getElementById("obtenerTotalComprasC").innerText =
