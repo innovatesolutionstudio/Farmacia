@@ -231,16 +231,12 @@
                                     <li><a href="#"
                                             onclick="cargarContenido('/mantenimiento')"
                                             style="font-size: 16px; font-family: monospace; ">>
-                                            <span>Productos
-                                                Disponibles</span></a></li>
+                                            <span>Inventario</span></a></li>
                                     <li><a href="#"
                                             onclick="cargarContenido('/mantenimiento')"
                                             style="font-size: 18px; font-family: monospace; ">>
-                                            <span>Cajas</span></a></li>
-                                    <li><a href="#"
-                                            onclick="cargarContenido('/mantenimiento')"
-                                            style="font-size: 18px; font-family: monospace; ">>
-                                            <span>pedidos</span></a></li>
+                                            <span>Registro de
+                                                ventas</span></a></li>
 
                                 </ul>
                             </li>
@@ -269,6 +265,41 @@
                                             onclick="cargarContenido('/compras')"
                                             style="font-size: 16px; font-family: monospace; ">>
                                             <span>Compras</span></a></li>
+                                    <li><a href="#"
+                                            onclick="cargarContenido('/proveedores')"
+                                            style="font-size: 16px; font-family: monospace; ">>
+                                            <span>Proveedores</span></a></li>
+                                    <li><a href="#"
+                                            onclick="cargarContenido('/productos')"
+                                            style="font-size: 16px; font-family: monospace; ">>
+                                            <span>Productos</span></a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <% } %>
+                        <% if (sesion === 1 || sesion === 3 || sesion === 4) {
+                        %>
+                        <ul class="list-unstyled components"
+                            style="border-bottom: 1px solid #ffffff69">
+                            <li class="active">
+                                <a href="#compras"
+                                    onclick="cargarContenido('/vista_compras')"
+                                    data-toggle="collapse" aria-expanded="false"
+                                    class="dropdown-toggle btn-group"
+                                    style="font-size: 18px; font-family: monospace; ">
+                                    <i class="far fa-calendar-alt"
+                                        style="font-size: 30px;"></i>
+                                    <span>&nbsp;&nbsp;Pedidos</span></a>
+                                <ul class="collapse list-unstyled" id="compras">
+                                    <li><a href="#"
+                                            onclick="cargarContenido('/nueva_compra')"
+                                            style="font-size: 18px; font-family: monospace; ">>
+                                            <span>Registro de
+                                                Pedidos</span></a></li>
+                                    <li><a href="#"
+                                            onclick="cargarContenido('/compras')"
+                                            style="font-size: 16px; font-family: monospace; ">>
+                                            <span>Delivery</span></a></li>
 
                                 </ul>
                             </li>
@@ -294,7 +325,7 @@
                                             onclick="cargarContenido('/empleados')"
                                             style="font-size: 18px; font-family: monospace; ">>
                                             <span>Gestion
-                                                Humanos</span></a></li>
+                                                Empleados</span></a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -334,7 +365,7 @@
                                     style="font-size: 18px; font-family: monospace;">
                                     <i class="fas fa-calendar-times"
                                         style="font-size: 30px;"></i>
-                                    <span>&nbsp;&nbsp;Papeleria</span></a></li>
+                                    <span>&nbsp;&nbsp;Ayuda</span></a></li>
                         </ul>
                         <% } %>
                     </div>

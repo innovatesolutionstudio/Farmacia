@@ -20,22 +20,19 @@
         <form id="detallesCompraForm" action="/nueva_compra"  method="POST"></form>
             <div class="header-container">
                 <div class="breadcrumb">
-                    <a href="/vista_Finanzas" class="reporte-link "><h1
-                            style="color: #858B92; font-weight: bold; margin-right: 5px;">Finanzas</h1></a>
-                    <h2
-                        style="color: #858B92; font-weight: bold; margin-right: 5px;">›</h2>
-                    <a href="/cajas" class="reporte-link"><h1
-                            style="color: #858B92; font-weight: bold; margin-right: 5px;">Cajas</h1></a>
+                    <a href="/vista_compras" class="reporte-link "><h1
+                            style="color: #858B92; font-weight: bold; margin-right: 5px;">Compras</h1></a>
                     <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
-                    <h1 style="font-weight: bold;">Adm. Caja de</h1>
+                    <h1 style="font-weight: bold;">Nueva Compra</h1>
                     <!--recuperar nombre de la caja seleccionada-->
                 </div>
                 <div class="button-container">
-                    <a  type="button"  onclick="confirmarCompra()" class="btn btn-group btn-success">
+                    <a type="button" onclick="confirmarCompra()" class="btn btn-group btn-success">
                         <img src="resources/images/iconos/venta.svg" alt="Crear">&nbsp;Registrar compra</a>
-                    <a  type="button"  class="btn btn-group btn-danger">
-                        <img src="resources/images/iconos/cancel.svg" alt="Crear">&nbsp;Registrar compra</a>
+                    <a type="button" onclick="cancelarCompra()" class="btn btn-group btn-danger">
+                        <img src="resources/images/iconos/cancel.svg" alt="Crear">&nbsp;Cancelar compra</a>
                 </div>
+                
             </div>
         
             <div class="container mt-3">
@@ -138,31 +135,95 @@
                 </div>
                 <div class="content-card-formulario">
                     <table class="table-formulario" id="tablaProductosAgregados">
-                            <thead>
-                                <tr>
-                                    <th>ID_Producto</th>
-                                    <th>Unidad de Empaque</th>
-                                    <th>Cantidad Empaque</th>
-                                    <th>Cantidad Unitario</th>
-                                    <th>Precio</th>
-                                    <th>Fecha Vencimiento</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Aquí se agregarán los productos -->
-                            </tbody>
-                        </table>
+                        <thead>
+                            <tr>
+                                <th>ID_Producto</th>
+                                <th>Unidad de Empaque</th>
+                                <th>Cantidad Empaque</th>
+                                <th>Cantidad Unitario</th>
+                                <th>Precio</th>
+                                <th>Subtotal</th> <!-- Nueva columna de Subtotal -->
+                                <th>Fecha Vencimiento</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Aquí se agregarán los productos -->
+                        </tbody>
+                    </table>
+                    
                     </div>
                 </form>
             </div>
         </div>
 
+
     
-        <script>
-  
-        </script>
-        <script>
+<script>
+const productoFiltro = document.getElementById("productoFiltro");
+const dropdownProductos = document.getElementById("dropdownProductos");
+
+productoFiltro.addEventListener("input", async function () {
+  const searchTerm = productoFiltro.value.trim();
+
+  if (searchTerm.length === 0) {
+    dropdownProductos.style.display = "none";
+    dropdownProductos.innerHTML = "";
+    return;
+  }
+
+  const url = `/buscar_productos?q=${encodeURIComponent(searchTerm)}`;
+
+  try {
+    const response = await fetch(url);
+    if (response.ok) {
+      const data = await response.json();
+      mostrarResultados(data);
+    } else {
+      throw new Error("Error al buscar productos");
+    }
+  } catch (error) {
+    console.error("Error al obtener productos:", error);
+  }
+});
+
+function mostrarResultados(productos) {
+  dropdownProductos.innerHTML = "";
+
+  if (productos.length === 0) {
+    dropdownProductos.style.display = "none";
+    return;
+  }
+
+  productos.forEach((producto) => {
+    const option = document.createElement("div");
+    option.classList.add("dropdown-item");
+    option.textContent = `${producto.NombreProducto} - ${producto.UnidadVenta}`;
+    option.addEventListener("click", function () {
+      productoFiltro.value = `${producto.NombreProducto} - ${producto.UnidadVenta}`;
+      dropdownProductos.style.display = "none";
+    });
+    dropdownProductos.appendChild(option);
+  });
+
+  dropdownProductos.style.display = "block";
+}
+
+// Cerrar el menú desplegable al hacer clic fuera de él
+document.addEventListener("click", function (event) {
+  const isClickInside =
+    dropdownProductos.contains(event.target) ||
+    productoFiltro.contains(event.target);
+  if (!isClickInside) {
+    dropdownProductos.style.display = "none";
+  }
+});
+
+const fechaCompraInput = document.getElementById('fechaCompra');
+fechaCompraInput.value = new Date().toISOString().slice(0, 10);
+</script>
+
+<script>
     const unidadEmpaqueSelect = document.getElementById('unidad_empaque');
 
     document.addEventListener('DOMContentLoaded', async function() {
@@ -190,8 +251,11 @@
         });
     }
 </script>
-        <script>
-     document.addEventListener('DOMContentLoaded', function() {
+
+
+
+<script>
+ document.addEventListener('DOMContentLoaded', function() {
     const unidadEmpaqueSelect = document.getElementById('unidad_empaque');
     const cantidadEmpaqueInput = document.getElementById('cantidadEmpaque');
     const cantidadUnitarioInput = document.getElementById('cantidadUnitario');
@@ -204,9 +268,9 @@
         // Obtener valores de los inputs
         const producto = productoFiltro.value.trim();
         const unidadEmpaque = unidadEmpaqueSelect.options[unidadEmpaqueSelect.selectedIndex].text.trim();
-        const cantidadEmpaque = cantidadEmpaqueInput.value.trim();
-        const cantidadUnitario = cantidadUnitarioInput.value.trim();
-        const precio = precioInput.value.trim();
+        const cantidadEmpaque = parseInt(cantidadEmpaqueInput.value.trim(), 10);
+        const cantidadUnitario = parseInt(cantidadUnitarioInput.value.trim(), 10);
+        const precio = parseFloat(precioInput.value.trim());
         const fechaVencimiento = fechaVencimientoInput.value.trim();
 
         // Validar que todos los campos estén llenos
@@ -219,6 +283,9 @@
             return;
         }
 
+        // Calcular el subtotal (Cantidad de Empaque * Cantidad Unitario * Precio)
+        const subtotal = cantidadEmpaque * cantidadUnitario * precio;
+
         // Crear nueva fila en la tabla
         const newRow = tablaProductosAgregados.insertRow();
         newRow.innerHTML = `
@@ -226,7 +293,8 @@
             <td data-id-unidad-empaque="">${unidadEmpaque}</td>
             <td>${cantidadEmpaque}</td>
             <td>${cantidadUnitario}</td>
-            <td>${precio}</td>
+            <td>${precio.toFixed(1)} Bs.</td>
+            <td>${subtotal.toFixed(1)} Bs.</td> <!-- Celda de Subtotal -->
             <td>${fechaVencimiento}</td>
             <td><button type="button" class="btn btn-danger btn-sm eliminar-btn">Eliminar</button></td>
         `;
@@ -242,7 +310,7 @@
             });
         }
 
-        // Opcional: Calcular el total de la compra
+        // Recalcular el total de la compra
         calcularTotal();
     });
 
@@ -256,32 +324,27 @@
     }
 
     function calcularTotal() {
-    let totalCompra = 0;
-    const filasProductos = tablaProductosAgregados.getElementsByTagName('tr');
+        let totalCompra = 0;
+        const filasProductos = tablaProductosAgregados.getElementsByTagName('tr');
 
-    for (const fila of filasProductos) {
-        const precio = parseFloat(fila.cells[4].textContent.trim());
-        const cantidadEmpaque = parseInt(fila.cells[2].textContent.trim(), 10);
-        const cantidadUnitario = parseInt(fila.cells[3].textContent.trim(), 10);
+        for (const fila of filasProductos) {
+            const subtotal = parseFloat(fila.cells[5].textContent.trim()); // Subtotal está en la columna 5 (índice 5)
+            totalCompra += subtotal;
+        }
 
-        const subtotal = precio * cantidadEmpaque * cantidadUnitario;
-        totalCompra += subtotal;
+        // Actualizar el campo de total con el valor calculado
+        const totalInput = document.getElementById('total');
+        totalInput.value = totalCompra.toFixed(1) + ' Bs.'; // Ajustar a dos decimales si es necesario
     }
-
-    // Actualizar el campo de total con el valor calculado
-    const totalInput = document.getElementById('total');
-    totalInput.value = totalCompra.toFixed(2); // Ajustar a dos decimales si es necesario
-}
 
     function eliminarFila(boton) {
         const row = boton.closest('tr');
         row.remove();
 
-        // Opcional: Recalcular el total después de eliminar una fila
+        // Recalcular el total después de eliminar una fila
         calcularTotal();
     }
 });
-
 
     async function obtenerIDProducto(nombreProducto) {
     try {
@@ -309,103 +372,139 @@ async function obtenerIDUnidadEmpaque(nombreUnidadEmpaque) {
         return null;
     }
 }
-
-// Función para confirmar la compra y enviar los datos al servidor
+// Función para confirmar la compra con mensaje de confirmación
 async function confirmarCompra() {
-    try {
-        // Obtener datos del formulario
-        const ID_Empleado = document.getElementById('ID_Empleado').value;
-        const ID_Sucursal = document.getElementById('ID_Sucursal').value;
-        const ID_Proveedor = document.getElementById('ID_Proveedor').value;
-        const fechaCompra = document.getElementById('fechaCompra').value;
+    Swal.fire({
+        title: '¿Estás seguro de registrar esta compra?',
+        text: 'No podrás deshacer esta acción',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, registrar',
+        cancelButtonText: 'Cancelar'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                // Obtener datos del formulario
+                const ID_Empleado = document.getElementById('ID_Empleado').value;
+                const ID_Sucursal = document.getElementById('ID_Sucursal').value;
+                const ID_Proveedor = document.getElementById('ID_Proveedor').value;
+                const fechaCompra = document.getElementById('fechaCompra').value;
 
-        // Validar que los campos principales no estén vacíos
-        if (!ID_Empleado || !ID_Sucursal || !ID_Proveedor || !fechaCompra) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Campos incompletos',
-                text: 'Por favor, completa todos los campos obligatorios antes de registrar la compra.'
-            });
-            return;
-        }
+                // Validar que los campos principales no estén vacíos
+                if (!ID_Empleado || !ID_Sucursal || !ID_Proveedor || !fechaCompra) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Campos incompletos',
+                        text: 'Por favor, completa todos los campos obligatorios antes de registrar la compra.'
+                    });
+                    return;
+                }
 
-        // Obtener detalles de los productos de la tabla
-        const productos = [];
-        const filasProductos = document.querySelectorAll('#tablaProductosAgregados tbody tr');
+                // Obtener detalles de los productos de la tabla
+                const productos = [];
+                const filasProductos = document.querySelectorAll('#tablaProductosAgregados tbody tr');
 
-        if (filasProductos.length === 0) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Sin productos',
-                text: 'Por favor, agrega al menos un producto antes de registrar la compra.'
-            });
-            return;
-        }
+                if (filasProductos.length === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Sin productos',
+                        text: 'Por favor, agrega al menos un producto antes de registrar la compra.'
+                    });
+                    return;
+                }
 
-        for (const fila of filasProductos) {
-            const nombreProducto = fila.cells[0].textContent.trim();
-            const nombreUnidadEmpaque = fila.cells[1].textContent.trim();
+                for (const fila of filasProductos) {
+                    const nombreProducto = fila.cells[0].textContent.trim();
+                    const nombreUnidadEmpaque = fila.cells[1].textContent.trim();
 
-            // Obtener ID del producto y unidad de empaque
-            const idProducto = await obtenerIDProducto(nombreProducto);
-            const idUnidadEmpaque = await obtenerIDUnidadEmpaque(nombreUnidadEmpaque);
+                    // Obtener ID del producto y unidad de empaque
+                    const idProducto = await obtenerIDProducto(nombreProducto);
+                    const idUnidadEmpaque = await obtenerIDUnidadEmpaque(nombreUnidadEmpaque);
 
-            // Validar si se obtuvieron los IDs correctamente
-            if (idProducto && idUnidadEmpaque) {
-                const producto = {
-                    ID_Producto: idProducto,
-                    ID_Unidad_Empaque: idUnidadEmpaque,
-                    cantidadEmpaque: fila.cells[2].textContent.trim(),
-                    cantidadUnitario: fila.cells[3].textContent.trim(),
-                    precioUnitario: fila.cells[4].textContent.trim(),
-                    fechaVencimiento: fila.cells[5].textContent.trim()
+                    // Validar si se obtuvieron los IDs correctamente
+                    if (idProducto && idUnidadEmpaque) {
+                        const producto = {
+                            ID_Producto: idProducto,
+                            ID_Unidad_Empaque: idUnidadEmpaque,
+                            cantidadEmpaque: fila.cells[2].textContent.trim(),
+                            cantidadUnitario: fila.cells[3].textContent.trim(),
+                            precioUnitario: fila.cells[4].textContent.trim(),
+                            fechaVencimiento: fila.cells[5].textContent.trim()
+                        };
+                        productos.push(producto);
+                    } else {
+                        throw new Error('No se pudo obtener el ID del producto o de la unidad de empaque');
+                    }
+                }
+
+                // Construir objeto a enviar
+                const data = {
+                    ID_Empleado,
+                    ID_Sucursal,
+                    ID_Proveedor,
+                    fechaCompra,
+                    productos
                 };
-                productos.push(producto);
-            } else {
-                throw new Error('No se pudo obtener el ID del producto o de la unidad de empaque');
+
+                // Enviar datos al servidor
+                const response = await fetch('/nueva_compra', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const responseData = await response.json();
+                    console.log('Respuesta del servidor:', responseData);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Compra registrada',
+                        text: 'La compra ha sido registrada exitosamente.'
+                    }).then(() => {
+                        location.reload(); // Recarga la página actual después de registrar
+                    });
+                } else {
+                    throw new Error('Error al registrar compra');
+                }
+            } catch (error) {
+                console.error('Error al enviar datos de compra:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Hubo un problema al intentar registrar la compra. Por favor intenta de nuevo.'
+                });
             }
         }
-
-        // Construir objeto a enviar
-        const data = {
-            ID_Empleado,
-            ID_Sucursal,
-            ID_Proveedor,
-            fechaCompra,
-            productos
-        };
-
-        // Enviar datos al servidor
-        const response = await fetch('/nueva_compra', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (response.ok) {
-            const responseData = await response.json();
-            console.log('Respuesta del servidor:', responseData);
-            Swal.fire({
-                icon: 'success',
-                title: 'Compra registrada',
-                text: 'La compra ha sido registrada exitosamente.'
-            });
-        } else {
-            throw new Error('Error al registrar compra');
-        }
-    } catch (error) {
-        console.error('Error al enviar datos de compra:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Hubo un problema al intentar registrar la compra. Por favor intenta de nuevo.'
-        });
-    }
+    });
 }
+
+// Función para cancelar la compra con mensaje de confirmación
+function cancelarCompra() {
+    Swal.fire({
+        title: '¿Estás seguro de cancelar la compra?',
+        text: 'Se perderán todos los datos ingresados',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, cancelar',
+        cancelButtonText: 'Continuar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            location.reload(); // Recargar la página para cancelar la compra
+        }
+    });
+}
+
 </script>
-        <script>
+
+
+
+<script>
 document.addEventListener('DOMContentLoaded', async function() {
     const ID_SucursalSelect = document.getElementById('ID_Sucursal');
 
@@ -432,13 +531,12 @@ function mostrarSucursales(sucursales) {
         ID_SucursalSelect.appendChild(option);
     });
 
-    // Seleccionar la opción por defecto si es necesario
-    // ID_SucursalSelect.value = ''; // Esto si quieres dejar el select sin opción seleccionada por defecto
+    
 }
 
 </script>
 
-        <script>
+<script>
     document.addEventListener('DOMContentLoaded', function() {
         fetch('/obtener_proveedores')
             .then(response => response.json())
@@ -455,7 +553,7 @@ function mostrarSucursales(sucursales) {
                 console.error('Error al cargar los proveedores:', error);
             });
     });
-    </script>
+</script>
 
-    </body>
+</body>
 </html>

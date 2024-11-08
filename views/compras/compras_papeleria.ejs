@@ -24,20 +24,15 @@
             style="color: #858B92; font-weight: bold; margin-right: 5px;">Compras</h1>
         </a>
         <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
-        <h1 style="font-weight: bold;">Registro de Compras</h1>
+        <a href="/compras" class="reporte-link">
+          <h1
+            style="color: #858B92; font-weight: bold; margin-right: 5px;">Registro
+            de Compras</h1>
+        </a>
+        <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+        <h1 style="font-weight: bold;">Papeleria de Compras</h1>
       </div>
-      <div class="button-container">
-        <!-- Botones de exportar y actualizar -->
-        <select id="opciones" class="form-select">
-          <option value style="color: #ffffff;" disabled selected>Exportar
-            documento</option>
 
-          <option value="excel">Exportar CSV</option>
-          <option value="Papeleria">Papeleria</option>
-        </select>
-        <a id="btnCrear" class="btn btnCrear btn-danger" href="/nueva_compra"
-          style="font-size: 20px;">Añadir Nuevo</a>
-      </div>
     </div>
 
     <!-- Contenedor de la tabla de compras -->
@@ -87,7 +82,7 @@
                   aria-label="Acciones">
                   <option selected disabled>Selecciona una acción</option>
                   <option value="detalle">Ver Detalle</option>
-                  <option value="eliminar">Eliminar</option>
+                  <option value="restaurar">Restaurar</option>
                   <option value="copiar">Copiar</option>
                 </select>
               </td>
@@ -114,7 +109,7 @@
     
             if (fechaInicio && fechaFin) {
                 // Redirigir con parámetros de filtro de fecha
-                window.location.href = `/compras?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
+                window.location.href = `/compras_papeleria?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
             } else {
                 alert('Por favor, selecciona ambas fechas para aplicar el filtro.');
             }
@@ -122,13 +117,13 @@
     
         document.getElementById('btnLimpiar').addEventListener('click', function() {
             // Redirigir a /compras para mostrar los últimos 200 registros
-            window.location.href = `/compras`;
+            window.location.href = `/compras_papeleria`;
         });
     </script>
 
     <script>
         $(document).ready(function () {
-            let url = "/compras/"; // Cambia la URL de acuerdo a tu backend
+            let url = "/compras_papeleria/"; // Cambia la URL de acuerdo a tu backend
             let tablaCompras = $("#tablaCompras").DataTable({
                 language: {
                     url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
@@ -138,12 +133,11 @@
             // Acción de los select de opciones
             $("#opciones").change(function () {
                 let selectedOption = $(this).val();
-                if (selectedOption === "excel") {
+                if (selectedOption === "pdf") {
+                    window.open("/imprimir_compras", '_blank');
+                } else if (selectedOption === "excel") {
                     exportToExcel();
-                }else if(selectedOption ==="Papeleria"){
-                window.location.href = "/compras_papeleria";
-               
-              }
+                }
             });
 
             // Función para exportar a Excel
@@ -168,22 +162,22 @@
 
                 if (accion === 'detalle') {
                     window.location.href = `/detalle_compra/${data[0]}`;
-                } else if (accion === 'eliminar') {
+                } else if (accion === 'restaurar') {
                     Swal.fire({
                         title: '¿Estás seguro?',
                         text: "¡No podrás revertir esto!",
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonText: 'Sí, eliminarlo',
+                        confirmButtonText: 'Sí, restaurar',
                         cancelButtonText: 'Cancelar',
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
                                 type: 'POST',
                                 url: `/compras/${data[0]}`,
-                                data: { opcion: 'eliminar' },
+                                data: { opcion: 'restaurar' },
                                 success: function () {
-                                    Swal.fire('¡Eliminado!', 'La compra ha sido eliminada.', 'success').then(() => {
+                                    Swal.fire('¡Restaurado!', 'La compra ha sido restaurada.', 'success').then(() => {
                                         window.location.reload();
                                     });
                                 }
@@ -202,7 +196,38 @@
             });
 
 
-            
+            // Botón de Crear Compra
+            $("#btnCrear").click(function () {
+                Swal.fire({
+                    title: 'Crear Compra',
+                    html: `
+                        <div class="form-container">
+                            <label for="Total_Compra" class="col-form-label">Total de Compra</label>
+                            <input type="number" id="Total_Compra" class="form-input swal2-input" required />
+                        </div>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: 'Guardar',
+                    cancelButtonText: 'Cancelar',
+                    preConfirm: () => {
+                        const total = Swal.getPopup().querySelector('#Total_Compra').value;
+                        return { Total_Compra: total };
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: 'POST',
+                            url: url,
+                            data: { Total_Compra: result.value.Total_Compra, opcion: 'crear' },
+                            success: function () {
+                                Swal.fire('¡Guardado!', 'Compra creada con éxito', 'success').then(() => {
+                                    window.location.reload();
+                                });
+                            }
+                        });
+                    }
+                });
+            });
         });
     </script>
 
