@@ -77,10 +77,6 @@ const coneccion = require("./database/db");
 
 //#region - rutas y llamados
 
-//seteamos urlencoded para capturar datos de formularios
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-
 // invocamos a dotenv
 const dotenv = require("dotenv");
 dotenv.config({ path: "./env/.env" });
@@ -96,7 +92,7 @@ app.use(bodyParser.json());
 
 // Middleware para procesar datos de formularios
 app.use(express.urlencoded({ extended: true }));
-
+app.use(express.json());
 //#endregion
 
 //#region estilos - js - css

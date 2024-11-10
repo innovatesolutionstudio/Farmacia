@@ -220,7 +220,13 @@ document.addEventListener("click", function (event) {
 });
 
 const fechaCompraInput = document.getElementById('fechaCompra');
-fechaCompraInput.value = new Date().toISOString().slice(0, 10);
+const hoy = new Date().toLocaleDateString('en-CA', {
+    timeZone: 'America/La_Paz',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+}).replace(/\//g, '-'); // Reemplaza / con - para formato YYYY-MM-DD
+fechaCompraInput.value = hoy;
 </script>
 
 <script>
@@ -293,8 +299,8 @@ fechaCompraInput.value = new Date().toISOString().slice(0, 10);
             <td data-id-unidad-empaque="">${unidadEmpaque}</td>
             <td>${cantidadEmpaque}</td>
             <td>${cantidadUnitario}</td>
-            <td>${precio.toFixed(1)} Bs.</td>
-            <td>${subtotal.toFixed(1)} Bs.</td> <!-- Celda de Subtotal -->
+            <td>${precio.toFixed(1)} Bs.</td> <!-- Precio con "Bs." -->
+            <td>${subtotal.toFixed(1)} Bs.</td> <!-- Subtotal con "Bs." -->
             <td>${fechaVencimiento}</td>
             <td><button type="button" class="btn btn-danger btn-sm eliminar-btn">Eliminar</button></td>
         `;
@@ -430,8 +436,9 @@ async function confirmarCompra() {
                             ID_Unidad_Empaque: idUnidadEmpaque,
                             cantidadEmpaque: fila.cells[2].textContent.trim(),
                             cantidadUnitario: fila.cells[3].textContent.trim(),
-                            precioUnitario: fila.cells[4].textContent.trim(),
-                            fechaVencimiento: fila.cells[5].textContent.trim()
+                            precioUnitario: fila.cells[4].textContent.trim().replace(" Bs.", ""), // Precio sin "Bs." para enviar
+                            fechaVencimiento: fila.cells[6].textContent.trim() // Fecha de vencimiento
+                            // Excluye el subtotal al enviar los datos
                         };
                         productos.push(producto);
                     } else {

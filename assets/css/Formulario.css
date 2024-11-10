@@ -1,140 +1,137 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f4f8;
-    margin: 0;
-    padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f0f4f8;
+  margin: 0;
+  padding: 20px;
 }
-
 
 .header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .breadcrumb {
-    display: flex;
-    align-items: center;
-    font-size: 24px;
+  display: flex;
+  align-items: center;
+  font-size: 24px;
 }
 /* Estilo para el enlace del reporte */
 .reporte-link {
-    color: inherit; /* Usa el color del texto que tenga el contenedor padre */
-    text-decoration: none; /* Quita la subrayado */
- 
+  color: inherit; /* Usa el color del texto que tenga el contenedor padre */
+  text-decoration: none; /* Quita la subrayado */
 }
 
 .reporte-link:hover {
-    color: inherit; /* Mantiene el color al pasar el cursor */
-    text-decoration: none; /* Sin subrayado al hacer hover */
+  color: inherit; /* Mantiene el color al pasar el cursor */
+  text-decoration: none; /* Sin subrayado al hacer hover */
 }
-
-
 
 /* Formulario */
 .container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 20px;
 }
-
+/* Formulario */
+.container2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
 .form-group {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
-.text{
-    font-size: 20px;
+.text {
+  font-size: 20px;
 }
 
 .form-control {
-    padding: 10px;
-    padding-right: 40px; /* Asegurando espacio para el ícono a la derecha */
-    border-radius: 5px;
-    border: 1px solid #d1d1d1;
-    font-size: 18px;
-    background-color: #E3EBF3;
-    height: 50px;
-    width: 100%; /* Ocupar todo el ancho del contenedor */
-    box-sizing: border-box; /* Para que el padding no afecte el ancho */
+  padding: 10px;
+  padding-right: 40px; /* Asegurando espacio para el ícono a la derecha */
+  border-radius: 5px;
+  border: 1px solid #d1d1d1;
+  font-size: 18px;
+  background-color: #e3ebf3;
+  height: 50px;
+  width: 100%; /* Ocupar todo el ancho del contenedor */
+  box-sizing: border-box; /* Para que el padding no afecte el ancho */
 }
 
 #show_password {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    font-size: 20px;
-    color: #555;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 20px;
+  color: #555;
 }
-
-
 
 .form-select {
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #d1d1d1;
-    font-size: 18px;
-    background-color: #E3EBF3;
-    height: 50px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #d1d1d1;
+  font-size: 18px;
+  background-color: #e3ebf3;
+  height: 50px;
 }
 label {
-    margin-bottom: 5px;
-    font-size: 14px;
-    font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-weight: bold;
 }
 
-
-
-.btn-danger{
-    padding: 10px 15px;
-    background-color: #ff5f5f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    height: 50px;
-    width: 50%;
-    font-size: 20px;
+.btn-danger {
+  padding: 10px 15px;
+  background-color: #ff5f5f;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  height: 50px;
+  width: 50%;
+  font-size: 20px;
 }
 .btn:hover {
-    background-color: #ff4b4b;
+  background-color: #ff4b4b;
 }
 
 .container-img {
-    width: 300px;
-    height: 300px;
-    border: 2px solid rgba(70, 70, 70, 0.442);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    background-color: #f0f0f0;
+  width: 300px;
+  height: 300px;
+  border: 2px solid rgba(70, 70, 70, 0.442);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #f0f0f0;
 }
 
 img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
 }
 
 #uploadButton {
-    padding: 10px 20px;
-    background-color: #c7c7c7;
-    color: rgb(1, 1, 1);
-    border: none;
-    cursor: pointer;
-    border-color: #333;
+  padding: 10px 20px;
+  background-color: #c7c7c7;
+  color: rgb(1, 1, 1);
+  border: none;
+  cursor: pointer;
+  border-color: #333;
 }
 
 #uploadButton:hover {
-    background-color: #d1d1d1;
+  background-color: #d1d1d1;
 }
 
 #fileName {
-    margin-top: 10px;
-    font-size: 16px;
-    color: #333;
+  margin-top: 10px;
+  font-size: 16px;
+  color: #333;
 }

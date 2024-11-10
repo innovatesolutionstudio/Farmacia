@@ -1,370 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
-<head>
-  <link rel="shortcut icon" href="#" />
-  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <title>DataTables estilo Bootstrap 5 - NodeJS y Express</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
-    integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous" />
-  <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"></script>
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      crossorigin="anonymous" />
+    <link rel="stylesheet" href="/resources/css/recursosH.css" />
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css" />
-  <style>
-    table.dataTable thead {
-      background-color: #485464;
-    color: white;
-    }
- 
-    .ftable{
-      background-color: rgba(224, 223, 223, 0.433);
-      color: rgb(0, 0, 0);
-    }
-    .btn-group img {
-    max-width: 24px; /* Define el ancho máximo del icono */
-    max-height: 24px; /* Define el alto máximo del icono */
-    }
-    body{
-      background-color: #00000000;
-    }
-  </style>
-</head>
+    <title>Gestión de Productos</title>
+  </head>
 
-<body>
-  <div class="container-fluid">
-    <H1 id="tituloImpresion" class="" style="
-      text-align: left;
-      font-family: Arial,sans-serif;
-      font-size: 25px;
-      padding: 20px 0;
-      background-color: #485464; 
-      color: #ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;Tablero de control - Productos</H1>
+  <body>
 
-      <a id="btnCrear" class="btn btn-group btn-light mt-2" style="font-size: 20px;">
-        <img src="resources/images/iconos/create.svg" alt="Crear"> &nbsp;Crear
-      </a>
-      <a id="btnActualizar" class="btn btn-group btn-light mt-2" style="font-size: 20px;">
-        <img src="resources/images/iconos/refresh.svg" alt="Crear"> &nbsp;Actualizar
-      </a>
+    <!-- Encabezado -->
+    <div class="header-container">
+      <div class="breadcrumb">
+        <a href="/compras" class="reporte-link">
+          <h1
+            style="color: #858B92; font-weight: bold; margin-right: 5px;">Compras</h1>
+        </a>
+        <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+        <h1 style="font-weight: bold;">Gestión de Productos</h1>
+      </div>
 
-      <a id="btnExportar" class="btn btn-group btn-light mt-2" style="font-size: 20px;">
-        <img src="resources/images/iconos/export.svg" alt="Crear"> &nbsp;Exportar CSV 
-      </a>
+      <div class="button-container">
+        <select id="opciones" class="form-select"
+          onchange="redirectToPage(this.value)">
+          <option value style="color: #888;" disabled
+            selected>Seleccionar</option>
+          <option value="/categorias">Categorías</option>
+          <option value="/proveedores">Proveedores</option>
+          <option value="/area_producto">Área de Producto</option>
+        </select>
+        <a type="submit" href="/CrearProducto" class="btn btn-danger">Añadir
+          Nuevo</a>
+      </div>
+    </div>
 
-      <div class="row shadow-lg p-3 mb-5 ftable" id="ProductosContainer" >
-        <div class="col">
-            <table id="tablaProductos" class="table table-striped table-bordered" style="width: 50%;  background-color: white;">
+    <br>
+
+    <div class="card3">
+      <div class="header-card1">
+        <span>Registro de Productos</span>
+      </div>
+
+      <div class="content-card-empleados">
+        <table id="tablaProductos" class="table-empleados">
           <thead>
             <tr>
-              <th class="text-center">ID Producto</th>
-              <th class="text-center">Nombre</th>
-              <th class="text-center">Descripción</th>
-              <th class="text-center">Precio Unitario</th>
-              <th class="text-center">ID Categoria</th>
-              <th class="text-center">ID Proveedor</th>
-              <th class="text-center">ID Área producto</th>
-              <th class="text-center">ID Tipo Paciente</th>
-              <th class="text-center">ID Tipo Vías Administracion</th>
-              <th class="text-center">Indicaciones</th>
-              <th class="text-center">Dosis Medicamento</th>
-              <th class="text-center">Riesgo Embarazo</th>
-              <th class="text-center">Efectos Secundarios</th>
-              <th class="text-center">Precauciones</th>
-              <th class="text-center">Generalidades</th>
-              <th class="text-center">ID Unidad Venta</th>
-              <th class="text-center" style="width: 150px;">ACCIONES</th>
+              <th>ID</th>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th>Proveedor</th>
+              <th>Categoría</th>
+              <th>Precio Unitario</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             <% results.forEach(function(producto) { %>
-                <tr>
-                    <td class="text-center"><%= producto.ID_Producto %></td>
-                    <td class="text-center"><%= producto.Nombre %></td>
-                    <td class="text-center"><%= producto.Descripcion %></td>
-                    <td class="text-center"><%= producto.Precio_Unitario %></td>
-                    <td class="text-center"><%= producto.Nombre_Categoria %></td>             
-                    <td class="text-center"><%= producto.Nombre_Proveedor %></td>
-                    <td class="text-center"><%= producto.Nombre_Area_Producto %></td>
-                    <td class="text-center"><%= producto.Nombre_Tipo_Paciente %></td>
-                    <td class="text-center"><%= producto.Nombre_Tipo_vias_administracion %></td>
-                    <td class="text-center"><%= producto.Indicaciones %></td>
-                    <td class="text-center"><%= producto.Dosis_Medicacmento %></td>
-                    <td class="text-center"><%= producto.Riesgo_Embarazo %></td>
-                    <td class="text-center"><%= producto.Efectos_Secundarios %></td>
-                    <td class="text-center"><%= producto.Precauciones %></td>
-                    <td class="text-center"><%= producto.Generaliadades %></td>
-                    <td class="text-center"><%= producto.Nombre_Unidad_Venta %></td>
-                    <td>
-                        <div class="text-center">
-                            <div class="btn-group">
-                                <a href="#" class="btn btn-sm btnEditar"><img src="resources/images/iconos/edit.svg" alt="Editar"></a>
-                                <a href="#" class="btn btn-sm btnBorrar"><img src="resources/images/iconos/delete.svg" alt="Eliminar"></a>
-                                <a href="#" class="btn btn-sm btnCopiar"><img src="resources/images/iconos/copy.svg" alt="Copiar"></a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
+            <tr>
+              <td><%= producto.ID_Producto %></td>
+              <td><%= producto.Codigo %></td>
+              <td style="width: 300px;"><%= producto.Nombre %></td>
+              <td><%= producto.Nombre_Proveedor %></td>
+              <td><%= producto.Nombre_Categoria %></td>
+              <td><%= producto.Precio_Unitario %></td>
+              <td>
+                <div>
+                  <a class="btndetalles">Ver Detalles</a>
+                </div>
+              </td>
+            </tr>
             <% }); %>
-        </tbody>
-        
+          </tbody>
         </table>
       </div>
     </div>
-  </div>
 
-  <div id="modalCRUD" class="modal fade" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"></h5>
-        </div>
-        <form id="formProductos"> <!-- Cambié el ID del formulario a "formProductos" -->
-          <div class="modal-body">
-            <input type="text" class="form-control" id="ID_Producto" hidden />
-            <label for="Nombre" class="col-form-label">Nombre</label>
-            <input type="text" class="form-control" id="Nombre" />
-            <label for="Descripción" class="col-form-label">Descripción</label> 
-            <textarea class="form-control" id="Descripción"></textarea> 
-            <label for="Precio_Unitario" class="col-form-label">Precio Unitario</label> 
-            <input type="number" class="form-control" id="Precio_Unitario" /> 
-            <label for="ID_Categoría" class="col-form-label">ID Categoría</label> 
-            <input type="number" class="form-control" id="ID_Categoría" /> 
-            <label for="ID_Proveedor" class="col-form-label">ID Proveedor</label> 
-            <input type="number" class="form-control" id="ID_Proveedor" /> 
-            <label for="ID_Area_Producto" class="col-form-label">ID Área Producto</label> 
-            <input type="number" class="form-control" id="ID_Area_Producto" /> 
-            <label for="ID_Tipo_Paciente" class="col-form-label">ID Tipo Paciente</label>
-            <input type="number" class="form-control" id="ID_Tipo_Paciente" />
-            <label for="ID_Tipo_vias_administracion" class="col-form-label">ID Tipo Vías Administración</label> 
-            <input type="number" class="form-control" id="ID_Tipo_vias_administracion" />
-            <label for="Indicaciones" class="col-form-label">Indicaciones</label>
-            <textarea class="form-control" id="Indicaciones"></textarea> 
-            <label for="Dosis_Medicamento" class="col-form-label">Dosis Medicamento</label>
-            <input type="text" class="form-control" id="Dosis_Medicacmento" /> 
-            <label for="Riesgo_Embarazo" class="col-form-label">Riesgo Embarazo</label> 
-            <input type="text" class="form-control" id="Riesgo_Embarazo" /> 
-            <label for="Efectos_Secundarios" class="col-form-label">Efectos Secundarios</label>
-            <textarea class="form-control" id="Efectos_Secundarios"></textarea>
-            <label for="Precauciones" class="col-form-label">Precauciones</label>
-            <textarea class="form-control" id="Precauciones"></textarea> 
-            <label for="Generaliadades" class="col-form-label">Generalidades</label>
-            <textarea class="form-control" id="Generaliadades"></textarea> 
-            <label for="ID_Unidad_Venta" class="col-form-label">ID Unidad Venta</label> 
-            <input type="number" class="form-control" id="ID_Unidad_Venta">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-            <button type="submit" id="btnGuardar" class="btn" style="background-color: #28A787; color: white; ">
-              Guardar
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Tus scripts de JavaScript -->
-  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-  <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.min.js"
-    integrity="sha384-5h4UG+6GOuV9qXh6HqOLwZMY4mnLPraeTrjT5v07o347pj6IkfuoASuGBhfDsp3d"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.all.min.js"></script>
+  </body>
+
+  <script type="text/javascript" language="javascript"
+    src="https://code.jquery.com/jquery-3.5.1.js"></script>
   <script type="text/javascript" language="javascript"
     src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
-  <script type="text/javascript" language="javascript"
-    src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
 
   <script>
-    $(document).ready(function () {
-      let url = "/productos/"; // Cambié la URL
-      let opcion = null;
-      let ID_Producto, Nombre, Descripción, Precio_Unitario, ID_Categoría, ID_Proveedor, ID_Area_Producto, ID_Tipo_Paciente, ID_Tipo_vias_administracion, Indicaciones, Dosis_Medicacmento, Riesgo_Embarazo, Efectos_Secundarios, Precauciones, Generaliadades, ID_Unidad_Venta;
+  $(document).ready(function () {
+    let url = "/productos/";
 
-
-      let tablaProductos = $("#tablaProductos").DataTable({
-      json: {
+    let tablaProductos = $("#tablaProductos").DataTable({
+      JSON: {
         url: url,
-        dataSrc: "",
+        dataSrc: ""
       },
-
       columns: [
         { data: "ID_Producto" },
+        { data: "Codigo" },
         { data: "Nombre" },
-        { data: "Descripcion" },
+        { data: "Nombre_Proveedor" },
+        { data: "Nombre_Categoria" },
         { data: "Precio_Unitario" },
-        { data: "ID_Categoria" },
-        { data: "ID_Proveedor" },
-        { data: "ID_Area_Producto" },
-        { data: "ID_Tipo_Paciente" },
-        { data: "ID_Tipo_vias_administracion" },
-        { data: "Indicaciones" },
-        { data: "Dosis_Medicacmento" },
-        { data: "Riesgo_Embarazo" },
-        { data: "Efectos_Secundarios" },
-        { data: "Precauciones" },
-        { data: "Generaliadades" },
-        { data: "ID_Unidad_Venta" },
         {
-          defaultContent:
-            "<div class='text-center'><div class='btn-group'><button class='btn btn-info btn-sm btnEditar'>Editar</button><button class='btn btn-danger btn-sm btnBorrar'>Borrar</button></div></div>",
+          defaultContent: "<div class='text-center'><a class='btndetalles'>Ver Detalles</a></div>",
         },
       ],
       language: {
-                        url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json",
-                    },
-        });
+        url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json",
+      },
+        dom: '<"table-toolbar"lf>tip',  // 'l' = length, 'f' = filter (search), 'tip' = table, info, pagination
+        lengthMenu: [10, 25, 50, 100]
+    });
+    let urlDetalles = "/detallesproductos/";
+    $("#tablaProductos").on("click", ".btndetalles", function () {
+      var data = tablaProductos.row($(this).parents("tr")).data();
+      var id = data.ID_Producto;
 
-  
-        // Evento click para el botón de eliminar
-      $("#tablaProductos").on("click", ".btnBorrar", function () {
-          var data = tablaProductos.row($(this).parents("tr")).data(); // Obtener datos de la fila
-          var id = data.ID_Producto;
-          opcion = "eliminar"; // Establecer la opción como eliminar
-          Swal.fire({
-              title: "¿Estás seguro?",
-              text: "¡No podrás revertir esto!",
-              icon: "warning",
-              showCancelButton: true,
-              confirmButtonColor: "#3085d6",
-              cancelButtonColor: "#d33",
-              confirmButtonText: "Sí, eliminarlo!"
-          }).then((result) => {
-              if (result.isConfirmed) {
-                  // Hacer la petición para eliminar
-                  $.ajax({
-                      type: "POST",
-                      url: url + id,
-                      data: { opcion: opcion },
-                      success: function (data) {
-                          Swal.fire(
-                              "¡Eliminado!",
-                              "El registro ha sido eliminado.",
-                              "success"
-                          ).then((result) => {
-                              if (result.isConfirmed) {
-                                  window.location.reload(); // Recarga la página si se confirma la acción
-                              }
-                          });
-                      },
-                  });
-              }
-          });
+      Swal.fire({
+        title: "¿Quieres ver detalles?",
+        text: "Detalles del producto",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, ver!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = urlDetalles + id;
+        }
       });
+    });
+  });
 
-
-      // Evento click para el botón de editar
-      $("#tablaProductos").on("click", ".btnEditar", function () {
-          var data = tablaProductos.row($(this).parents("tr")).data(); // Obtener datos de la fila
-          $("#exampleModalLabel").text("Editar Producto"); // Cambiar el título del modal
-
-          // Llenar los campos del formulario
-          $("#ID_Producto").val(data.ID_Producto); // Llenar el campo ID_Producto
-          $("#Nombre").val(data.Nombre); // Llenar el campo Nombre
-          $("#Descripcion").val(data.Descripción); // Llenar el campo Descripción
-          $("#Precio_Unitario").val(data.Precio_Unitario); // Llenar el campo Precio_Unitario
-          $("#ID_Categoria").val(data.ID_Categoría); // Llenar el campo ID_Categoría
-          $("#ID_Proveedor").val(data.ID_Proveedor); // Llenar el campo ID_Proveedor
-          $("#ID_Area_Producto").val(data.ID_Area_Producto); // Llenar el campo ID_Area_Producto
-          $("#ID_Tipo_Paciente").val(data.ID_Tipo_Paciente); // Llenar el campo ID_Tipo_Paciente
-          $("#ID_Tipo_vias_administracion").val(data.ID_Tipo_vias_administracion); // Llenar el campo ID_Tipo_vias_administracion
-          $("#Indicaciones").val(data.Indicaciones); // Llenar el campo Indicaciones
-          $("#Dosis_Medicacmento").val(data.Dosis_Medicacmento); // Llenar el campo Dosis_Medicacmento
-          $("#Riesgo_Embarazo").val(data.Riesgo_Embarazo); // Llenar el campo Riesgo_Embarazo
-          $("#Efectos_Secundarios").val(data.Efectos_Secundarios); // Llenar el campo Efectos_Secundarios
-          $("#Precauciones").val(data.Precauciones); // Llenar el campo Precauciones
-          $("#Generaliadades").val(data.Generaliadades); // Llenar el campo Generaliadades
-          $("#ID_Unidad_Venta").val(data.ID_Unidad_Venta); // Llenar el campo ID_Unidad_Venta
-
-          // Mostrar el modal
-          $("#modalCRUD").modal("show");
-
-          opcion = "editar"; // Establecer la opción como editar
-      });
-
-
-    // Evento submit para el formulario de edición
-    $("#formProductos").submit(function (e) {
-        e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
-
-        // Obtener los valores del formulario
-        var formData = {
-            ID_Producto: $("#ID_Producto").val(),
-            Nombre: $("#Nombre").val(),
-            Descripción: $("#Descripcion").val(),
-            Precio_Unitario: $("#Precio_Unitario").val(),
-            ID_Categoría: $("#ID_Categoria").val(),
-            ID_Proveedor: $("#ID_Proveedor").val(),
-            ID_Area_Producto: $("#ID_Area_Producto").val(),
-            ID_Tipo_Paciente: $("#ID_Tipo_Paciente").val(),
-            ID_Tipo_vias_administracion: $("#ID_Tipo_vias_administracion").val(),
-            Indicaciones: $("#Indicaciones").val(),
-            Dosis_Medicacmento: $("#Dosis_Medicacmento").val(),
-            Riesgo_Embarazo: $("#Riesgo_Embarazo").val(),
-            Efectos_Secundarios: $("#Efectos_Secundarios").val(),
-            Precauciones: $("#Precauciones").val(),
-            Generaliadades: $("#Generaliadades").val(),
-            ID_Unidad_Venta: $("#ID_Unidad_Venta").val(),
-            // Obtener los demás campos si es necesario
-            opcion: opcion,
-        };
-
-        // Hacer la petición
-        $.ajax({
-            url: url,
-            type: "POST",
-            dataType: "json",
-            data: formData,
-            success: function (data) {
-             
-              window.location.reload();
-                // Cerrar el modal
-                $("#modalCRUD").modal("hide");
-           
-                // Mostrar una notificación de éxito
-                Swal.fire("¡Listo!", "El registro ha sido guardado.", "success");
-            },
-        });
-      });
-    $(document).ready(function () {
-        // Evento click para el botón de crear
-        $("#btnCrear").click(function () {
-        $("#exampleModalLabel").text("Crear Producto"); // Cambiar el título del modal
-        // Llenar los campos del formulario
-        $("#ID_Producto").val("");
-        $("#Nombre").val("");
-        $("#Descripcion").val("");
-        $("#Precio_Unitario").val("");
-        $("#ID_Categoria").val("");
-        $("#ID_Proveedor").val("");
-        $("#ID_Area_Producto").val(""); 
-        $("#ID_Tipo_Paciente").val(""); 
-        $("#ID_Tipo_vias_administracion").val(""); 
-        $("#Indicaciones").val("");
-        $("#Dosis_Medicacmento").val(""); 
-        $("#Riesgo_Embarazo").val(""); 
-        $("#Efectos_Secundarios").val(""); 
-        $("#Precauciones").val(""); 
-        $("#Generaliadades").val(""); 
-        $("#ID_Unidad_Venta").val(""); 
-
-        // Mostrar el modal
-        $("#modalCRUD").modal("show");
-
-        opcion = "crear"; // Establecer la opción como editar
-        });
-      });
-});
-
-
-
-  </script>
-</body>
+  function redirectToPage(value) {
+    if (value) {
+      window.location.href = value;
+    }
+  }
+</script>
 
 </html>
-

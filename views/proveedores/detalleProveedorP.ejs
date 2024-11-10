@@ -28,6 +28,11 @@
                         style="color: #858B92; font-weight: bold; margin-right: 5px;">Proveedores</h1>
                 </a>
                 <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+                <a href="/proveedores" class="reporte-link">
+                    <h1
+                        style="color: #858B92; font-weight: bold; margin-right: 5px;">Papeleria</h1>
+                </a>
+                <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
                 <h1 style="font-weight: bold;">Detalle de proveedor</h1>
             </div>
             <p class="subtext">Ver más sobre el proveedor.</p>
@@ -107,11 +112,12 @@
                         <form id="deleteForm_<%= proveedor.ID_Proveedor %>"
                             action="/proveedores" method="post"
                             style="display: inline;">
-                            <input type="hidden" name="opcion" value="eliminar">
+                            <input type="hidden" name="opcion"
+                                value="restaurar">
                             <input type="hidden" name="ID"
                                 value="<%= proveedor.ID_Proveedor %>">
                             <button type="button" class="btn btn-delete"
-                                onclick="confirmDelete('<%= proveedor.ID_Proveedor %>')">Eliminar</button>
+                                onclick="confirmDelete('<%= proveedor.ID_Proveedor %>')">Restaurar</button>
                         </form>
                     </div>
                 </div>
@@ -129,13 +135,13 @@
         // Función para confirmar la eliminación
         function confirmDelete(idProveedor) {
             Swal.fire({
-                title: '¿Estás seguro de eliminar este proveedor?',
+                title: '¿Estás seguro de restaurar este proveedor?',
                 text: "Esta acción no se puede deshacer",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, eliminar',
+                confirmButtonText: 'Sí, Restaurar',
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {

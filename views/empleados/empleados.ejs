@@ -1,133 +1,142 @@
 <!DOCTYPE html>
 <html lang="es">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    crossorigin="anonymous" />
-  <link rel="stylesheet" href="resources/css/recursosH.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"></script>
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      crossorigin="anonymous" />
+    <link rel="stylesheet" href="resources/css/recursosH.css" />
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <title>Ventas - Finanzas</title>
-</head>
+    <title>Ventas - Finanzas</title>
+  </head>
 
-<body>
+  <body>
 
-  <!-- Encabezado -->
-  <div class="header-container">
-    <div class="breadcrumb">
-      <a href="/empleados" class="reporte-link ">
-        <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Recursos Humanos</h1>
-      </a>
-      <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
-      <h1 style="font-weight: bold;">Gestion Empleados</h1>
+    <!-- Encabezado -->
+    <div class="header-container">
+      <div class="breadcrumb">
+        <a href="/empleados" class="reporte-link ">
+          <h1
+            style="color: #858B92; font-weight: bold; margin-right: 5px;">Recursos
+            Humanos</h1>
+        </a>
+        <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+        <h1 style="font-weight: bold;">Gestion Empleados</h1>
+      </div>
+
+      <div class="button-container">
+        <select id="opciones" class="form-select"
+          onchange="redirectToPage(this.value)">
+          <option value style="color: #888;" disabled
+            selected>Seleccionar</option>
+          <option value="/departamentos">Departamento</option>
+          <option value="/ciudades">Ciudad</option>
+          <option value="/Papeleria_Empleados">Papeleria</option>
+        </select>
+        <a type="submit" href="/CrearEmpleado" class="btn btn-danger">Añadir
+          Nuevo</a>
+      </div>
+
     </div>
 
-    <div class="button-container">
-      <select id="opciones" class="form-select" onchange="redirectToPage(this.value)">
-        <option value="" style="color: #888;" disabled selected>Seleccionar</option>
-        <option value="/departamentos">Departamento</option>
-        <option value="/ciudades">Ciudad</option>
-        <option value="/Papeleria_Empleados">Papeleria</option>
-      </select>
-      <a  type="submit" href="/CrearEmpleado" class="btn btn-danger">Añadir Nuevo</a>
+    <div class="container2">
+      <!-- Card 1: Información del Empleado -->
+      <div class="card1">
+        <div class="header-card1">
+          <span>Empleado con mayor ventas</span>
+        </div>
+        <div class="content-card1">
+          <div>
+            <h2 id="EmpleadoVistas">Cargando...</h2>
+            <p>Responsable actual</p>
+          </div>
+          <div>
+            <h2 id="totalventas">Cargando...</h2>
+            <p>Recor de ventas</p>
+          </div>
+          <div>
+            <h2 id="codigoempleado">Cargando...</h2>
+            <p>Codigo de Caja</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Estado Actual de la Caja -->
+      <div class="card1">
+        <div class="header-card1">
+          <span>Estado Actual</span>
+        </div>
+        <div class="content-card1">
+          <div>
+            <h2 id="empleadoactivos">Cargando...</h2>
+            <p>Empleados activos</p>
+          </div>
+          <div>
+            <h2 id="cajaactiva">Cargando... </h2>
+            <p>Cajeros Activos</p>
+          </div>
+
+        </div>
+      </div>
     </div>
 
-  </div>
+    <br>
 
-
-
-  <div class="container2">
-    <!-- Card 1: Información del Empleado -->
-    <div class="card1">
+    <div class="card3">
       <div class="header-card1">
-        <span>Empleado con mayor ventas</span>
+        <span>Registro de Empleados</span>
       </div>
-      <div class="content-card1">
-        <div>
-          <h2 id="EmpleadoVistas">Cargando...</h2>
-          <p>Responsable actual</p>
-        </div>
-        <div>
-          <h2 id="totalventas">Cargando...</h2>
-          <p>Recor de ventas</p>
-        </div>
-        <div>
-          <h2 id="codigoempleado">Cargando...</h2>
-          <p>Codigo de Caja</p>
-        </div>
-      </div>
-    </div>
 
-    <!-- Card 2: Estado Actual de la Caja -->
-    <div class="card1">
-      <div class="header-card1">
-        <span>Estado Actual</span>
-      </div>
-      <div class="content-card1">
-        <div>
-          <h2 id="empleadoactivos">Cargando...</h2>
-          <p>Empleados activos</p>
-        </div>
-        <div>
-          <h2 id="cajaactiva">Cargando... </h2>
-          <p>Cajeros Activos</p>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <br>
-
-  <div class="card3">
-    <div class="header-card1">
-      <span>Registro de Empleados</span>
-    </div>
-
-    <div class="content-card-empleados">
-      <table id="tablaEmpleados" class="table-empleados">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Teléfono</th>
-            <th>ID Rol</th>
-            <th>ACCIONES</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% results.forEach(function(empleado) { %>
-          <tr>
-            <td><%= empleado.ID_Empleado %></td>
-            <td><%= empleado.Nombre %></td>
-            <td><%= empleado.Apellido %></td>
-            <td><%= empleado.Teléfono %></td>
-            <td><%= empleado.NombreRol %></td>
-            <td>
-              <div>
+      <div class="content-card-empleados">
+        <table id="tablaEmpleados" class="table-empleados">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Teléfono</th>
+              <th>ID Rol</th>
+              <th>ACCIONES</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% results.forEach(function(empleado) { %>
+            <tr>
+              <td><%= empleado.ID_Empleado %></td>
+              <td><%= empleado.Nombre %></td>
+              <td><%= empleado.Apellido %></td>
+              <td><%= empleado.Teléfono %></td>
+              <td><%= empleado.NombreRol %></td>
+              <td>
                 <div>
-                  <a class="btndetalles">Ver Detalles</a>
+                  <div>
+                    <a class="btndetalles">Ver Detalles</a>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-          <% }); %>
-        </tbody>
-      </table>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
-</body>
+  </body>
 
-<script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+  <script type="text/javascript" language="javascript"
+    src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script type="text/javascript" language="javascript"
+    src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
 
-<script>
+  <script>
   $(document).ready(function () {
     let url = "/empleados/"; // Define la variable url aquí
 
@@ -192,10 +201,10 @@
 
   obtenerOpciones('/api/roles', '#ID_Rol');
 </script>
-<script>
+  <script>
 
 </script>
-<script>
+  <script>
   fetch('/datoEmpleadoDestacado20s')
     .then(response => response.json())
     .then(data => {
@@ -211,7 +220,7 @@
     });
 </script>
 
-<script>
+  <script>
   function redirectToPage(value) {
       if (value) {
           window.location.href = value; // Redirige a la página seleccionada

@@ -24,7 +24,7 @@ router.get("/vista_compras", (req, res) => {
 const ObtenerTotalProveedores = () => {
   return new Promise((resolve, reject) => {
     const sql = `
-        SELECT COUNT(*) AS totalProveedores FROM proveedores;
+        SELECT COUNT(*) AS totalProveedores FROM proveedores WHERE Figura = 1;
       `;
 
     connection.query(sql, (err, results) => {

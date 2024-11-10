@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+            crossorigin="anonymous" />
+        <link rel="stylesheet" href="/resources/css/Formulario.css" />
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script
+            src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <title>Formulario de Edición de Producto</title>
+    </head>
+    <body>
+
+        <!-- Encabezado -->
+        <div class="header-container">
+            <div class="breadcrumb">
+                <a href="/productos" class="reporte-link">
+                    <h1
+                        style="color: #858B92; font-weight: bold; margin-right: 5px;">Gestión
+                        de Productos</h1>
+                </a>
+                <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+                <h1 style="font-weight: bold;">Formulario de Edición</h1>
+            </div>
+        </div>
+
+        <h1>Información del Producto</h1>
+
+        <form id="formProducto" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="opcion" value="editar">
+
+            <!-- Imagen del Producto -->
+            <div class="container-img">
+                <img id="uploadedImage"
+                    src="<%= producto.Fotografia ? `/fotos/img_productos/${producto.Fotografia}` : '/fotos/img_productos/default.png' %>">
+            </div>
+            <p id="fileName" style="color: red;">No se ha seleccionado ningún
+                archivo para hacer el cambio, solo archivos .jpg</p>
+            <input type="file" name="fotografia" id="fileInput"
+                style="display:none;" accept=".jpg,image/jpeg">
+            <input type="hidden" name="fotografia" id="fotografiaNombre"
+                value="<%= producto.Fotografia %>">
+            <button id="uploadButton">Agregar Fotografía</button>
+
+            <div class="container">
+                <div class="form-group">
+                    <label class="text" for="nombre">Nombre</label>
+                    <input type="text" name="Nombre" id="nombre"
+                        class="form-control" placeholder="Nombre"
+                        value="<%= producto.Nombre %>" required minlength="2"
+                        maxlength="200">
+                </div>
+
+                <div class="form-group">
+                    <label class="text" for="precio">Precio Unitario</label>
+                    <input type="number" name="Precio_Unitario" id="precio"
+                        class="form-control" placeholder="Precio Unitario"
+                        value="<%= producto.Precio_Unitario %>" required>
+                </div>
+
+                <!-- Selects Dinámicos para Datos Relacionados -->
+                <div class="form-group">
+                    <label class="text" for="categoria">Categoría</label>
+                    <select name="ID_Categoria" id="categoria"
+                        class="form-select" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label class="text" for="proveedor">Proveedor</label>
+                    <select name="ID_Proveedor" id="proveedor"
+                        class="form-select" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label class="text" for="area_producto">Área de
+                        Producto</label>
+                    <select name="ID_Area_Producto" id="area_producto"
+                        class="form-select" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label class="text" for="tipo_paciente">Tipo de
+                        Paciente</label>
+                    <select name="ID_Tipo_Paciente" id="tipo_paciente"
+                        class="form-select" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label class="text" for="tipo_administracion">Tipo de
+                        Administración</label>
+                    <select name="ID_Tipo_vias_administracion"
+                        id="tipo_administracion" class="form-select"
+                        required></select>
+                </div>
+
+                <div class="form-group">
+                    <label class="text" for="unidad_venta">Unidad de
+                        Venta</label>
+                    <select name="ID_Unidad_Venta" id="unidad_venta"
+                        class="form-select" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label class="text" for="riesgo">Riesgo Embarazo</label>
+                    <input type="text" name="Riesgo_Embarazo" id="riesgo"
+                        class="form-control"
+                        value="<%= producto.Riesgo_Embarazo %>">
+                </div>
+
+            </div>
+            <!-- Información adicional -->
+            <h2>Descripciones</h2>
+
+            <div class="container">
+
+                <div class="form-group">
+                    <label class="text" for="efectos_secundarios">Efectos
+                        Secundarios</label>
+                    <textarea name="Efectos_Secundarios"
+                        id="efectos_secundarios"
+                        class="form-control"><%= producto.Efectos_Secundarios %></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="text" for="precauciones">Precauciones</label>
+                    <textarea name="Precauciones" id="precauciones"
+                        class="form-control"><%= producto.Precauciones %></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="text" for="descripcion">Descripción</label>
+                    <textarea name="Descripcion" id="descripcion"
+                        class="form-control" placeholder="Descripción"
+                        required><%= producto.Descripcion %></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="text" for="dosis">Dosis del
+                        Medicamento</label>
+                    <textarea name="Dosis_Medicacmento" id="dosis"
+                        class="form-control"><%= producto.Dosis_Medicacmento %></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="text" for="indicaciones">Indicaciones</label>
+                    <textarea name="Indicaciones" id="indicaciones"
+                        class="form-control"><%= producto.Indicaciones %></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="text"
+                        for="generaliadades">Generalidades</label>
+                    <textarea name="Generaliadades" id="generaliadades"
+                        class="form-control"><%= producto.Generaliadades %></textarea>
+                </div>
+
+                <button type="submit">Guardar Cambios</button>
+            </div>
+        </form>
+        <script>
+            document.getElementById('formProducto').onsubmit = async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target);
+      
+              try {
+                const response = await fetch(`/EditProductos/<%= producto.ID_Producto %>`, {
+                  method: 'POST',
+                  body: formData
+                });
+                const data = await response.json();
+      
+                if (data.success) {
+                  Swal.fire('¡Éxito!', data.message, 'success');
+                } else {
+                  Swal.fire('Error', data.message, 'error');
+                }
+              } catch (error) {
+                console.error('Error al enviar datos:', error);
+              }
+            };
+          </script>
+
+        <script>
+        // Cargar datos de los select desde las APIs
+        async function cargarSelect(url, selectId, selectedId = null) {
+            const response = await fetch(url);
+            const data = await response.json();
+            const select = document.getElementById(selectId);
+            data.forEach(item => {
+                const option = document.createElement("option");
+                option.value = item.id;
+                option.textContent = item.nombre;
+                if (item.id === selectedId) option.selected = true;
+                select.appendChild(option);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            cargarSelect('/api/categorias', 'categoria', '<%= producto.ID_Categoria %>');
+            cargarSelect('/api/proveedores', 'proveedor',' <%= producto.ID_Proveedor %>');
+            cargarSelect('/api/area_producto', 'area_producto', '<%= producto.ID_Area_Producto %>');
+            cargarSelect('/api/tipo_paciente', 'tipo_paciente', '<%= producto.ID_Tipo_Paciente %>');
+            cargarSelect('/api/tipo_administracion', 'tipo_administracion', '<%= producto.ID_Tipo_vias_administracion %>');
+            cargarSelect('/api/unidad_venta', 'unidad_venta', '<%= producto.ID_Unidad_Venta %>');
+        });
+
+        // Configurar carga de imagen
+        const fileInput = document.getElementById('fileInput');
+        const uploadButton = document.getElementById('uploadButton');
+        const uploadedImage = document.getElementById('uploadedImage');
+        const fileNameDisplay = document.getElementById('fileName');
+
+        uploadButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    uploadedImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+                fileNameDisplay.textContent = `Archivo seleccionado: ${file.name}`;
+            } else {
+                fileNameDisplay.textContent = 'No se ha seleccionado ningún archivo';
+            }
+        });
+    </script>
+    </body>
+</html>

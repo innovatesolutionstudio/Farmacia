@@ -27,22 +27,15 @@
             style="color: #858B92; font-weight: bold; margin-right: 5px;">Compras</h1>
         </a>
         <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
-        <h1 style="font-weight: bold;">Registro de Proveedores</h1>
+        <a href="/vista_compras" class="reporte-link">
+          <h1
+            style="color: #858B92; font-weight: bold; margin-right: 5px;">Registro
+            de Proveedores</h1>
+        </a>
+        <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+        <h1 style="font-weight: bold;">Papeleria</h1>
       </div>
 
-      <div class="button-container">
-        <select id="opciones" class="form-select"
-          onchange="handleOptionChange(this.value)">
-          <option value style="color: #888;" disabled
-            selected>Seleccionar</option>
-          <option value="pdf">Exportar PDF</option>
-          <option value="excel">Exportar Excel</option>
-          <option value="/Papeleria_Proveedores">Papelería Proveedores</option>
-        </select>
-
-        <a type="submit" href="/CrearProveedor" class="btn btn-danger">Añadir
-          Nuevo</a>
-      </div>
     </div>
 
     <br>
@@ -92,7 +85,7 @@
       src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
       // Función para verificar el parámetro 'success' en la URL
       function checkSuccessParam() {
@@ -109,15 +102,15 @@
                   // Redirigir a la página de proveedores o limpiar el parámetro de la URL
                   window.location.href = '/proveedores';
               });
-          } else if (successParam === 'delete') {
+          } else if (successParam === 'restaurar') {
               Swal.fire({
                   icon: 'success',
-                  title: 'Proveedor eliminado correctamente',
+                  title: 'Proveedor restaurado correctamente',
                   showConfirmButton: false,
                   timer: 1500
               }).then(() => {
                   // Redirigir a la página de proveedores o limpiar el parámetro de la URL
-                  window.location.href = '/proveedores';
+                  window.location.href = '/Papeleria_proveedores';
               });
           }
       }
@@ -136,7 +129,7 @@
             exportToExcel();
           } else if (value === "/Papeleria_Proveedores") {
             // Redirigir a la papelería de proveedores
-            window.location.href = "/proveedoresP";
+            window.location.href = value;
           }
         }
       
@@ -170,6 +163,7 @@
   $(document).ready(function () {
     // Inicializa la tabla de proveedores
     let tablaProveedores = $("#tablaProveedores").DataTable({
+      
       language: {
         url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json",
       },
@@ -178,7 +172,7 @@
     });
 
     // Define la URL base para los detalles del proveedor
-    let url2 = "/detalleProveedores/";
+    let url2 = "/detalleProveedoresP/";
 
     // Evento para el botón "Ver Detalles"
     $("#tablaProveedores").on("click", ".btndetalles", function () {

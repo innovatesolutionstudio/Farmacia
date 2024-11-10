@@ -435,8 +435,15 @@ router.get("/EditEmpleados/:id", async (req, res) => {
   });
 });
 
-//codigo para el guardado de las imagenes
+router.get("/CrearEmpleado", (req, res) => {
+  if (req.session.loggedin) {
+    res.render("./empleados/nuevoempleado");
+  } else {
+    res.render("./paginas/logout");
+  }
+});
 
+//codigo para el guardado de las imagenes
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, "../storage/img_empleados")); // Ruta corregida
@@ -449,14 +456,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-
-router.get("/CrearEmpleado", (req, res) => {
-  if (req.session.loggedin) {
-    res.render("./empleados/nuevoempleado");
-  } else {
-    res.render("./paginas/logout");
-  }
-});
 
 router.post(
   "/EditEmpleados/:id?",
@@ -609,12 +608,10 @@ router.post(
           conexion.query(sqlDelete, [id], (err, result) => {
             if (err) {
               console.error("Error al eliminar empleado:", err);
-              res
-                .status(500)
-                .json({
-                  success: false,
-                  message: "Error al eliminar empleado",
-                });
+              res.status(500).json({
+                success: false,
+                message: "Error al eliminar empleado",
+              });
             } else {
               console.log("Empleado eliminado:", result);
               res.json({
@@ -638,12 +635,10 @@ router.post(
           conexion.query(sqlDelete, [id], (err, result) => {
             if (err) {
               console.error("Error al Restaurar empleado:", err);
-              res
-                .status(500)
-                .json({
-                  success: false,
-                  message: "Error al Restaurar empleado",
-                });
+              res.status(500).json({
+                success: false,
+                message: "Error al Restaurar empleado",
+              });
             } else {
               console.log("Empleado Restaurar:", result);
               res.json({

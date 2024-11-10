@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+            crossorigin="anonymous" />
+        <link rel="stylesheet" href="/resources/css/Formulario.css" />
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <title>Formulario - Nuevo Proveedor</title>
+    </head>
+    <body>
+        <!-- Encabezado -->
+        <div class="header-container">
+            <div class="breadcrumb">
+                <a href="/compras" class="reporte-link">
+                    <h1
+                        style="color: #858B92; font-weight: bold; margin-right: 5px;">Compras</h1>
+                </a>
+                <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+                <h1 style="font-weight: bold;">Nuevo Proveedor</h1>
+            </div>
+        </div>
+        <h1>Datos del Proveedor</h1>
+
+        <form id="formProveedor" action="/proveedores" method="POST">
+            <input type="hidden" name="opcion" value="crear">
+            <div class="container2">
+                <div class="form-group">
+                    <label for="Nombre">Nombre del Proveedor</label>
+                    <input type="text" name="Nombre" id="Nombre"
+                        class="form-control" placeholder="Nombre del Proveedor"
+                        required minlength="2" maxlength="100">
+                </div>
+
+                <div class="form-group">
+                    <label for="Dirección">Dirección</label>
+                    <input type="text" name="Dirección" id="Dirección"
+                        class="form-control" placeholder="Dirección" required
+                        minlength="5" maxlength="255">
+                </div>
+
+                <div class="form-group">
+                    <label for="Nit">NIT</label>
+                    <input type="text" name="Nit" id="Nit" class="form-control"
+                        placeholder="NIT" required minlength="6" maxlength="20">
+                </div>
+
+                <div class="form-group">
+                    <label for="Nombre_encargado">Nombre del Encargado</label>
+                    <input type="text" name="Nombre_encargado"
+                        id="Nombre_encargado" class="form-control"
+                        placeholder="Nombre del Encargado" required
+                        minlength="2" maxlength="100">
+                </div>
+
+                <div class="form-group">
+                    <label for="Teléfono">Teléfono</label>
+                    <input type="number" name="Teléfono" id="Teléfono"
+                        class="form-control" placeholder="Teléfono" required
+                        pattern="[0-9]{10}">
+                </div>
+
+                <div class="form-group">
+                    <label for="Telefono_referencia">Teléfono de
+                        Referencia</label>
+                    <input type="number" name="Telefono_referencia"
+                        id="Telefono_referencia" class="form-control"
+                        placeholder="Teléfono de Referencia"
+                        pattern="[0-9]{10}">
+                </div>
+
+                <div class="form-group">
+                    <label for="Email">Correo Electrónico</label>
+                    <input type="email" name="Email" id="Email"
+                        class="form-control" placeholder="Correo Electrónico"
+                        required maxlength="100">
+                </div>
+
+                <div class="form-group">
+                    <label for="ID_Pais">País</label>
+                    <select name="ID_Pais" id="ID_Pais" class="form-select"
+                        required>
+                        <option value>- Selecciona País -</option>
+                        <!-- Opciones dinámicas -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="ID_Departamento">Departamento</label>
+                    <select name="ID_Departamento" id="ID_Departamento"
+                        class="form-select" required>
+                        <option value>- Selecciona Departamento -</option>
+                        <!-- Opciones dinámicas -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="ID_Ciudad">Ciudad</label>
+                    <select name="ID_Ciudad" id="ID_Ciudad" class="form-select"
+                        required>
+                        <option value>- Selecciona Ciudad -</option>
+                        <!-- Opciones dinámicas -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn-danger" type="submit"
+                        id="submitButton">Guardar</button>
+                </div>
+            </div>
+        </form>
+
+        <script>
+        // Cargar las opciones de los select dinámicamente
+        function cargarSelect(url, selectId, defaultText) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById(selectId);
+                    select.innerHTML = `<option value="">${defaultText}</option>`;
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.id;
+                        option.textContent = item.nombre;
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error al cargar los datos:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarSelect('/api/paises', 'ID_Pais', "- Selecciona País -");
+            cargarSelect('/api/departamentos', 'ID_Departamento', "- Selecciona Departamento -");
+            cargarSelect('/api/ciudades', 'ID_Ciudad', "- Selecciona Ciudad -");
+        });
+    </script>
+    </body>
+</html>
