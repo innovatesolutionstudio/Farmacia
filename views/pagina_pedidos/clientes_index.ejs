@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Productos - Farmacia</title>
+    <link rel="stylesheet" href="/resources/css/paginapedidos.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="top-header">
+        <a href="/pagina_pedidos/index_clientes" class="logo">
+            <img src="resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
+        </a>   
+        <ul>
+            <li><a href="/pagina_pedidos/index_clientes" class="dropdown">Inicio</a></li>
+            <li><a href="/pagina_pedidos/productos/:idSucursal" class="dropdown">Tienda</a></li>
+            <li><a href="#" class="dropdown">Contactos</a></li>
+        </ul>
+        <a href="#" class="cart-icon" onclick="mostrarCarrito(); return false;">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">0</span>
+        </a>
+
+        <!-- Selector de Sucursales -->
+        <select name="sucursal" id="sucursal" class="location-select" onchange="cambiarSucursal()">
+            <% results.forEach(sucursal => { %> 
+                <option value="<%= sucursal.ID_Sucursal %>" <%= idSucursal == sucursal.ID_Sucursal ? 'selected' : '' %>><%= sucursal.Nombre %></option>
+            <% }); %>
+        </select>
+
+
+        <% if (estaLogueadoCliente ===true) { %>
+            <li><a href="/pagina_pedidos/consultas" class="dropdown">Consultas</a></li>
+            <li><a href="/pagina_pedidos/miscompras" class="dropdown">Compras</a></li>
+            <li><a href="/pagina_pedidos/recordatorio" class="dropdown">Recordatorio</a></li>
+        <% } %>
+        
+        
+        <!-- Botones de Iniciar Sesión y Registrar -->
+        <a href="/pagina_pedidos/login_clientes" class="btn-login">Iniciar sesión</a>
+        <a href="/pagina_pedidos/registrar_clientes" class="btn-register">Registrar</a>
+    </div>
+
+    <header>
+        <div class="left-content">
+            <h1>¡Bienvenido a nuestra Farmacia en Línea!</h1>
+            <p>Explora nuestras opciones y no dudes en consultarnos cualquier inquietud. Estamos listos para ayudarte.</p>
+            <!-- Botón de Comprar -->
+            <button class="btn-buy" onclick="window.location.href='/pagina_pedidos/login_clientes'">Comprar</button>
+        </div>
+    </header>
+
+    <div class="services-section">
+        <h2>Nuestros Servicios</h2>
+        <div class="services-container">
+            <a href="/pagina_pedidos/consultas" class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>Realiza Consultas</h3>
+                <p>24h</p>
+            </a>
+            <a href="/pagina_pedidos/productos" class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <h3>Pedidos</h3>
+                <p>Coordina Tu Pedido</p>
+            </a>
+            <a href="/pagina_pedidos/recordatorio" class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-hand-holding-usd"></i>
+                </div>
+                <h3>Recordatorio</h3>
+                <p>No Olvides Tomar Tu Pastilla</p>
+            </a>
+        </div>
+    </div>
+    <!-- Nuevo carrito emergente -->
+    <div id="cart-popup">
+        <h2>Mi carrito</h2>
+        <ul id="cart-items"></ul>
+        <div class="cart-buttons">
+            <button class="close-cart" onclick="cerrarCarrito()">Cerrar</button>
+            <button class="checkout-cart" onclick="realizarCompra()">Continuar pedido</button>
+        </div>
+    </div>
+
+    <!-- Sección de contacto al final -->
+    <div class="contact-container">
+        <div class="social-media">
+            <!-- Aquí irían los enlaces a redes sociales -->
+        </div>
+        <div class="contact-info">
+            <h2>Contacto</h2>
+            <p>Si tienes alguna duda, por favor contacta con nosotros:</p>
+            <p><strong>Horario de Atención:</strong> Lunes a Viernes, 9:00 - 18:00</p>
+            <p><strong>Teléfono:</strong> +34 123 456 789</p>
+            <p><strong>Correo Electrónico:</strong> contacto@ejemplo.com</p>
+        </div>
+    </div>
+
+    <script>
+        function cambiarSucursal() {
+            const sucursalId = document.getElementById('sucursal').value;
+            window.location.href = `/pagina_pedidos/clientes_index/${sucursalId}`;
+        }
+
+        let carrito = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function agregarAlCarrito(productId, nombre, precio) {
+            const productoExistente = carrito.find(item => item.id === productId);
+
+            if (productoExistente) {
+                productoExistente.quantity += 1;
+            } else {
+                carrito.push({
+                    id: productId,
+                    name: nombre,
+                    price: precio,
+                    quantity: 1
+                });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(carrito));
+            mostrarCarrito();
+            actualizarContadorCarrito();
+        }
+
+        function mostrarCarrito() {
+            const carritoPopup = document.getElementById('cart-popup');
+            const listaCarrito = document.getElementById('cart-items');
+            listaCarrito.innerHTML = '';
+
+            carrito.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="cart-item-details">
+                        <div class="cart-item-title">${item.name}</div>
+                        <div class="cart-item-price">$${item.price}</div>
+                    </div>
+                    <div class="cart-item-quantity">
+                        <button class="quantity-btn" onclick="cambiarCantidad('${item.id}', -1)">-</button>
+                        <span>${item.quantity}</span>
+                        <button class="quantity-btn" onclick="cambiarCantidad('${item.id}', 1)">+</button>
+                    </div>
+                `;
+                listaCarrito.appendChild(li);
+            });
+
+            carritoPopup.style.display = 'block';
+        }
+
+        function cerrarCarrito() {
+            document.getElementById('cart-popup').style.display = 'none';
+        }
+
+        function cambiarCantidad(productId, change) {
+            const producto = carrito.find(item => item.id === productId);
+            
+            if (producto) {
+                producto.quantity += change;
+                if (producto.quantity <= 0) {
+                    carrito = carrito.filter(item => item.id !== productId);
+                }
+                localStorage.setItem('cart', JSON.stringify(carrito));
+                mostrarCarrito();
+                actualizarContadorCarrito();
+            }
+        }
+
+        function actualizarContadorCarrito() {
+            const total = carrito.reduce((sum, item) => sum + item.quantity, 0);
+            document.querySelector('.cart-count').textContent = total;
+        }
+
+        function realizarCompra() {
+            window.location.href = '/pagina_pedidos/carritopedidos';
+        }
+    </script>
+    
+</body>
+</html>

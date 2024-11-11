@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+    <title>Registro de Clientes</title>
+    <link rel="icon" href="/resources/images/iconos/farmacia.ico">
+    <link rel="stylesheet" href="/resources/css/style_login.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="forms-container">
+            <div class="signin-signup">
+                <!-- Formulario de registro -->
+                <form method="post" action="/registrar" class="sign-in-form">
+                    <img src="/resources/images/login/logo1.png" alt="Logo">
+                    <h2 class="title">Registrar Cliente</h2>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <!-- Campo para el nombre -->
+                        <input type="text" name="name" placeholder="Nombre" maxlength="100" required />
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <!-- Campo para el apellido -->
+                        <input type="text" name="apellido" placeholder="Apellido" maxlength="100" required />
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-phone"></i>
+                        <!-- Campo para el teléfono -->
+                        <input type="text" name="telefono" placeholder="Teléfono" maxlength="20" required />
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-id-card"></i>
+                        <!-- Campo para el CI -->
+                        <input type="text" name="ci" placeholder="Cédula de Identidad (CI)" maxlength="50" required />
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-briefcase"></i>
+                        <!-- Campo para el Nit -->
+                        <input type="text" name="nit" placeholder="NIT" maxlength="50" required />
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <!-- Campo para el correo (Gmail) -->
+                        <input type="email" name="email" placeholder="Correo electrónico (Gmail)" maxlength="50" required />
+                    </div>
+                    <input type="submit" value="Registrar" class="btn solid" />
+                    <p class="social-text">¿Ya tienes cuenta? <a href="/pagina_pedidos/login_clientes" class="register-link">Inicia sesión aquí</a></p>
+                </form>                 
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

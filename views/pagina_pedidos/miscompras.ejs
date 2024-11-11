@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Compras</title>
+    <style>
+        /* Reglas generales */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            padding-top: 60px; /* Para evitar que el contenido se solape con el header fijo */
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .purchase-list {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .purchase-item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        .purchase-item-details {
+            flex: 1;
+        }
+
+        .purchase-item h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+
+        .purchase-item-details p {
+            margin: 5px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .productos-lista {
+            margin: 10px 0;
+        }
+
+        .productos-lista span {
+            display: block;
+            margin: 5px 0;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .purchase-item-total {
+            font-weight: bold;
+            color: #00b894;
+            font-size: 18px;
+            margin: 0 20px;
+            text-align: right;
+            min-width: 120px;
+        }
+
+        .purchase-item-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .purchase-item-button:hover {
+            background-color: #2980b9;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* Modal de detalles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 1000px;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .order-details-container {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .products-section, .payment-section {
+            flex: 1;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .product-info {
+            color: #666;
+        }
+
+        .product-price {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .payment-summary {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            color: #666;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #eee;
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .download-pdf {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            font-size: 1.1em;
+        }
+
+        /* Header */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .top-header ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        .top-header ul li {
+            margin-right: 20px;
+        }
+
+        .top-header ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 1.1em;
+            padding: 5px 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .top-header ul li a:hover {
+            background-color: #ecf0f1;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="top-header">
+        <a href="/pagina_pedidos/index_clientes/:idSucursal" class="logo">
+            <img src="/resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
+        </a>     
+        <ul>
+            <li><a href="/pagina_pedidos/index_clientes/:idSucursal" class="dropdown">Inicio</a></li>
+            <li><a href="/pagina_pedidos/productos/:idSucursal" class="dropdown">Tienda</a></li>
+            <li><a href="/pagina_pedidos/consultas" class="dropdown">Consultas</a></li>
+            <li><a href="/pagina_pedidos/miscompras" class="dropdown">Compras</a></li>
+            <li><a href="/pagina_pedidos/recordatorio" class="dropdown">Recordatorio</a></li>
+        </ul>
+        <a href="#" class="cart-icon">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">0</span>
+        </a>
+        <a href="#" class="profile-icon">
+            <i class="fas fa-user"></i>
+            <span class="profile-name">Perfil</span>
+        </a>
+    </div>
+    <div class="main-container">
+        <h1>Mis Compras</h1>
+        <div class="purchase-list" id="purchaseList">
+            <!-- Las compras se cargarán aquí -->
+        </div>
+    </div>
+    <!-- Modal de Detalles -->
+    <div id="detallesModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="cerrarModal()">&times;</span>
+            <h2>Detalles de Compra</h2>
+            <div class="order-details-container">
+                <div class="products-section">
+                    <h3 class="section-title">Productos</h3>
+                    <div id="productosLista"></div>
+                </div>
+                <div class="payment-section">
+                    <h3 class="section-title">Resumen de Pago</h3>
+                    <div id="pagoResumen"></div>
+                </div>
+            </div>
+            <a href="#" class="download-pdf">Descargar PDF</a>
+        </div>
+    </div>
+    <script>
+        // Función para cargar las compras desde localStorage
+function cargarMisCompras() {
+    const compras = JSON.parse(localStorage.getItem('compras')) || [];
+    const purchaseListContainer = document.getElementById('purchaseList');
+    purchaseListContainer.innerHTML = '';
+
+    if (compras.length === 0) {
+        purchaseListContainer.innerHTML = '<div class="empty-message">No tienes compras previas.</div>';
+        return;
+    }
+
+    compras.forEach((compra, index) => {
+        const compraElemento = document.createElement('div');
+        compraElemento.classList.add('purchase-item');
+
+        let productosDetalles = compra.productos.map(producto => 
+            `<span>${producto.name} - ${producto.quantity} x Bs ${producto.price.toFixed(2)}</span>`
+        ).join('');
+
+        compraElemento.innerHTML = 
+            `<div class="purchase-item-details">
+                <h3>Pedido #${compras.length - index}</h3>
+                <p><strong>Fecha:</strong> ${compra.fecha}</p>
+                <p><strong>Cliente:</strong> ${compra.cliente.nombre}</p>
+                <div class="productos-lista">
+                    <strong>Productos:</strong>
+                    ${productosDetalles}
+                </div>
+            </div>
+            <div class="purchase-item-total">
+                Total: Bs ${compra.total.toFixed(2)}
+            </div>
+            <button class="purchase-item-button" onclick="verDetallesCompra(${index})">Ver detalles</button> `;
+
+        purchaseListContainer.appendChild(compraElemento);
+    });
+}
+    
+        function verDetallesCompra(index) {
+    const compras = JSON.parse(localStorage.getItem('compras')) || [];
+    const compra = compras[index];
+    document.getElementById('detallesModal').style.display = 'block';
+
+    // Generar los productos listados en el modal
+    let productosHTML = compra.productos.map(producto => 
+        `<div class="product-item">
+            <span class="product-info">${producto.name} - ${producto.quantity}</span>
+            <span class="product-price">Bs ${producto.price.toFixed(2)}</span>
+        </div>`
+    ).join('');
+
+    // Mostrar los productos en el modal
+    document.getElementById('productosLista').innerHTML = productosHTML;
+
+    // Mostrar el resumen de pago, incluyendo el total de la compra
+    document.getElementById('resumenPago').innerHTML = `
+        <div class="summary-item"><span>Subtotal:</span><span>Bs ${compra.subtotal.toFixed(2)}</span></div>
+        <div class="summary-item"><span>Impuesto:</span><span>Bs ${compra.impuesto.toFixed(2)}</span></div>
+        <div class="summary-total"><span>Total Productos:</span><span>Bs ${compra.total.toFixed(2)}</span></div>`;
+}
+
+
+
+        function cerrarModal() {
+            document.getElementById('detallesModal').style.display = 'none';
+        }
+
+        function generarPDF() {
+            alert("Función de generación de PDF activada.");
+        }
+
+        cargarMisCompras();
+    </script>
+</body>
+</html>

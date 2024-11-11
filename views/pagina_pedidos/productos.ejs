@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Productos - Farmacia</title>
+    <link rel="stylesheet" href="/resources/css/paginapedidos2.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="top-header">
+        <a href="/pagina_pedidos/index_clientes/:idSucursal" class="logo">
+            <img src="/resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
+        </a>    
+        <ul>
+            <li><a href="/pagina_pedidos/index_clientes/:idSucursal" class="dropdown">Inicio</a></li>
+            <li><a href="/pagina_pedidos/productos/:idSucursal" class="dropdown">Tienda</a></li>
+            <li><a href="/pagina_pedidos/consultas" class="dropdown">Consultas</a></li>
+            <li><a href="/pagina_pedidos/miscompras" class="dropdown">Compras</a></li>
+            <li><a href="#" class="dropdown">Recordatorio</a></li>
+        </ul>
+        <a href="#" class="cart-icon" onclick="mostrarCarrito(); return false;">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">0</span>
+        </a>
+        <!-- Selector de Sucursales -->
+        <select name="sucursal" id="sucursal" class="location-select" onchange="cambiarSucursal()">
+            <% results.forEach(sucursal => { %>
+                 <option value="<%= sucursal.ID_Sucursal %>" <%= idSucursal == sucursal.ID_Sucursal ? 'selected' : '' %>><%= sucursal.Nombre %></option>
+             <% }); %>
+         </select>
+        <!-- Botón de Perfil del Usuario -->
+        <a href="/pagina_pedidos/perfil" class="profile-icon">
+            <i class="fas fa-user"></i> <span class="profile-name">Perfil</span>
+        </a>
+    </div>
+
+    <div class="products-section">
+        <h2>Nuestros Productos</h2>
+        <div class="search-bar">
+            <input type="text" placeholder="Buscar">
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="product-categories">
+            <h2>Categoría Productos</h2>
+            <ul>
+                <li>Belleza</li>
+                <li>Dispositivos Médicos</li>
+                <li>Suplementos</li>
+                <li>Anticonceptivos</li>
+                <li>Bioseguridad</li>
+            </ul>
+        </div>
+        <div class="popular-products">
+            <h2>Popular Products</h2>
+            <!-- Productos populares aquí -->
+        </div>
+    </div>
+
+    <% if (products.length > 0) { %>
+        <div class="products-grid" id="product-list">
+            <% products.forEach(product => { %>
+                <div class="product-item">
+                    <h3><%= product.Nombre %></h3>
+                    <p><%= product.Descripcion %></p>
+                    <p>Precio: $<%= product.Precio_Unitario %></p>
+                    <p>Cantidad en Inventario: <%= product.Cantidad %></p>
+                    <button class="add-to-cart-btn" onclick="agregarAlCarrito('<%= product.ID_Producto %>', '<%= product.Nombre %>', <%= product.Precio_Unitario %>, '<%= product.Imagen %>')">
+                        Añadir al carrito
+                    </button>
+                </div>
+            <% }); %>
+        </div>
+    <% } else { %>
+        <p>No hay productos disponibles para esta sucursal.</p>
+    <% } %>
+    
+    <!-- Carrito emergente -->
+    <div id="cart-popup">
+        <div class="cart-header">
+            <h2>Mi carrito</h2>
+            <div class="cart-tab" onclick="cerrarCarrito();">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+        </div>
+        <ul id="cart-items"></ul>
+        <div class="cart-buttons">
+            <button class="checkout-cart" onclick="realizarCompra()">Continuar pedido</button>
+            <button class="close-cart" onclick="cerrarCarrito()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Pestaña para cerrar el carrito -->
+    <div class="cart-tab" onclick="toggleCarrito();">
+        <i class="fas fa-chevron-right"></i>
+    </div>
+
+    <!-- Sección de contacto al final -->
+    <div class="contact-container">
+        <div class="social-media">
+            <!-- Aquí irían los enlaces a redes sociales -->
+        </div>
+        <div class="contact-info">
+            <h2>Contacto</h2>
+            <p>Si tienes alguna duda, por favor contacta con nosotros:</p>
+            <p><strong>Horario de Atención:</strong> Lunes a Viernes, 9:00 - 18:00</p>
+            <p><strong>Teléfono:</strong> +34 123 456 789</p>
+            <p><strong>Correo Electrónico:</strong> contacto@ejemplo.com</p>
+        </div>
+    </div>
+
+    <script>
+        function cambiarSucursal() {
+            const idSucursal = document.getElementById('sucursal').value;
+            window.location.href = `/pagina_pedidos/productos/${idSucursal}`;
+        }
+        let carrito = JSON.parse(localStorage.getItem('cart')) || [];
+    
+        function agregarAlCarrito(productId, nombre, precio, imagen = '', stock = 'Disponible', unidad = 'Unidad') {
+            const productoExistente = carrito.find(item => item.id === productId);
+    
+            if (productoExistente) {
+                productoExistente.quantity += 1;
+            } else {
+                carrito.push({
+                    id: productId,
+                    name: nombre,
+                    price: precio,
+                    quantity: 1,
+                    image: imagen,
+                    stock: stock,
+                    unit: unidad
+                });
+            }
+    
+            localStorage.setItem('cart', JSON.stringify(carrito));
+            mostrarCarrito();
+            actualizarContadorCarrito();
+        }
+    
+        function mostrarCarrito() {
+            const carritoPopup = document.getElementById('cart-popup');
+            const listaCarrito = document.getElementById('cart-items');
+            listaCarrito.innerHTML = '';
+    
+            carrito.forEach(item => {
+                const subtotal = item.price * item.quantity;
+    
+                const li = document.createElement('li');
+                li.className = 'cart-item';
+                li.innerHTML = ` 
+                    <div class="cart-item-image">
+                        <img src="${item.image || '/resources/images/default-product.png'}" alt="${item.name}">
+                    </div>
+                    <div class="cart-item-info">
+                        <div class="cart-item-title">${item.name}</div>
+                        <div class="cart-item-price">Bs ${item.price.toFixed(2)}/Unidad</div>
+                        <div class="cart-item-description">
+                            <small>Stock: ${item.stock}</small><br>
+                            <small>Unidad de venta: ${item.unit}</small>
+                        </div>
+                        <div class="cart-item-quantity">
+                            <button class="quantity-btn" onclick="cambiarCantidad('${item.id}', -1)">-</button>
+                            <span class="quantity-display">${item.quantity}</span>
+                            <button class="quantity-btn" onclick="cambiarCantidad('${item.id}', 1)">+</button>
+                        </div>
+                        <div class="cart-item-subtotal">
+                            Subtotal: Bs ${subtotal.toFixed(2)}
+                        </div>
+                    </div>
+                `;
+                listaCarrito.appendChild(li);
+            });
+    
+            const total = carrito.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            const totalElement = document.createElement('div');
+            totalElement.className = 'cart-total';
+            totalElement.innerHTML = `Total: Bs ${total.toFixed(2)}`;
+            listaCarrito.appendChild(totalElement);
+    
+            // Mostrar el carrito
+            carritoPopup.classList.add('visible');
+    
+            // Cambiar el ícono de la pestaña
+            const cartTab = document.querySelector('.cart-tab');
+            cartTab.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        }
+    
+        function cerrarCarrito() {
+            const carritoPopup = document.getElementById('cart-popup');
+            carritoPopup.classList.remove('visible');
+    
+            // Cambiar el ícono de la pestaña
+            const cartTab = document.querySelector('.cart-tab');
+            cartTab.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        }
+    
+        function toggleCarrito() {
+            const carritoPopup = document.getElementById('cart-popup');
+            const cartTab = document.querySelector('.cart-tab');
+            
+            if (carritoPopup.classList.contains('visible')) {
+                cerrarCarrito();
+            } else {
+                mostrarCarrito();
+            }
+        }
+    
+        function actualizarContadorCarrito() {
+            const cartCount = document.querySelector('.cart-count');
+            const totalItems = carrito.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+        }
+                function cambiarCantidad(productId, change) {
+            const producto = carrito.find(item => item.id === productId);
+            
+            if (producto) {
+                producto.quantity += change;
+                if (producto.quantity <= 0) {
+                    carrito = carrito.filter(item => item.id !== productId);
+                }
+                localStorage.setItem('cart', JSON.stringify(carrito));
+                mostrarCarrito();
+                actualizarContadorCarrito();
+            }
+        }
+    
+        function realizarCompra() {
+            alert('Procediendo a la compra...');
+            // Redirigir al carrito
+            window.location.href = '/pagina_pedidos/carritopedidos';
+        }
+    
+        // Actualizar contador al cargar la página
+        actualizarContadorCarrito();
+    </script>
+</body>
+</html>  

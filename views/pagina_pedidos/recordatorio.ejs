@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recordatorio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/resources/css/recordatorio.css" />
+</head>
+<body>
+    <!-- Header -->
+    <div class="top-header">
+        <a href="/pagina_pedidos/index_clientes/:idSucursal" class="logo">
+            <img src="/resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
+        </a>      
+        <ul>
+            <li><a href="/pagina_pedidos/index_clientes/:idSucursal" class="dropdown">Inicio</a></li>
+            <li><a href="/pagina_pedidos/productos/:idSucursal" class="dropdown">Tienda</a></li>
+            <li><a href="/pagina_pedidos/consultas" class="dropdown">Consultas</a></li>
+            <li><a href="/pagina_pedidos/miscompras" class="dropdown">Compras</a></li>
+            <li><a href="/pagina_pedidos/recordatorio" class="dropdown">Recordatorio</a></li>
+        </ul>
+        <div style="display: flex; gap: 20px;">
+            <a href="#" style="text-decoration: none; color: #333;">
+                <i class="fas fa-shopping-cart"></i>
+                <span>0</span>
+            </a>
+            <a href="#" style="text-decoration: none; color: #333;">
+                <i class="fas fa-user"></i>
+                <span>Perfil</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <h1 class="recordatorio-title">Mis recordatorios</h1>
+        
+        <div id="reminderList" class="recordatorio-list">
+            <!-- Aquí se mostrarán los recordatorios -->
+        </div>
+
+        <button class="btn btn-crear" onclick="showModal()">Agregar Recordatorio</button>
+    </div>
+
+    <!-- Modal de Recordatorio -->
+    <div class="modal" id="recordatorioModal">
+        <div class="modal-content">
+            <div class="modal-left">
+                <h3>Farmacia 25 De Julio</h3>
+                <h2>Crear Nuevo Recordatorio</h2>
+
+                <div class="form-group">
+                    <label>Selecciona el medicamento *</label>
+                    <select id="productoSelect" onchange="actualizarCamposMedicamento()" required>
+                        <option value="">Seleccione un medicamento</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Descripción/Instrucciones</label>
+                    <div id="descripcionProducto" class="descripcion-box">
+                        Selecciona un medicamento para ver sus instrucciones.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Dosis recomendada</label>
+                    <div id="dosisRecomendada" class="info-box"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Frecuencia recomendada</label>
+                    <div id="frecuenciaRecomendada" class="info-box"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Número de teléfono (WhatsApp) *</label>
+                    <input type="tel" id="telefonoInput" placeholder="Ej: 591XXXXXXXX" required>
+                    <small>Incluye el código de país (591 para Bolivia)</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Fecha y Hora del Recordatorio *</label>
+                    <!-- Cambiar a un campo de tipo datetime-local -->
+                    <input type="datetime-local" id="fechaHoraInput" required>
+                    <small>Selecciona la fecha y hora para el recordatorio</small>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-crear" onclick="validarYCrearRecordatorio()">Crear Recordatorio</button>
+                    <button class="btn btn-descartar" onclick="closeModal()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para mostrar el modal
+        function showModal() {
+            document.getElementById('recordatorioModal').style.display = 'flex';
+            cargarProductos();
+        }
+
+        // Función para cargar productos en el select
+        function cargarProductos() {
+            const compras = JSON.parse(localStorage.getItem('compras')) || [];
+            const productoSelect = document.getElementById('productoSelect');
+            productoSelect.innerHTML = '<option value="">Seleccione un medicamento</option>';
+
+            if (compras.length > 0) {
+                const productosUnicos = new Set();
+                
+                compras.forEach(compra => {
+                    compra.productos.forEach(producto => {
+                        if (!productosUnicos.has(producto.name)) {
+                            productosUnicos.add(producto.name);
+                            const option = document.createElement('option');
+                            option.value = producto.name;
+                            option.innerText = producto.name;
+                            productoSelect.appendChild(option);
+                        }
+                    });
+                });
+            }
+        }
+
+        // Función para actualizar campos del medicamento
+        function actualizarCamposMedicamento() {
+            const productoSelect = document.getElementById('productoSelect');
+            const compras = JSON.parse(localStorage.getItem('compras')) || [];
+            
+            if (productoSelect.value) {
+                const producto = encontrarProductoPorNombre(productoSelect.value, compras);
+                
+                if (producto) {
+                    document.getElementById('descripcionProducto').textContent = 
+                        producto.description || 'No hay descripción disponible';
+                    document.getElementById('dosisRecomendada').textContent = 
+                        producto.dosisRecomendada || 'Según prescripción médica';
+                    document.getElementById('frecuenciaRecomendada').textContent = 
+                        producto.frecuencia || 'Según prescripción médica';
+                }
+            } else {
+                limpiarCampos();
+            }
+        }
+
+        // Función para limpiar campos
+        function limpiarCampos() {
+            document.getElementById('descripcionProducto').textContent = 
+                'Selecciona un medicamento para ver sus instrucciones.';
+            document.getElementById('dosisRecomendada').textContent = '';
+            document.getElementById('frecuenciaRecomendada').textContent = '';
+        }
+
+        // Función para encontrar producto por nombre
+        function encontrarProductoPorNombre(nombre, compras) {
+            for (let compra of compras) {
+                for (let producto of compra.productos) {
+                    if (producto.name === nombre) {
+                        return producto;
+                    }
+                }
+            }
+            return null;
+        }
+
+        // Función para validar y crear recordatorio
+        function validarYCrearRecordatorio() {
+            const productoSelect = document.getElementById('productoSelect');
+            const telefonoInput = document.getElementById('telefonoInput');
+            const fechaHoraInput = document.getElementById('fechaHoraInput');
+
+            if (!productoSelect.value) {
+                alert('Por favor selecciona un medicamento');
+                return;
+            }
+
+            if (!telefonoInput.value) {
+                alert('Por favor ingresa tu número de teléfono');
+                return;
+            }
+
+            const phoneRegex = /^591\d{8}$/;
+            if (!phoneRegex.test(telefonoInput.value)) {
+                alert('Por favor ingresa un número de teléfono válido (formato: 591XXXXXXXX)');
+                return;
+            }
+
+            if (!fechaHoraInput.value) {
+                alert('Por favor selecciona una fecha y hora para el recordatorio');
+                return;
+            }
+
+            agregarRecordatorio();
+        }
+
+        // Función para agregar recordatorio
+        function agregarRecordatorio() {
+            const productoSelect = document.getElementById('productoSelect');
+            const telefonoInput = document.getElementById('telefonoInput');
+            const fechaHoraInput = document.getElementById('fechaHoraInput');
+
+            const producto = encontrarProductoPorNombre(
+                productoSelect.value, 
+                JSON.parse(localStorage.getItem('compras')) || []
+            );
+            
+            const recordatorio = {
+                id: new Date().getTime(),
+                productName: productoSelect.value,
+                description: producto.description || '',
+                dosis: producto.dosisRecomendada || 'Según prescripción',
+                frecuencia: producto.frecuencia || 'Según prescripción',
+                phoneNumber: telefonoInput.value,
+                fechaHora: fechaHoraInput.value
+            };
+
+            let recordatorios = JSON.parse(localStorage.getItem('recordatorios')) || [];
+            recordatorios.push(recordatorio);
+            localStorage.setItem('recordatorios', JSON.stringify(recordatorios));
+
+            closeModal();
+            cargarRecordatorios();
+        }
+
+        // Función para cerrar el modal
+        function closeModal() {
+            document.getElementById('recordatorioModal').style.display = 'none';
+        }
+
+        // Función para cargar recordatorios en la lista
+        function cargarRecordatorios() {
+            const recordatorios = JSON.parse(localStorage.getItem('recordatorios')) || [];
+            const recordatorioList = document.getElementById('reminderList');
+
+            recordatorioList.innerHTML = ''; // Limpiar la lista
+
+            recordatorios.forEach(recordatorio => {
+                const recordatorioElement = document.createElement('div');
+                recordatorioElement.classList.add('recordatorio-item');
+                recordatorioElement.innerHTML = `
+                    <h3>${recordatorio.productName}</h3>
+                    <p>${recordatorio.description}</p>
+                    <p>Teléfono: ${recordatorio.phoneNumber}</p>
+                    <p>Fecha y Hora: ${new Date(recordatorio.fechaHora).toLocaleString()}</p>
+                `;
+                recordatorioList.appendChild(recordatorioElement);
+            });
+        }
+
+        // Cargar recordatorios al cargar la página
+        window.onload = cargarRecordatorios;
+        // Función para validar y crear recordatorio
+function validarYCrearRecordatorio() {
+    const productoSelect = document.getElementById('productoSelect');
+    const telefonoInput = document.getElementById('telefonoInput');
+    const fechaHoraInput = document.getElementById('fechaHoraInput');
+
+    if (!productoSelect.value) {
+        alert('Por favor selecciona un medicamento');
+        return;
+    }
+
+    if (!telefonoInput.value) {
+        alert('Por favor ingresa tu número de teléfono');
+        return;
+    }
+
+    const phoneRegex = /^591\d{8}$/;
+    if (!phoneRegex.test(telefonoInput.value)) {
+        alert('Por favor ingresa un número de teléfono válido (formato: 591XXXXXXXX)');
+        return;
+    }
+
+    if (!fechaHoraInput.value) {
+        alert('Por favor selecciona una fecha y hora para el recordatorio');
+        return;
+    }
+
+    agregarRecordatorio();
+    enviarRecordatorioWhatsApp(productoSelect.value, telefonoInput.value, fechaHoraInput.value);
+}
+
+// Función para enviar el recordatorio a WhatsApp
+function enviarRecordatorioWhatsApp(producto, telefono, fechaHora) {
+    const mensaje = `Recordatorio: Tomar el medicamento ${producto} a las ${new Date(fechaHora).toLocaleString()}`;
+    const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, '_blank'); // Abre el enlace en una nueva pestaña
+}
+
+    </script>
+</body>
+</html>

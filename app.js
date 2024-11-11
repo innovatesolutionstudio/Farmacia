@@ -74,6 +74,11 @@ const compras_pRouter = require("./papeleria/compras");
 const buscadorIARouter = require("./routes/buscador_ai");
 
 const coneccion = require("./database/db");
+const paginapedidos = require('./routes/paginapedidos '); // Ajusta el nombre del archivo de rutas si es necesario 
+
+
+app.use(paginapedidos); // Solo esta línea es necesaria
+
 
 //#region - rutas y llamados
 

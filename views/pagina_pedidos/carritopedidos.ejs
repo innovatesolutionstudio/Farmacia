@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+    /* Estilos CSS */
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        padding: 20px;
+        margin: 0;
+    }
+
+    .main-container {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .cart-container, .suggested-products {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 1);
+        padding: 30px;
+    }
+
+    h1, h2 {
+        font-size: 30px;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .cart-item {
+        display: grid;
+        grid-template-columns: 60px 1fr auto;
+        gap: 15px;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 5px solid #ddd;
+    }
+
+    .cart-item img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .cart-item-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .quantity-controls button {
+        background-color: #007acc;
+        color: #ffffff;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+    }
+
+    .remove-item {
+        background: none;
+        border: none;
+        color: #dc3545;
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    .subtotal {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .summary-box {
+        margin-top: 20px;
+        background-color: #f8f9fa;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .total {
+        font-weight: bold;
+        margin-top: 15px;
+        color: #333;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    button {
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .continue-shopping {
+        background-color: #28a745;
+        color: #ffffff;
+    }
+
+    .checkout {
+        background-color: #ffc107;
+        color: #000000;
+    }
+
+    .suggested-products {
+        margin-top: 30px;
+    }
+
+    .suggested-product {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+
+    .suggested-product img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    /* Estilos del header */
+    .top-header {
+        background: white;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+    }
+    .logo img {
+    height: 40px;
+}
+
+.top-header ul {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+}
+
+.top-header a {
+    text-decoration: none;
+    color: #333;
+}
+</style>
+<body>
+    <div class="top-header">
+        <a href="/pagina_pedidos/index_clientes/:idSucursal" class="logo">
+            <img src="/resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
+        </a>   
+        <ul>
+            <li><a href="/pagina_pedidos/index_clientes/:idSucursal" class="dropdown">Inicio</a></li>
+            <li><a href="/pagina_pedidos/productos/:idSucursal" class="dropdown">Tienda</a></li>
+            <li><a href="/pagina_pedidos/consultas" class="dropdown">Consultas</a></li>
+            <li><a href="/pagina_pedidos/consultas" class="dropdown">Compras</a></li>
+            <li><a href="#" class="dropdown">Recordatorio</a></li>
+        </ul>
+        <a href="/pagina_pedidos/carritopedidos" class="cart-icon">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">0</span>
+        </a>
+    </div>
+    <div class="main-container">
+        <div class="cart-container">
+            <h1>Mi Carrito</h1>
+            <div id="cartItems">
+                <!-- Los items del carrito se cargarán dinámicamente aquí -->
+            </div>
+
+            <div class="summary-box">
+                <h2>Resumen</h2>
+                <div id="cartSummary">
+                    <!-- Resumen del carrito -->
+                </div>
+                <div class="total" id="cartTotal">Subtotal: Bs 0.00</div>
+                <div class="action-buttons">
+                    <button class="continue-shopping" onclick="window.location.href='/pagina_pedidos/continuar_pedido'">Continuar pedido</button>
+                    <button class="checkout" onclick="window.location.href='/pagina_pedidos/productos/:idSucursal'">Seguir Comprando</button>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="suggested-products">
+            <h2>Productos sugeridos</h2>
+            <div class="suggested-product">
+                <img src="/path/to/vitamin-b12.png" alt="Vitamina B12">
+                <div>
+                    <h3>Vitamina B12</h3>
+                    <p>Bs 12.50</p>
+                </div>
+                <button onclick="agregarAlCarrito('Vitamina B12', 12.50, '/path/to/vitamin-b12.png')">+</button>
+            </div>
+            <div class="suggested-product">
+                <img src="/path/to/vitamin-d.png" alt="Vitamina D">
+                <div>
+                    <h3>Vitamina D</h3>
+                    <p>Bs 12.50</p>
+                </div>
+                <button onclick="agregarAlCarrito('Vitamina D', 12.50, '/path/to/vitamin-d.png')">+</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function cargarCarrito() {
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartItemsContainer = document.getElementById('cartItems');
+            const cartTotalElement = document.getElementById('cartTotal');
+            let total = 0;
+            
+            cartItemsContainer.innerHTML = '';
+            
+            cartItems.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.classList.add('cart-item');
+                itemElement.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <div class="cart-item-details">
+                        <div>
+                            <h3>${item.name}</h3>
+                            <p>Bs ${item.price.toFixed(2)}/Unidad</p>
+                        </div>
+                        <div class="quantity-controls">
+                            <button onclick="cambiarCantidad(${item.id}, -1)">-</button>
+                            <span>${item.quantity}</span>
+                            <button onclick="cambiarCantidad(${item.id}, 1)">+</button>
+                        </div>
+                        <div class="subtotal">Bs ${(item.price * item.quantity).toFixed(2)}</div>
+                        <button class="remove-item" onclick="eliminarItem(${item.id})">×</button>
+                    </div>
+                `;
+                cartItemsContainer.appendChild(itemElement);
+                total += item.price * item.quantity;
+            });
+            
+            cartTotalElement.textContent = `Subtotal: Bs ${total.toFixed(2)}`;
+        }
+
+        function agregarAlCarrito(name, price, image) {
+            let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            const existingItem = cartItems.find(item => item.name === name);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                const newItem = {
+                    id: Date.now(),
+                    name: name,
+                    price: price,
+                    quantity: 1,
+                    image: image
+                };
+                cartItems.push(newItem);
+            }
+
+            console.log('Producto agregado:', name);
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+            cargarCarrito();
+        }
+
+        function cambiarCantidad(id, cambio) {
+            let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            console.log('Items antes de cambiar cantidad:', cartItems);
+            const itemIndex = cartItems.findIndex(item => item.id === id);
+
+            if (itemIndex !== -1) {
+                cartItems[itemIndex].quantity += cambio;
+                // Verificar que la cantidad mínima sea 1
+                if (cartItems[itemIndex].quantity < 1) {
+                    cartItems[itemIndex].quantity = 1;
+                }
+                console.log('Items después de cambiar cantidad:', cartItems);
+                localStorage.setItem('cart', JSON.stringify(cartItems));
+                cargarCarrito();
+            }
+        }
+
+        function eliminarItem(id) {
+            let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            console.log('Items antes de eliminar:', cartItems);
+            cartItems = cartItems.filter(item => item.id !== id);
+            console.log('Items después de eliminar:', cartItems);
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+            cargarCarrito();
+        }
+
+        cargarCarrito();
+    </script>
+</body>
+</html>

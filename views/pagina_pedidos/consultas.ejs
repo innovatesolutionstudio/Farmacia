@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta Farmacéutica</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .top-header ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        .top-header ul li {
+            margin-right: 20px;
+        }
+
+        .top-header ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 1.1em;
+            padding: 5px 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .main-content {
+            margin-top: 80px;
+            padding: 20px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .welcome-section h1 {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .welcome-section p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .option-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .option-card h3 {
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .option-card p {
+            color: #666;
+            margin: 0;
+            font-size: 0.9em;
+        }
+
+        .consulta-button {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .consulta-button button {
+            background-color: #00a884;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .consulta-button button:hover {
+            background-color: #008f6f;
+        }
+
+        .cart-icon {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 3px 7px;
+            font-size: 0.9em;
+        }
+
+        .profile-icon {
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-header">
+        <a href="/pagina_pedidos/index_clientes/:idSucursal" class="logo">
+            <img src="/resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
+        </a>      
+        <ul>
+            <li><a href="/pagina_pedidos/index_clientes/:idSucursal" class="dropdown">Inicio</a></li>
+            <li><a href="/pagina_pedidos/productos/:idSucursal" class="dropdown">Tienda</a></li>
+            <li><a href="/pagina_pedidos/consultas" class="dropdown">Consultas</a></li>
+            <li><a href="/pagina_pedidos/miscompras" class="dropdown">Compras</a></li>
+            <li><a href="/pagina_pedidos/recordatorio" class="dropdown">Recordatorio</a></li>
+        </ul>
+        <a href="#" class="cart-icon">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">0</span>
+        </a>
+        <a href="#" class="profile-icon">
+            <i class="fas fa-user"></i>
+            <span class="profile-name">Perfil</span>
+        </a>
+    </div>
+
+    <div class="main-content">
+        <div class="welcome-section">
+            <h1>¿En qué puedo ayudarte hoy?</h1>
+            <p>¡Hola! 👋 Soy tu asistente virtual de la Farmacia 25 de Julio.<br>
+            Estoy aquí para ayudarte a encontrar el mejor producto o medicamento según tus síntomas.</p>
+        </div>
+
+        <div class="options-grid">
+            <div class="option-card">
+                <h3>Necesito ayuda con un síntoma específico</h3>
+                <p>Ingresá tus síntomas.</p>
+            </div>
+            <div class="option-card">
+                <h3>Quiero saber qué puedo tomar para un malestar</h3>
+                <p>Basado en signos específicos.</p>
+            </div>
+            <div class="option-card">
+                <h3>Opciones de productos para el alivio general</h3>
+                <p>Recomendaciones según productos.</p>
+            </div>
+            <div class="option-card">
+                <h3>Necesito asesoría sobre medicamentos</h3>
+                <p>Referencias para uso responsable.</p>
+            </div>
+        </div>
+
+        <div class="consulta-button">
+            <button onclick="realizarConsulta()">Realiza tu consulta</button>
+        </div>
+    </div>
+
+    <script>
+        function realizarConsulta() {
+            // Aquí puedes agregar la lógica para manejar la consulta
+            console.log('Iniciando consulta...');
+        }
+    </script>
+</body>
+</html>
+
+

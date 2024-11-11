@@ -35,7 +35,7 @@ router.post('/auth', async (req, res) => {
         if (!userData) {
             return res.render('login', {
                 alert: true,
-                alertTitle: "Error",
+                alertTitle: "Error  ",
                 alertMessage: "Usuario o contraseña incorrectos",
                 alertIcon: "error",
                 showConfirmButton: true,
