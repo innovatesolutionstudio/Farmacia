@@ -35,9 +35,9 @@
             <input type="hidden" name="opcion" value="editar">
 
             <!-- Imagen del Producto -->
-            <div class="container-img">
-                <img id="uploadedImage"
-                    src="<%= producto.Fotografia ? `/fotos/img_productos/${producto.Fotografia}` : '/fotos/img_productos/default.png' %>">
+            <div class="profile-pic-product">
+                <img class="img-product" id="uploadedImage"
+                    src="<%= producto.Fotografia ? `/fotos/img_productos/${producto.Fotografia}` : '/fotos/img_productos/default.jpg' %>">
             </div>
             <p id="fileName" style="color: red;">No se ha seleccionado ningún
                 archivo para hacer el cambio, solo archivos .jpg</p>
@@ -123,64 +123,77 @@
                         Secundarios</label>
                     <textarea name="Efectos_Secundarios"
                         id="efectos_secundarios"
-                        class="form-control"><%= producto.Efectos_Secundarios %></textarea>
+                        class="form-control-description"><%= producto.Efectos_Secundarios %></textarea>
                 </div>
 
                 <div class="form-group">
                     <label class="text" for="precauciones">Precauciones</label>
                     <textarea name="Precauciones" id="precauciones"
-                        class="form-control"><%= producto.Precauciones %></textarea>
+                        class="form-control-description"><%= producto.Precauciones %></textarea>
                 </div>
                 <div class="form-group">
                     <label class="text" for="descripcion">Descripción</label>
                     <textarea name="Descripcion" id="descripcion"
-                        class="form-control" placeholder="Descripción"
+                        class="form-control-description"
+                        placeholder="Descripción"
                         required><%= producto.Descripcion %></textarea>
                 </div>
                 <div class="form-group">
                     <label class="text" for="dosis">Dosis del
                         Medicamento</label>
                     <textarea name="Dosis_Medicacmento" id="dosis"
-                        class="form-control"><%= producto.Dosis_Medicacmento %></textarea>
+                        class="form-control-description"><%= producto.Dosis_Medicacmento %></textarea>
                 </div>
                 <div class="form-group">
                     <label class="text" for="indicaciones">Indicaciones</label>
                     <textarea name="Indicaciones" id="indicaciones"
-                        class="form-control"><%= producto.Indicaciones %></textarea>
+                        class="form-control-description"><%= producto.Indicaciones %></textarea>
                 </div>
 
                 <div class="form-group">
                     <label class="text"
                         for="generaliadades">Generalidades</label>
                     <textarea name="Generaliadades" id="generaliadades"
-                        class="form-control"><%= producto.Generaliadades %></textarea>
+                        class="form-control-description"><%= producto.Generaliadades %></textarea>
                 </div>
-
-                <button type="submit">Guardar Cambios</button>
+            </div>
+            <div class="container">
+                <br>
+                <button class="btn-primary" style="width: 100%;"
+                    type="submit">Guardar
+                    Cambios</button>
             </div>
         </form>
         <script>
             document.getElementById('formProducto').onsubmit = async (e) => {
-              e.preventDefault();
-              const formData = new FormData(e.target);
-      
-              try {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            try {
                 const response = await fetch(`/EditProductos/<%= producto.ID_Producto %>`, {
-                  method: 'POST',
-                  body: formData
+                    method: 'POST',
+                    body: formData
                 });
                 const data = await response.json();
-      
+
                 if (data.success) {
-                  Swal.fire('¡Éxito!', data.message, 'success');
+                    Swal.fire({
+                        title: '¡Éxito!',
+                        text: data.message,
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    }).then(() => {
+                        window.location.href = '/productos'; // Redirige a la página de productos
+                    });
                 } else {
-                  Swal.fire('Error', data.message, 'error');
+                    Swal.fire('Error', data.message, 'error');
                 }
-              } catch (error) {
+            } catch (error) {
                 console.error('Error al enviar datos:', error);
-              }
-            };
-          </script>
+            }
+        };
+
+        </script>
 
         <script>
         // Cargar datos de los select desde las APIs

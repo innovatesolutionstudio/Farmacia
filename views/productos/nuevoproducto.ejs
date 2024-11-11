@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+            crossorigin="anonymous" />
+        <link rel="stylesheet" href="/resources/css/Formulario.css" />
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <title>Formulario de Creación de Producto</title>
+    </head>
+    <body>
+
+        <!-- Encabezado -->
+        <div class="header-container">
+            <h1>Gestión de Productos</h1>
+            <h2>Formulario de Creación de Producto</h2>
+        </div>
+
+        <form id="formProducto" action="/EditProductos" method="POST"
+            enctype="multipart/form-data">
+            <input type="hidden" name="opcion" value="crear">
+            <!-- Campo para la Imagen -->
+            <div class="profile-pic-product">
+                <img class="img-product" id="uploadedImage"
+                    src="/fotos/img_productos/default.jpg"
+                    alt="Agrega una Imagen">
+            </div>
+            <p id="fileName" style="color: red;">No se ha seleccionado ningún
+                archivo para hacer el cambio, Solo se puede seleccionar archivos
+                .jpg</p>
+            <input type="file" name="fotografia" id="fileInput"
+                style="display:none;" accept=".jpg,image/jpeg" required>
+            <input type="hidden" name="fotografia" id="fotografiaNombre"
+                value>
+            <button type="button" id="uploadButton"
+                onclick="document.getElementById('fileInput').click();">Agregar
+                Fotografía</button>
+
+            <!-- Campos de Producto -->
+            <div class="container mt-3">
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" name="Nombre" id="nombre"
+                        class="form-control" required
+                        placeholder="Nombre del producto"
+                        minlength="2" maxlength="50">
+                </div>
+
+                <div class="form-group">
+                    <label for="codigo">Código</label>
+                    <input type="text" name="Codigo" id="codigo"
+                        class="form-control" readonly
+                        placeholder="Codigo automatico">
+                </div>
+
+                <div class="form-group">
+                    <label for="precio">Precio Unitario</label>
+                    <input type="number" name="Precio_Unitario" id="precio"
+                        class="form-control"
+                        placeholder="Precio Unitario en Bs."
+                        min="1" max="1000" step="0.01" required>
+                </div>
+
+                <!-- Selects Dinámicos para Datos Relacionados -->
+                <div class="form-group">
+                    <label for="categoria">Categoría</label>
+                    <select name="ID_Categoria" id="categoria"
+                        class="form-select" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="proveedor">Proveedor</label>
+                    <select name="ID_Proveedor" id="proveedor"
+                        class="form-select" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="area_producto">Área de Producto</label>
+                    <select name="ID_Area_Producto" id="area_producto"
+                        class="form-select" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="riesgo">Riesgo Embarazo</label>
+                    <input type="text" name="Riesgo_Embarazo" id="riesgo"
+                        placeholder="Riesgo de Embarazo" minlength="1"
+                        maxlength="3"
+                        class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="tipo_paciente">Tipo de Paciente</label>
+                    <select name="ID_Tipo_Paciente" id="tipo_paciente"
+                        class="form-select" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tipo_administracion">Tipo de
+                        Administración</label>
+                    <select name="ID_Tipo_vias_administracion"
+                        id="tipo_administracion" class="form-select"
+                        required></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="unidad_venta">Unidad de Venta</label>
+                    <select name="ID_Unidad_Venta" id="unidad_venta"
+                        class="form-select" required></select>
+                </div>
+            </div>
+
+            <h2>Descripciones</h2>
+
+            <div class="container">
+                <div class="form-group">
+                    <label for="indicaciones">Indicaciones</label>
+                    <textarea name="Indicaciones" id="indicaciones"
+                        placeholder="Indicaciones sobre el Producto" required
+                        minlength="1" maxlength="300"
+                        class="form-control-description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="dosis">Dosis del Medicamento</label>
+                    <textarea name="Dosis_Medicacmento" id="dosis"
+                        placeholder="Dosis del Producto" required minlength="1"
+                        maxlength="300"
+                        class="form-control-description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <textarea name="Descripcion" id="descripcion"
+                        class="form-control-description"
+                        placeholder="Descripción del Producto"
+                        minlength="1" maxlength="300"
+                        required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="efectos_secundarios">Efectos Secundarios</label>
+                    <textarea name="Efectos_Secundarios"
+                        id="efectos_secundarios"
+                        placeholder="Efectos Secundarios del Producto" required
+                        minlength="1" maxlength="300"
+                        class="form-control-description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="precauciones">Precauciones</label>
+                    <textarea name="Precauciones" id="precauciones"
+                        placeholder="Precauciones sobre el Producto" required
+                        minlength="1" maxlength="300"
+                        class="form-control-description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="generaliadades">Generalidades</label>
+                    <textarea name="Generaliadades" id="generaliadades"
+                        placeholder="Generialidades sobre el Producto" required
+                        minlength="1" maxlength="300"
+                        class="form-control-description"></textarea>
+                </div>
+
+            </div>
+            <div class="container">
+                <br>
+                <button type="submit" style="width: 100%;"
+                    class="btn-primary">Guardar</button>
+            </div>
+        </form>
+
+        <script>
+        const fileInput = document.getElementById('fileInput');
+        const uploadButton = document.getElementById('uploadButton');
+        const uploadedImage = document.getElementById('uploadedImage');
+        const fileNameDisplay = document.getElementById('fileName');
+    
+        uploadButton.addEventListener('click', () => {
+            fileInput.click();
+        });
+    
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    uploadedImage.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+    
+                // Mostrar el nombre del archivo
+                fileNameDisplay.textContent = `Archivo seleccionado: ${file.name}`;
+            } else {
+                fileNameDisplay.textContent = 'No se ha seleccionado ningún archivo';
+            }
+        });
+        </script>
+        <script>
+            document.getElementById('fileInput').addEventListener('change', function() {
+                var fileInput = document.getElementById('fileInput');
+                var file = fileInput.files[0];
+                var fileName = file.name;
+                var fileExtension = fileName.split('.').pop().toLowerCase();
+                
+                // Solo permitir archivos .jpg
+                if (fileExtension !== 'jpg') {
+                    alert('Solo se permiten archivos con formato .jpg');
+                    fileInput.value = ''; // Limpiar el input
+                    document.getElementById('fileName').textContent = 'No se ha seleccionado ningún archivo';
+                    return;
+                }
+        
+                // Si es válido, mostrar el nombre del archivo
+                document.getElementById('fileName').textContent = fileName;
+            });
+        
+            // Mostrar el campo de selección de archivo cuando se hace clic en el botón
+            document.getElementById('uploadButton').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('fileInput').click();
+            });
+        </script>
+        <script>
+            // Generar código automáticamente
+            document.getElementById('nombre').addEventListener('input', function() {
+                const nombre = this.value.trim().toUpperCase().substring(0, 3);
+                const numeroAleatorio = Math.floor(Math.random() * 1000) + 20000;
+                document.getElementById('codigo').value = `${nombre}${numeroAleatorio}`;
+            });
+    
+            // Cargar datos en los selects
+            async function cargarSelect(url, selectId, defaultText) {
+                const response = await fetch(url);
+                const data = await response.json();
+                const select = document.getElementById(selectId);
+                select.innerHTML = `<option value="">${defaultText}</option>`;
+                data.forEach(item => {
+                    const option = document.createElement("option");
+                    option.value = item.id;
+                    option.textContent = item.nombre;
+                    select.appendChild(option);
+                });
+            }
+    
+            document.addEventListener("DOMContentLoaded", () => {
+                cargarSelect('/api/categorias', 'categoria', "- Selecciona Categoría -");
+                cargarSelect('/api/proveedores', 'proveedor', "- Selecciona Proveedor -");
+                cargarSelect('/api/area_producto', 'area_producto', "- Selecciona Área -");
+                cargarSelect('/api/tipo_paciente', 'tipo_paciente', "- Selecciona Tipo de Paciente -");
+                cargarSelect('/api/tipo_administracion', 'tipo_administracion', "- Selecciona Tipo de Administración -");
+                cargarSelect('/api/unidad_venta', 'unidad_venta', "- Selecciona Unidad de Venta -");
+            });
+    
+            // Enviar datos del formulario
+            document.getElementById('formProducto').onsubmit = async function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+    
+                try {
+                    const response = await fetch('/EditProductos', {
+                        method: 'POST',
+                        body: formData
+                    });
+    
+                    const data = await response.json();
+    
+                    if (data.success) {
+                    Swal.fire('¡Éxito!', data.message, 'success').then(() => {
+                        window.location.href = '/productos';
+                    });
+                    } else {
+                        Swal.fire('Error', data.message || 'No se pudo crear el producto.', 'error');
+                    }
+
+                } catch (error) {
+                    console.error('Error al enviar datos:', error);
+                    Swal.fire('Error', 'Hubo un problema al crear el producto.', 'error');
+                }
+            };
+        </script>
+    </body>
+</html>
