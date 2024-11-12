@@ -313,25 +313,28 @@ router.get("/EditProveedor/:id", async (req, res) => {
     res.render("./paginas/logout");
   }
 });
+
 router.post("/proveedores/:id?", function (req, res) {
   const id = req.params.id || req.body.ID; // Obtener el ID del proveedor, si se proporciona
   const opcion = req.body.opcion; // Obtener la opción (crear, editar, eliminar)
 
+  console.log(req.body);
   switch (opcion) {
     case "crear":
       const nuevoProveedor = {
-        Nombre: req.body.nombre,
-        Dirección: req.body.direccion,
-        Nit: req.body.nit,
-        Nombre_encargado: req.body.nombre_encargado,
-        Teléfono: req.body.telefono,
-        Telefono_referencia: req.body.telefono_referencia,
-        Email: req.body.email,
-        ID_Pais: req.body.pais,
-        ID_Ciudad: req.body.ciudad,
-        ID_Departamento: req.body.departamento,
+        Nombre: req.body.Nombre,
+        Dirección: req.body.Dirección,
+        Nit: req.body.Nit,
+        Nombre_encargado: req.body.Nombre_encargado,
+        Teléfono: req.body.Teléfono,
+        Telefono_referencia: req.body.Telefono_referencia,
+        Email: req.body.Email,
+        ID_Pais: req.body.ID_Pais,
+        ID_Ciudad: req.body.ID_Ciudad,
+        ID_Departamento: req.body.ID_Departamento,
         Figura: 1,
       };
+      console.log(nuevoProveedor);
       coneccion.query(
         "INSERT INTO proveedores SET ?",
         nuevoProveedor,
