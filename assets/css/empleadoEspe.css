@@ -290,6 +290,12 @@ body {
   margin: 0;
   color: #363636;
 }
+.data-group input {
+  margin: 0;
+  color: #363636;
+  height: 45px;
+  font-size: 20px;
+}
 
 .data-group strong {
   font-size: 30px;

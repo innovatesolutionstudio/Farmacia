@@ -104,6 +104,18 @@ body {
   text-decoration: none; /* Quita la subrayado */
 }
 
+.btn-conft {
+  background-color: #006666; /* Color de fondo rojo */
+  height: 70px;
+  width: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none; /* Quita la subrayado */
+}
+.btn-conft:hover {
+  background-color: #00897b; /* Color de fondo rojo */
+}
 .btn-danger::before {
   content: "+"; /* Agrega el ícono '+' dentro del botón */
   font-size: 24px;

@@ -1,52 +1,58 @@
 <!DOCTYPE html>
 <html lang="es">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-        crossorigin="anonymous" />
-    <link rel="stylesheet" href="/resources/css/empleadoEspe.css" />
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+            crossorigin="anonymous" />
+        <link rel="stylesheet" href="/resources/css/empleadoEspe.css" />
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <title>recursos - humanos</title>
-</head>
+        <title>recursos - humanos</title>
+    </head>
 
-<body>
+    <body>
 
-    <!-- Encabezado -->
-    <div class="header-container">
-        <div class="breadcrumb">
-            <a href="/empleados" class="reporte-link">
-                <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Recursos Humanos</h1>
-            </a>
-            <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
-            <h1 style="font-weight: bold;">Empleado</h1>
+        <!-- Encabezado -->
+        <div class="header-container">
+            <div class="breadcrumb">
+                <a href="/empleados" class="reporte-link">
+                    <h1
+                        style="color: #858B92; font-weight: bold; margin-right: 5px;">Recursos
+                        Humanos</h1>
+                </a>
+                <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+                <h1 style="font-weight: bold;">Empleado</h1>
+            </div>
+            <!-- Párrafo debajo del encabezado -->
+            <p class="subtext">Ver mas sobre el responsable.</p>
         </div>
-        <!-- Párrafo debajo del encabezado -->
-        <p class="subtext">Ver mas sobre el responsable.</p>
-    </div>
 
-    <% results.forEach(function(empleado) { %>
+        <% results.forEach(function(empleado) { %>
 
         <div class="container2">
-    
+
             <!-- Primera Columna: Información Personal -->
             <div class="card1">
-    
+
                 <div class="header-card1">
                     <span>Información Personal</span>
                 </div>
-        
+
                 <div class="content-card1">
                     <div class="profile-pic">
-                        <img class="img-perfil" src="/fotos/img_empleados/<%= empleado.Fotografia%>" alt="">
+                        <img class="img-perfil"
+                            src="/fotos/img_empleados/<%= empleado.Fotografia%>"
+                            alt>
                     </div>
                     <h2><%= empleado.Nombre %> <%= empleado.Apellido %></h2>
                     <p><%= empleado.Email %></p>
-        
+
                     <div class="info">
                         <div class="info-item">
                             <p><strong><%= empleado.ID_Empleado %></strong></p>
@@ -57,10 +63,12 @@
                             <p>CI</p>
                         </div>
                     </div>
-        
+
                     <div class="actions">
-                        <a href="/EditEmpleados/<%= empleado.ID_Empleado %>" class="btn btn-edit">Editar</a>
-                        <a href="#" class="btn btn-delete" onclick="eliminarEmpleado('<%= empleado.ID_Empleado %>')">Eliminar</a>
+                        <a href="/EditEmpleados/<%= empleado.ID_Empleado %>"
+                            class="btn btn-edit">Editar</a>
+                        <a href="#" class="btn btn-delete"
+                            onclick="eliminarEmpleado('<%= empleado.ID_Empleado %>')">Eliminar</a>
 
                     </div>
                 </div>
@@ -72,7 +80,7 @@
                     <div class="header-card1">
                         <span>Datos</span>
                     </div>
-        
+
                     <div class="content-data">
                         <div class="data-group">
                             <p><strong><%= empleado.Genero %></strong></p>
@@ -83,11 +91,13 @@
                             <p>Teléfono</p>
                         </div>
                         <div class="data-group">
-                            <p><strong><%= empleado.Telefono_referencia %></strong></p>
+                            <p><strong><%= empleado.Telefono_referencia
+                                    %></strong></p>
                             <p>Teléfono Referencia</p>
                         </div>
                         <div class="data-group">
-                            <p><strong><%= empleado.Fecha_Nacimiento %></strong></p>
+                            <p><strong><%= empleado.Fecha_Nacimiento
+                                    %></strong></p>
                             <p>Fecha Nacimiento</p>
                         </div>
                         <div class="data-group">
@@ -100,13 +110,13 @@
                         </div>
                     </div>
                 </div>
-        
+
                 <!-- Tarjeta de Datos Administrativos -->
                 <div class="card-data2">
                     <div class="header-card1">
                         <span>Datos Administrativos</span>
                     </div>
-        
+
                     <div class="content-data2">
                         <div class="data-group">
                             <p><strong><%= empleado.Rol %></strong></p>
@@ -126,38 +136,61 @@
                         </div>
                     </div>
                 </div>
-        
+
                 <!-- Tarjeta de Datos Adicionales -->
                 <div class="card-data3">
                     <div class="header-card1">
                         <span>Datos Adicionales</span>
                     </div>
-        
+
                     <div class="content-data">
                         <div class="data-group">
-                            <p><strong><%= empleado.Contrasena %></strong></p>
+                            <div style="position: relative;">
+                                <input type="password" id="contrasena"
+                                    value="<%= empleado.Contrasena %>" readonly
+                                    style="border: none; background: none; font-size: inherit; font-weight: bold; padding: 0; margin: 0; width: auto;" />
+                                <i class="fa fa-eye-slash"
+                                    onclick="mostrarPassword()"
+                                    id="show_password"
+                                    style="cursor: pointer; font-size: 20px; margin-left: 10px;"></i>
+                            </div>
                             <p>Contraseña</p>
                         </div>
+
                         <div class="data-group">
-                            <p><strong><%= empleado.Grado %></strong></p>
+                            <p><strong>
+                                    <% if (empleado.Grado == 1) { %>Intentos
+                                    fallidos 1
+                                    <% } else if (empleado.Grado == 2) {
+                                    %>Intentos fallidos 2
+                                    <% } else if (empleado.Grado == 3) {
+                                    %>Intentos fallidos 3
+                                    <% } else if (empleado.Grado == 4) {
+                                    %>Cuenta bloqueada
+                                    <% } else { %>Desconocido<% } %>
+                                </strong></p>
                             <p>Grado</p>
                         </div>
+
                         <div class="data-group">
-                            <p><strong><%= empleado.Estado %></strong></p>
+                            <p><strong>
+                                    <% if (empleado.Estado == 1) { %>Activo
+                                    <% } else if (empleado.Estado == 2) {
+                                    %>Bloqueado
+                                    <% } else { %>Desconocido<% } %>
+                                </strong></p>
                             <p>Estado</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-    <% }); %>
-    
-</body>
 
+        <% }); %>
 
+    </body>
 
-<script>
+    <script>
     $(document).ready(function () {
       
       let url2 = "/EditEmpleados/";
@@ -185,7 +218,23 @@
     obtenerOpciones('/api/roles', '#ID_Rol');
   </script>
 
-<script>
+    <script type="text/javascript">
+    function mostrarPassword() {
+        var contrasenaElemento = document.getElementById("contrasena");
+        var icono = document.getElementById("show_password");
+        
+        if (contrasenaElemento.type === "password") {
+            contrasenaElemento.type = "text"; // Muestra la contraseña
+            icono.classList.remove('fa-eye-slash');
+            icono.classList.add('fa-eye');
+        } else {
+            contrasenaElemento.type = "password"; // Oculta la contraseña
+            icono.classList.remove('fa-eye');
+            icono.classList.add('fa-eye-slash');
+        }
+    }
+</script>
+    <script>
     function eliminarEmpleado(idEmpleado) {
         Swal.fire({
             title: '¿Estás seguro?',
