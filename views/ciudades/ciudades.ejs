@@ -40,7 +40,7 @@
         </select>
 
         <!-- Botón Añadir Nuevo con SweetAlert2 -->
-        <a type="submit" href="#" class="btn btnCrear btn-danger"
+        <a type="submit" href="#" class="btn btnCrear btn-conft"
           style="font-size: 20px;">Añadir Nuevo</a>
       </div>
 
@@ -250,56 +250,63 @@
     // Reiniciar el select después de la acción
     $(this).val('Selecciona una acción');
 });
-
 $(".btnCrear").click(function () {
-    Swal.fire({
-        title: 'Crear Ciudad',
-        html: `
-            <div class="form-container">
-                <input type="text" id="ID_Ciudad" hidden />
-                
-                <label for="Nombre" class="col-form-label">Nombre</label>
-                <input type="text" id="Nombre" class="form-input swal2-input" 
-                       maxlength="50" required oninput="this.value = this.value.trimStart()" placeholder="Ingrese el nombre de la ciudad">
-            </div>
-        `,
-        showCancelButton: true,
-        confirmButtonText: 'Guardar',
-        cancelButtonText: 'Cancelar',
+  Swal.fire({
+    title: 'Crear Ciudad',
+    html: `
+      <div class="form-container">
+        <input type="text" id="ID_Ciudad" hidden />
+        
+        <label for="Nombre" class="col-form-label">Nombre</label>
+        <input type="text" id="Nombre" class="form-input swal2-input" 
+               maxlength="50" required oninput="this.value = this.value.trimStart()" placeholder="Ingrese el nombre de la ciudad">
+      </div>
+    `,
+    showCancelButton: true,
+    confirmButtonText: 'Guardar',
+    cancelButtonText: 'Cancelar',
 
-        preConfirm: () => {
-            const nombre = Swal.getPopup().querySelector('#Nombre').value.trim();
+    preConfirm: () => {
+      const nombre = Swal.getPopup().querySelector('#Nombre').value.trim();
 
-            // Validación del campo Nombre
-            if (!nombre) {
-                Swal.showValidationMessage('Por favor, ingrese el nombre');
-                return false;
-            }
+      // Validación del campo Nombre
+      if (!nombre) {
+        Swal.showValidationMessage('Por favor, ingrese el nombre');
+        return false;
+      }
 
-            // Verificar que el nombre solo contenga letras y espacios
-            if (!/^[A-Za-z\s]+$/.test(nombre)) {
-                Swal.showValidationMessage('El nombre solo debe contener letras y espacios');
-                return false;
-            }
+      // Verificar que el nombre solo contenga letras y espacios
+      if (!/^[A-Za-z\s]+$/.test(nombre)) {
+        Swal.showValidationMessage('El nombre solo debe contener letras y espacios');
+        return false;
+      }
 
-            return { Nombre: nombre };
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-          const formData = { Nombre: result.value.Nombre, opcion: 'crear' };
-          $.ajax({
-              type: 'POST',
-              url: url,
-              data: formData,
-              success: function () {
-                   Swal.fire('¡Guardado!', 'Ciudad creada con éxito', 'success').then(() => {
-                      window.location.reload(); // Recarga la página después de guardar
-              });
-              }
+      return { Nombre: nombre };
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const formData = { Nombre: result.value.Nombre, opcion: 'crear' };
+      $.ajax({
+        type: 'POST',
+        url: url,
+        data: formData,
+        success: function () {
+          Swal.fire('¡Guardado!', 'Ciudad creada con éxito', 'success').then(() => {
+            window.location.reload(); // Recarga la página después de guardar
           });
+        },
+        error: function (xhr) {
+          if (xhr.status === 400) {
+            const response = JSON.parse(xhr.responseText);
+            Swal.fire('Error', response.message, 'error');
+          } else {
+            Swal.fire('Error', 'Ocurrió un error al crear la ciudad', 'error');
+          }
         }
-    });
-  })
+      });
+    }
+  });
+});
 });
   </script>
 

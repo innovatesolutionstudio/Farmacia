@@ -55,36 +55,84 @@ router.post("/ciudades/:id?", function (req, res) {
         Nombre: req.body.Nombre,
         Figura: 1,
       };
+
+      // Verificar si la ciudad ya existe
       coneccion.query(
-        "INSERT INTO ciudades SET ?",
-        nuevaCiudad,
-        (error, result) => {
+        "SELECT COUNT(*) AS count FROM ciudades WHERE Nombre = ?",
+        [nuevaCiudad.Nombre],
+        (error, results) => {
           if (error) {
-            console.error("Error al crear una nueva ciudad:", error);
-            res.status(500).send("Error al crear una nueva ciudad");
+            console.error(
+              "Error al verificar la existencia de la ciudad:",
+              error
+            );
+            return res
+              .status(500)
+              .send("Error al verificar la existencia de la ciudad");
+          } else if (results[0].count > 0) {
+            return res
+              .status(400)
+              .json({ message: "El nombre de la ciudad ya existe" });
           } else {
-            res.send("Ciudad creada correctamente");
+            // Insertar la nueva ciudad si no existe
+            coneccion.query(
+              "INSERT INTO ciudades SET ?",
+              nuevaCiudad,
+              (error, result) => {
+                if (error) {
+                  console.error("Error al crear una nueva ciudad:", error);
+                  res.status(500).send("Error al crear una nueva ciudad");
+                } else {
+                  res.send("Ciudad creada correctamente");
+                }
+              }
+            );
           }
         }
       );
       break;
+
     case "editar":
       const ciudadEditada = {
         Nombre: req.body.Nombre, // Obtener el nuevo nombre de la ciudad del cuerpo de la solicitud
       };
+
+      // Verificar si el nuevo nombre ya existe en otra ciudad
       coneccion.query(
-        "UPDATE ciudades SET ? WHERE ID_Ciudad = ?",
-        [ciudadEditada, id],
-        (error, result) => {
+        "SELECT COUNT(*) AS count FROM ciudades WHERE Nombre = ? AND ID_Ciudad != ?",
+        [ciudadEditada.Nombre, id],
+        (error, results) => {
           if (error) {
-            console.error("Error al editar la ciudad:", error);
-            res.status(500).send("Error al editar la ciudad");
+            console.error(
+              "Error al verificar la existencia de la ciudad:",
+              error
+            );
+            return res
+              .status(500)
+              .send("Error al verificar la existencia de la ciudad");
+          } else if (results[0].count > 0) {
+            return res
+              .status(400)
+              .json({ message: "El nombre de la ciudad ya existe" });
           } else {
-            res.send("Ciudad editada correctamente");
+            // Actualizar la ciudad si el nombre no está en uso por otra ciudad
+            coneccion.query(
+              "UPDATE ciudades SET ? WHERE ID_Ciudad = ?",
+              [ciudadEditada, id],
+              (error, result) => {
+                if (error) {
+                  console.error("Error al editar la ciudad:", error);
+                  res.status(500).send("Error al editar la ciudad");
+                } else {
+                  res.send("Ciudad editada correctamente");
+                }
+              }
+            );
           }
         }
       );
       break;
+
     case "eliminar":
       coneccion.query(
         "UPDATE ciudades SET Figura = 2 WHERE ID_Ciudad = ?",
@@ -99,20 +147,22 @@ router.post("/ciudades/:id?", function (req, res) {
         }
       );
       break;
+
     case "Restaurar":
       coneccion.query(
         "UPDATE ciudades SET Figura = 1 WHERE ID_Ciudad = ?",
         id,
         (error, result) => {
           if (error) {
-            console.error("Error al eliminar la ciudad:", error);
-            res.status(500).send("Error al eliminar la ciudad");
+            console.error("Error al restaurar la ciudad:", error);
+            res.status(500).send("Error al restaurar la ciudad");
           } else {
-            res.send("Ciudad eliminada correctamente");
+            res.send("Ciudad restaurada correctamente");
           }
         }
       );
       break;
+
     default:
       res.status(400).send("Opción no válida");
       break;

@@ -58,8 +58,6 @@ router.get("/Papeleria_departamentos", function (req, res) {
     res.render("./paginas/logout");
   }
 });
-
-// Ruta para gestionar la creación, edición y eliminación de departamentos
 router.post("/departamentos/:id?", function (req, res) {
   const id = req.params.id; // Obtener el ID del departamento, si se proporciona
   const opcion = req.body.opcion; // Obtener la opción (crear, editar, eliminar)
@@ -68,38 +66,86 @@ router.post("/departamentos/:id?", function (req, res) {
     case "crear":
       const nuevoDepartamento = {
         Nombre: req.body.Nombre,
-        Figura: 1, // Obtener el nombre del departamento del cuerpo de la solicitud
+        Figura: 1,
       };
+
+      // Verificar si el departamento ya existe
       connection.query(
-        "INSERT INTO departamentos SET ?",
-        nuevoDepartamento,
-        (error, result) => {
+        "SELECT COUNT(*) AS count FROM departamentos WHERE Nombre = ?",
+        [nuevoDepartamento.Nombre],
+        (error, results) => {
           if (error) {
-            console.error("Error al crear un nuevo departamento:", error);
-            res.status(500).send("Error al crear un nuevo departamento");
+            console.error(
+              "Error al verificar la existencia del departamento:",
+              error
+            );
+            return res
+              .status(500)
+              .send("Error al verificar la existencia del departamento");
+          } else if (results[0].count > 0) {
+            return res
+              .status(400)
+              .json({ message: "El nombre del departamento ya existe" });
           } else {
-            res.send("Departamento creado correctamente");
+            // Insertar el nuevo departamento si no existe
+            connection.query(
+              "INSERT INTO departamentos SET ?",
+              nuevoDepartamento,
+              (error, result) => {
+                if (error) {
+                  console.error("Error al crear un nuevo departamento:", error);
+                  res.status(500).send("Error al crear un nuevo departamento");
+                } else {
+                  res.send("Departamento creado correctamente");
+                }
+              }
+            );
           }
         }
       );
       break;
+
     case "editar":
       const departamentoEditado = {
-        Nombre: req.body.Nombre, // Obtener el nuevo nombre del departamento del cuerpo de la solicitud
+        Nombre: req.body.Nombre,
       };
+
+      // Verificar si el nuevo nombre ya existe en otro departamento
       connection.query(
-        "UPDATE departamentos SET ? WHERE ID_Departamento = ?",
-        [departamentoEditado, id],
-        (error, result) => {
+        "SELECT COUNT(*) AS count FROM departamentos WHERE Nombre = ? AND ID_Departamento != ?",
+        [departamentoEditado.Nombre, id],
+        (error, results) => {
           if (error) {
-            console.error("Error al editar el departamento:", error);
-            res.status(500).send("Error al editar el departamento");
+            console.error(
+              "Error al verificar la existencia del departamento:",
+              error
+            );
+            return res
+              .status(500)
+              .send("Error al verificar la existencia del departamento");
+          } else if (results[0].count > 0) {
+            return res
+              .status(400)
+              .json({ message: "El nombre del departamento ya existe" });
           } else {
-            res.send("Departamento editado correctamente");
+            // Actualizar el departamento si el nombre no está en uso por otro departamento
+            connection.query(
+              "UPDATE departamentos SET ? WHERE ID_Departamento = ?",
+              [departamentoEditado, id],
+              (error, result) => {
+                if (error) {
+                  console.error("Error al editar el departamento:", error);
+                  res.status(500).send("Error al editar el departamento");
+                } else {
+                  res.send("Departamento editado correctamente");
+                }
+              }
+            );
           }
         }
       );
       break;
+
     case "eliminar":
       connection.query(
         "UPDATE departamentos SET Figura = 2 WHERE ID_Departamento = ?",
@@ -114,16 +160,17 @@ router.post("/departamentos/:id?", function (req, res) {
         }
       );
       break;
+
     case "restaurar":
       connection.query(
         "UPDATE departamentos SET Figura = 1 WHERE ID_Departamento = ?",
         id,
         (error, result) => {
           if (error) {
-            console.error("Error al eliminar el departamento:", error);
-            res.status(500).send("Error al eliminar el departamento");
+            console.error("Error al restaurar el departamento:", error);
+            res.status(500).send("Error al restaurar el departamento");
           } else {
-            res.send("Departamento eliminado correctamente");
+            res.send("Departamento restaurado correctamente");
           }
         }
       );

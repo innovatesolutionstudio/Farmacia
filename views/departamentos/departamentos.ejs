@@ -19,10 +19,11 @@
         <!-- Encabezado -->
         <div class="header-container">
             <div class="breadcrumb">
-             
+
                 <a href="/empleados" class="reporte-link ">
                     <h1
-                        style="color: #858B92; font-weight: bold; margin-right: 5px;">Gestion Empleados</h1>
+                        style="color: #858B92; font-weight: bold; margin-right: 5px;">Gestion
+                        Empleados</h1>
                 </a>
                 <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
                 <h1 style="font-weight: bold;">Departamentos</h1>
@@ -40,7 +41,7 @@
                 </select>
 
                 <!-- Botón Añadir Nuevo con SweetAlert2 -->
-                <a type="submit" href="#" class="btn btnCrear btn-danger"
+                <a type="submit" href="#" class="btn btnCrear btn-conft"
                     style="font-size: 20px;">Añadir Nuevo</a>
             </div>
 
@@ -91,11 +92,11 @@
         </div>
     </div>
     <script type="text/javascript" language="javascript"
-      src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script type="text/javascript" language="javascript"
-      src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+        src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
     <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+        src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
 
     <script>
     $(document).ready(function () {
@@ -244,40 +245,50 @@
               $(this).val('Selecciona una acción');
           });
   
-            // Función para crear ciudad
-            $(".btnCrear").click(function () {
-              Swal.fire({
-                  title: 'Crear Departamento',
-                  html: `
-                      <input type="text" id="ID_Departamento" hidden />
-                      <label for="Nombre" class="col-form-label">Nombre</label>
-                      <input type="text" id="Nombre" class="swal2-input" placeholder="Ingrese el nombre del departamento">
-                  `,
-                  showCancelButton: true,
-                  confirmButtonText: 'Guardar',
-                  cancelButtonText: 'Cancelar',
-                  preConfirm: () => {
-                      const nombre = Swal.getPopup().querySelector('#Nombre').value;
-                      if (!nombre) {
-                          Swal.showValidationMessage('Por favor, ingrese el nombre');
-                      }
-                      return { Nombre: nombre };
-                  }
-              }).then((result) => {
-                  if (result.isConfirmed) {
-                      const formData = { Nombre: result.value.Nombre, opcion: 'crear' };
-                      $.ajax({
-                          type: 'POST',
-                          url: url,
-                          data: formData,
-                          success: function () {
-                              Swal.fire('¡Guardado!', 'Departamento creada con éxito', 'success').then(() => {
-                                  window.location.reload();
-                              });
-                          }
-                      });
-                  }
-              });
+           // Función para crear departamento
+$(".btnCrear").click(function () {
+  Swal.fire({
+    title: 'Crear Departamento',
+    html: `
+      <input type="text" id="ID_Departamento" hidden />
+      <label for="Nombre" class="col-form-label">Nombre</label>
+      <input type="text" id="Nombre" class="swal2-input" placeholder="Ingrese el nombre del departamento">
+    `,
+    showCancelButton: true,
+    confirmButtonText: 'Guardar',
+    cancelButtonText: 'Cancelar',
+    preConfirm: () => {
+      const nombre = Swal.getPopup().querySelector('#Nombre').value;
+      if (!nombre) {
+        Swal.showValidationMessage('Por favor, ingrese el nombre');
+      }
+      return { Nombre: nombre };
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const formData = { Nombre: result.value.Nombre, opcion: 'crear' };
+      $.ajax({
+        type: 'POST',
+        url: url,
+        data: formData,
+        success: function () {
+          Swal.fire('¡Guardado!', 'Departamento creado con éxito', 'success').then(() => {
+            window.location.reload();
+          });
+        },
+        error: function (xhr) {
+          if (xhr.status === 400) {
+            const response = JSON.parse(xhr.responseText);
+            Swal.fire('Error', response.message, 'error');
+          } else {
+            Swal.fire('Error', 'Ocurrió un error al crear el departamento', 'error');
+          }
+        }
+      });
+    }
+  });
+
+
           });
         // Botón copiar (opcional)
         $("#tablaDepartamentos").on("click", ".btnCopiar", function () {
