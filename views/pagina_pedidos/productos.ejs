@@ -13,22 +13,25 @@
             <img src="/resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
         </a>    
         <ul>
-            <li><a href="/pagina_pedidos/index_clientes/:idSucursal" class="dropdown">Inicio</a></li>
+            <li><a href="/pagina_pedidos/clientes_index/:idSucursal" class="dropdown">Inicio</a></li>
             <li><a href="/pagina_pedidos/productos/:idSucursal" class="dropdown">Tienda</a></li>
             <li><a href="/pagina_pedidos/consultas" class="dropdown">Consultas</a></li>
             <li><a href="/pagina_pedidos/miscompras" class="dropdown">Compras</a></li>
             <li><a href="#" class="dropdown">Recordatorio</a></li>
         </ul>
-        <a href="#" class="cart-icon" onclick="mostrarCarrito(); return false;">
+                <a href="#" class="cart-icon" onclick="mostrarCarrito(); return false;">
             <i class="fas fa-shopping-cart"></i>
             <span class="cart-count">0</span>
         </a>
         <!-- Selector de Sucursales -->
         <select name="sucursal" id="sucursal" class="location-select" onchange="cambiarSucursal()">
             <% results.forEach(sucursal => { %>
-                 <option value="<%= sucursal.ID_Sucursal %>" <%= idSucursal == sucursal.ID_Sucursal ? 'selected' : '' %>><%= sucursal.Nombre %></option>
-             <% }); %>
-         </select>
+                <option value="<%= sucursal.ID_Sucursal %>" 
+                    <%= idSucursal == sucursal.ID_Sucursal ? 'selected' : '' %>>
+                    <%= sucursal.Nombre %>
+                </option>
+            <% }); %>
+        </select>
         <!-- Botón de Perfil del Usuario -->
         <a href="/pagina_pedidos/perfil" class="profile-icon">
             <i class="fas fa-user"></i> <span class="profile-name">Perfil</span>
@@ -37,9 +40,11 @@
 
     <div class="products-section">
         <h2>Nuestros Productos</h2>
-        <div class="search-bar">
-            <input type="text" placeholder="Buscar">
-        </div>
+        <!-- Barra de búsqueda -->
+        <form action="/pagina_pedidos/productos/<%= idSucursal %>" method="GET">
+            <input type="text" name="search" placeholder="Buscar productos por nombre" id="search-input" value="<%= searchTerm || '' %>">
+            <button type="submit">Buscar</button>
+        </form>        
     </div>
 
     <div class="sidebar">
@@ -64,17 +69,18 @@
             <% products.forEach(product => { %>
                 <div class="product-item">
                     <h3><%= product.Nombre %></h3>
+                    <p><%= product.Fotografia %></p>
                     <p><%= product.Descripcion %></p>
                     <p>Precio: $<%= product.Precio_Unitario %></p>
                     <p>Cantidad en Inventario: <%= product.Cantidad %></p>
-                    <button class="add-to-cart-btn" onclick="agregarAlCarrito('<%= product.ID_Producto %>', '<%= product.Nombre %>', <%= product.Precio_Unitario %>, '<%= product.Imagen %>')">
+                    <button class="add-to-cart-btn" onclick="agregarAlCarrito('<%= product.ID_Producto %>', '<%= product.Nombre %>', <%= product.Precio_Unitario %>, '<%= product.Fotografia %>')">
                         Añadir al carrito
                     </button>
                 </div>
             <% }); %>
         </div>
     <% } else { %>
-        <p>No hay productos disponibles para esta sucursal.</p>
+        <p>No hay productos disponibles para esta búsqueda.</p>
     <% } %>
     
     <!-- Carrito emergente -->
@@ -88,7 +94,7 @@
         <ul id="cart-items"></ul>
         <div class="cart-buttons">
             <button class="checkout-cart" onclick="realizarCompra()">Continuar pedido</button>
-            <button class="close-cart" onclick="cerrarCarrito()">Cerrar</button>
+            <button class="close-cart" onclick="cerrarCarrito()">Ocultar</button>
         </div>
     </div>
 
@@ -116,6 +122,24 @@
             const idSucursal = document.getElementById('sucursal').value;
             window.location.href = `/pagina_pedidos/productos/${idSucursal}`;
         }
+
+
+            function buscarProductos() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();  // Obtén el valor de la búsqueda y lo pasas a minúsculas
+            const productItems = document.querySelectorAll('.product-item');  // Selecciona todos los productos en la página
+
+            productItems.forEach(item => {
+                const productName = item.querySelector('h3').textContent.toLowerCase();  // Obtén el nombre del producto y lo pasas a minúsculas
+                
+                // Si el nombre del producto incluye el término de búsqueda, se muestra; de lo contrario, se oculta
+                if (productName.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
         let carrito = JSON.parse(localStorage.getItem('cart')) || [];
     
         function agregarAlCarrito(productId, nombre, precio, imagen = '', stock = 'Disponible', unidad = 'Unidad') {
@@ -237,5 +261,20 @@
         // Actualizar contador al cargar la página
         actualizarContadorCarrito();
     </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Verifica si el idSucursal está en la URL antes de redirigir
+        const idSucursal = "<%= idSucursal %>";
+        if (!idSucursal) {
+            const defaultSucursalId = "<%= results[0].ID_Sucursal %>"; // ID de la primera sucursal
+            window.location.href = `/pagina_pedidos/productos/${defaultSucursalId}`;
+        }
+    });
+
+    function cambiarSucursal() {
+        const selectedSucursalId = document.getElementById('sucursal').value;
+        window.location.href = `/pagina_pedidos/productos/${selectedSucursalId}`;
+    }
+</script>
 </body>
 </html>  

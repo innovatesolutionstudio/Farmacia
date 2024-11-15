@@ -9,6 +9,65 @@
     <link rel="icon" href="/resources/images/iconos/farmacia.ico">
     <link rel="stylesheet" href="/resources/css/style_login.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        /* Estilo para asegurar que el botón sea visible */
+        .btn.solid {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn.solid:hover {
+            background-color: #218838;
+        }
+
+        .input-field {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+
+        .input-field input {
+            border: none;
+            outline: none;
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .input-field i {
+            margin-right: 10px;
+            color: #777;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+    </style>
 </head>
 
 <body>
@@ -17,41 +76,39 @@
             <div class="signin-signup">
                 <!-- Formulario de registro -->
                 <form method="post" action="/registrar" class="sign-in-form">
-                    <img src="/resources/images/login/logo1.png" alt="Logo">
+                    <img src="/resources/images/login/logo1.png" alt="Logo" style="display: block; margin: 0 auto 20px; max-width: 120px;">
                     <h2 class="title">Registrar Cliente</h2>
                     <div class="input-field">
                         <i class="fas fa-user"></i>
-                        <!-- Campo para el nombre -->
                         <input type="text" name="name" placeholder="Nombre" maxlength="100" required />
                     </div>
                     <div class="input-field">
                         <i class="fas fa-user"></i>
-                        <!-- Campo para el apellido -->
                         <input type="text" name="apellido" placeholder="Apellido" maxlength="100" required />
                     </div>
                     <div class="input-field">
                         <i class="fas fa-phone"></i>
-                        <!-- Campo para el teléfono -->
                         <input type="text" name="telefono" placeholder="Teléfono" maxlength="20" required />
                     </div>
                     <div class="input-field">
                         <i class="fas fa-id-card"></i>
-                        <!-- Campo para el CI -->
                         <input type="text" name="ci" placeholder="Cédula de Identidad (CI)" maxlength="50" required />
                     </div>
                     <div class="input-field">
                         <i class="fas fa-briefcase"></i>
-                        <!-- Campo para el Nit -->
                         <input type="text" name="nit" placeholder="NIT" maxlength="50" required />
                     </div>
                     <div class="input-field">
-                        <i class="fas fa-user"></i>
-                        <!-- Campo para el correo (Gmail) -->
-                        <input type="email" name="email" placeholder="Correo electrónico (Gmail)" maxlength="50" required />
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="contrasena" placeholder="Contraseña" maxlength="50" required />
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-key"></i>
+                        <input type="text" name="codigo" placeholder="Código" maxlength="50" required />
                     </div>
                     <input type="submit" value="Registrar" class="btn solid" />
                     <p class="social-text">¿Ya tienes cuenta? <a href="/pagina_pedidos/login_clientes" class="register-link">Inicia sesión aquí</a></p>
-                </form>                 
+                </form>
             </div>
         </div>
     </div>

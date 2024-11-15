@@ -2,6 +2,17 @@
 const express = require("express");
 const app = express();
 
+//#region - iniciar sesion - login - autenticacion
+const session = require("express-session");
+
+app.use(
+  session({
+    secret: "secret",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+
 const ciudadesRoutes = require("./routes/ciudades");
 const proveedoresRoutes = require("./routes/proveedores");
 const ventasRoutes = require("./routes/ventas");
@@ -74,7 +85,7 @@ const compras_pRouter = require("./papeleria/compras");
 const buscadorIARouter = require("./routes/buscador_ai");
 
 const coneccion = require("./database/db");
-const paginapedidos = require('./routes/paginapedidos '); // Ajusta el nombre del archivo de rutas si es necesario 
+const paginapedidos = require('./routes/paginapedidos'); // Ajusta el nombre del archivo de rutas si es necesario 
 
 
 app.use(paginapedidos); // Solo esta línea es necesaria
@@ -123,16 +134,7 @@ app.use(
 app.use("/js", express.static(__dirname + "/views/graficos/js"));
 //#endregion
 
-//#region - iniciar sesion - login - autenticacion
-const session = require("express-session");
 
-app.use(
-  session({
-    secret: "secret",
-    resave: true,
-    saveUninitialized: true,
-  })
-);
 
 app.get("/mantenimiento", (req, res) => {
   res.render("./paginas/mantenimiento");

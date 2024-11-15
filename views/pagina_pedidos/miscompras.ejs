@@ -251,11 +251,11 @@
 </head>
 <body>
     <div class="top-header">
-        <a href="/pagina_pedidos/index_clientes/:idSucursal" class="logo">
+        <a href="/pagina_pedidos/clientes_index/:idSucursal" class="logo">
             <img src="/resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
         </a>     
         <ul>
-            <li><a href="/pagina_pedidos/index_clientes/:idSucursal" class="dropdown">Inicio</a></li>
+            <li><a href="/pagina_pedidos/clientes_index/:idSucursal" class="dropdown">Inicio</a></li>
             <li><a href="/pagina_pedidos/productos/:idSucursal" class="dropdown">Tienda</a></li>
             <li><a href="/pagina_pedidos/consultas" class="dropdown">Consultas</a></li>
             <li><a href="/pagina_pedidos/miscompras" class="dropdown">Compras</a></li>
@@ -272,8 +272,24 @@
     </div>
     <div class="main-container">
         <h1>Mis Compras</h1>
-        <div class="purchase-list" id="purchaseList">
-            <!-- Las compras se cargarán aquí -->
+        <div class="purchase-list">
+            <% if (compras.length === 0) { %>
+                <div class="empty-message">No tienes compras previas.</div>
+            <% } else { %>
+                <% compras.forEach((compra, index) => { %>
+                    <div class="purchase-item">
+                        <div class="purchase-item-details">
+                            <h3>Pedido #<%= compras.length - index %></h3>
+                            <p><strong>Fecha:</strong> <%= compra.Fecha_Venta %></p>
+                            <p><strong>Sucursal:</strong> <%= compra.Sucursal %></p>
+                        </div>
+                        <div class="purchase-item-total">
+                            Total: Bs <%= compra.Total_Venta ? compra.Total_Venta.toFixed(2) : '0.00' %>
+                        </div>                        
+                        <button class="purchase-item-button">Ver detalles</button>
+                    </div>
+                <% }); %>
+            <% } %>
         </div>
     </div>
     <!-- Modal de Detalles -->
@@ -296,42 +312,43 @@
     </div>
     <script>
         // Función para cargar las compras desde localStorage
-function cargarMisCompras() {
-    const compras = JSON.parse(localStorage.getItem('compras')) || [];
-    const purchaseListContainer = document.getElementById('purchaseList');
-    purchaseListContainer.innerHTML = '';
+        function cargarMisCompras() {
+            const compras = JSON.parse(localStorage.getItem('compras')) || [];
+            const purchaseListContainer = document.getElementById('purchaseList');
+            purchaseListContainer.innerHTML = '';
 
-    if (compras.length === 0) {
-        purchaseListContainer.innerHTML = '<div class="empty-message">No tienes compras previas.</div>';
-        return;
-    }
+            if (compras.length === 0) {
+                purchaseListContainer.innerHTML = '<div class="empty-message">No tienes compras previas.</div>';
+                return;
+            }
 
-    compras.forEach((compra, index) => {
-        const compraElemento = document.createElement('div');
-        compraElemento.classList.add('purchase-item');
+            compras.forEach((compra, index) => {
+                const compraElemento = document.createElement('div');
+                compraElemento.classList.add('purchase-item');
 
-        let productosDetalles = compra.productos.map(producto => 
-            `<span>${producto.name} - ${producto.quantity} x Bs ${producto.price.toFixed(2)}</span>`
-        ).join('');
+                let productosDetalles = compra.productos.map(producto => 
+                    `<span>${producto.name} - ${producto.quantity} x Bs ${producto.price.toFixed(2)}</span>`
+                ).join('');
 
-        compraElemento.innerHTML = 
-            `<div class="purchase-item-details">
-                <h3>Pedido #${compras.length - index}</h3>
-                <p><strong>Fecha:</strong> ${compra.fecha}</p>
-                <p><strong>Cliente:</strong> ${compra.cliente.nombre}</p>
-                <div class="productos-lista">
-                    <strong>Productos:</strong>
-                    ${productosDetalles}
-                </div>
-            </div>
-            <div class="purchase-item-total">
-                Total: Bs ${compra.total.toFixed(2)}
-            </div>
-            <button class="purchase-item-button" onclick="verDetallesCompra(${index})">Ver detalles</button> `;
+                compraElemento.innerHTML = 
+                    `<div class="purchase-item-details">
+                        <h3>Pedido #${compras.length - index}</h3>
+                        <p><strong>Fecha:</strong> ${compra.fecha}</p>
+                        <p><strong>Cliente:</strong> ${compra.cliente.nombre}</p>
+                        <div class="productos-lista">
+                            <strong>Productos:</strong>
+                            ${productosDetalles}
+                        </div>
+                    </div>
+                    <div class="purchase-item-total">
+                        Total: Bs ${compra.total.toFixed(2)}
+                    </div>
+                    <button class="purchase-item-button" onclick="verDetallesCompra(${index})">Ver detalles</button> `;
 
-        purchaseListContainer.appendChild(compraElemento);
-    });
-}
+                purchaseListContainer.appendChild(compraElemento);
+            });
+        }
+
     
         function verDetallesCompra(index) {
     const compras = JSON.parse(localStorage.getItem('compras')) || [];
