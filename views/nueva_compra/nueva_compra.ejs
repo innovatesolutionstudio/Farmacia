@@ -44,10 +44,10 @@
                         value="<%= ID_Empleado %>" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="fechaCompra">Fecha:</label>
-                    <input type="date" class="form-control"
-                            style="background-color:#ffffff; color: rgb(0, 0, 0);"
-                            id="fechaCompra" name="fechaCompra" readonly>
+                    <label for="fechaCompra">Fecha y Hora de la Compra:</label>
+                    <input type="datetime-local" class="form-control"
+                           style="background-color: #f8f9fa; color: rgb(0, 0, 0);"
+                           id="fechaCompra" name="fechaCompra" readonly>
                 </div>
                 <div class="form-group">
                     <label for="ID_Sucursal" class="form-label">Sucursal
@@ -221,15 +221,23 @@ document.addEventListener("click", function (event) {
     dropdownProductos.style.display = "none";
   }
 });
+document.addEventListener("DOMContentLoaded", () => {
+    const fechaCompraInput = document.getElementById("fechaCompra");
 
-const fechaCompraInput = document.getElementById('fechaCompra');
-const hoy = new Date().toLocaleDateString('en-CA', {
-    timeZone: 'America/La_Paz',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-}).replace(/\//g, '-'); // Reemplaza / con - para formato YYYY-MM-DD
-fechaCompraInput.value = hoy;
+    // Obtener la fecha y hora actuales
+    const ahora = new Date();
+    const year = ahora.getFullYear();
+    const month = String(ahora.getMonth() + 1).padStart(2, "0"); // Mes en formato MM
+    const day = String(ahora.getDate()).padStart(2, "0"); // Día en formato DD
+    const hours = String(ahora.getHours()).padStart(2, "0"); // Horas en formato HH
+    const minutes = String(ahora.getMinutes()).padStart(2, "0"); // Minutos en formato mm
+
+    // Formatear como YYYY-MM-DDTHH:mm
+    const isoDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+    // Establecer el valor del input
+    fechaCompraInput.value = isoDateTime;
+  });
 </script>
 
 <script>

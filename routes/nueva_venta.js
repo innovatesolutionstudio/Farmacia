@@ -286,10 +286,10 @@ router.post("/nueva_venta", async (req, res) => {
       // Función para procesar la venta
       function procesarVenta(idCliente) {
         const insertarVentaQuery =
-          "INSERT INTO ventas (ID_cliente, Fecha_Venta, ID_Empleado, ID_Sucursal, ID_Caja) VALUES (?, ?, ?, ?, ?)";
+          "INSERT INTO ventas (ID_cliente, Fecha_Venta, ID_Empleado, ID_Sucursal, ID_Caja,Estado) VALUES (?, ?, ?, ?, ?,?)";
         connection.query(
           insertarVentaQuery,
-          [idCliente, fechaVenta, ID_Empleado, ID_Sucursal, ID_Caja],
+          [idCliente, fechaVenta, ID_Empleado, ID_Sucursal, ID_Caja,1],
           (error, result) => {
             if (error) {
               console.error("Error al registrar la venta:", error);
@@ -382,6 +382,18 @@ router.post("/generar_factura", async (req, res) => {
       ID_Sucursal,
     } = req.body;
 
+    // Función para generar código y contraseña dinámicos
+    const generarCodigoYContrasena = (nombre, apellido, carnet, nit) => {
+      const codigoBase = `${nombre.charAt(0).toLowerCase()}${apellido.charAt(0).toLowerCase()}`;
+      const codigo = carnet
+        ? `${codigoBase}${carnet}`
+        : nit
+        ? `${codigoBase}${nit}`
+        : "sin-codigo";
+      const contrasena = carnet || nit || "sin-contrasena";
+      return { codigo, contrasena };
+    };
+
     // Consulta para obtener el código y la contraseña del cliente
     const obtenerDatosCliente = () => {
       return new Promise((resolve, reject) => {
@@ -392,15 +404,19 @@ router.post("/generar_factura", async (req, res) => {
           } else if (results.length > 0) {
             resolve(results[0]); // Retorna el primer resultado
           } else {
-            resolve({ codigo: "N/A", contrasena: "N/A" }); // Si no hay resultados
+            // Generar código y contraseña dinámicos para un nuevo cliente
+            const datosGenerados = generarCodigoYContrasena(nombre, apellido, carnet, nit);
+            resolve(datosGenerados);
           }
         });
       });
     };
 
+    // Obtener datos del cliente (existente o dinámico)
     const clienteDatos = await obtenerDatosCliente();
     const { codigo: codigoCliente, contrasena: contrasenaCliente } = clienteDatos;
 
+    // Validación del total de la venta
     const totalVentaNumber = typeof totalVenta === "number" ? totalVenta : parseFloat(totalVenta);
     if (isNaN(totalVentaNumber)) {
       throw new Error("El total de la venta no es un número válido.");
@@ -444,14 +460,15 @@ router.post("/generar_factura", async (req, res) => {
     doc.text(`Código de Sucursal: ${ID_Sucursal}`);
     doc.text(`Código de Caja: ${ID_Caja}`);
     doc.moveDown(1);
-    doc.font("Helvetica-Bold").text("Datos para el Citio Web:", { align: "left" });
+    doc.font("Helvetica-Bold").text("Datos para el Sitio Web:", { align: "left" });
     doc.font("Helvetica").text(`Codigo de Usuario: ${codigoCliente}`);
     doc.text(`Contraseña de Usuario: ${contrasenaCliente}`);
     doc.moveDown(1);
+
     // Detalles de Compra
     doc.font("Helvetica-Bold").text("Detalles de Compra:");
     doc.moveDown(1);
-    doc.font("Helvetica-Bold").text("Cantidad   -   Producto   -   Precio Unitario   - sub total");
+    doc.font("Helvetica-Bold").text("Cantidad   -   Producto   -   Precio Unitario   - Subtotal");
     detalles.forEach((detalle) => {
       const subtotal = detalle.cantidad * detalle.precio;
       doc
@@ -471,20 +488,10 @@ router.post("/generar_factura", async (req, res) => {
 
     doc.moveDown(1);
 
-   // Define los márgenes
-    const leftMargin = 10; // Asigna un valor a leftMargin
-    const rightMargin = 10;
-    const textWidth = 300 - leftMargin - rightMargin; // Ancho total menos los márgenes
-
     // Derechos reservados
-    doc.font('Helvetica').fontSize(6).text(
-      `Derechos Reservados © ${new Date().getFullYear()} FARMACIA 25 de Julio. Todos los derechos reservados. Este recibo y su contenido están protegidos por las leyes de derechos de autor y no pueden ser reproducidos, distribuidos, transmitidos, exhibidos, publicados o transmitidos sin el permiso previo por escrito del titular de los derechos de autor.`,
-      leftMargin, // Usamos la variable `leftMargin` definida
-      doc.y, 
-      { 
-        align: 'justify', 
-        width: textWidth 
-      }
+    doc.font("Helvetica").fontSize(6).text(
+      `Derechos Reservados © ${new Date().getFullYear()} FARMACIA 25 de Julio.`,
+      { align: "justify" }
     );
 
     // Finalizar y guardar el PDF
@@ -500,24 +507,5 @@ router.post("/generar_factura", async (req, res) => {
     res.status(500).json({ error: "Error al generar la factura" });
   }
 });
-
-function obtenerUltimoIdVenta() {
-  return new Promise((resolve, reject) => {
-    connection.query(
-      "SELECT MAX(ID_Venta) as ultimoId FROM ventas",
-      (error, results, fields) => {
-        if (error) {
-          reject(error);
-        } else {
-          if (results.length > 0) {
-            resolve(results[0].ultimoId);
-          } else {
-            resolve("No hay registros en la tabla ventas");
-          }
-        }
-      }
-    );
-  });
-}
 
 module.exports = router;

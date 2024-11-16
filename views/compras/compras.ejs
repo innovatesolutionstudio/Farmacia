@@ -42,22 +42,24 @@
 
     <!-- Contenedor de la tabla de compras -->
     <div class="card3">
+
+
       <div class="header-card1">
         <span>Filtrar compra especifica</span>
       </div>
+
+
       <div class="filter-container">
         <label for="fechaInicio" class="filter-label">Fecha Inicio:</label>
-        <input type="date" id="fechaInicio" name="fechaInicio"
-          class="filter-input">
+        <input type="datetime-local" id="fechaInicio" name="fechaInicio" class="filter-input">
 
         <label for="fechaFin" class="filter-label">Fecha Fin:</label>
-        <input type="date" id="fechaFin" name="fechaFin" class="filter-input">
+        <input type="datetime-local" id="fechaFin" name="fechaFin" class="filter-input">
 
-        <button id="btnFiltrar"
-          class="btn btn-primary filter-btn">Filtrar</button>
-        <button id="btnLimpiar" class="btn btn-secondary filter-btn">Limpiar
-          Filtro</button>
+        <button id="btnFiltrar" class="btn btn-primary filter-btn">Filtrar</button>
+        <button id="btnLimpiar" class="btn btn-secondary filter-btn">Limpiar Filtro</button>
       </div>
+
 
       <div class="header-card1">
         <span>Registro de Compras</span>
@@ -108,22 +110,27 @@
       src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
 
     <script>
-        document.getElementById('btnFiltrar').addEventListener('click', function() {
-            const fechaInicio = document.getElementById('fechaInicio').value;
-            const fechaFin = document.getElementById('fechaFin').value;
-    
-            if (fechaInicio && fechaFin) {
-                // Redirigir con parámetros de filtro de fecha
-                window.location.href = `/compras?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
-            } else {
-                alert('Por favor, selecciona ambas fechas para aplicar el filtro.');
-            }
+      document.getElementById("btnFiltrar").addEventListener("click", function () {
+      const fechaInicio = document.getElementById("fechaInicio").value;
+      const fechaFin = document.getElementById("fechaFin").value;
+
+      if (fechaInicio && fechaFin) {
+        // Redirigir con parámetros de filtro de fecha y hora
+        window.location.href = `/compras?fechaInicio=${encodeURIComponent(fechaInicio)}&fechaFin=${encodeURIComponent(fechaFin)}`;
+      } else {
+        Swal.fire({
+          icon: "warning",
+          title: "Campos incompletos",
+          text: "Por favor, selecciona ambas fechas y horas para aplicar el filtro.",
         });
-    
-        document.getElementById('btnLimpiar').addEventListener('click', function() {
-            // Redirigir a /compras para mostrar los últimos 200 registros
-            window.location.href = `/compras`;
-        });
+      }
+    });
+
+    document.getElementById("btnLimpiar").addEventListener("click", function () {
+      // Redirigir a /compras para mostrar los últimos 200 registros
+      window.location.href = `/compras`;
+    });
+
     </script>
 
     <script>

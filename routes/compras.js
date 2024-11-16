@@ -4,19 +4,22 @@ const router = express.Router();
 
 // Invocamos a la conexión de la base de datos
 const connection = require("../database/db");
-
 router.get("/compras", function (req, res) {
   if (req.session.loggedin) {
     const { fechaInicio, fechaFin } = req.query;
 
     let sql = `
-        SELECT c.ID_Compra, c.Fecha_Compra, c.Total_Compra, p.Nombre AS NombreProveedor
-        FROM compras c
-        INNER JOIN proveedores p ON c.ID_Proveedor = p.ID_Proveedor
-        WHERE (c.Estado IS NULL OR c.Estado =1)
+      SELECT 
+        c.ID_Compra, 
+        c.Fecha_Compra, 
+        c.Total_Compra, 
+        p.Nombre AS NombreProveedor
+      FROM compras c
+      INNER JOIN proveedores p ON c.ID_Proveedor = p.ID_Proveedor
+      WHERE (c.Estado IS NULL OR c.Estado = 1)
     `;
 
-    // Si las fechas están presentes, agregar la cláusula WHERE
+    // Agregar cláusula WHERE si las fechas están presentes
     if (fechaInicio && fechaFin) {
       sql += ` AND c.Fecha_Compra BETWEEN ? AND ? ORDER BY c.Fecha_Compra DESC`;
     } else {

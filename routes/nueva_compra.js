@@ -16,7 +16,6 @@ router.get("/nueva_compra", (req, res) => {
     res.render("./paginas/logout");
   }
 });
-
 router.post("/nueva_compra", async (req, res) => {
   const { ID_Empleado, ID_Sucursal, ID_Proveedor, fechaCompra, productos } =
     req.body;
@@ -123,6 +122,7 @@ router.post("/nueva_compra", async (req, res) => {
     res.status(500).json({ error: "Error interno al procesar la compra" });
   }
 });
+
 
 router.get("/buscar_productos", (req, res) => {
   const terminoBusqueda = req.query.q;
