@@ -8,7 +8,7 @@ const ventasRoutes = require("./routes/ventas");
 const detallesventasRoutes = require("./routes/detalles_ventas");
 const clientesRoutes = require("./routes/clientes");
 const inventarioRoutes = require("./routes/inventario");
-const inventario_vistaRoutes = require("./routes/inventario_vista");
+
 const productosRoutes = require("./routes/productos");
 const nuevaventaRoutes = require("./routes/nueva_venta");
 const ganancias_esRoutes = require("./routes/ganancias_es");
@@ -211,7 +211,7 @@ app.use(ventasRoutes);
 app.use(detallesventasRoutes);
 app.use(clientesRoutes);
 app.use(inventarioRoutes);
-app.use(inventario_vistaRoutes);
+
 app.use(productosRoutes);
 app.use(nuevaventaRoutes);
 app.use(ganancias_esRoutes);

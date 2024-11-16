@@ -1,83 +1,77 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <link rel="shortcut icon" href="#" />
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-    <title>Detalles de Venta</title>
-    <!-- Enlaces a Bootstrap 5 y otros estilos -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
-    integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous" />
+  <link rel="shortcut icon" href="#" />
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+  <title>Ventas - Gestión de Datos</title>
+  <link rel="stylesheet" href="/resources/css/RegistroTablas.css" />
   <link rel="icon" href="resources/images/fevicon.png" type="image/png" />
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap5.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.min.css" />
-    <style>
-        /* Estilo específico para la tabla de detalles */
-        .table-details thead {
-            background-color: #485464;
-            color: white;
-        }
-
-        .table-details .ftable {
-            background-color: rgba(224, 223, 223, 0.433);
-            color: rgb(0, 0, 0);
-        }
-
-        .btn-group img {
-            max-width: 24px; /* Define el ancho máximo del icono */
-            max-height: 24px; /* Define el alto máximo del icono */
-        }
-
-        body {
-            background-color: #00000000;
-        }
-    </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body>
+  <!-- Encabezado -->
+  <div class="header-container">
+    <div class="breadcrumb">
+      <a href="/vista_ventas" class="reporte-link">
+        <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Registro de Ventas</h1>
+      </a>
+      <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+      <h1 style="font-weight: bold;">Detalles de venta</h1>
+    </div>
+  </div>
+
+
   
-<div class="container-fluid">
-    <H1 id="tituloImpresion" class="" style="
-        text-align: left;
-        font-family: Arial, sans-serif;
-        font-size: 25px;
-        padding: 20px 0;
-        background-color: #485464;
-        color: #ffffff;">&nbsp;&nbsp;&nbsp;&nbsp;Detalles de la Venta &nbsp;&nbsp;     -     &nbsp;&nbsp; <%= venta.ID_Venta %></H1>
-    <!-- Contenedor de la tabla de detalles -->
-    <div class="row shadow-lg p-3 mb-5 ftable">
-        <div class="col">
-            <table class="table table-striped table-bordered table-details" style="width: 100%">
-                <tbody>
-                    <tr>
-                        <th>ID de Venta</th>
-                        <td><%= venta.ID_Venta %></td>
-                    </tr>
-                    <tr>
-                        <th>Fecha de Venta</th>
-                        <td><%= venta.Fecha_Venta.toISOString().substring(0, 10) %></td>
-                    </tr>
-                    <tr>
-                        <th>Total de Venta</th>
-                        <td><%= venta.Total_Venta %></td>
-                    </tr>
-                    <tr>
+  <div class="card3">
+    <div class="header-card1">
+        <span>Datos de la venta:</span>
+    </div>
+    <br>
+
+    <div class="content-card-registro">
+        <table  class="table-registro" >
+            <tbody>
+                <tr>
+                    <th>ID de Venta</th>
+                    <td><%= venta.ID_Venta %></td>
+                </tr>
+                <tr>
+                    <th>Fecha de Venta</th>
+                    <td><%= venta.Fecha_Venta.toISOString().substring(0, 10) %></td>
+                </tr>
+                <tr>
+                    <th>Total de Venta</th>
+                    <td><%= venta.Total_Venta %></td>
+                </tr>
+                <tr>
                         <th>ID Cliente</th>
-                        <td><%= venta.ID_Cliente %></td>
-                    </tr>
-                    <tr>
-                        <th>Nombre Cliente</th>
-                        <td><%= venta.NombreCliente %></td>
-                    </tr>
-                    <tr>
-                        <th>Nombre Empleado</th>
-                        <td><%= venta.NombreEmpleado %></td>
-                    </tr>
-                </tbody>
-            </table>
-            <h2>Detalles de Productos Vendidos</h2>
-            <table class="table table-bordered table-details">
-                <thead>
+                    <td><%= venta.ID_Cliente %></td>
+                </tr>
+                <tr>
+                    <th>Nombre Cliente</th>
+                    <td><%= venta.NombreCliente %></td>
+                </tr>
+                <tr>
+                    <th>Nombre Empleado</th>
+                    <td><%= venta.NombreEmpleado %></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="card3">
+    <div class="header-card1">
+        <span>Datos de la venta:</span>
+    </div>
+    <br>
+    <div class="content-card-registro">
+        <table  class="table-registro" >
+
+            <thead>
                 <tr>
                     <th>Producto</th>
                     <th>Cantidad</th>
@@ -94,12 +88,10 @@
                     <td><%= detalle.Cantidad * detalle.Precio_Unitario %></td>
                 </tr>
                 <% }); %>
-                </tbody>
-            </table>
-        </div>
+            </tbody>
+        </table>
     </div>
 </div>
-
 <!-- Tus scripts de JavaScript -->
 <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.0.2/dist/sweetalert2.all.min.js"></script>

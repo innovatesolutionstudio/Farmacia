@@ -9,42 +9,47 @@ const conexion = require("../database/db");
 
 // Ruta para obtener los datos de ventas anuales
 router.get("/graficos", (req, res) => {
-  const { ID_Empleado, ID_Sucursal } = req.session;
 
-  if (!ID_Sucursal) {
-    return res.status(400).send("Sucursal no especificada en la sesión.");
-  }
+  if (req.session.loggedin) {
+    const { ID_Empleado, ID_Sucursal } = req.session;
 
-  // Consulta SQL para obtener las ventas totales por año filtradas por sucursal
-  const sql = `
-    SELECT YEAR(Fecha_Venta) AS Anio, SUM(Total_Venta) AS TotalAnual
-    FROM ventas
-    WHERE ID_Sucursal = ?
-    GROUP BY YEAR(Fecha_Venta)
-    ORDER BY YEAR(Fecha_Venta)
-  `;
-
-  // Ejecutar la consulta con parámetros
-  conexion.query(sql, [ID_Sucursal], (error, results) => {
-    if (error) {
-      console.error("Error en la consulta de ventas anuales:", error);
-      return res
-        .status(500)
-        .send("Error al obtener los datos de ventas anuales.");
+    if (!ID_Sucursal) {
+      return res.status(400).send("Sucursal no especificada en la sesión.");
     }
 
-    // Procesar los resultados para generar los datos del gráfico
-    const labels = results.map((row) => row.Anio);
-    const data = results.map((row) => row.TotalAnual);
+    // Consulta SQL para obtener las ventas totales por año filtradas por sucursal
+    const sql = `
+      SELECT YEAR(Fecha_Venta) AS Anio, SUM(Total_Venta) AS TotalAnual
+      FROM ventas
+      WHERE ID_Sucursal = ?
+      GROUP BY YEAR(Fecha_Venta)
+      ORDER BY YEAR(Fecha_Venta)
+    `;
 
-    // Renderizar la plantilla HTML con el gráfico de ventas anuales
-    res.render("./graficos/graficos", {
-      ID_Empleado,
-      ID_Sucursal,
-      labels,
-      data,
+    // Ejecutar la consulta con parámetros
+    conexion.query(sql, [ID_Sucursal], (error, results) => {
+      if (error) {
+        console.error("Error en la consulta de ventas anuales:", error);
+        return res
+          .status(500)
+          .send("Error al obtener los datos de ventas anuales.");
+      }
+
+      // Procesar los resultados para generar los datos del gráfico
+      const labels = results.map((row) => row.Anio);
+      const data = results.map((row) => row.TotalAnual);
+
+      // Renderizar la plantilla HTML con el gráfico de ventas anuales
+      res.render("./graficos/graficos", {
+        ID_Empleado,
+        ID_Sucursal,
+        labels,
+        data,
+      });
     });
-  });
+  } else {
+    res.render("./paginas/logout");
+  }
 });
 
 // funcion de consulta para hacer la consulta y recuperar datos de - el numero total ventas del mes en dinero metrica 1
@@ -369,70 +374,74 @@ ORDER BY
 };
 
 router.get("/datos", async (req, res) => {
-  const { ID_Sucursal } = req.session;
+  if (req.session.loggedin) {
+    const { ID_Sucursal } = req.session;
 
-  if (!ID_Sucursal) {
-    return res.status(400).send("Sucursal no especificada en la sesión.");
-  }
+    if (!ID_Sucursal) {
+      return res.status(400).send("Sucursal no especificada en la sesión.");
+    }
 
-  try {
-    const [
-      ventasMes,
-      ComprasMesActual,
-      clientesRegistradosMes,
-      medicamentosapuntovencer,
-      obtenerVentasMest,
-      obtenerProductoMasVendido,
-      obtenerTotalProductosVendidosMesSucursal,
-      obtenerCantidadTotalInventario,
-      comprasMestabla,
-      obtenerProveedorMasComprado,
-      ventasMesGrafico,
-      ObtenerTablaInventarios,
-      ventasMesActual,
-      productosVendidosMes,
-      obtenerTotalComprasC,
-      obtenerTotalComprasGR,
-    ] = await Promise.all([
-      obtenerVentasMes(ID_Sucursal),
-      obtenerComprasMes(ID_Sucursal),
-      obtenerClientesRegistradosMes(ID_Sucursal),
-      obtenerMedicamentosPorAcabarse(ID_Sucursal),
-      obtenerVentasMestotales(ID_Sucursal),
-      obtenerProductoMasVendidos(ID_Sucursal),
-      obtenerTotalProductosVendidosMesSucursalS(ID_Sucursal),
-      obtenerCantidadTotalInventarioS(ID_Sucursal),
-      obtenerDetallesComprasMes(ID_Sucursal),
-      obtenerProveedorMasCompradoS(ID_Sucursal),
-      obtenerVentasDelMesGraficoM(ID_Sucursal),
-      ObtenerTablaInventario(ID_Sucursal),
-      obtenerVentasMesActual(ID_Sucursal),
-      obtenerProductosVendidosMes(ID_Sucursal),
-      obtenerTotalCompras(ID_Sucursal),
-      obtenerTotalComprasG(ID_Sucursal),
-    ]);
+    try {
+      const [
+        ventasMes,
+        ComprasMesActual,
+        clientesRegistradosMes,
+        medicamentosapuntovencer,
+        obtenerVentasMest,
+        obtenerProductoMasVendido,
+        obtenerTotalProductosVendidosMesSucursal,
+        obtenerCantidadTotalInventario,
+        comprasMestabla,
+        obtenerProveedorMasComprado,
+        ventasMesGrafico,
+        ObtenerTablaInventarios,
+        ventasMesActual,
+        productosVendidosMes,
+        obtenerTotalComprasC,
+        obtenerTotalComprasGR,
+      ] = await Promise.all([
+        obtenerVentasMes(ID_Sucursal),
+        obtenerComprasMes(ID_Sucursal),
+        obtenerClientesRegistradosMes(ID_Sucursal),
+        obtenerMedicamentosPorAcabarse(ID_Sucursal),
+        obtenerVentasMestotales(ID_Sucursal),
+        obtenerProductoMasVendidos(ID_Sucursal),
+        obtenerTotalProductosVendidosMesSucursalS(ID_Sucursal),
+        obtenerCantidadTotalInventarioS(ID_Sucursal),
+        obtenerDetallesComprasMes(ID_Sucursal),
+        obtenerProveedorMasCompradoS(ID_Sucursal),
+        obtenerVentasDelMesGraficoM(ID_Sucursal),
+        ObtenerTablaInventario(ID_Sucursal),
+        obtenerVentasMesActual(ID_Sucursal),
+        obtenerProductosVendidosMes(ID_Sucursal),
+        obtenerTotalCompras(ID_Sucursal),
+        obtenerTotalComprasG(ID_Sucursal),
+      ]);
 
-    res.json({
-      ventasMes,
-      ComprasMesActual,
-      clientesRegistradosMes,
-      medicamentosapuntovencer,
-      obtenerVentasMest,
-      obtenerProductoMasVendido,
-      obtenerTotalProductosVendidosMesSucursal,
-      obtenerCantidadTotalInventario,
-      comprasMestabla,
-      obtenerProveedorMasComprado,
-      ventasMesGrafico,
-      ObtenerTablaInventarios,
-      ventasMesActual,
-      productosVendidosMes,
-      obtenerTotalComprasC,
-      obtenerTotalComprasGR,
-    });
-  } catch (err) {
-    console.error("Error al obtener los datos:", err);
-    res.status(500).send("Error al obtener los datos");
+      res.json({
+        ventasMes,
+        ComprasMesActual,
+        clientesRegistradosMes,
+        medicamentosapuntovencer,
+        obtenerVentasMest,
+        obtenerProductoMasVendido,
+        obtenerTotalProductosVendidosMesSucursal,
+        obtenerCantidadTotalInventario,
+        comprasMestabla,
+        obtenerProveedorMasComprado,
+        ventasMesGrafico,
+        ObtenerTablaInventarios,
+        ventasMesActual,
+        productosVendidosMes,
+        obtenerTotalComprasC,
+        obtenerTotalComprasGR,
+      });
+    } catch (err) {
+      console.error("Error al obtener los datos:", err);
+      res.status(500).send("Error al obtener los datos");
+    }
+  } else {
+    res.render("./paginas/logout");
   }
 });
 

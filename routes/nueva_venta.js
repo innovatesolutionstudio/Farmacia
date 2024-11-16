@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 
 router.get("/nueva_venta", (req, res) => {
-  /*if (req.session.loggedin) */
+  if (req.session.loggedin) {
     const idCaja = req.session.ID_Caja;
 
     const query = "SELECT Estado FROM cajas WHERE ID_Caja = ?";
@@ -35,85 +35,97 @@ router.get("/nueva_venta", (req, res) => {
         res.send("Caja no encontrada");
       }
     });
-  /*} else {
+  } else {
     res.render("./paginas/logout");
-  }*/
+  }
 });
 
 router.post("/buscar_cliente_por_carnet", (req, res) => {
-  const { carnet } = req.body;
+  if (req.session.loggedin) {
+    const { carnet } = req.body;
 
-  const query = `
-    SELECT Nombre, Apellido, Nit
-    FROM clientes
-    WHERE CI = ?
-    LIMIT 1;
-  `;
+    const query = `
+      SELECT Nombre, Apellido, Nit
+      FROM clientes
+      WHERE CI = ?
+      LIMIT 1;
+    `;
 
-  connection.query(query, [carnet], (error, results) => {
-    if (error) {
-      console.error("Error al buscar cliente por carnet:", error);
-      return res
-        .status(500)
-        .json({ error: "Error al buscar cliente por carnet" });
-    }
+    connection.query(query, [carnet], (error, results) => {
+      if (error) {
+        console.error("Error al buscar cliente por carnet:", error);
+        return res
+          .status(500)
+          .json({ error: "Error al buscar cliente por carnet" });
+      }
 
-    if (results.length > 0) {
-      res.json(results[0]);
-    } else {
-      res.status(404).json({ error: "Cliente no encontrado" });
-    }
-  });
+      if (results.length > 0) {
+        res.json(results[0]);
+      } else {
+        res.status(404).json({ error: "Cliente no encontrado" });
+      }
+    });
+  } else {
+    res.render("./paginas/logout");
+  }
 });
 
 router.get("/obtener_cantidad_inventario/:idProducto", (req, res) => {
-  const { idProducto } = req.params;
-  const query = "SELECT Cantidad FROM inventario WHERE ID_Producto = ?";
-  connection.query(query, [idProducto], (error, results) => {
-    if (error) {
-      console.error(
-        "Error al obtener la cantidad en inventario del producto:",
-        error
-      );
-      return res
-        .status(500)
-        .json({ error: "Error al obtener la cantidad en inventario" });
-    }
-    if (results.length > 0) {
-      res.json({ cantidad: results[0].Cantidad });
-    } else {
-      res.status(404).json({ error: "Producto no encontrado en inventario" });
-    }
-  });
+  if (req.session.loggedin) {
+    const { idProducto } = req.params;
+    const query = "SELECT Cantidad FROM inventario WHERE ID_Producto = ?";
+    connection.query(query, [idProducto], (error, results) => {
+      if (error) {
+        console.error(
+          "Error al obtener la cantidad en inventario del producto:",
+          error
+        );
+        return res
+          .status(500)
+          .json({ error: "Error al obtener la cantidad en inventario" });
+      }
+      if (results.length > 0) {
+        res.json({ cantidad: results[0].Cantidad });
+      } else {
+        res.status(404).json({ error: "Producto no encontrado en inventario" });
+      }
+    });
+  } else {
+    res.render("./paginas/logout");
+  }
 });
 
 router.get("/obtener_productos_inventario", (req, res) => {
-  const idSucursalEmpleado = req.session.ID_Sucursal;
-  const filtroNombre = req.query.nombre || ""; // Obtén el filtro de nombre del query
+  if (req.session.loggedin) {
+    const idSucursalEmpleado = req.session.ID_Sucursal;
+    const filtroNombre = req.query.nombre || ""; // Obtén el filtro de nombre del query
 
-  const obtenerProductosInventarioQuery = `
-        SELECT p.ID_Producto, p.Nombre, p.Precio_Unitario, uv.Nombre AS Unidad_Venta
-        FROM productos p 
-        JOIN inventario i ON p.ID_Producto = i.ID_Producto
-        JOIN unidad_venta uv ON p.ID_Unidad_Venta = uv.ID_Unidad_Venta
-        WHERE i.ID_Sucursal = ? 
-        AND p.Nombre LIKE ?
-    `;
+    const obtenerProductosInventarioQuery = `
+          SELECT p.ID_Producto, p.Nombre, p.Precio_Unitario, uv.Nombre AS Unidad_Venta
+          FROM productos p 
+          JOIN inventario i ON p.ID_Producto = i.ID_Producto
+          JOIN unidad_venta uv ON p.ID_Unidad_Venta = uv.ID_Unidad_Venta
+          WHERE i.ID_Sucursal = ? 
+          AND p.Nombre LIKE ?
+      `;
 
-  connection.query(
-    obtenerProductosInventarioQuery,
-    [idSucursalEmpleado, `%${filtroNombre}%`],
-    (error, productos) => {
-      if (error) {
-        console.error("Error al obtener los productos del inventario:", error);
-        return res
-          .status(500)
-          .json({ error: "Error al obtener los productos del inventario" });
+    connection.query(
+      obtenerProductosInventarioQuery,
+      [idSucursalEmpleado, `%${filtroNombre}%`],
+      (error, productos) => {
+        if (error) {
+          console.error("Error al obtener los productos del inventario:", error);
+          return res
+            .status(500)
+            .json({ error: "Error al obtener los productos del inventario" });
+        }
+
+        res.json(productos);
       }
-
-      res.json(productos);
-    }
-  );
+    );
+  } else {
+    res.render("./paginas/logout");
+  }
 });
 router.post("/buscar_producto_por_codigo", (req, res) => {
   const { codigo } = req.body;
@@ -146,31 +158,35 @@ router.post("/buscar_producto_por_codigo", (req, res) => {
 });
 
 router.get("/obtener_precio_producto/:idProducto", (req, res) => {
-  const idProducto = req.params.idProducto;
+  if (req.session.loggedin) {
+    const idProducto = req.params.idProducto;
 
-  // Consulta SQL para obtener el precio del producto por su ID
-  const obtenerPrecioProductoQuery =
-    "SELECT Precio_Unitario FROM productos WHERE ID_Producto = ?";
+    // Consulta SQL para obtener el precio del producto por su ID
+    const obtenerPrecioProductoQuery =
+      "SELECT Precio_Unitario FROM productos WHERE ID_Producto = ?";
 
-  connection.query(
-    obtenerPrecioProductoQuery,
-    [idProducto],
-    (error, resultados) => {
-      if (error) {
-        console.error("Error al obtener el precio del producto:", error);
-        return res
-          .status(500)
-          .json({ error: "Error al obtener el precio del producto" });
+    connection.query(
+      obtenerPrecioProductoQuery,
+      [idProducto],
+      (error, resultados) => {
+        if (error) {
+          console.error("Error al obtener el precio del producto:", error);
+          return res
+            .status(500)
+            .json({ error: "Error al obtener el precio del producto" });
+        }
+
+        if (resultados.length === 0) {
+          return res.status(404).json({ error: "Producto no encontrado" });
+        }
+
+        const precio = resultados[0].Precio_Unitario;
+        res.json({ precio: precio });
       }
-
-      if (resultados.length === 0) {
-        return res.status(404).json({ error: "Producto no encontrado" });
-      }
-
-      const precio = resultados[0].Precio_Unitario;
-      res.json({ precio: precio });
-    }
-  );
+    );
+  } else {
+    res.render("./paginas/logout");
+  }
 });
 
 router.post("/nueva_venta", async (req, res) => {
