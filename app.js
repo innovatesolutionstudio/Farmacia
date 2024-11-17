@@ -91,6 +91,7 @@ const paginapedidos = require('./routes/paginapedidos'); // Ajusta el nombre del
 app.use(paginapedidos); // Solo esta línea es necesaria
 
 
+
 //#region - rutas y llamados
 
 //seteamos urlencoded para capturar datos de formularios

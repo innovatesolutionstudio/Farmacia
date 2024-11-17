@@ -5,19 +5,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
-   
-    <!-- site metas -->
     <title>Login</title>
-    <!-- site icon -->
     <link rel="icon" href="/resources/images/iconos/farmacia.ico">
-
-    <!-- Estilos -->
     <link rel="stylesheet" href="/resources/css/style_login.css" />
-
-    <!-- Font Awesome (solo la versión que necesitas) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-    <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 
@@ -31,14 +22,12 @@
                     <h2 class="title">Bienvenido Cliente!</h2>
                     <div class="input-field">
                         <i class="fas fa-user"></i>
-                        <!-- Cambiar 'name' de 'email' a 'codigo' -->
                         <input type="text" name="codigo" placeholder="Código" maxlength="50" required />
                     </div>
                     <div class="input-field" style="position: relative;">
                         <i class="fas fa-lock"></i>
-                        <!-- Cambiar 'name' de 'password' a 'contrasena' y agregar id -->
                         <input type="password" name="contrasena" id="contrasena" placeholder="Contraseña" style="padding-right: 30px;" maxlength="50" required />
-                        <i class="fa fa-smile-o" onclick="mostrarPassword()" id="show_password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 25px;"></i>
+                        <i class="fa fa-eye" onclick="mostrarPassword()" id="show_password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 25px;"></i>
                     </div>  
                     <input type="submit" value="INICIAR SESION" class="btn solid" />
                     <p class="social-text">¿No tienes una cuenta? <a href="/pagina_pedidos/registrar_clientes" class="register-link">Regístrate aquí</a></p>
@@ -64,16 +53,16 @@
 
     <script type="text/javascript">
         function mostrarPassword() {
-            var cambio = document.getElementById("contrasena"); // Cambiar 'pass' por 'contrasena'
+            var cambio = document.getElementById("contrasena");
             var icono = document.getElementById("show_password");
             if (cambio.type === "password") {
-                cambio.type = "text";
-                icono.classList.remove('fa-smile');
-                icono.classList.add('fa-meh');
+                cambio.type = "text";  // Cambiar el tipo a texto para mostrar la contraseña
+                icono.classList.remove('fa-eye');  // Eliminar el ícono de ojo cerrado
+                icono.classList.add('fa-eye-slash');  // Agregar el ícono de ojo abierto
             } else {
-                cambio.type = "password";
-                icono.classList.remove('fa-meh');
-                icono.classList.add('fa-smile');
+                cambio.type = "password";  // Cambiar el tipo a contraseña para ocultarla
+                icono.classList.remove('fa-eye-slash');  // Eliminar el ícono de ojo abierto
+                icono.classList.add('fa-eye');  // Agregar el ícono de ojo cerrado
             }
         }
     </script>

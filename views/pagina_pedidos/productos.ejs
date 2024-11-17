@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Productos - Farmacia</title>
-    <link rel="stylesheet" href="/resources/css/paginapedidos2.css" />
+    <link rel="stylesheet" href="/resources/css/productos.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+
+
 <body>
     <div class="top-header">
-        <a href="/pagina_pedidos/index_clientes/:idSucursal" class="logo">
+        <a href="" class="logo">
             <img src="/resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
         </a>    
         <ul>
@@ -46,43 +48,26 @@
             <button type="submit">Buscar</button>
         </form>        
     </div>
-
-    <div class="sidebar">
-        <div class="product-categories">
-            <h2>Categoría Productos</h2>
-            <ul>
-                <li>Belleza</li>
-                <li>Dispositivos Médicos</li>
-                <li>Suplementos</li>
-                <li>Anticonceptivos</li>
-                <li>Bioseguridad</li>
-            </ul>
-        </div>
-        <div class="popular-products">
-            <h2>Popular Products</h2>
-            <!-- Productos populares aquí -->
-        </div>
+    <div id="products-container">
+        <% if (!products || products.length === 0) { %>
+            <p>No hay productos disponibles para esta sucursal.</p>
+        <% } else { %>
+            <div class="products-grid" id="product-list">
+                <% products.forEach(product => { %>
+                    <div class="product-item" data-sucursal="<%= idSucursal %>">
+                        <h3><%= product.Nombre %></h3>
+                        <img src="<%= product.Fotografia %>" alt="<%= product.Nombre %>">
+                        <p><%= product.Descripcion %></p>
+                        <p>Precio: $<%= product.Precio_Unitario %></p>
+                        <p>Cantidad en Inventario: <%= product.Cantidad %></p>
+                        <button class="add-to-cart-btn" onclick="agregarAlCarrito('<%= product.ID_Producto %>', '<%= product.Nombre %>', <%= product.Precio_Unitario %>, '<%= product.Fotografia %>')">
+                            Añadir al carrito
+                        </button>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
     </div>
-
-    <% if (products.length > 0) { %>
-        <div class="products-grid" id="product-list">
-            <% products.forEach(product => { %>
-                <div class="product-item">
-                    <h3><%= product.Nombre %></h3>
-                    <p><%= product.Fotografia %></p>
-                    <p><%= product.Descripcion %></p>
-                    <p>Precio: $<%= product.Precio_Unitario %></p>
-                    <p>Cantidad en Inventario: <%= product.Cantidad %></p>
-                    <button class="add-to-cart-btn" onclick="agregarAlCarrito('<%= product.ID_Producto %>', '<%= product.Nombre %>', <%= product.Precio_Unitario %>, '<%= product.Fotografia %>')">
-                        Añadir al carrito
-                    </button>
-                </div>
-            <% }); %>
-        </div>
-    <% } else { %>
-        <p>No hay productos disponibles para esta búsqueda.</p>
-    <% } %>
-    
     <!-- Carrito emergente -->
     <div id="cart-popup">
         <div class="cart-header">
@@ -93,7 +78,7 @@
         </div>
         <ul id="cart-items"></ul>
         <div class="cart-buttons">
-            <button class="checkout-cart" onclick="realizarCompra()">Continuar pedido</button>
+            <button onclick="continueToCheckout()">Continuar Pedido</button>
             <button class="close-cart" onclick="cerrarCarrito()">Ocultar</button>
         </div>
     </div>
@@ -103,28 +88,301 @@
         <i class="fas fa-chevron-right"></i>
     </div>
 
-    <!-- Sección de contacto al final -->
-    <div class="contact-container">
-        <div class="social-media">
-            <!-- Aquí irían los enlaces a redes sociales -->
-        </div>
-        <div class="contact-info">
-            <h2>Contacto</h2>
-            <p>Si tienes alguna duda, por favor contacta con nosotros:</p>
-            <p><strong>Horario de Atención:</strong> Lunes a Viernes, 9:00 - 18:00</p>
-            <p><strong>Teléfono:</strong> +34 123 456 789</p>
-            <p><strong>Correo Electrónico:</strong> contacto@ejemplo.com</p>
+<!-- Sección de contacto al final -->
+<div id="contacto" class="contact-container">
+    <div class="contact-info">
+        <h2>Contacto</h2>
+        <p>Si tienes alguna duda, no dudes en contactarnos. Estaremos encantados de ayudarte.</p>
+        <div class="contact-details">
+            <div class="detail-item">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <strong>Horario de Atención:</strong>
+                    <p>Lunes a Viernes, 9:00 - 18:00</p>
+                </div>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-phone-alt"></i>
+                <div>
+                    <strong>Teléfono:</strong>
+                    <p>+34 123 456 789</p>
+                </div>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-envelope"></i>
+                <div>
+                    <strong>Correo Electrónico:</strong>
+                    <p>contacto@ejemplo.com</p>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Mapa de Google -->
+    <div class="map-container">
+        <h3>Visítanos</h3>
+        <p>Estamos ubicados en El Alto, La Paz, Bolivia:</p>
+        <div class="map-embed">
+            <!-- Aquí agregas el enlace de Google Maps -->
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5977.735616871491!2d-68.11930320270277!3d-16.500038149523107!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93e37874cc2e2c6f%3A0x6977e6a8ffb104ef!2sEl%20Alto%2C%20La%20Paz%2C%20Bolivia!5e0!3m2!1ses!2ses!4v1699388895394!5m2!1ses!2ses" 
+                width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </div>
+</div>
+    <!-- El modal del producto -->
+<div class="product-modal" id="productModal">
+    <div class="product-modal-content">
+        <button class="close-modal" onclick="closeProductModal()">×</button>
+        <div class="product-details">
+            <div class="product-image-container">
+                <img id="modalProductImage" class="product-image" src="" alt="">
+                <div class="quantity-selector" style="margin-top: 1rem; text-align: center;">
+                    <button onclick="updateQuantity(-1)">-</button>
+                    <span id="modalQuantity">1</span>
+                    <button onclick="updateQuantity(1)">+</button>
+                </div>
+                <div class="action-buttons">
+                    <button class="add-to-cart" onclick="addToCartFromModal()">Añadir al carrito</button>
+                    <button class="continue-shopping" onclick="closeProductModal()">Seguir comprando</button>
+                </div>
+            </div>
+            <div class="product-info">
+                <h1 id="modalProductName"></h1>
+                <div class="product-tabs">
+                    <div class="tab-buttons">
+                        <button class="tab-button active" onclick="switchTab('general')">Información General</button>
+                        <button class="tab-button" onclick="switchTab('medical')">Información Médica</button>
+                        <button class="tab-button" onclick="switchTab('technical')">Detalles Técnicos</button>
+                    </div>
+                    
+                    <div id="generalTab" class="tab-content active">
+                        <div class="details-grid">
+                            <div class="details-item">
+                                <h4>Descripción</h4>
+                                <p id="modalProductDescription"></p>
+                            </div>
+                            <div class="details-item">
+                                <h4>Precio</h4>
+                                <p>Bs <span id="modalProductPrice"></span></p>
+                            </div>
+                            <div class="details-item">
+                                <h4>Stock Disponible</h4>
+                                <p><span id="modalProductStock"></span> unidades</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="medicalTab" class="tab-content">
+                        <div class="details-grid">
+                            <div class="details-item">
+                                <h4>Indicaciones</h4>
+                                <p id="modalProductIndications"></p>
+                            </div>
+                            <div class="details-item">
+                                <h4>Dosis Medicamento</h4>
+                                <p id="modalProductDose"></p>
+                            </div>
+                            <div class="details-item">
+                                <h4>Efectos Secundarios</h4>
+                                <p id="modalProductSideEffects"></p>
+                            </div>
+                            <div class="details-item">
+                                <h4>Precauciones</h4>
+                                <p id="modalProductPrecautions"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="technicalTab" class="tab-content">
+                        <div class="details-grid">
+                            <div class="details-item">
+                                <h4>ID Producto</h4>
+                                <p id="modalProductId"></p>
+                            </div>
+                            <div class="details-item">
+                                <h4>Categoría</h4>
+                                <p id="modalProductCategory"></p>
+                            </div>
+                            <div class="details-item">
+                                <h4>Área de Producto</h4>
+                                <p id="modalProductArea"></p>
+                            </div>
+                            <div class="details-item">
+                                <h4>Unidad de Venta</h4>
+                                <p id="modalProductUnit"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+        let currentProduct = null;
+        let modalQuantity = 1;
+        
+        // Función para inicializar los event listeners de los productos
+        function initializeProductItems() {
+            document.querySelectorAll('.product-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // No abrir el modal si se hizo clic en el botón de añadir al carrito
+                    if (!e.target.classList.contains('add-to-cart-btn')) {
+                        try {
+                            // Obtener el ID del producto del botón
+                            const addToCartBtn = this.querySelector('.add-to-cart-btn');
+                            const onclickAttr = addToCartBtn.getAttribute('onclick');
+                            const productId = onclickAttr.match(/'([^']+)'/)[1];
+                            
+                            // Obtener el resto de la información
+                            const productName = this.querySelector('h3').textContent;
+                            const productPrice = this.querySelector('p:nth-of-type(2)').textContent
+                                .match(/\$([0-9.]+)/)[1];
+                            const productImage = this.querySelector('img').src;
+                            const productDescription = this.querySelector('p:nth-of-type(1)').textContent;
+                            const productStock = this.querySelector('p:nth-of-type(3)').textContent
+                                .match(/\d+/)[0];
+                            
+                            loadProductDetails(productId, productName, productPrice, productImage, 
+                                             productDescription, productStock);
+                        } catch (error) {
+                            console.error('Error al obtener datos del producto:', error);
+                        }
+                    }
+                });
+            });
+        }
+        
+        function loadProductDetails(id, name, price, image, description, stock) {
+            try {
+                // Primero mostramos los datos básicos que ya tenemos
+                currentProduct = { 
+                    id, 
+                    name, 
+                    price: parseFloat(price), 
+                    image, 
+                    description, 
+                    stock: parseInt(stock) 
+                };
+                modalQuantity = 1;
+                
+                // Actualizar elementos del modal con los datos básicos
+                document.getElementById('modalProductName').textContent = name;
+                document.getElementById('modalProductPrice').textContent = `$${price}`;
+                document.getElementById('modalProductImage').src = image;
+                document.getElementById('modalProductDescription').textContent = description;
+                document.getElementById('modalProductStock').textContent = stock;
+                document.getElementById('modalQuantity').textContent = modalQuantity;
+                document.getElementById('modalProductId').textContent = id;
+                
+                // Mostrar el modal
+                const modal = document.getElementById('productModal');
+                modal.style.display = 'flex';
+                
+                // Obtener datos adicionales del producto
+                fetch(`/api/productos/${id}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data) {
+                            document.getElementById('modalProductIndications').textContent = 
+                                data.Indicaciones || 'No disponible';
+                            document.getElementById('modalProductDose').textContent = 
+                                data.Dosis_Medicacmento || 'No disponible';
+                            document.getElementById('modalProductSideEffects').textContent = 
+                                data.Efectos_Secundarios || 'No disponible';
+                            document.getElementById('modalProductPrecautions').textContent = 
+                                data.Precauciones || 'No disponible';
+                            document.getElementById('modalProductCategory').textContent = 
+                                data.ID_Categoria || 'No disponible';
+                            document.getElementById('modalProductArea').textContent = 
+                                data.ID_Area_Producto || 'No disponible';
+                            document.getElementById('modalProductUnit').textContent = 
+                                data.ID_Unidad_Venta || 'No disponible';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading product details:', error);
+                        // Opcional: mostrar mensaje de error en el modal
+                    });
+            } catch (error) {
+                console.error('Error in loadProductDetails:', error);
+            }
+        }
+        
+        function switchTab(tabName) {
+            // Remover clase active de todos los tabs y botones
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Activar el tab seleccionado
+            document.getElementById(`${tabName}Tab`).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+            currentProduct = null;
+            modalQuantity = 1;
+        }
+        
+        function updateQuantity(change) {
+            const newQuantity = modalQuantity + change;
+            if (newQuantity > 0 && newQuantity <= parseInt(currentProduct.stock)) {
+                modalQuantity = newQuantity;
+                document.getElementById('modalQuantity').textContent = modalQuantity;
+            }
+        }
+        
+        function addToCartFromModal() {
+            if (currentProduct) {
+                agregarAlCarrito(
+                    currentProduct.id,
+                    currentProduct.name,
+                    currentProduct.price,
+                    currentProduct.image
+                );
+                closeProductModal();
+            }
+        }
+        
+        // Event Listeners al cargar el DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeProductItems();
+        
+            // Cerrar el modal si se hace clic fuera de él
+            const modal = document.getElementById('productModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeProductModal();
+                    }
+                });
+            }
+        
+            // Imprimir en consola para depuración
+            console.log('Script inicializado correctamente');
+            console.log('Número de productos encontrados:', document.querySelectorAll('.product-item').length);
+        });
+        </script>
+            <!-- Asegúrate de incluir Font Awesome -->
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
     <script>
         function cambiarSucursal() {
             const idSucursal = document.getElementById('sucursal').value;
             window.location.href = `/pagina_pedidos/productos/${idSucursal}`;
         }
-
-
-            function buscarProductos() {
+        
+        function buscarProductos() {
             const searchTerm = document.getElementById('search-input').value.toLowerCase();  // Obtén el valor de la búsqueda y lo pasas a minúsculas
             const productItems = document.querySelectorAll('.product-item');  // Selecciona todos los productos en la página
 
@@ -139,8 +397,7 @@
                 }
             });
         }
-
-        let carrito = JSON.parse(localStorage.getItem('cart')) || [];
+        let carrito = []; // Aquí ya no usaremos localStorage
     
         function agregarAlCarrito(productId, nombre, precio, imagen = '', stock = 'Disponible', unidad = 'Unidad') {
             const productoExistente = carrito.find(item => item.id === productId);
@@ -251,17 +508,50 @@
                 actualizarContadorCarrito();
             }
         }
-    
-        function realizarCompra() {
-            alert('Procediendo a la compra...');
-            // Redirigir al carrito
-            window.location.href = '/pagina_pedidos/carritopedidos';
+        function continueToCheckout(event) {
+            event.preventDefault();  // Prevenir comportamiento predeterminado (si está dentro de un formulario)
+            window.location.href = '/pagina_pedidos/continuar_pedido';
         }
-    
-        // Actualizar contador al cargar la página
-        actualizarContadorCarrito();
+
+        function realizarCompra() {
+            // Mostrar el modal de carrito
+            const cartModal = document.getElementById('cartModal');
+            cartModal.style.display = 'flex'; // Hacer visible el modal
+
+            // Aquí puedes cargar los detalles del carrito, si es necesario
+            const cartItemsContainer = document.getElementById('cartItems');
+            cartItemsContainer.innerHTML = ''; // Limpiar los items anteriores
+
+            carrito.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'cart-item';
+                itemDiv.innerHTML = `
+                    <img src="${item.image || '/resources/images/default-product.png'}" alt="${item.name}">
+                    <div class="cart-item-info">
+                        <h3>${item.name}</h3>
+                        <p>Precio: Bs ${item.price.toFixed(2)}</p>
+                        <p>Cantidad: ${item.quantity}</p>
+                    </div>
+                `;
+                cartItemsContainer.appendChild(itemDiv);
+            });
+                // Mostrar el resumen del carrito y el total
+                const total = carrito.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                document.getElementById('cartTotal').textContent = `Subtotal: Bs ${total.toFixed(2)}`;
+            }
+
+            function closeCart() {
+            const cartModal = document.getElementById('cartModal');
+            cartModal.style.display = 'none'; // Ocultar el modal
+            }
+            function continueToCheckout() {
+                window.location.href = '/pagina_pedidos/continuar_pedido'; // Redirige a la página de continuar pedido
+            }
+            // Actualizar contador al cargar la página
+                actualizarContadorCarrito();
+
     </script>
-<script>
+    <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Verifica si el idSucursal está en la URL antes de redirigir
         const idSucursal = "<%= idSucursal %>";
@@ -270,11 +560,24 @@
             window.location.href = `/pagina_pedidos/productos/${defaultSucursalId}`;
         }
     });
+    
 
-    function cambiarSucursal() {
-        const selectedSucursalId = document.getElementById('sucursal').value;
-        window.location.href = `/pagina_pedidos/productos/${selectedSucursalId}`;
-    }
+function cambiarSucursal() {
+    const sucursalSelect = document.getElementById('sucursal');
+    const selectedSucursalId = sucursalSelect.value;
+    // Obtener también el nombre de la sucursal del option seleccionado
+    const selectedSucursalNombre = sucursalSelect.options[sucursalSelect.selectedIndex].text;
+    
+    // Guardar en localStorage
+    const sucursalData = {
+        id: selectedSucursalId,
+        nombre: selectedSucursalNombre
+    };
+    localStorage.setItem('sucursalSeleccionada', JSON.stringify(sucursalData));
+    
+    // Redireccionar
+    window.location.href = `/pagina_pedidos/productos/${selectedSucursalId}`;
+}
 </script>
 </body>
 </html>  

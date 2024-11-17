@@ -355,11 +355,284 @@ header p {
     outline: 3px solid #007acc;
 }
 
+/* Estilos para el contenedor del dropdown */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Estilos para el menú desplegable */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    border-radius: 8px; /* Bordes redondeados */
+    border: 1px solid #ccc;
+    top: 100%;
+    right: 0;
+    min-width: 180px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    opacity: 0;  /* Inicialmente invisible */
+    visibility: hidden; /* Inicialmente oculto */
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Mostrar el menú al pasar el mouse o al hacer click */
+.dropdown:hover .dropdown-menu,
+.dropdown:focus-within .dropdown-menu {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Estilos para los elementos dentro del dropdown */
+.dropdown-menu li {
+    display: block;
+    padding: 12px 20px;
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+    border-bottom: 1px solid #f1f1f1;
+    transition: background-color 0.3s ease;
+}
+
+/* Efecto de hover para los elementos */
+.dropdown-menu li:hover {
+    background-color: #f1f1f1;
+    color: #007bff;  /* Cambiar color del texto al pasar el mouse */
+}
+
+/* El último item sin borde inferior */
+.dropdown-menu li:last-child {
+    border-bottom: none;
+}
+
+
+/* Estilos adicionales para el botón del dropdown si es necesario */
+.dropdown button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.dropdown button:hover {
+    background-color: #0056b3;
+}
+
+    #profile-dropdown {
+        display: none;  /* Asegúrate de que esté oculto por defecto */
+    }
+    
+    
+    .dropdown-menu li a {
+        text-decoration: none;
+        color: #333;
+        display: block;
+        width: 100%;
+    }
+    
+    .dropdown-menu li:hover {
+        background-color: #f1f1f1;
+    }
+/* Estilos para el perfil emergente */
+.profile-popup {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    z-index: 9999; /* Asegúrate de que el modal se muestre sobre otros elementos */
+}
+
+.profile-popup-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    width: 50%;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+/* Estilos para el botón de cerrar */
+.profile-popup-content button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #ff6347;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+/* Contenedor principal de contacto */
+.contact-container {
+    display: flex; /* Para organizar los elementos en fila */
+    justify-content: space-between;
+    padding: 40px;
+    background-color: #f3f4f6; /* Color de fondo suave */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    flex-wrap: wrap; /* Permite que los elementos se ajusten cuando la pantalla sea pequeña */
+}
+
+/* Información de contacto */
+.contact-info {
+    width: 48%; /* Asigna el 48% del espacio a los detalles de contacto */
+    margin-right: 20px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Mapa */
+.map-container {
+    width: 48%; /* Asigna el 48% del espacio al mapa */
+    text-align: center;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el título del mapa */
+.map-container h3 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Estilos para el texto debajo del título del mapa */
+.map-container p {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Estilos del iframe */
+.map-embed iframe {
+    border-radius: 8px;
+    width: 100%;
+    height: 300px; /* Fija una altura más específica para el mapa */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Detalles de contacto */
+.contact-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease; /* Efecto al pasar el mouse */
+}
+
+/* Estilo de los íconos */
+.detail-item i {
+    margin-right: 15px;
+    font-size: 1.6rem;
+    color: #007BFF; /* Color azul para íconos */
+    transition: color 0.3s ease; /* Efecto al pasar el mouse */
+}
+
+/* Estilo de los detalles */
+.detail-item div {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-item strong {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.detail-item p {
+    color: #666;
+    font-size: 1rem;
+}
+
+/* Efectos al pasar el mouse por los íconos */
+.detail-item:hover i {
+    color: #0056b3; /* Cambio de color en hover */
+}
+
+.detail-item:hover {
+    transform: translateX(10px); /* Desplazamiento de los detalles al pasar el mouse */
+}
+
+/* Estilo para los títulos */
+h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+h3 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+p {
+    font-size: 1.1rem;
+    color: #666;
+}
+
+/* Responsividad */
+@media screen and (max-width: 768px) {
+    .contact-container {
+        flex-direction: column; /* Pone los elementos en columna en pantallas pequeñas */
+        padding: 20px;
+    }
+
+    .contact-info, .map-container {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+}
+
+
 /* Responsividad */
 @media (max-width: 768px) {
     .top-header ul {
         flex-direction: column;
         align-items: center;
+        padding: 0; /* Elimina el padding para evitar espacio adicional */
+    }
+
+    .top-header ul li {
+        margin: 10px 0; /* Aumenta el margen entre los elementos de la barra */
+    }
+
+    .top-header .logo img {
+        height: 30px; /* Ajusta el tamaño del logo para pantallas pequeñas */
+    }
+
+    .cart-icon {
+        margin-left: 0; /* Asegura que el carrito esté alineado correctamente */
+    }
+
+    .location-select {
+        margin-top: 10px;
+        margin-right: 0;
+        width: 100%; /* Hace que el selector de sucursal ocupe el 100% del espacio */
+        padding: 10px;
+        font-size: 16px;
     }
 
     .services-container, .products-container {
@@ -370,6 +643,19 @@ header p {
     .product-card, .service-card {
         width: 100%;
         margin: 10px 0;
+    }
+
+    /* Opcional: Ajusta la altura del header y el texto */
+    header {
+        padding: 100px 20px; /* Reduce el padding superior */
+    }
+
+    header h1 {
+        font-size: 2em; /* Reduce el tamaño del título */
+    }
+
+    header p {
+        font-size: 1.1em; /* Ajusta el tamaño del texto */
     }
 }
 

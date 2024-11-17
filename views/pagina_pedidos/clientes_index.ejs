@@ -7,64 +7,50 @@
     <link rel="stylesheet" href="/resources/css/paginapedidos.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-<style>
-    /* Estilos para el dropdown */
-    .dropdown {
-    position: relative;
-}
 
-.dropdown-menu {
-    display: none; /* El menú estará oculto por defecto */
-    position: absolute;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    top: 100%; /* Aparece justo debajo del ícono de perfil */
-    left: 0;
-    min-width: 150px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-}
-
-.dropdown-menu li {
-    padding: 10px;
-}
-
-.dropdown-menu li a {
-    text-decoration: none;
-    color: #333;
-}
-
-.dropdown-menu li a:hover {
-    background-color: #f1f1f1;
-}
-
-</style>
 <body>
-    <div class="top-header">
+    <div class="top-header">  
         <a href="/pagina_pedidos/clientes_index/:idSucursal" class="logo">
-            <img src="resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
-        </a>   
+            <img src="/resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
+        </a> 
         <ul>
-            <li><a href="/pagina_pedidos/clientes_index/:idSucursal" class="dropdown">Inicio</a></li>
-            <li><a href="/pagina_pedidos/productos/:idSucursal" class="dropdown">Tienda</a></li>
-            <li><a href="#contacto" class="dropdown">Contactos</a></li>
+            <li><a href="/pagina_pedidos/clientes_index/:idSucursal">Inicio</a></li>
+            <li><a href="/pagina_pedidos/productos/:idSucursal">Tienda</a></li>
+            <li><a href="#contacto">Contactos</a></li>
             <% if (estaLogueadoCliente) { %>
-                <li><a href="/pagina_pedidos/consultas" class="dropdown">Consultas</a></li>
-                <li><a href="/pagina_pedidos/miscompras" class="dropdown">Compras</a></li>
-                <li><a href="/pagina_pedidos/recordatorio" class="dropdown">Recordatorio</a></li>
-                <!-- Icono de perfil que abre el dropdown -->
-                <li class="dropdown">
-                    <a href="javascript:void(0);" onclick="toggleDropdown()">
-                        <i class="fas fa-user"></i> Perfil
-                    </a>
-                    <!-- Menú desplegable -->
-                    <ul id="profile-dropdown" class="dropdown-menu">
-                        <li><a href="/pagina_pedidos/perfil">Mi Perfil</a></li>
-                        <li><a href="/pagina_pedidos/logout">Cerrar Sesión</a></li>
-                    </ul>
-                </li>
+                <li><a href="/pagina_pedidos/consultas">Consultas</a></li>
+                <li><a href="/pagina_pedidos/miscompras">Compras</a></li>
+                <li><a href="/pagina_pedidos/recordatorio">Recordatorio</a></li>
+                    <!-- Icono de perfil que abre el dropdown -->
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" onclick="toggleDropdown(event)">
+                            <i class="fas fa-user"></i> Perfil
+                        </a>
+                        <!-- Menú desplegable -->
+                        <ul id="profile-dropdown" class="dropdown-menu">
+                            <li><a href="javascript:void(0);" onclick="toggleProfilePopup(event)">Mi Perfil</a></li>
+                            <li><a href="/pagina_pedidos/logout">Cerrar Sesión</a></li>
+                        </ul>
+                    </li>
+                    <!-- Ventana emergente de perfil -->
+                    <div id="profile-popup" class="profile-popup" style="display: none;">
+                        <div class="profile-popup-content">
+                            <h3>Mi Perfil</h3>
+                            <p>Aquí puedes ver y editar tu perfil.</p>
+                            <!-- Información del cliente -->
+                            <div id="client-info">
+                                <p><strong>ID Cliente:</strong> <span id="client-id"></span></p>
+                                <p><strong>Nombre:</strong> <span id="client-name"></span></p>
+                                <p><strong>Apellido:</strong> <span id="client-lastname"></span></p>
+                                <p><strong>Teléfono:</strong> <span id="client-phone"></span></p>
+                                <p><strong>C.I.:</strong> <span id="client-ci"></span></p>
+                                <p><strong>NIT:</strong> <span id="client-nit"></span></p>
+                                <p><strong>Código:</strong> <span id="client-code"></span></p>
+                            </div>
+                            <button onclick="closePopup()">Cerrar</button>
+                        </div>
+                    </div>
             <% } else { %>
-                <!-- Botones de Iniciar Sesión y Registrar solo cuando no está logueado -->
                 <li><a href="/pagina_pedidos/login_clientes" class="btn-login">Iniciar sesión</a></li>
                 <li><a href="/pagina_pedidos/registrar_clientes" class="btn-register">Registrar</a></li>
             <% } %>
@@ -133,26 +119,104 @@
             <% } %>
         </div>
     </div>
-
-    <!-- Sección de contacto al final -->
-    <div id="contacto" class="contact-container">
-        <div class="contact-info">
-            <h2>Contacto</h2>
-            <p>Si tienes alguna duda, por favor contacta con nosotros:</p>
-            <p><strong>Horario de Atención:</strong> Lunes a Viernes, 9:00 - 18:00</p>
-            <p><strong>Teléfono:</strong> +34 123 456 789</p>
-            <p><strong>Correo Electrónico:</strong> contacto@ejemplo.com</p>
+<!-- Sección de contacto al final -->
+<div id="contacto" class="contact-container">
+    <div class="contact-info">
+        <h2>Contacto</h2>
+        <p>Si tienes alguna duda, no dudes en contactarnos. Estaremos encantados de ayudarte.</p>
+        <div class="contact-details">
+            <div class="detail-item">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <strong>Horario de Atención:</strong>
+                    <p>Lunes a Viernes, 9:00 - 18:00</p>
+                </div>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-phone-alt"></i>
+                <div>
+                    <strong>Teléfono:</strong>
+                    <p>+34 123 456 789</p>
+                </div>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-envelope"></i>
+                <div>
+                    <strong>Correo Electrónico:</strong>
+                    <p>contacto@ejemplo.com</p>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Mapa de Google -->
+    <div class="map-container">
+        <h3>Visítanos</h3>
+        <p>Estamos ubicados en El Alto, La Paz, Bolivia:</p>
+        <div class="map-embed">
+            <!-- Aquí agregas el enlace de Google Maps -->
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5977.735616871491!2d-68.11930320270277!3d-16.500038149523107!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93e37874cc2e2c6f%3A0x6977e6a8ffb104ef!2sEl%20Alto%2C%20La%20Paz%2C%20Bolivia!5e0!3m2!1ses!2ses!4v1699388895394!5m2!1ses!2ses" 
+                width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </div>
+</div>
 
+    <!-- Asegúrate de incluir Font Awesome -->
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
     <script>
+       function toggleProfilePopup(event) {
+    const popup = document.getElementById('profile-popup');
+    popup.style.display = (popup.style.display === 'block') ? 'none' : 'block';
+
+    // Obtener los datos del cliente desde el backend
+    fetch('/getClientData')  // Asegúrate de que la URL sea correcta y apunte a tu servidor
+        .then(response => response.json())
+        .then(data => {
+            // Verificar si los datos fueron obtenidos correctamente
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            // Mostrar la información del cliente en la ventana emergente
+            document.getElementById('client-id').textContent = data.id_cliente;
+            document.getElementById('client-name').textContent = data.nombre;
+            document.getElementById('client-lastname').textContent = data.apellido;
+            document.getElementById('client-phone').textContent = data.telefono;
+            document.getElementById('client-ci').textContent = data.ci;
+            document.getElementById('client-nit').textContent = data.nit;
+            document.getElementById('client-code').textContent = data.codigo;
+            document.getElementById('client-password').textContent = data.contrasena;
+        })
+        .catch(error => {
+            console.error('Error al obtener los datos:', error);
+        });
+
+    // Evitar que el evento de clic se propague
+    event.stopPropagation();
+}
+
+        // Cerrar ventana emergente
+        function closePopup() {
+            document.getElementById('profile-popup').style.display = 'none';
+        }
+
+        // Cuando se hace clic fuera de la ventana emergente, la cerramos
+        window.onclick = function(event) {
+            const popup = document.getElementById('profile-popup');
+            if (!event.target.closest('.dropdown') && !event.target.closest('.profile-popup')) {
+                popup.style.display = 'none';
+            }
+        };
+
+
         function cambiarSucursal() {
             const sucursalId = document.getElementById('sucursal').value;
             window.location.href = `/pagina_pedidos/clientes_index/${sucursalId}`;
         }
 
-        let carrito = JSON.parse(localStorage.getItem('cart')) || [];
+        let carrito = []; // Aquí ya no usaremos localStorage
 
         function agregarAlCarrito(productId, nombre, precio) {
             const productoExistente = carrito.find(item => item.id === productId);
@@ -216,35 +280,68 @@
         }
 
         function actualizarContadorCarrito() {
-            const total = carrito.reduce((sum, item) => sum + item.quantity, 0);
-            document.querySelector('.cart-count').textContent = total;
+            const cartCount = document.querySelector('.cart-count');
+            const totalItems = carrito.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+        }
+                // Validación de cantidad en el carrito
+        function cambiarCantidad(productId, change) {
+            const producto = carrito.find(item => item.id === productId);
+            
+            if (producto) {
+                producto.quantity += change;
+                if (producto.quantity <= 0) {
+                    carrito = carrito.filter(item => item.id !== productId);
+                }
+                mostrarCarrito();
+                actualizarContadorCarrito();
+            }
         }
 
         function realizarCompra() {
-            window.location.href = '/pagina_pedidos/carritopedidos';
+            window.location.href = '/pagina_pedidos/productos/:idSucursal';
         }
     </script>
-<script>
-    // Función para mostrar/ocultar el dropdown
-    function toggleDropdown(event) {
-        // Prevenir que el clic en el botón cierre inmediatamente el dropdown
-        event.stopPropagation();
-        
-        const dropdown = document.getElementById('profile-dropdown');
-        
-        // Alternar entre mostrar y ocultar el menú
-        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-    }
-
-    // Cerrar el dropdown si el usuario hace clic fuera del menú
-    window.onclick = function(event) {
-        const dropdown = document.getElementById('profile-dropdown');
-        if (dropdown.style.display === 'block' && !event.target.matches('.dropdown-btn, .dropdown-btn *')) {
-            // Solo ocultar si el clic es fuera del botón de perfil y del dropdown
-            dropdown.style.display = 'none';
+    <script>
+        function toggleDropdown(event) {
+ 
+            const dropdown = document.getElementById('profile-dropdown');
+            
+            // Si el dropdown está visible, lo ocultamos, y viceversa
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            } else {
+                dropdown.style.display = 'block';
+            }
         }
-    };
-</script>
 
+        // Cuando se hace clic fuera del dropdown, lo cerramos
+        window.onclick = function(event) {
+            const dropdown = document.getElementById('profile-dropdown');
+            if (!event.target.closest('.dropdown')) {
+                dropdown.style.display = 'none';
+            }
+        };
+        // Función para abrir el popup
+function openPopup() {
+    document.getElementById('profile-popup').style.display = 'block';
+}
+
+// Función para cerrar el popup
+function closePopup() {
+    document.getElementById('profile-popup').style.display = 'none';
+}
+
+// Detectar clic fuera del popup para cerrarlo
+document.addEventListener('click', function(event) {
+    const popup = document.getElementById('profile-popup');
+    const popupContent = document.querySelector('.profile-popup-content');
+    
+    // Si el clic no fue dentro del contenido del popup, lo cerramos
+    if (!popupContent.contains(event.target) && !popup.contains(event.target)) {
+        closePopup();
+    }
+});
+    </script>
 </body>
 </html>
