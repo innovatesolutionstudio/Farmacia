@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://kit.fontawesome.com/a076d05399.js"
+            crossorigin="anonymous"></script>
+
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+            integrity="sha512-Fo3rlrZj/kMVqz1K3lJu3g4C2yOt6nfx1NNMRdyz0HXov9pGi3mXKjbl2XFK9xZPd9XyG6XTB/8x8es5X+Xw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"
+            integrity="sha384-UzomW2R7c1D7vo/vSjtyUlbhlmJ8LZ+DRjW/zhbKUp7AWGzZQL57/bjH5CV2N2zJ"
+            crossorigin="anonymous">
+        <link rel="stylesheet" href="resources/css/graficos.css" />
+
+        <title>Ventas</title>
+
+    </head>
+    <body>
+
+        <div class="header-container">
+            <h1>Pedidos</h1>
+        </div>
+
+        <p>Listas y configuración de pedidos.</p>
+
+        <div class="container">
+            <div class="card" style="border: 2px solid #A7DCF5;">
+                <a href="/notificaciones_pedidos"
+                    class="btn-group"><img class="icono"
+                        src="resources/images/iconos/notificaciones.svg"></a>
+                <h2 id="totalNotificaciones">Cargando...</h2>
+                <p>Notificaciones</p>
+                <div class="details">
+                    <a href="/notificaciones_pedidos"
+                        style="background-color: #A7DCF5; color: black;"> Ver Notificaciones
+                        &raquo;</a>
+                </div>
+            </div>
+            <div class="card" style="border: 2px solid #A6DBCB;">
+                <a href="/historial_pedidos"
+                    class="btn-group"><img class="icono"
+                        src="resources/images/iconos/reporte.svg"></a>
+
+                <h2 id="totalPedidosMesActual">Cargando...</h2>
+                <p>Total Pedidos del Mes</p>
+                <div class="details">
+                    <a href="/historial_pedidos"
+                        style="background-color: #A6DBCB; color: black;">Ver
+                        Historial de pedidos
+                        &raquo;</a>
+                </div>
+            </div>
+
+        </div>
+
+    </body>
+    <script>
+ 
+        document.addEventListener('DOMContentLoaded', () => {
+  // Hacer una solicitud al servidor para obtener los datos
+  fetch('/datospedidos')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error en la respuesta del servidor');
+      }
+      return response.json();
+    })
+    .then(data => {
+      document.getElementById('totalNotificaciones').innerText = data.totalNotificaciones !== undefined ? data.totalNotificaciones: 'No se encuentran pedidos';   
+      document.getElementById('totalPedidosMesActual').innerText = data.totalPedidosMesActual!== undefined ? data.totalPedidosMesActual  : 'No hay pedidos';
+
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+      // Opcional: Mostrar un mensaje de error en la interfaz
+      document.getElementById('totalNotificaciones').innerText = 'Error al cargar datos';
+      document.getElementById('totalPedidosMesActual').innerText = 'Error al cargar datos';
+
+      
+    });
+});
+
+
+</script>
+</html>

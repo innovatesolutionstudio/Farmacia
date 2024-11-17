@@ -12,6 +12,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
+    "bwip-js": "^4.5.1",
     "chart.js": "^4.4.3",
     "cohere-ai": "^7.11.0",
     "dhtmlx-gantt": "^8.0.6",
@@ -28,6 +29,7 @@
     "plotly.js": "^2.32.0",
     "plotly.js-dist": "^2.32.0",
     "puppeteer": "^22.7.1",
+    "qrcode": "^1.5.4",
     "xtend": "^4.0.2"
   },
   "devDependencies": {

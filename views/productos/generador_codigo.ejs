@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"></script>
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      crossorigin="anonymous" />
+    <link rel="stylesheet" href="/resources/css/recursosH.css" />
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <title>Gestión de Productos</title>
+  </head>
+
+  <body>
+
+    <!-- Encabezado -->
+    <div class="header-container">
+      <div class="breadcrumb">
+        <a href="/productos" class="reporte-link">
+          <h1
+            style="color: #858B92; font-weight: bold; margin-right: 5px;">Gestión de Productos</h1>
+        </a>
+        <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+        <h1 style="font-weight: bold;">Generar codigos</h1>
+      </div>
+
+      
+    </div>
+
+    <br>
+    
+
+    <div class="container-generador">
+        <h2 class="titulo">Generador de Códigos</h2>
+        <form id="generarCodigosForm" class="form-generador">
+            <div class="form-group">
+                <label for="productoBusqueda" class="form-label">Buscar Producto:</label>
+                <input
+                    type="text"
+                    id="productoBusqueda"
+                    name="productoBusqueda"
+                    placeholder="Ingrese el nombre del producto"
+                    autocomplete="off"
+                    class="form-input"
+                />
+                <div id="productosDropdown" class="dropdown"></div>
+            </div>
+
+            <input type="hidden" id="ID_Producto" name="ID_Producto" />
+
+            <div class="form-group">
+                <label for="cantidad" class="form-label">Cantidad de Códigos:</label>
+                <input
+                    type="number"
+                    id="cantidad"
+                    name="cantidad"
+                    min="1"
+                    required
+                    class="form-input"
+                />
+            </div>
+
+            <button type="submit" class="btn-generar">Generar PDF</button>
+        </form>
+    </div>
+    </body>
+      <script>
+        document.getElementById("generarCodigosForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const ID_Producto = document.getElementById("ID_Producto").value;
+  const cantidad = document.getElementById("cantidad").value;
+
+  try {
+    const response = await fetch("/generar_codigo_producto", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ID_Producto, cantidad }),
+    });
+
+    if (response.ok) {
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank");
+    } else {
+      const error = await response.json();
+      alert(`Error: ${error.error}`);
+    }
+  } catch (error) {
+    console.error("Error al generar códigos:", error);
+    alert("Hubo un problema al generar los códigos.");
+  }
+});
+      </script>
+      <script>
+        document.addEventListener("DOMContentLoaded", () => {
+  const productoBusqueda = document.getElementById("productoBusqueda");
+  const productosDropdown = document.getElementById("productosDropdown");
+  const ID_Producto = document.getElementById("ID_Producto");
+
+  productoBusqueda.addEventListener("input", async () => {
+    const searchTerm = productoBusqueda.value.trim();
+
+    if (searchTerm.length === 0) {
+      productosDropdown.style.display = "none";
+      productosDropdown.innerHTML = "";
+      return;
+    }
+
+    try {
+      const response = await fetch(`/buscar_productos?nombre=${encodeURIComponent(searchTerm)}`);
+      const productos = await response.json();
+
+      if (productos.length > 0) {
+        productosDropdown.innerHTML = "";
+        productos.forEach((producto) => {
+          const div = document.createElement("div");
+          div.textContent = `${producto.Nombre} - ${producto.Codigo}`;
+          div.dataset.id = producto.ID_Producto;
+          div.addEventListener("click", () => {
+            productoBusqueda.value = producto.Nombre;
+            ID_Producto.value = producto.ID_Producto;
+            productosDropdown.style.display = "none";
+          });
+          productosDropdown.appendChild(div);
+        });
+        productosDropdown.style.display = "block";
+      } else {
+        productosDropdown.innerHTML = "<div>No se encontraron productos</div>";
+        productosDropdown.style.display = "block";
+      }
+    } catch (error) {
+      console.error("Error al buscar productos:", error);
+    }
+  });
+
+  // Cerrar el menú desplegable si se hace clic fuera
+  document.addEventListener("click", (event) => {
+    if (!productoBusqueda.contains(event.target) && !productosDropdown.contains(event.target)) {
+      productosDropdown.style.display = "none";
+    }
+  });
+});
+
+      </script>
+      
+
+
+
+  <script type="text/javascript" language="javascript"
+    src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script type="text/javascript" language="javascript"
+    src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+
+
+
+</html>

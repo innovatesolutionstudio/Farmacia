@@ -27,6 +27,8 @@ const venta_espeRoutes = require("./routes/venta_espe");
 const cajasRoutes = require("./routes/cajas");
 const nueva_compraRoutes = require("./routes/nueva_compra");
 
+const generarcodigoproducto = require("./routes/generador_codigos");
+
 const rolesRoutes = require("./routes/roles");
 const sucursalesRoutes = require("./routes/sucursales");
 const vista_ventas = require("./routes/vista_ventas");
@@ -36,8 +38,9 @@ const vistareportes = require("./routes/vista_reportes");
 const registrocagas = require("./routes/registro_cajas");
 const vistafinanzas = require("./routes/vista_Finanzas");
 const vistaComtas = require("./routes/vista_compras");
-
+const vistaPedidos = require("./routes/vista_pedidos");
 const notificacionesRoutes = require("./routes/notificaciones");
+const pedidos = require("./routes/pedidos");
 
 //#endregion
 const graficosRouter = require("./routes/graficos"); // Ajusta la ruta según la ubicación de tu archivo graficos.js
@@ -211,7 +214,7 @@ app.use(ventasRoutes);
 app.use(detallesventasRoutes);
 app.use(clientesRoutes);
 app.use(inventarioRoutes);
-
+app.use(generarcodigoproducto);
 app.use(productosRoutes);
 app.use(nuevaventaRoutes);
 app.use(ganancias_esRoutes);
@@ -240,6 +243,9 @@ app.use(vistareportes);
 app.use(registrocagas);
 app.use(api_datos);
 app.use(vistaComtas);
+app.use(vistaPedidos);
+app.use(pedidos);
+
 //reportes
 
 app.use(generador_reportesRoutes);

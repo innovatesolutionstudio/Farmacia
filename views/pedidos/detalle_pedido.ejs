@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/resources/css/recursosH.css" />
+    <title>Detalles del Pedido</title>
+  </head>
+  <body>
+    <div class="header-container">
+      <div class="breadcrumb">
+        <a href="/vista_pedidos" class="reporte-link">
+          <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">
+            Pedidos
+          </h1>
+        </a>
+        <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+        <h1 style="font-weight: bold;">Mas Detalle</h1>
+      </div>
+    </div>
+
+    <div class="container2">
+   
+        <div class="card1">
+            <div class="header-card1">
+              <span>Datos del cliente</span>
+            </div>
+
+            <div class="content-card1">
+                <div>
+                    <h2> <%= pedido.ID_Pedido %></h2>
+                    <p>ID del Pedido</p>
+                </div>
+                <div>
+                    <h2> <%= pedido.NombreCliente %></h2>
+                    <p>Nombre del cliente </p>
+                </div><div>
+                    <h2> <%= pedido.CICliente || pedido.NitCliente %></h2>
+                    <p>Usuario</p>
+                </div>
+
+               
+            </div>
+        </div>
+        <div class="card1">
+            <div class="header-card1">
+              <span>Fecha de entrega</span>
+            </div>
+
+            <div class="content-card1">
+                <div>
+                    <h2> <%= pedido.Fecha_Venta %></h2>
+                    <p>Realizado</p>
+                </div>
+                <div>
+                    <h2><%= pedido.Fecha_Entrega %></h2>
+                    <p>Entrega</p>
+                </div><div>
+                    <h2><%= new Date(pedido.Fecha_Entrega).toLocaleTimeString() %></h2>
+                    <p>Hora</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container2">
+   
+        <div class="card1">
+            <div class="header-card1">
+              <span>Datos del Recibo</span>
+            </div>
+            <div class="content-card1">
+                <div>
+                    <h2><%= pedido.NombreCliente %></h2>
+                    <p>Razón Social:</p>
+                </div>
+                <div>
+                    <h2> <%= pedido.CICliente || pedido.NitCliente %></h2>
+                    <p>CI/NIT:</p>
+                </div>
+                <div>
+                    <h2><%= pedido.DireccionEntrega %></h2>
+                    <p>Dirección</p>
+                </div>
+            </div>
+        </div>
+        <div class="card1">
+            <div class="header-card1">
+                <span>Fecha de entrega</span>
+            </div>
+            <div class="content-card1">
+
+                <div>
+                    <h2> <%= pedido.NombreEmpleado || "N/A" %></h2>
+                    <p>Responsable</p>
+                </div>
+                <div>
+                    <h2> <%= pedido.TarifaDelivery || "0.00" %></h2>
+                    <p>Tarifa</p>
+                </div>
+            </div>
+        </div>
+
+       
+    </div>
+                
+    <div class="card3">
+        <div class="header-card1">
+          <span>Detalles del Pedido</span>
+        </div>
+        <div class="content-card-empleados">
+            <table class="table-empleados">
+                <thead>
+                    <tr>
+                    <th>ID</th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% productos.forEach(function (producto) { %>
+                    <tr>
+                    <td><%= producto.ID_Producto %></td>
+                    <td><%= producto.NombreProducto %></td>
+                    <td><%= producto.Cantidad %></td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+  </body>
+</html>
