@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+    <title>Login</title>
+    <link rel="icon" href="/resources/images/iconos/farmacia.ico">
+    <link rel="stylesheet" href="/resources/css/style_login.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="forms-container">
+            <div class="signin-signup">
+                <!-- Formulario para inicio de sesión de clientes -->
+                <form method="post" action="/authas" class="sign-in-form">
+                    <img src="/resources/images/login/logo1.png" alt="Logo">
+                    <h2 class="title">Bienvenido Cliente!</h2>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" name="codigo" placeholder="Código" maxlength="50" required />
+                    </div>
+                    <div class="input-field" style="position: relative;">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="contrasena" id="contrasena" placeholder="Contraseña" style="padding-right: 30px;" maxlength="50" required />
+                        <i class="fa fa-eye" onclick="mostrarPassword()" id="show_password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 25px;"></i>
+                    </div>  
+                    <input type="submit" value="INICIAR SESION" class="btn solid" style="border-radius: 8px;"/>
+                    <p class="social-text">¿No tienes una cuenta? <a href="/pagina_pedidos/registrar_clientes" class="register-link">Regístrate aquí</a></p>
+                </form>              
+            </div>
+        </div>
+
+        <!-- Paneles laterales -->
+        <div class="panels-container">
+            <div class="panel left-panel">
+                <div class="content">
+                    <h1>FARMACIA - 25 DE JULIO</h1>
+                    <p>
+                        "Nuestro compromiso es ayudarte a cuidar de tu salud, brindándote y confianza con el respaldo de un equipo que trabaja para tu bienestar. Porque tu salud es nuestra prioridad."
+                    </p>
+                </div>
+                <img src="/resources/images/login/img1.png" class="image" alt="" />
+            </div>
+        </div>
+    </div>
+
+    <script src="/resources/js/script_login.js"></script>
+
+    <script type="text/javascript">
+        function mostrarPassword() {
+            var cambio = document.getElementById("contrasena");
+            var icono = document.getElementById("show_password");
+            if (cambio.type === "password") {
+                cambio.type = "text";  // Cambiar el tipo a texto para mostrar la contraseña
+                icono.classList.remove('fa-eye');  // Eliminar el ícono de ojo cerrado
+                icono.classList.add('fa-eye-slash');  // Agregar el ícono de ojo abierto
+            } else {
+                cambio.type = "password";  // Cambiar el tipo a contraseña para ocultarla
+                icono.classList.remove('fa-eye-slash');  // Eliminar el ícono de ojo abierto
+                icono.classList.add('fa-eye');  // Agregar el ícono de ojo cerrado
+            }
+        }
+    </script>
+</body>
+</html>

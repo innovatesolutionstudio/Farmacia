@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Productos - Farmacia</title>
+    <link rel="stylesheet" href="/resources/css/paginapedidos.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <div class="top-header">  
+        <a href="/pagina_pedidos/clientes_index/:idSucursal" class="logo">
+            <img src="/resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
+        </a> 
+        <ul>
+            <li><a href="/pagina_pedidos/clientes_index/:idSucursal">Inicio</a></li>
+            <li><a href="/pagina_pedidos/productos/1">Tienda</a></li>
+            <li><a href="#contacto">Contactos</a></li>
+            <% if (estaLogueadoCliente) { %>
+                <li><a href="/pagina_pedidos/consultas">Consultas</a></li>
+                <li><a href="/pagina_pedidos/miscompras">Compras</a></li>
+                <li><a href="/pagina_pedidos/recordatorio">Recordatorio</a></li>
+                    <!-- Icono de perfil que abre el dropdown -->
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" onclick="toggleDropdown(event)">
+                            <i class="fas fa-user"></i> Perfil
+                        </a>
+                        <!-- Menú desplegable -->
+                        <ul id="profile-dropdown" class="dropdown-menu">
+                            <li><a href="javascript:void(0);" onclick="toggleProfilePopup(event)">Mi Perfil</a></li>
+                            <li><a href="/pagina_pedidos/logout">Cerrar Sesión</a></li>
+                        </ul>
+                    </li>
+                    <!-- Ventana emergente de perfil -->
+                    <div id="profile-popup" class="profile-popup" style="display: none;">
+                        <div class="profile-popup-content">
+                            <h3>Mi Perfil</h3>
+                            <p>Aquí puedes ver y editar tu perfil.</p>
+                            <!-- Información del cliente -->
+                            <div id="client-info">
+                                <p><strong>ID Cliente:</strong> <span id="client-id"></span></p>
+                                <p><strong>Nombre:</strong> <span id="client-name"></span></p>
+                                <p><strong>Apellido:</strong> <span id="client-lastname"></span></p>
+                                <p><strong>Teléfono:</strong> <span id="client-phone"></span></p>
+                                <p><strong>C.I.:</strong> <span id="client-ci"></span></p>
+                                <p><strong>NIT:</strong> <span id="client-nit"></span></p>
+                                <p><strong>Código:</strong> <span id="client-code"></span></p>
+                            </div>
+                            <button onclick="closePopup()">Cerrar</button>
+                        </div>
+                    </div>
+            <% } else { %>
+                <li><a href="/pagina_pedidos/login_clientes" class="btn-login">Iniciar sesión</a></li>
+                <li><a href="/pagina_pedidos/registrar_clientes" class="btn-register">Registrar</a></li>
+            <% } %>
+        </ul>
+        <a href="#" class="cart-icon" onclick="mostrarCarrito(); return false;">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">0</span>
+        </a>
+        <!-- Selector de Sucursales -->
+        <select name="sucursal" id="sucursal" class="location-select" onchange="cambiarSucursal()">
+            <% results.forEach(sucursal => { %> 
+                <option value="<%= sucursal.ID_Sucursal %>" <%= idSucursal == sucursal.ID_Sucursal ? 'selected' : '' %>><%= sucursal.Nombre %></option>
+            <% }); %>
+        </select>
+    </div>
+<!-- Inicio nuestros servicios -->
+    <header>
+        <div class="header-content">
+            <div class="left-content">
+                <h1 style="color: #ffffff; line-height: 1.3;" >¡Bienvenido a nuestra Farmacia en Línea!</h1>
+                <p style="color: #ffffff;" >Explora nuestras opciones y no dudes en consultarnos cualquier inquietud. Estamos listos para ayudarte.</p>
+                <% if (estaLogueadoCliente) { %>
+                <% } else { %>
+                    <!-- Botón de Comprar -->
+                    <button class="btn-buy" onclick="window.location.href='/pagina_pedidos/login_clientes'">Comprar</button>
+                <% } %>
+            </div>
+            <div class="right-content"  >
+                <img src="/resources/images/index/1.png" alt="Imagen de la farmacia" class="header-image">
+            </div>
+        </div>
+    </header>
+
+    <div class="services-section" >
+        <h2>Nuestros Servicios</h2>
+        <div class="services-container" >
+            <button class="service-card" onclick="window.location.href='/pagina_pedidos/consultas'">
+                <div class="service-icon-clock">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3 style="color: #12AEE0; font-family: 'Poppins', sans-serif;" >Realiza Consultas</h3>
+                <p style="font-family: 'Poppins', sans-serif;">24h</p>
+            </button>
+            <button class="service-card" onclick="window.location.href='/pagina_pedidos/productos'">
+                <div class="service-icon-car">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <h3 style="color: #E87B16; font-family: 'Poppins', sans-serif;">Pedidos</h3>
+                <p style="font-family: 'Poppins', sans-serif;">Coordina Tu Pedido</p>
+            </button>
+            <button class="service-card" onclick="window.location.href='/pagina_pedidos/recordatorio'">
+                <div class="service-icon-remind">
+                    <i class="fas fa-hand-holding-usd"></i>
+                </div>
+                <h3 style="color: #00cc25; font-family: 'Poppins', sans-serif;">Recordatorio</h3>
+                <p style="font-family: 'Poppins', sans-serif;">No Olvides Tomar Tu Pastilla</p>
+            </button>
+        </div>
+    </div>
+<!-- Nuevo carrito emergente -->
+    <div id="cart-popup">
+        <h2>Mi carrito</h2>
+        <ul id="cart-items"></ul>
+        <div class="cart-buttons">
+            <% if (estaLogueadoCliente) { %>
+                <button class="close-cart" onclick="cerrarCarrito()">Ocultar</button>
+                <button class="checkout-cart" onclick="realizarCompra()">Continuar pedido</button>
+            <% } else { %>
+                    <!-- Botón de Comprar -->
+                    <button class="btn-buy" onclick="window.location.href='/pagina_pedidos/login_clientes'">Comprar</button>
+            <% } %>
+        </div>
+    </div>
+<!-- Sección de contacto al final -->
+<div id="contacto" class="contact-container">
+    <div class="contact-info">
+        <h2 style="color: #334A69">Contacto</h2>
+        <p>Si tienes alguna duda, no dudes en contactarnos. Estaremos encantados de ayudarte.</p>
+        <div class="contact-details">
+            <div class="detail-item">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <strong>Horario de Atención:</strong>
+                    <p>Lunes a Viernes, 9:00 - 18:00</p>
+                </div>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-phone-alt"></i>
+                <div>
+                    <strong>Teléfono:</strong>
+                    <p>+591 XXXXXXXX</p>
+                </div>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-envelope"></i>
+                <div>
+                    <strong>Correo Electrónico:</strong>
+                    <p>farmacia25julio@ejemplo.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mapa de Google -->
+    <div class="map-container">
+        <h3 style="color: #334A69">Visítanos</h3>
+        <p>Estamos ubicados en El Alto, La Paz, Bolivia:</p>
+        <div class="map-embed">
+            <!-- Aquí agregas el enlace de Google Maps -->
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5977.735616871491!2d-68.11930320270277!3d-16.500038149523107!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93e37874cc2e2c6f%3A0x6977e6a8ffb104ef!2sEl%20Alto%2C%20La%20Paz%2C%20Bolivia!5e0!3m2!1ses!2ses!4v1699388895394!5m2!1ses!2ses" 
+                width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </div>
+</div>
+
+    <!-- Asegúrate de incluir Font Awesome -->
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+    <script>
+       function toggleProfilePopup(event) {
+    const popup = document.getElementById('profile-popup');
+    popup.style.display = (popup.style.display === 'block') ? 'none' : 'block';
+
+    // Obtener los datos del cliente desde el backend
+    fetch('/getClientData')  // Asegúrate de que la URL sea correcta y apunte a tu servidor
+        .then(response => response.json())
+        .then(data => {
+            // Verificar si los datos fueron obtenidos correctamente
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            // Mostrar la información del cliente en la ventana emergente
+            document.getElementById('client-id').textContent = data.id_cliente;
+            document.getElementById('client-name').textContent = data.nombre;
+            document.getElementById('client-lastname').textContent = data.apellido;
+            document.getElementById('client-phone').textContent = data.telefono;
+            document.getElementById('client-ci').textContent = data.ci;
+            document.getElementById('client-nit').textContent = data.nit;
+            document.getElementById('client-code').textContent = data.codigo;
+            document.getElementById('client-password').textContent = data.contrasena;
+        })
+        .catch(error => {
+            console.error('Error al obtener los datos:', error);
+        });
+
+    // Evitar que el evento de clic se propague
+    event.stopPropagation();
+}
+
+        // Cerrar ventana emergente
+        function closePopup() {
+            document.getElementById('profile-popup').style.display = 'none';
+        }
+
+        // Cuando se hace clic fuera de la ventana emergente, la cerramos
+        window.onclick = function(event) {
+            const popup = document.getElementById('profile-popup');
+            if (!event.target.closest('.dropdown') && !event.target.closest('.profile-popup')) {
+                popup.style.display = 'none';
+            }
+        };
+
+
+        function cambiarSucursal() {
+            const sucursalId = document.getElementById('sucursal').value;
+            window.location.href = `/pagina_pedidos/clientes_index/${sucursalId}`;
+        }
+
+        let carrito = []; // Aquí ya no usaremos localStorage
+
+        function agregarAlCarrito(productId, nombre, precio) {
+            const productoExistente = carrito.find(item => item.id === productId);
+
+            if (productoExistente) {
+                productoExistente.quantity += 1;
+            } else {
+                carrito.push({
+                    id: productId,
+                    name: nombre,
+                    price: precio,
+                    quantity: 1
+                });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(carrito));
+            mostrarCarrito();
+            actualizarContadorCarrito();
+        }
+
+        function mostrarCarrito() {
+            const carritoPopup = document.getElementById('cart-popup');
+            const listaCarrito = document.getElementById('cart-items');
+            listaCarrito.innerHTML = '';
+
+            carrito.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="cart-item-details">
+                        <div class="cart-item-title">${item.name}</div>
+                        <div class="cart-item-price">$${item.price}</div>
+                    </div>
+                    <div class="cart-item-quantity">
+                        <button class="quantity-btn" onclick="cambiarCantidad('${item.id}', -1)">-</button>
+                        <span>${item.quantity}</span>
+                        <button class="quantity-btn" onclick="cambiarCantidad('${item.id}', 1)">+</button>
+                    </div>
+                `;
+                listaCarrito.appendChild(li);
+            });
+
+            carritoPopup.style.display = 'block';
+        }
+
+        function cerrarCarrito() {
+            document.getElementById('cart-popup').style.display = 'none';
+        }
+
+        function cambiarCantidad(productId, change) {
+            const producto = carrito.find(item => item.id === productId);
+            
+            if (producto) {
+                producto.quantity += change;
+                if (producto.quantity <= 0) {
+                    carrito = carrito.filter(item => item.id !== productId);
+                }
+                localStorage.setItem('cart', JSON.stringify(carrito));
+                mostrarCarrito();
+                actualizarContadorCarrito();
+            }
+        }
+
+        function actualizarContadorCarrito() {
+            const cartCount = document.querySelector('.cart-count');
+            const totalItems = carrito.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+        }
+                // Validación de cantidad en el carrito
+        function cambiarCantidad(productId, change) {
+            const producto = carrito.find(item => item.id === productId);
+            
+            if (producto) {
+                producto.quantity += change;
+                if (producto.quantity <= 0) {
+                    carrito = carrito.filter(item => item.id !== productId);
+                }
+                mostrarCarrito();
+                actualizarContadorCarrito();
+            }
+        }
+
+        function realizarCompra() {
+            window.location.href = '/pagina_pedidos/productos/:idSucursal';
+        }
+    </script>
+    <script>
+        function toggleDropdown(event) {
+ 
+            const dropdown = document.getElementById('profile-dropdown');
+            
+            // Si el dropdown está visible, lo ocultamos, y viceversa
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            } else {
+                dropdown.style.display = 'block';
+            }
+        }
+
+        // Cuando se hace clic fuera del dropdown, lo cerramos
+        window.onclick = function(event) {
+            const dropdown = document.getElementById('profile-dropdown');
+            if (!event.target.closest('.dropdown')) {
+                dropdown.style.display = 'none';
+            }
+        };
+        // Función para abrir el popup
+function openPopup() {
+    document.getElementById('profile-popup').style.display = 'block';
+}
+
+// Función para cerrar el popup
+function closePopup() {
+    document.getElementById('profile-popup').style.display = 'none';
+}
+
+// Detectar clic fuera del popup para cerrarlo
+document.addEventListener('click', function(event) {
+    const popup = document.getElementById('profile-popup');
+    const popupContent = document.querySelector('.profile-popup-content');
+    
+    // Si el clic no fue dentro del contenido del popup, lo cerramos
+    if (!popupContent.contains(event.target) && !popup.contains(event.target)) {
+        closePopup();
+    }
+});
+    </script>
+</body>
+</html>
