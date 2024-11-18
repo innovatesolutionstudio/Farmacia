@@ -3,139 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/resources/css/continuar_pedido.css" />
     <title>Recibo de Venta - Farmacia</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        .sales-container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 1rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .sales-header {
-            border-bottom: 1px solid #eee;
-            padding-bottom: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .sale-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .detail-item strong {
-            font-size: 0.875rem;
-            color: #666;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-        }
-
-        .status-pending {
-            background-color: #fef3c7;
-            color: #92400e;
-        }
-
-        .products-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-        }
-
-        .products-table th,
-        .products-table td {
-            padding: 0.75rem 1rem;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-
-        .products-table th {
-            background-color: #f9fafb;
-            font-weight: 600;
-        }
-
-        .product-image {
-            width: 40px;
-            height: 40px;
-            border-radius: 4px;
-            object-fit: cover;
-        }
-
-        .total-section {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid #eee;
-        }
-
-        .confirm-btn {
-            padding: 0.5rem 1.5rem;
-            background-color: #16a34a;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.2s;
-        }
-
-        .confirm-btn:hover {
-            background-color: #15803d;
-        }
-
-        .confirm-btn:disabled {
-            background-color: #d1d5db;
-            cursor: not-allowed;
-        }
-
-        .error-message {
-            padding: 1rem;
-            background-color: #fee2e2;
-            border: 1px solid #fecaca;
-            border-radius: 6px;
-            color: #dc2626;
-            margin-bottom: 1rem;
-            display: none;
-        }
-
-        .alert {
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 6px;
-            display: none;
-        }
-
-        .alert-error {
-            background-color: #fee2e2;
-            border: 1px solid #fecaca;
-            color: #dc2626;
-        }
-
-        .alert-success {
-            background-color: #dcfce7;
-            border: 1px solid #bbf7d0;
-            color: #16a34a;
-        }
-    </style>
+    
 </head>
 <body>
+    
     <div class="sales-container">
         <div id="errorAlert" class="alert alert-error"></div>
         <div id="successAlert" class="alert alert-success"></div>
@@ -185,7 +59,7 @@
             <div>
                 <h3>Total de la Venta: <span id="totalAmount">Bs. 0.00</span></h3>
             </div>
-            <button id="confirmBtn" class="confirm-btn" onclick="confirmarVenta()">
+            <button style="font-family: 'Poppins', sans-serif;" id="confirmBtn" class="confirm-btn" onclick="confirmarVenta()">
                 Confirmar Venta
             </button>
         </div>

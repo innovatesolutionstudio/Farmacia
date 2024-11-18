@@ -49,9 +49,14 @@
             <li><a href="/pagina_pedidos/recordatorio" class="dropdown">Recordatorio</a></li>
         </ul>
         <div style="display: flex; gap: 20px;">
-            <a href="/pagina_pedidos/productos/1" style="text-decoration: none; color: #333;">
+            <a href="#" class="cart-icon"  onclick="mostrarCarrito(); return false;">
                 <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
             </a>
+            
+            <select class="location-select">
+                <option>25 de julio "Santiago"</option>
+            </select>
             <a href="/pagina_pedidos/logout" class="logout-btn">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Cerrar Sesion</span>
@@ -60,17 +65,33 @@
     </div>
 
     <div class="main-container">
-        <h1>Mis Ventas</h1>
+      
         <% if (ventas && ventas.length > 0) { %>
             <ul id="ventas-lista">
+                <h1>Mis Compras</h1>
                 <% ventas.forEach(venta => { %>
                     <li class="venta-item">
-                        <strong>Venta:</strong> <span data-id-venta><%= venta.ID_Venta %></span><br>
-                        <strong>Fecha:</strong> <span data-fecha><%= venta.Fecha_Venta %></span><br>
-                        <strong>Total:</strong> <span data-total><%= venta.Total_Venta %></span> Bs.<br>
-                        <strong>Sucursal:</strong> <span data-sucursal><%= venta.Sucursal %></span><br>
-                        <button class="venta-item-button" onclick="verDetallesVenta('<%= venta.ID_Venta %>')">Detalles</button>
-                        <a href="#" class="download-pdf">Descargar</a>
+                        <div class="venta-icon">
+                            <img src="/resources/images/index/4.png" alt="Imagen de la venta" class="venta-imagen">
+                        </div>
+                        
+                    <!-- Información de la compra -->
+                    <div class="venta-info">
+                        <div class="venta-sucursal">
+                            Sucursal: <span data-sucursal><%= venta.Sucursal %></span>
+                        </div>
+                        <div class="venta-detalles">
+                            <span>Compra: <%= venta.ID_Venta %></span><br>
+                            <span>Fecha: <%= venta.Fecha_Venta %></span><br>
+                            <span>Total: <%= venta.Total_Venta %></span> Bs.
+                        </div>
+                    </div>
+
+                         <!-- Botones de acción -->
+                    <div class="venta-actions">
+                        <button class="venta-item-button" onclick="verDetallesVenta('<%= venta.ID_Venta %>')">Ver más detalles</button>
+                        <a href="#" class="download-pdf">Recibo</a>
+                    </div>
                     </li>
                 <% }) %>
             </ul>
@@ -83,7 +104,7 @@
     <div id="detallesModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="cerrarModal()">&times;</span>
-            <h2>Detalles de Venta</h2>
+            <h2 style="font-family: 'Poppins', sans-serif;">Detalles de Venta</h2>
             <div class="order-details-container">
                 <div class="products-section">
                     <h3 class="section-title">Productos</h3>

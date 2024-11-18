@@ -20,12 +20,17 @@
             <li><a href="/pagina_pedidos/recordatorio">Recordatorio</a></li>
         </ul>
         <div>
-            <a href="/pagina_pedidos/productos/1" style="text-decoration: none; color: #333;">
+            <a href="#" class="cart-icon"  onclick="mostrarCarrito(); return false;">
                 <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
             </a>
-            <select class="sucursal-select">
+            
+            <select class="location-select">
                 <option>25 de julio "Santiago"</option>
             </select>
+
+            
+
             <a href="/pagina_pedidos/logout" class="logout-btn">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Cerrar Sesion</span>
@@ -60,11 +65,11 @@
             </div>
         </div>
 
-        <div class="search-container" id="searchContainer">
+        <div class="search-container" id="searchContainer" >
             <form id="buscador-form" class="search-form">
-                <input type="text" id="medicamento" class="search-input" 
+                <input  style="font-family: 'Poppins', sans-serif;" type="text" id="medicamento" class="search-input" 
                        placeholder="Describe tus síntomas o el medicamento que buscas" required>
-                <button type="submit" class="search-button">
+                <button  style="font-family: 'Poppins', sans-serif;" type="submit" class="search-button">
                     <i class="fas fa-search"></i> Buscar
                 </button>
             </form>
@@ -72,10 +77,10 @@
             <ul id="lista-items" class="lista-items"></ul>
         </div>
     </div>
-    <!-- Sección de contacto al final -->
+<!-- Sección de contacto al final -->
 <div id="contacto" class="contact-container">
     <div class="contact-info">
-        <h2>Contacto</h2>
+        <h2 style="color: #334A69">Contacto</h2>
         <p>Si tienes alguna duda, no dudes en contactarnos. Estaremos encantados de ayudarte.</p>
         <div class="contact-details">
             <div class="detail-item">
@@ -104,7 +109,7 @@
 
     <!-- Mapa de Google -->
     <div class="map-container">
-        <h3>Visítanos</h3>
+        <h3 style="color: #334A69">Visítanos</h3>
         <p>Estamos ubicados en El Alto, La Paz, Bolivia:</p>
         <div class="map-embed">
             <!-- Aquí agregas el enlace de Google Maps -->

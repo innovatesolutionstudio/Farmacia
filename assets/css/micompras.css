@@ -1,77 +1,123 @@
 /* ---------------------------------------
    Estilos del Header (Encabezado)
    --------------------------------------- */
+   @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
+   
+   body {
+    font-family: "Poppins", sans-serif;
+    background-color: #f8f8f8;
+    color: #333; /* Añadir color de texto predeterminado */
+    margin: 0;
+    padding: 0; /* Asegura espacio por la barra superior fija */
+}
 
-   .top-header {
+.top-header {
+    
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 10px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #2c3e50;
-    padding: 2px 20px;
-    color: white;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.top-header .logo {
+    flex: 0 0 15%;
 }
 
 .top-header .logo img {
-    width: 50px;
-    height: auto;
+    height: 40px;
 }
 
 .top-header ul {
+    flex: 1;
+    display: flex;
+    justify-content: center;
     list-style: none;
+    gap: 40px;
     margin: 0;
     padding: 0;
-    display: flex;
-    gap: 15px;
 }
 
 .top-header ul li a {
+    color: rgb(26, 28, 27);
     text-decoration: none;
-    color: white;
-    font-weight: bold;
-    transition: color 0.3s ease;
+    font-size: 16px;
 }
 
 .top-header ul li a:hover {
-    color: #1abc9c;
+    color: #828286;
 }
 
-.top-header .cart-icon, .top-header .profile-icon {
+.top-header > div:last-child {
+    flex: 0 0 25%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+}
+
+.top-header .fa-shopping-cart {
+    color: white;
+    font-size: 1.2em;
+    position: relative;
+}
+
+/* Selector de sucursales */
+.location-select {
+    font-family: "Poppins", sans-serif;
+    padding: 10px 10px; /* Define el tamaño interno del dropdown */
+    font-size: 16px; /* Tamaño del texto */
+    font-weight: bold; /* Grosor del texto */
+    background-color: none; /* Color de fondo */
+    color: rgb(64, 64, 64); /* Color del texto */
+    border: 5pc; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Icono del cursor al pasar sobre el dropdown */
+    transition: background-color 0.3s ease; /* Transición para hover */
+    width: auto; /* Cambiar a un tamaño específico si lo deseas */
+    text-align: center; /* Alineación del texto */
+    margin-left: 15px; /* Separación a la izquierda del selector */
+    margin-right: 15px; /* Separación a la derecha para el carrito */
+}
+
+/* Carrito */
+.cart-icon {
     display: flex;
     align-items: center;
-    color: white;
-    text-decoration: none;
-    gap: 5px;
-    cursor: pointer;
-    transition: color 0.3s ease;
+    position: relative;
+    margin-left: 15px; /* Separación a la izquierda del carrito */
 }
 
-.top-header .cart-icon:hover, .top-header .profile-icon:hover {
-    color: #1abc9c;
+.cart-icon .fas {
+    font-size: 1.5em;
+    color: #333;
 }
 
 .cart-count {
-    background-color: red;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #E3B110;
     color: white;
     border-radius: 50%;
-    padding: 2px 6px;
-    font-size: 12px;
+    padding: 3px 7px;
+    font-size: 0.9em;
 }
 
 /* ---------------------------------------
    Estilos Generales
    --------------------------------------- */
 
-body {
-    margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background-color: #f5f5f5;
-}
-
 .main-container {
-    max-width: 1200px;
+    max-width: 100px;
     margin: 2rem auto;
-    padding: 0 1rem;
+    padding: 200p;
 }
 
 .main-container h1 {
@@ -80,108 +126,105 @@ body {
     margin-bottom: 2rem;
 }
 
-/* ---------------------------------------
-   Estilos para la lista de compras
-   --------------------------------------- */
+/* General */
+.main-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: Arial, sans-serif;
+}
 
-ul {
+/* Lista de compras */
+ul#ventas-lista {
+    font-family: "Poppins", sans-serif;
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-li {
-    border-radius: 12px;
+li.venta-item {
+    font-family: "Poppins", sans-serif;
+    background-color: #fef9f4;
+    border-radius: 16px;
     padding: 1.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
-    gap: 2rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    gap: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Icono de compra */
-.purchase-icon {
-    width: 100px;
-    height: 100px;
-    background-image: url('/ruta/a/tu/icono/carrito.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+.venta-icon {
+    flex-shrink: 0;
+}
+
+.venta-imagen {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 12px;
 }
 
 /* Información de la compra */
-.purchase-info {
+.venta-info {
     flex-grow: 1;
 }
 
-.purchase-id, .purchase-date, .purchase-branch {
-    font-size: 1rem;
-    color: #666;
-    margin-bottom: 0.5rem;
-}
-
-.purchase-total {
-    font-size: 1.25rem;
-    font-weight: 600;
+.venta-sucursal {
+    font-size: 1.2rem;
+    font-weight: bold;
     color: #333;
     margin-bottom: 0.5rem;
 }
 
-button, .download-pdf, .purchase-item-button {
+.venta-detalles {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* Botones */
+.venta-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+button.venta-item-button,
+a.download-pdf {
+    font-family: "Poppins", sans-serif;
     display: inline-block;
-    background-color: #6c5ce7; /* Adjust as needed */
-    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
     border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s;
-    width: 200px; /* Ensure consistent width */
     text-align: center;
+    transition: background-color 0.3s;
+    text-decoration: none;
+    color: white;
 }
 
-/* Individual button color overrides */
-.download-pdf {
-    background-color: #6c5ce7; /* Original color */
+/* Botón Ver más detalles */
+.venta-item-button {
+    background-color: #00b894;
 }
 
-.purchase-item-button {
-    background-color: #00B894; /* Original color */
-}
-
-.purchase-item-button:hover {
+.venta-item-button:hover {
     background-color: #00a383;
 }
 
-/* ---------------------------------------
-   Modal de Detalles de Compra
-   --------------------------------------- */
-   button, .download-pdf, .purchase-item-button {
-    display: inline-block;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s;
-    width: 200px; /* Asegura un ancho consistente */
-    text-align: center;
-}
-
-/* Estilo individual para .download-pdf */
+/* Botón Recibo */
 .download-pdf {
-    background-color: #6c5ce7; /* Color original */
+    background-color: #fbc531;
 }
 
-/* Estilo individual para .purchase-item-button */
-.purchase-item-button {
-    background-color: #00B894; /* Color original */
+.download-pdf:hover {
+    background-color: #e1a722;
 }
 
-
+/* Modal */
 .modal {
     display: none;
     position: fixed;
@@ -194,111 +237,19 @@ button, .download-pdf, .purchase-item-button {
 }
 
 .modal-content {
-    position: relative;
     background-color: white;
     margin: 2rem auto;
     padding: 2rem;
     max-width: 800px;
     border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .close-modal {
     position: absolute;
-    right: 1.5rem;
-    top: 1.5rem;
+    top: 1rem;
+    right: 1rem;
     font-size: 1.5rem;
     cursor: pointer;
     color: #666;
-}
-
-/* Productos en el Modal */
-.products-section {
-    margin-top: 2rem;
-}
-
-.section-title {
-    font-size: 1.25rem;
-    color: #333;
-    margin-bottom: 1rem;
-}
-
-.product-item {
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-}
-
-.product-info {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.product-image {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.product-name {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-}
-
-.product-price {
-    color: #666;
-}
-
-/* ---------------------------------------
-   Estilos Responsivos
-   --------------------------------------- */
-
-@media (max-width: 768px) {
-    .top-header {
-        flex-direction: column;
-        padding: 1rem;
-        gap: 1rem;
-    }
-
-    .purchase-card {
-        flex-direction: column;
-        text-align: center;
-        gap: 1rem;
-    }
-
-    .purchase-amount {
-        text-align: center;
-    }
-
-    .modal-content {
-        margin: 1rem;
-        padding: 1rem;
-    }
-
-    ul li {
-        flex-direction: column;
-        text-align: center;
-        padding: 1rem;
-    }
-
-    .purchase-icon {
-        margin: 0 auto;
-    }
-
-    .purchase-info {
-        text-align: center;
-    }
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.modal.active {
-    display: block;
-    animation: fadeIn 0.3s ease-in-out;
 }

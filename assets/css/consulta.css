@@ -1,14 +1,188 @@
 
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
+
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: "Poppins", sans-serif;
     margin: 0;
     padding: 20px;
     background-color: #f5f5f5;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    align-items: center;/* Asegura espacio por la barra superior fija */
+}
+
+.top-header {
+    
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.top-header .logo {
+    flex: 0 0 15%;
+}
+
+.top-header .logo img {
+    height: 40px;
+}
+
+.top-header ul {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    gap: 40px;
+    margin: 0;
+    padding: 0;
+}
+
+.top-header ul li a {
+    color: rgb(26, 28, 27);
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.top-header ul li a:hover {
+    color: #828286;
+}
+
+.top-header > div:last-child {
+    flex: 0 0 25%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+}
+
+.top-header .fa-shopping-cart {
+    color: #333;
+    font-size: 1.2em;
+    position: relative;
+}
+
+/* Selector de sucursales */
+.location-select {
+    font-family: "Poppins", sans-serif;
+    padding: 10px 10px; /* Define el tamaño interno del dropdown */
+    font-size: 16px; /* Tamaño del texto */
+    font-weight: bold; /* Grosor del texto */
+    background-color: none; /* Color de fondo */
+    color: rgb(64, 64, 64); /* Color del texto */
+    border: 5pc; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Icono del cursor al pasar sobre el dropdown */
+    transition: background-color 0.3s ease; /* Transición para hover */
+    width: auto; /* Cambiar a un tamaño específico si lo deseas */
+    text-align: center; /* Alineación del texto */
+    margin-left: 15px; /* Separación a la izquierda del selector */
+    margin-right: 15px; /* Separación a la derecha para el carrito */
+}
+
+/* Carrito */
+.cart-icon {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-left: 15px; /* Separación a la izquierda del carrito */
+}
+
+.cart-icon .fas {
+    font-size: 1.5em;
+    color: #333;
+}
+
+.cart-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #E3B110;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 7px;
+    font-size: 0.9em;
+}
+/* Sección de contacto */
+.contact-container {
+    padding: 50px 20px;
+    background-color: #fff;
+    text-align: center;
+}
+
+.contact-info h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #007acc;
+}
+
+.contact-info p {
+    font-size: 1.2em;
+    margin: 5px 0;
+    color: #333;
+}
+/* Detalles de contacto */
+.contact-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinea los elementos al inicio del contenedor en el eje transversal */
+    justify-content: flex-start; /* Alinea los elementos al inicio del contenedor en el eje principal */
+    text-align: left; /* Alinea el texto a la izquierda */
+}
+
+
+.detail-item {
+    display: flex;
+    align-items: left;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease; /* Efecto al pasar el mouse */
+    justify-content: left; 
+} 
+
+/* Estilo de los íconos */
+.detail-item i {
+    margin-right: 15px;
+    font-size: 1.6rem;
+    color: #334A69; /* Color azul para íconos */
+    transition: color 0.3s ease; /* Efecto al pasar el mouse */
+}
+
+/* Estilo de los detalles */
+.detail-item div {
+    display: flex;
+    flex-direction: column;
     align-items: center;
 }
+
+.detail-item strong {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.detail-item p {
+    color: #666;
+    font-size: 1rem;
+}
+
+/* Efectos al pasar el mouse por los íconos */
+.detail-item:hover i {
+    color: #334A69; /* Cambio de color en hover */
+}
+
+.detail-item:hover {
+    transform: translateX(10px); /* Desplazamiento de los detalles al pasar el mouse */
+}
+
+
 
 .container {
     max-width: 800px;
@@ -186,73 +360,13 @@ h1 {
     background-color: #ffebee;
     color: #d32f2f;
 }
-.top-header {
-background-color: #003366;
-padding: 10px 40px;
-display: flex;
-align-items: center;
-justify-content: space-between;
-width: 100%;
-box-sizing: border-box;
-position: fixed;
-top: 0;
-left: 0;
-z-index: 1000;
-}
 
-.top-header .logo {
-flex: 0 0 15%;
-}
 
-.top-header .logo img {
-height: 40px;
-}
 
-.top-header ul {
-flex: 1;
-display: flex;
-justify-content: center;
-list-style: none;
-gap: 40px;
-margin: 0;
-padding: 0;
-}
-
-.top-header ul li a {
-color: white;
-text-decoration: none;
-font-size: 16px;
-}
-
-.top-header ul li a:hover {
-color: #cccccc;
-}
-
-.top-header > div:last-child {
-flex: 0 0 25%;
-display: flex;
-justify-content: flex-end;
-align-items: center;
-gap: 20px;
-}
-
-.top-header .fa-shopping-cart {
-color: white;
-font-size: 1.2em;
-position: relative;
-}
-
-/* Agregar el selector */
-.sucursal-select {
-padding: 5px 10px;
-border-radius: 4px;
-border: none;
-background-color: white;
-}
 
 /* Estilo para el botón de salir */
 .logout-btn {
-color: white;
+color: rgb(24, 40, 68);
 text-decoration: none;
 display: flex;
 align-items: center;

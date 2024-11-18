@@ -22,9 +22,14 @@
             <li><a href="/pagina_pedidos/recordatorio">Recordatorio</a></li>
         </ul>
         <div style="display: flex; gap: 20px;">
-            <a href="/pagina_pedidos/productos/1" style="text-decoration: none; color: #333;">
+            <a href="#" class="cart-icon"  onclick="mostrarCarrito(); return false;">
                 <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
             </a>
+            
+            <select class="location-select">
+                <option>25 de julio "Santiago"</option>
+            </select>
             <a href="/pagina_pedidos/logout" class="logout-btn">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Cerrar Sesion</span>
@@ -38,6 +43,9 @@
         <% if (recordatorios && recordatorios.length > 0) { %>
             <% recordatorios.forEach(recordatorio => { %>
                 <div class="recordatorio-card">
+                    <div class="recordatorio-image">
+                        <img src="/resources/images/index/3.png" alt="Recordatorio Imagen">
+                    </div>
                     <div class="recordatorio-info">
                         <p><strong>Producto:</strong> <%= recordatorio.ID_Producto %></p>
                         <p><strong>Fecha:</strong> <%= recordatorio.fecha.toLocaleDateString() %></p>
@@ -125,36 +133,48 @@
             </div>
         </div>
     </div>
-
-    <!-- Contact Section -->
-    <div id="contacto" class="contact-container">
-        <div class="contact-info">
-            <h2>Contacto</h2>
-            <p>Si tienes alguna duda, no dudes en contactarnos. Estaremos encantados de ayudarte.</p>
-            <div class="contact-details">
-                <div class="detail-item">
-                    <i class="fas fa-clock"></i>
-                    <div>
-                        <strong>Horario de Atención:</strong>
-                        <p>Lunes a Viernes, 9:00 - 18:00</p>
-                    </div>
+<!-- Sección de contacto al final -->
+<div id="contacto" class="contact-container">
+    <div class="contact-info">
+        <h2 style="color: #334A69">Contacto</h2>
+        <p>Si tienes alguna duda, no dudes en contactarnos. Estaremos encantados de ayudarte.</p>
+        <div class="contact-details">
+            <div class="detail-item">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <strong>Horario de Atención:</strong>
+                    <p>Lunes a Viernes, 9:00 - 18:00</p>
                 </div>
-                <div class="detail-item">
-                    <i class="fas fa-phone-alt"></i>
-                    <div>
-                        <strong>Teléfono:</strong>
-                        <p>+591 XXXXXXXX</p>
-                    </div>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-phone-alt"></i>
+                <div>
+                    <strong>Teléfono:</strong>
+                    <p>+591 XXXXXXXX</p>
                 </div>
-                <div class="detail-item">
-                    <i class="fas fa-envelope"></i>
-                    <div>
-                        <strong>Correo Electrónico:</strong>
-                        <p>farmacia25julio@ejemplo.com</p>
-                    </div>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-envelope"></i>
+                <div>
+                    <strong>Correo Electrónico:</strong>
+                    <p>farmacia25julio@ejemplo.com</p>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Mapa de Google -->
+    <div class="map-container">
+        <h3 style="color: #334A69">Visítanos</h3>
+        <p>Estamos ubicados en El Alto, La Paz, Bolivia:</p>
+        <div class="map-embed">
+            <!-- Aquí agregas el enlace de Google Maps -->
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5977.735616871491!2d-68.11930320270277!3d-16.500038149523107!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93e37874cc2e2c6f%3A0x6977e6a8ffb104ef!2sEl%20Alto%2C%20La%20Paz%2C%20Bolivia!5e0!3m2!1ses!2ses!4v1699388895394!5m2!1ses!2ses" 
+                width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </div>
+</div>
         <!-- <h1>Editar Recordatorio</h1>
         <% if (typeof recordatorio !== 'undefined' && recordatorio) { %>
             <form action="/pagina_pedidos/actualizar_recordatorio/<%= recordatorio.ID_Recordatorio %>" method="POST">
@@ -188,20 +208,7 @@
             <p>No se encontró el recordatorio</p>
         <% } %> -->
 
-        <div class="map-container">
-            <h3>Visítanos</h3>
-            <p>Estamos ubicados en El Alto, La Paz, Bolivia:</p>
-            <div class="map-embed">
-                <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5977.735616871491!2d-68.11930320270277!3d-16.500038149523107!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93e37874cc2e2c6f%3A0x6977e6a8ffb104ef!2sEl%20Alto%2C%20La%20Paz%2C%20Bolivia!5e0!3m2!1ses!2ses!4v1699388895394!5m2!1ses!2ses" 
-                    width="100%" 
-                    height="300" 
-                    style="border:0;" 
-                    allowfullscreen="" 
-                    loading="lazy">
-                </iframe>
-            </div>
-        </div>
+        
     </div>
     <script>
         function validarYCrearRecordatorio() {

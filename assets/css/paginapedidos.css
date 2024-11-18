@@ -1,18 +1,19 @@
 /* Estilos globales */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
 * {
     box-sizing: border-box;
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Poppins", sans-serif;
     background-color: #f8f8f8;
     color: #333; /* Añadir color de texto predeterminado */
     margin: 0;
-    padding: 60px 0; /* Asegura espacio por la barra superior fija */
+    padding: 0; /* Asegura espacio por la barra superior fija */
 }
 
-/* Encabezado y contenedor superior */
 .top-header {
+    
     position: fixed;
     top: 0;
     left: 0;
@@ -26,37 +27,64 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.logo img {
+.top-header .logo {
+    flex: 0 0 15%;
+}
+
+.top-header .logo img {
     height: 40px;
 }
 
 .top-header ul {
-    list-style: none;
+    flex: 1;
     display: flex;
+    justify-content: center;
+    list-style: none;
+    gap: 40px;
     margin: 0;
     padding: 0;
 }
 
-.top-header ul li {
-    margin-right: 20px;
-}
-
 .top-header ul li a {
+    color: rgb(26, 28, 27);
     text-decoration: none;
-    color: #333;
-    font-size: 1.1em;
-    padding: 5px 10px;
-    transition: background-color 0.3s ease;
+    font-size: 16px;
 }
 
-.top-header ul li a:hover,
-.top-header ul li a:active {
-    background-color: #f2f2f2;
-    border-radius: 5px;
+.top-header ul li a:hover {
+    color: #828286;
 }
 
-.top-header ul li a:focus {
-    outline: 3px solid #007acc;
+.top-header > div:last-child {
+    flex: 0 0 25%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+}
+
+.top-header .fa-shopping-cart {
+    color: white;
+    font-size: 1.2em;
+    position: relative;
+}
+
+/* Selector de sucursales */
+.location-select {
+    font-family: "Poppins", sans-serif;
+    padding: 10px 10px; /* Define el tamaño interno del dropdown */
+    font-size: 16px; /* Tamaño del texto */
+    font-weight: bold; /* Grosor del texto */
+    background-color: none; /* Color de fondo */
+    color: rgb(64, 64, 64); /* Color del texto */
+    border: 5pc; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Icono del cursor al pasar sobre el dropdown */
+    transition: background-color 0.3s ease; /* Transición para hover */
+    width: auto; /* Cambiar a un tamaño específico si lo deseas */
+    text-align: center; /* Alineación del texto */
+    margin-left: 15px; /* Separación a la izquierda del selector */
+    margin-right: 15px; /* Separación a la derecha para el carrito */
 }
 
 /* Carrito */
@@ -64,6 +92,7 @@ body {
     display: flex;
     align-items: center;
     position: relative;
+    margin-left: 15px; /* Separación a la izquierda del carrito */
 }
 
 .cart-icon .fas {
@@ -75,38 +104,167 @@ body {
     position: absolute;
     top: -5px;
     right: -5px;
-    background-color: red;
+    background-color: #E3B110;
     color: white;
     border-radius: 50%;
     padding: 3px 7px;
     font-size: 0.9em;
 }
-
-/* Selector de sucursales */
-.location-select {
-    padding: 10px;
-    border-radius: 5px;
-    background-color: #f0f0f0;
-    margin-right: 15px;
-    color: #333;
-    font-size: 14px;
-    cursor: pointer;
+/* Sección de contacto */
+.contact-container {
+    padding: 50px 20px;
+    background-color: #fff;
+    text-align: center;
 }
+
+.contact-info h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #007acc;
+}
+
+.contact-info p {
+    font-size: 1.2em;
+    margin: 5px 0;
+    color: #333;
+}
+/* Detalles de contacto */
+.contact-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinea los elementos al inicio del contenedor en el eje transversal */
+    justify-content: flex-start; /* Alinea los elementos al inicio del contenedor en el eje principal */
+    text-align: left; /* Alinea el texto a la izquierda */
+}
+
+
+.detail-item {
+    display: flex;
+    align-items: left;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease; /* Efecto al pasar el mouse */
+    justify-content: left; 
+} 
+
+/* Estilo de los íconos */
+.detail-item i {
+    margin-right: 15px;
+    font-size: 1.6rem;
+    color: #334A69; /* Color azul para íconos */
+    transition: color 0.3s ease; /* Efecto al pasar el mouse */
+}
+
+/* Estilo de los detalles */
+.detail-item div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.detail-item strong {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.detail-item p {
+    color: #666;
+    font-size: 1rem;
+}
+
+/* Efectos al pasar el mouse por los íconos */
+.detail-item:hover i {
+    color: #334A69; /* Cambio de color en hover */
+}
+
+.detail-item:hover {
+    transform: translateX(10px); /* Desplazamiento de los detalles al pasar el mouse */
+}
+
+
+
+.btn-login, .btn-register {
+    background-color: #0BAB7C; /* Fondo oscuro */
+    color: white; /* Color de texto blanco */
+    padding: 10px 20px; /* Relleno interno para el botón */
+    text-decoration: none; /* Elimina el subrayado de los enlaces */
+    border-radius: 5px; /* Bordes redondeados */
+    font-size: 16px; /* Tamaño del texto */
+   
+    transition: background-color 0.3s ease; /* Transición para hover */
+}
+
+/* Opcional: cambiar el fondo al pasar el cursor (hover) */
+.btn-login:hover, .btn-register:hover {
+    background-color: #0BAB7C; /* Fondo ligeramente más claro */
+}
+
 
 /* Encabezado */
 header {
+    font-family: "Poppins", sans-serif;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding: 150px 20px;
+    width: 100%; /* Asegura que el header ocupe todo el ancho */
+    padding: 140px 0; /* Añadir un poco de espacio arriba y abajo */
     background: linear-gradient(135deg, #393a79, #344a78);
     color: #ffffff;
+    display: flex; /* Usar Flexbox para el layout */
+    justify-content: center; /* Centra el contenido en el eje horizontal */
 }
 
-header .left-content {
-    width: 50%;
-    text-align: center;
+/* Contenedor del contenido del header */
+.header-content {
+    font-family: "Poppins", sans-serif;
+    display: flex;
+    justify-content: space-between; /* Divide el espacio entre los dos elementos */
+    align-items: center; /* Alinea los elementos verticalmente */
+    width: 90%; /* El contenido ocupará el 90% del ancho del header */
+    max-width: 1200px; /* Limita el tamaño máximo del contenedor */
 }
+
+/* Estilo para la columna de la izquierda */
+.left-content {
+    width: 50%; /* Ocupa la mitad del espacio disponible */
+    text-align: left; /* Alinea el texto a la izquierda */
+}
+.left-content h1 {
+    font-size: 2.5rem; /* Tamaño de fuente grande para el encabezado */
+    color: #ffffff; /* Color oscuro para el texto */
+    margin-bottom: 5px; /* Espacio entre el título y el párrafo */
+}
+
+.left-content p {
+    font-size: 1.8rem; /* Tamaño de texto moderado */
+    color: #666; /* Color gris claro para el párrafo */
+    margin-bottom: 20px; /* Espacio entre el párrafo y el botón */
+}
+/* Estilo para la columna de la derecha */
+.right-content {
+    width: 45%; /* Ocupa casi la mitad del espacio disponible */
+}
+
+.header-image {
+    width: 900px; /* Asegura que la imagen ocupe el 100% del ancho de su contenedor */
+    height: auto; /* Mantiene la proporción de la imagen */
+    border-radius: 10px; /* Bordes redondeados en la imagen */
+}
+
+.left-content h1 {
+    font-family: "Poppins", sans-serif;
+    font-size: 3.5rem; /* Tamaño de fuente grande para el encabezado */
+    color: #333; /* Color oscuro para el texto */
+    margin-bottom: 10px; /* Espacio entre el título y el párrafo */
+}
+
+.left-content p {
+    font-size: 1.4rem; /* Tamaño de texto moderado */
+    color: #666; /* Color gris claro para el párrafo */
+    margin-bottom: 20px; /* Espacio entre el párrafo y el botón */
+}
+
+
 
 header h1 {
     font-size: 2.5em;
@@ -129,7 +287,7 @@ header p {
 .services-section h2 {
     font-size: 2em;
     margin-bottom: 30px;
-    color: #007acc;
+    color: #000000;
 }
 
 .services-container {
@@ -142,21 +300,37 @@ header p {
     background-color: #f0f0f0;
     border-radius: 8px;
     padding: 20px;
-    width: 200px;
+    width: 450px;
     margin: 10px;
     text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow:none;
     transition: transform 0.3s;
+    border: none;
 }
+
+
 
 .service-card:hover {
     transform: translateY(-5px);
 }
 
-.service-icon {
+.service-icon-clock,
+.service-icon-car,
+.service-icon-remind {
     font-size: 2.5em;
     margin-bottom: 15px;
-    color: #007acc;
+}
+
+.service-icon-clock {
+    color: #12AEE0;
+}
+
+.service-icon-car {
+    color: #E87B16;
+}
+
+.service-icon-remind {
+    color: #00cc25;
 }
 
 /* Sección de productos */
@@ -246,16 +420,16 @@ header p {
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: #fff;
-    padding: 20px;
+    padding: 40px; /* Aumentar el padding para más espacio dentro */
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 300px;
+    width: 500px; /* Aumentar el tamaño de la ventana */
     display: none;
+    text-align: center; /* Centrar el contenido del popup */
 }
 
 #cart-popup h2 {
-    text-align: center;
-    font-size: 1.5em;
+    font-size: 1.8em; /* Aumentar el tamaño del título */
     margin-bottom: 20px;
 }
 
@@ -266,7 +440,7 @@ header p {
 }
 
 .cart-item-title {
-    font-size: 1em;
+    font-size: 1.1em;
 }
 
 .cart-item-price {
@@ -281,23 +455,23 @@ header p {
 }
 
 .quantity-btn {
-    background-color: #007acc;
+    background-color: #334A69; /* Usar el color #334A69 para los botones de cantidad */
     color: white;
     border: none;
-    padding: 5px 10px;
-    font-size: 1em;
+    padding: 8px 12px; /* Aumentar el tamaño de los botones de cantidad */
+    font-size: 1.2em;
     cursor: pointer;
 }
 
 .cart-buttons {
     display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
+    justify-content: center; /* Centrar el contenido del contenedor de botones */
+    margin-top: 30px;
 }
 
 .cart-buttons button {
-    padding: 10px 15px;
-    background-color: #007acc;
+    padding: 12px 20px; /* Aumentar el tamaño del botón */
+    background-color: #334A69; /* Usar el color #334A69 para el fondo del botón */
     color: white;
     border: none;
     border-radius: 5px;
@@ -306,31 +480,16 @@ header p {
 }
 
 .cart-buttons button:hover {
-    background-color: #0056b3;
+    background-color: #2a3c57; /* Un tono más oscuro del mismo color */
 }
 
 .cart-buttons button:focus {
-    outline: 3px solid #007acc;
+    outline: 3px solid #334A69;
 }
 
-/* Sección de contacto */
-.contact-container {
-    padding: 50px 20px;
-    background-color: #fff;
-    text-align: center;
-}
 
-.contact-info h2 {
-    font-size: 2em;
-    margin-bottom: 20px;
-    color: #007acc;
-}
 
-.contact-info p {
-    font-size: 1.2em;
-    margin: 5px 0;
-    color: #333;
-}
+
 
 /* Botón de inicio de sesión, registro y compra */
 .button {
@@ -525,52 +684,7 @@ header p {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Detalles de contacto */
-.contact-details {
-    display: flex;
-    flex-direction: column;
-}
 
-.detail-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    transition: transform 0.3s ease; /* Efecto al pasar el mouse */
-}
-
-/* Estilo de los íconos */
-.detail-item i {
-    margin-right: 15px;
-    font-size: 1.6rem;
-    color: #007BFF; /* Color azul para íconos */
-    transition: color 0.3s ease; /* Efecto al pasar el mouse */
-}
-
-/* Estilo de los detalles */
-.detail-item div {
-    display: flex;
-    flex-direction: column;
-}
-
-.detail-item strong {
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 5px;
-}
-
-.detail-item p {
-    color: #666;
-    font-size: 1rem;
-}
-
-/* Efectos al pasar el mouse por los íconos */
-.detail-item:hover i {
-    color: #0056b3; /* Cambio de color en hover */
-}
-
-.detail-item:hover {
-    transform: translateX(10px); /* Desplazamiento de los detalles al pasar el mouse */
-}
 
 /* Estilo para los títulos */
 h2 {
@@ -581,15 +695,41 @@ h2 {
 }
 
 h3 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     color: #333;
     margin-bottom: 15px;
     font-weight: 600;
+    text-decoration: none;
 }
 
 p {
     font-size: 1.1rem;
     color: #666;
+}
+
+/* Estilo para el botón de "Comprar" */
+.btn-buy {
+    padding: 12px 65px; /* Espaciado interno (alto y ancho) */
+    font-size: 1.5em; /* Tamaño de la fuente */
+    background-color: #0BAB7C; /* Color de fondo */
+    color: white; /* Color del texto */
+    border: none; /* Sin borde */
+    border-radius: 8px; /* Bordes redondeados */
+    cursor: pointer; /* Cambia el cursor a mano cuando se pasa sobre el botón */
+    transition: background-color 0.3s, transform 0.2s; /* Transición suave */
+    text-align: center; /* Centra el texto */
+}
+
+/* Efecto cuando el usuario pasa el mouse sobre el botón */
+.btn-buy:hover {
+    background-color: #087F60; /* Color de fondo cuando se hace hover (más oscuro) */
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño del botón */
+}
+
+/* Efecto cuando el botón está en foco (por ejemplo, cuando se hace clic en él) */
+.btn-buy:focus {
+    outline: none; /* Elimina el borde de enfoque predeterminado */
+    box-shadow: 0 0 10px rgba(11, 171, 124, 0.6); /* Sombra alrededor para resaltar el foco */
 }
 
 /* Responsividad */

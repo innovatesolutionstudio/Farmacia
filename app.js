@@ -311,7 +311,7 @@ app.get("/reporte_tareas_e", (req, res) => {
 
 //#endregion
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log(`Servidor conectado en http://localhost:${PORT}`);
 });
