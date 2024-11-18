@@ -4,7 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/resources/css/micompras.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Mis Compras</title>
+    <style>
+        .recordatorio-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 0.9em;
+        }
+
+        .recordatorio-btn:hover {
+            background-color: #45a049;
+        }
+
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
 </head>
 <body>
     <div class="top-header">
@@ -18,123 +48,356 @@
             <li><a href="/pagina_pedidos/miscompras" class="dropdown">Compras</a></li>
             <li><a href="/pagina_pedidos/recordatorio" class="dropdown">Recordatorio</a></li>
         </ul>
-        <a href="#" class="cart-icon">
-            <i class="fas fa-shopping-cart"></i>
-            <span class="cart-count">0</span>
-        </a>
-        <a href="#" class="profile-icon">
-            <i class="fas fa-user"></i>
-            <span class="profile-name">Perfil</span>
-        </a>
+        <div style="display: flex; gap: 20px;">
+            <a href="#" style="text-decoration: none; color: #333;">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </a>
+            <a href="#" style="text-decoration: none; color: #333;">
+                <i class="fas fa-user"></i>
+                <span>Perfil</span>
+            </a>
+        </div>
     </div>
-    <div class="main-container">
-        <h1>Mis Compras</h1>
-        <% if (compras.length > 0) { %>
-            <ul>
-                <% compras.forEach(compra => { %>
-                    <li>
-                        <strong>Venta ID:</strong> <%= compra.ID_Venta %><br>
-                        <strong>Fecha:</strong> <%= compra.Fecha_Venta %><br>
-                        <strong>Total:</strong> <%= compra.Total_Venta %> Bs.<br>
-                        <strong>Sucursal:</strong> <%= compra.Sucursal %><br>
-                        <!-- Botón para ver más detalles -->
-                        <button class="purchase-item-button" onclick="verDetallesVenta('<%= compra.ID_Venta %>')">Ver detalles de la venta</button>
 
+    <div class="main-container">
+        <h1>Mis Ventas</h1>
+        <% if (ventas && ventas.length > 0) { %>
+            <ul id="ventas-lista">
+                <% ventas.forEach(venta => { %>
+                    <li class="venta-item">
+                        <strong>Venta:</strong> <span data-id-venta><%= venta.ID_Venta %></span><br>
+                        <strong>Fecha:</strong> <span data-fecha><%= venta.Fecha_Venta %></span><br>
+                        <strong>Total:</strong> <span data-total><%= venta.Total_Venta %></span> Bs.<br>
+                        <strong>Sucursal:</strong> <span data-sucursal><%= venta.Sucursal %></span><br>
+                        <button class="venta-item-button" onclick="verDetallesVenta('<%= venta.ID_Venta %>')">Detalles</button>
+                        <a href="#" class="download-pdf">Descargar</a>
                     </li>
                 <% }) %>
             </ul>
         <% } else { %>
-            <p>No tienes compras registradas.</p>
-        <% } %>
+            <p>No tienes ventas registradas.</p>
+        <% } %>        
     </div>
+    
     <!-- Modal de Detalles -->
     <div id="detallesModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="cerrarModal()">&times;</span>
-            <h2>Detalles de Compra</h2>
+            <h2>Detalles de Venta</h2>
             <div class="order-details-container">
                 <div class="products-section">
                     <h3 class="section-title">Productos</h3>
-                    <div id="productosLista"></div> <!-- Aquí se mostrarán los productos -->
+                    <div id="productosLista"></div>
                 </div>
             </div>
-            <a href="#" class="download-pdf">Descargar PDF</a>
         </div>
-    </div>    
+    </div> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
     <script>
-        // Función para cargar las compras desde localStorage
-        function cargarMisCompras() {
-            const compras = JSON.parse(localStorage.getItem('compras')) || [];
-            const purchaseListContainer = document.getElementById('purchaseList');
-            purchaseListContainer.innerHTML = '';
+       // Variables para la paginación
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let comprasData = [];
 
-            if (compras.length === 0) {
-                purchaseListContainer.innerHTML = '<div class="empty-message">No tienes compras previas.</div>';
+        // Cambiamos la función a cargarMisVentas
+        function cargarMisVentas() {
+            fetch('/pagina_pedidos/obtenerVentas')  // Cambiamos el endpoint
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    ventasData = data;  // Cambiamos comprasData a ventasData
+                    actualizarPaginacion();
+                    mostrarVentas();    // Cambiamos a mostrarVentas
+                })
+                .catch(error => {
+                    console.error('Error al cargar las ventas:', error);
+                    const ventasLista = document.getElementById('ventas-lista');  // Cambiamos el ID
+                    if (ventasLista) {
+                        ventasLista.innerHTML = '<li class="error">Error al cargar las ventas. Por favor, intente más tarde.</li>';
+                    }
+                });
+        }
+
+        // Cambiamos la función mostrarCompras a mostrarVentas
+        function mostrarVentas() {
+            const ventasLista = document.getElementById('ventas-lista');  // Cambiamos el ID
+            if (!ventasLista) {
+                console.error('Elemento ventas-lista no encontrado');
                 return;
             }
 
-            compras.forEach((compra, index) => {
-                const compraElemento = document.createElement('div');
-                compraElemento.classList.add('purchase-item');
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const ventasPagina = ventasData.slice(startIndex, endIndex);
 
-                let productosDetalles = compra.productos.map(producto => 
-                    `<span>${producto.name} - ${producto.quantity} x Bs ${producto.price.toFixed(2)}</span>`
-                ).join('');
+            ventasLista.innerHTML = ventasPagina.map(venta => `
+                <li class="venta-item">
+                    <strong>Venta:</strong> <span data-id-venta>${venta.ID_Venta}</span><br>
+                    <strong>Fecha:</strong> <span data-fecha>${formatearFecha(venta.Fecha_Venta)}</span><br>
+                    <strong>Total:</strong> <span data-total>${venta.Total_Venta}</span> Bs.<br>
+                    <strong>Sucursal:</strong> <span data-sucursal>${venta.Sucursal}</span><br>
+                    <button class="venta-item-button" onclick="verDetallesVenta(${venta.ID_Venta})">Detalles</button>
+                    <a href="#" class="download-pdf">Descargar</a>
+                </li>
+            `).join('');
+            
+            actualizarPaginacion();
+            actualizarEventListenersPDF();
+        }
 
-                compraElemento.innerHTML = 
-                    `<div class="purchase-item-details">
-                        <h3>Pedido #${compras.length - index}</h3>
-                        <p><strong>Fecha:</strong> ${compra.fecha}</p>
-                        <p><strong>Cliente:</strong> ${compra.cliente.nombre}</p>
-                        <div class="productos-lista">
-                            <strong>Productos:</strong>
-                            ${productosDetalles}
+        // Función para actualizar la paginación
+        function actualizarPaginacion() {
+            const totalPages = Math.ceil(comprasData.length / itemsPerPage);
+            const currentPageElem = document.getElementById('current-page');
+            const totalPagesElem = document.getElementById('total-pages');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+
+            if (currentPageElem && totalPagesElem) {
+                currentPageElem.textContent = currentPage;
+                totalPagesElem.textContent = totalPages;
+            }
+            
+            if (prevBtn && nextBtn) {
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
+            }
+        }
+
+        // Event listeners para los botones de paginación
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cargar las compras inicialmente
+            cargarMisCompras();
+
+            // Configurar event listeners para los botones de paginación
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        mostrarCompras();
+                        actualizarPaginacion();
+                    }
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    const totalPages = Math.ceil(comprasData.length / itemsPerPage);
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        mostrarCompras();
+                        actualizarPaginacion();
+                    }
+                });
+            }
+        });
+
+        // Función para actualizar los event listeners de los PDFs
+        function actualizarEventListenersPDF() {
+            document.querySelectorAll('.download-pdf').forEach(button => {
+                button.onclick = function(e) {
+                    e.preventDefault();
+                    const compraItem = this.closest('li');
+                    const compra = {
+                        ID_Venta: compraItem.querySelector('[data-id-venta]').textContent,
+                        Fecha_Venta: compraItem.querySelector('[data-fecha]').textContent,
+                        Total_Venta: compraItem.querySelector('[data-total]').textContent,
+                        Sucursal: compraItem.querySelector('[data-sucursal]').textContent
+                    };
+                    
+                    fetch(`/pagina_pedidos/detalleVenta/${compra.ID_Venta}`)
+                        .then(response => response.json())
+                        .then(detalles => {
+                            compra.detalles = detalles;
+                            descargarPDF(compra);
+                        })
+                        .catch(error => console.error('Error:', error));
+                };
+            });
+        }
+        function verDetallesVenta(ID_Detalle_Venta) {
+            fetch(`/pagina_pedidos/detalleVenta/${ID_Detalle_Venta}`)
+            .then(response => response.json())
+            .then(detallesVenta => {
+                console.log(detallesVenta);
+                const modal = document.getElementById('detallesModal');
+                const productosLista = document.getElementById('productosLista');
+                
+                productosLista.innerHTML = detallesVenta.map(item => 
+                    `<div class="product-item">
+                        <span class="product-info">
+                            ID Detalle Venta: ${item.ID_Detalle_Venta} - 
+                            ID Venta: ${item.ID_Venta} - 
+                            Nombre Producto: ${item.Nombre_Producto} - 
+                            Cantidad: ${item.Cantidad}
+                        </span>
+                        <div class="product-actions">
+                            <button 
+                                class="recordatorio-btn" 
+                                onclick="crearRecordatorio('${item.ID_Producto}', '${item.Nombre_Producto}')"
+                            >
+                                Crear Recordatorio
+                            </button>
                         </div>
-                    </div>
-                    <div class="purchase-item-total">
-                        Total: Bs ${compra.total.toFixed(2)}
-                    </div>
-                    <button class="purchase-item-button" onclick="verDetallesCompra(${index})">Ver detalles</button> `;
-
-                purchaseListContainer.appendChild(compraElemento);
+                    </div>`
+                ).join('');
+                
+                // Actualizar el enlace de descarga PDF
+                const downloadButton = document.querySelector('.download-pdf');
+                downloadButton.onclick = (e) => {
+                    e.preventDefault();
+                    descargarPDF(detallesVenta);
+                };
+                
+                modal.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error al obtener los detalles de la venta:', error);
             });
         }
 
-        function verDetallesVenta(ID_Detalle_Venta) {
-    // Llamada a la nueva ruta para obtener los detalles de la venta
-    fetch(`/pagina_pedidos/detalleVenta/${ID_Detalle_Venta}`)
-    .then(response => response.json())
-    .then(detallesVenta => {
-        console.log(detallesVenta); // Para verificar la estructura de los datos
-        const modal = document.getElementById('detallesModal');
-        const productosLista = document.getElementById('productosLista');
-        
-        // Mostrar los detalles en el modal
-        productosLista.innerHTML = detallesVenta.map(item => 
-            `<div class="product-item">
-                <span class="product-info">
-                    ID Detalle Venta: ${item.ID_Detalle_Venta} - 
-                    ID Venta: ${item.ID_Venta} - 
-                    Nombre Producto: ${item.Nombre_Producto} - 
-                    Cantidad: ${item.Cantidad}
-                </span>
-            </div>`
-        ).join('');
-        
-        modal.style.display = 'block';
-    })
-    .catch(error => {
-        console.error('Error al obtener los detalles de la venta:', error);
-    });
-
-}
-
-
+        function crearRecordatorio(idProducto, nombreProducto) {
+            // Guardar temporalmente el producto seleccionado
+            sessionStorage.setItem('recordatorio_producto', JSON.stringify({
+                id: idProducto,
+                nombre: nombreProducto
+            }));
+            
+            // Redirigir a la página de recordatorios
+            window.location.href = '/pagina_pedidos/recordatorio';
+        }
 
         function cerrarModal() {
             document.getElementById('detallesModal').style.display = 'none';
         }
 
+        function cargarMisCompras() {
+            // Esta función puede quedarse vacía si estás cargando los datos 
+            // directamente desde el servidor con EJS
+        }
+        function descargarPDF(compra) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Configuración inicial
+            let yPos = 20;
+            
+            // Encabezado
+            doc.setFontSize(20);
+            doc.text('Farmacia 25 de Julio', 105, yPos, { align: 'center' });
+            
+            // Título del comprobante
+            yPos += 20;
+            doc.setFontSize(16);
+            doc.text('Comprobante de Compra', 105, yPos, { align: 'center' });
+            
+            // Información de la compra
+            yPos += 20;
+            doc.setFontSize(12);
+            doc.text('Información de la Compra:', 20, yPos);
+            
+            yPos += 10;
+            doc.text(`Nº de Venta: ${compra.ID_Venta}`, 20, yPos);
+            
+            yPos += 10;
+            doc.text(`Fecha: ${compra.Fecha_Venta}`, 20, yPos);
+            
+            yPos += 10;
+            doc.text(`Sucursal: ${compra.Sucursal}`, 20, yPos);
+            
+            // Línea separadora
+            yPos += 10;
+            doc.setLineWidth(0.5);
+            doc.line(20, yPos, 190, yPos);
+            
+            // Productos
+            yPos += 20;
+            doc.setFont(undefined, 'bold');
+            doc.text('Detalle de Productos', 20, yPos);
+            
+            // Encabezados de la tabla
+            yPos += 10;
+            doc.text('Producto', 20, yPos);
+            doc.text('Cantidad', 100, yPos);
+            doc.text('Subtotal', 170, yPos);
+            
+            // Restablecer fuente
+            doc.setFont(undefined, 'normal');
+            
+            // Contenido de los productos
+            if (compra.detalles && compra.detalles.length > 0) {
+                compra.detalles.forEach(detalle => {
+                    yPos += 10;
+                    
+                    // Verificar si necesitamos una nueva página
+                    if (yPos >= 270) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    
+                    doc.text(detalle.Nombre_Producto.substring(0, 35), 20, yPos);
+                    doc.text(detalle.Cantidad.toString(), 100, yPos);
+
+                    const totalVenta = parseFloat(compra.Total_Venta);
+                    doc.text(`${totalVenta} Bs.`, 170, yPos);
+
+                });
+            }
+            
+            // Total
+            yPos += 20;
+            doc.setLineWidth(0.5);
+            doc.line(20, yPos, 190, yPos);
+            
+            yPos += 10;
+            doc.setFont(undefined, 'bold');
+            doc.text('Total:', 140, yPos);
+            doc.text(`${compra.Total_Venta} Bs.`, 170, yPos);
+            
+            // Pie de página
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.text('Gracias por su compra', 105, 280, { align: 'center' });
+            doc.text('Este documento es un comprobante de su transacción', 105, 285, { align: 'center' });
+            
+            // Generar y descargar el PDF
+            doc.save(`Comprobante-${compra.ID_Venta}.pdf`);
+        }
+
+        // Actualizar el event listener en la lista de compras
+        document.querySelectorAll('.download-pdf').forEach(button => {
+            button.onclick = function(e) {
+                e.preventDefault();
+                const compraItem = this.closest('li');
+                const compra = {
+                ID_Venta: compraItem.querySelector('[data-id-venta]').textContent,
+                Fecha_Venta: compraItem.querySelector('[data-fecha]').textContent,
+                Total_Venta: compraItem.querySelector('[data-total]').textContent,
+                Sucursal: compraItem.querySelector('[data-sucursal]').textContent
+            };
+
+                
+                // Obtener los detalles de la venta
+                fetch(`/pagina_pedidos/detalleVenta/${compra.ID_Venta}`)
+                    .then(response => response.json())
+                    .then(detalles => {
+                        compra.detalles = detalles;
+                        descargarPDF(compra);
+                    })
+                    .catch(error => {
+                        console.error('Error al obtener los detalles de la venta:', error);
+                    });
+            };
+        });
         cargarMisCompras();
     </script>
 </body>

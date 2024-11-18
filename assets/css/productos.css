@@ -310,28 +310,27 @@ body {
 }
 /* Contenedor principal de contacto */
 .contact-container {
-    display: flex; /* Para organizar los elementos en fila */
-    justify-content: space-between;
+    display: flex; /* Organiza los elementos en fila */
+    justify-content: space-between; /* Distribuye el espacio entre los elementos */
     padding: 40px;
     background-color: #f3f4f6; /* Color de fondo suave */
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    flex-wrap: wrap; /* Permite que los elementos se ajusten cuando la pantalla sea pequeña */
 }
 
 /* Información de contacto */
 .contact-info {
-    width: 48%; /* Asigna el 48% del espacio a los detalles de contacto */
-    margin-right: 20px;
+    width: 48%; /* Asigna el 48% del espacio para los detalles de contacto */
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-right: 4%; /* Aumenta el margen para más separación */
 }
 
 /* Mapa */
 .map-container {
-    width: 48%; /* Asigna el 48% del espacio al mapa */
+    width: 48%; /* Asigna el 48% del espacio para el mapa */
     text-align: center;
     background-color: #fff;
     padding: 20px;
@@ -427,6 +426,7 @@ p {
     font-size: 1.1rem;
     color: #666;
 }
+
 
 /* Responsividad */
 @media screen and (max-width: 768px) {
@@ -593,5 +593,125 @@ p {
     
     .product-modal .details-grid {
         grid-template-columns: 1fr;
+    }
+}
+/* Estilos responsive generales */
+@media screen and (max-width: 1024px) {
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    #products-container {
+        margin-left: 0;
+    }
+    
+    .sidebar {
+        position: static;
+        width: 100%;
+        border-left: none;
+        border-bottom: 1px solid #ccc;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .top-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 10px;
+    }
+    
+    .top-header ul {
+        flex-direction: column;
+        margin: 10px 0;
+    }
+    
+    .top-header ul li {
+        margin: 5px 0;
+    }
+    
+    .top-header select {
+        margin: 10px 0;
+    }
+    
+    .modal-cart .modal-grid {
+        flex-direction: column;
+    }
+    
+    .modal-cart .summary-box {
+        width: 100%;
+    }
+    
+    .product-modal .product-details {
+        grid-template-columns: 1fr;
+    }
+    
+    .product-modal .details-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .contact-container {
+        flex-direction: column;
+        padding: 20px;
+    }
+    
+    .contact-info, 
+    .map-container {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .products-section input[type="text"] {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .products-section form {
+        flex-direction: column;
+    }
+    
+    #cart-popup {
+        width: 100%;
+    }
+    
+    .modal-cart .modal-content {
+        width: 95%;
+        padding: 10px;
+    }
+    
+    .modal-cart .cart-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .modal-cart .cart-item img {
+        margin-bottom: 10px;
+    }
+    
+    .modal-cart .action-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .product-modal-content {
+        padding: 1rem;
+    }
+    
+    .product-modal .tab-buttons {
+        flex-wrap: wrap;
+    }
+    
+    .product-modal .action-buttons {
+        flex-direction: column;
     }
 }

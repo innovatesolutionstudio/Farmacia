@@ -6,16 +6,17 @@
     const { boolean } = require('cohere-ai/core/schemas');
     
     
-    // Ruta para mostrar la vista de login de clientes
-    router.get('/pagina_pedidos/login_clientes', (req, res) => {
-        res.render('pagina_pedidos/login_clientes');
-    });
-    
+
     
     // Middleware para analizar el cuerpo de las solicitudes JSON y URL-encoded
     router.use(express.json());
     router.use(express.urlencoded({ extended: true }));
     
+    // Ruta para mostrar la vista de login de clientes
+    router.get('/pagina_pedidos/login_clientes', (req, res) => {
+        res.render('pagina_pedidos/login_clientes');
+    });
+        
     // Ruta para mostrar la vista de registro de nuevos clientes
     router.get('/pagina_pedidos/registrar_clientes', (req, res) => {
         res.render('pagina_pedidos/registrar_clientes');
@@ -49,167 +50,213 @@
     });
     
         
-    router.get('/pagina_pedidos/productos/:idSucursal', (req, res) => {
-    // Verificar si el cliente está logueado
-    if (!req.session.loggedinCliente) {
-        return res.redirect('/login');
-    }
-
-    const idSucursal = req.params.idSucursal;
-    const searchTerm = req.query.search || '';
-    const clienteId = req.session.userIdCliente;
-
-    // Consulta para obtener datos del cliente
-    const sqlCliente = 'SELECT * FROM clientes WHERE ID_Cliente = ?';
-
-    // Consulta para obtener las sucursales
-    const sqlSucursales = `SELECT * FROM Sucursales`;
-
-    // Consulta para obtener los productos
-    const sqlProductos =  `
-    SELECT 
-        Inventario.ID_Producto, 
-        Productos.Fotografia, 
-        Productos.Nombre, 
-        Productos.Descripcion,
-        Productos.Precio_Unitario, 
-        Inventario.Cantidad, 
-        Inventario.ID_Sucursal,
-        Productos.ID_Categoria,
-        Productos.ID_Area_Producto,
-        Productos.Indicaciones,
-        Productos.Dosis_Medicacmento,
-        Productos.Efectos_Secundarios,
-        Productos.Precauciones,
-        Productos.ID_Unidad_Venta
-    FROM Inventario
-    JOIN Productos ON Inventario.ID_Producto = Productos.ID_Producto
-    WHERE Inventario.ID_Sucursal = ?
-    AND Productos.Nombre LIKE ?
-    ORDER BY RAND()
-    LIMIT 12;
-`;
-
-    // Primero obtenemos los datos del cliente
-    connection.query(sqlCliente, [clienteId], (error, clienteResults) => {
-        if (error) {
-            console.error('Error al obtener datos del cliente:', error);
-            return res.status(500).send('Error al obtener datos del cliente.');
+        router.get('/pagina_pedidos/productos/:idSucursal', (req, res) => {
+        // Verificar si el cliente está logueado
+        if (!req.session.loggedinCliente) {
+            return res.redirect('/pagina_pedidos/login_clientes');
         }
 
-        const cliente = clienteResults[0];
+        const idSucursal = req.params.idSucursal;
+        const searchTerm = req.query.search || '';
+        const clienteId = req.session.userIdCliente;
 
-        // Luego obtenemos las sucursales
-        connection.query(sqlSucursales, (error, results) => {
+        // Consulta para obtener datos del cliente
+        const sqlCliente = 'SELECT * FROM clientes WHERE ID_Cliente = ?';
+
+        // Consulta para obtener las sucursales
+        const sqlSucursales = `SELECT * FROM Sucursales`;
+
+        // Consulta para obtener los productos
+        const sqlProductos =  `
+        SELECT 
+            Inventario.ID_Producto, 
+            Productos.Fotografia, 
+            Productos.Nombre, 
+            Productos.Descripcion,
+            Productos.Precio_Unitario, 
+            Inventario.Cantidad, 
+            Inventario.ID_Sucursal,
+            Productos.ID_Categoria,
+            Productos.ID_Area_Producto,
+            Productos.Indicaciones,
+            Productos.Dosis_Medicacmento,
+            Productos.Efectos_Secundarios,
+            Productos.Precauciones,
+            Productos.ID_Unidad_Venta
+        FROM Inventario
+        JOIN Productos ON Inventario.ID_Producto = Productos.ID_Producto
+        WHERE Inventario.ID_Sucursal = ?
+        AND Productos.Nombre LIKE ?
+        ORDER BY RAND()
+        LIMIT 12;
+    `;
+
+        // Primero obtenemos los datos del cliente
+        connection.query(sqlCliente, [clienteId], (error, clienteResults) => {
             if (error) {
-                console.error('Error al obtener las sucursales:', error);
-                return res.status(500).send('Error al obtener los datos de sucursales.');
+                console.error('Error al obtener datos del cliente:', error);
+                return res.status(500).send('Error al obtener datos del cliente.');
             }
 
-            // Finalmente obtenemos los productos
-            const queryParams = [
-                idSucursal,
-                `%${searchTerm}%`
-            ];
+            const cliente = clienteResults[0];
 
-            connection.query(sqlProductos, queryParams, (error, products) => {
+            // Luego obtenemos las sucursales
+            connection.query(sqlSucursales, (error, results) => {
                 if (error) {
-                    console.error('Error al obtener los productos:', error);
-                    return res.status(500).send('Error al obtener los productos.');
+                    console.error('Error al obtener las sucursales:', error);
+                    return res.status(500).send('Error al obtener los datos de sucursales.');
                 }
 
-                // Renderiza la vista con todos los datos necesarios
-                res.render('pagina_pedidos/productos', {
-                    results,
-                    products,
+                // Finalmente obtenemos los productos
+                const queryParams = [
                     idSucursal,
-                    searchTerm,
-                    cliente // Ahora pasamos los datos del cliente a la vista
+                    `%${searchTerm}%`
+                ];
+
+                connection.query(sqlProductos, queryParams, (error, products) => {
+                    if (error) {
+                        console.error('Error al obtener los productos:', error);
+                        return res.status(500).send('Error al obtener los productos.');
+                    }
+
+                    // Renderiza la vista con todos los datos necesarios
+                    res.render('pagina_pedidos/productos', {
+                        results,
+                        products,
+                        idSucursal,
+                        searchTerm,
+                        cliente // Ahora pasamos los datos del cliente a la vista
+                    });
                 });
             });
         });
     });
-});
+
+
+    router.get('/api/productos/:id', (req, res) => {
+        const productId = req.params.id;
+        const sql = `
+            SELECT 
+                Productos.ID_Producto, 
+                Productos.Fotografia, 
+                Productos.Nombre, 
+                Productos.Descripcion,
+                Productos.Precio_Unitario, 
+                Inventario.Cantidad, 
+                Productos.ID_Categoria,
+                Productos.ID_Area_Producto,
+                Productos.Indicaciones,
+                Productos.Dosis_Medicacmento,
+                Productos.Efectos_Secundarios,
+                Productos.Precauciones,
+                Productos.ID_Unidad_Venta
+            FROM Productos
+            LEFT JOIN Inventario ON Inventario.ID_Producto = Productos.ID_Producto
+            WHERE Productos.ID_Producto = ?
+            LIMIT 1;
+        `;
     
-
-
-
-    router.get('/pagina_pedidos/consultas', (req, res) => {
-
-        if (!req.session.loggedinCliente) {
-            return res.redirect('/pagina_pedidos/login_clientes');
-        }
-        res.render('pagina_pedidos/consultas');
+        connection.query(sql, [productId], (error, results) => {
+            if (error) {
+                console.error('Error al obtener detalles del producto:', error);
+                return res.status(500).json({ error: 'Error al obtener detalles del producto' });
+            }
+    
+            if (results.length === 0) {
+                return res.status(404).json({ error: 'Producto no encontrado' });
+            }
+    
+            res.json(results[0]);
+        });
     });
 
 
-    // RUTA PARA MOSTRAR LAS COMPRAS
-router.get('/pagina_pedidos/miscompras', (req, res) => {
+        // RUTA PARA MOSTRAR LAS VENTAS
+        router.get('/pagina_pedidos/misventas', (req, res) => {
+            // Verificar si el usuario está logueado
+            if (!req.session.loggedinCliente) {
+                return res.redirect('/pagina_pedidos/login_clientes'); 
+            }
 
-    // Verificar si el usuario está logueado
-    if (!req.session.loggedinCliente) {
-        return res.redirect('/pagina_pedidos/login_clientes'); 
-    }
+            const idCliente = req.session.userIdCliente;
 
-    const idCliente = req.session.userIdCliente; // Obtener el ID del cliente desde la sesión
+            // Consulta SQL para obtener las ventas del cliente
+            const sqlVentas = `
+                SELECT ventas.ID_Venta, ventas.Fecha_Venta, ventas.Total_Venta, Sucursales.Nombre AS Sucursal
+                FROM ventas
+                JOIN Sucursales ON ventas.ID_Sucursal = Sucursales.ID_Sucursal
+                WHERE ventas.ID_Cliente = ?
+                ORDER BY ventas.Fecha_Venta DESC
+            `;
 
-    // Consulta SQL para obtener las compras del cliente desde la base de datos
-    const sqlCompras = `
-        SELECT ventas.ID_Venta, ventas.Fecha_Venta, ventas.Total_Venta, Sucursales.Nombre AS Sucursal
-        FROM ventas
-        JOIN Sucursales ON ventas.ID_Sucursal = Sucursales.ID_Sucursal
-        WHERE ventas.ID_Cliente = ?
-        ORDER BY ventas.Fecha_Venta DESC
-    `;
+            connection.query(sqlVentas, [idCliente], (error, ventas) => {
+                if (error) {
+                    console.error('Error al obtener las ventas:', error);
+                    return res.status(500).send('Error al obtener las ventas.');
+                }
 
-    // Realizar la consulta a la base de datos
-    connection.query(sqlCompras, [idCliente], (error, compras) => {
-        if (error) {
-            console.error('Error al obtener las compras:', error);
-            return res.status(500).send('Error al obtener las compras.'); // Manejo de errores
-        }
+                if (ventas.length === 0) {
+                    return res.render('pagina_pedidos/misventas', { ventas: [] });
+                }
 
-        // Si no hay compras registradas, mostrar un mensaje
-        if (compras.length === 0) {
-            return res.render('pagina_pedidos/miscompras', { compras: [] });
-        }
+                res.render('pagina_pedidos/misventas', { ventas });
+            });
+        });
 
-        // Si hay compras, renderizar la vista con los datos de las compras
-        res.render('pagina_pedidos/miscompras', { compras });
-    });
-});
-// Ruta para obtener los detalles de la venta por ID_Detalle_Venta
-router.get('/pagina_pedidos/detalleVenta/:ID_Detalle_Venta', (req, res) => {
-    const { ID_Detalle_Venta } = req.params;
+        // Dentro de tu ruta
+        router.get('/pagina_pedidos/miscompras', (req, res) => {
+            const idCliente = req.session.userIdCliente;
 
-    // Consulta SQL para obtener los detalles de la venta
-    const sqlDetalles = `
-        SELECT 
-            D.ID_Detalle_Venta, 
-            D.ID_Venta, 
-            D.ID_Producto, 
-            D.Cantidad, 
-            P.Nombre AS Nombre_Producto
-        FROM 
-            Detalles_Venta D
-        JOIN 
-            Productos P ON D.ID_Producto = P.ID_Producto
-        WHERE 
-            D.ID_Detalle_Venta = ?
+            const sqlVentas = `
+                SELECT ventas.ID_Venta, ventas.Fecha_Venta, ventas.Total_Venta, Sucursales.Nombre AS Sucursal
+                FROM ventas
+                JOIN Sucursales ON ventas.ID_Sucursal = Sucursales.ID_Sucursal
+                WHERE ventas.ID_Cliente = ?
+                ORDER BY ventas.Fecha_Venta DESC
+            `;
 
-    `;
+            connection.query(sqlVentas, [idCliente], (error, ventas) => {
+                if (error) {
+                    console.error('Error al obtener las ventas:', error);
+                    return res.status(500).send('Error al obtener las ventas');
+                }
 
-    // Realizar la consulta a la base de datos
-    connection.query(sqlDetalles, [ID_Detalle_Venta], (error, detalles) => {
-        if (error) {
-            console.error('Error al obtener los detalles de la venta:', error);
-            return res.status(500).send('Error al obtener los detalles de la venta.');
-        }
+                res.render('pagina_pedidos/miscompras', { ventas });  // Asegúrate de pasar 'ventas' aquí
+            });
+        });
 
-        // Enviar los detalles al cliente
-        res.json(detalles);
-    });
-});
+        // Ruta para obtener los detalles de la venta por ID_Detalle_Venta
+        router.get('/pagina_pedidos/detalleVenta/:ID_Detalle_Venta', (req, res) => {
+            const { ID_Detalle_Venta } = req.params;
+
+            // Consulta SQL para obtener los detalles de la venta
+            const sqlDetalles = `
+                SELECT 
+                    D.ID_Detalle_Venta, 
+                    D.ID_Venta, 
+                    D.ID_Producto, 
+                    D.Cantidad, 
+                    P.Nombre AS Nombre_Producto
+                FROM 
+                    Detalles_Venta D
+                JOIN 
+                    Productos P ON D.ID_Producto = P.ID_Producto
+                WHERE 
+                    D.ID_Detalle_Venta = ?
+
+            `;
+
+            // Realizar la consulta a la base de datos
+            connection.query(sqlDetalles, [ID_Detalle_Venta], (error, detalles) => {
+                if (error) {
+                    console.error('Error al obtener los detalles de la venta:', error);
+                    return res.status(500).send('Error al obtener los detalles de la venta.');
+                }
+
+                // Enviar los detalles al cliente
+                res.json(detalles);
+            });
+        });
 
     
     router.post('/authas', (req, res) => {
@@ -251,39 +298,6 @@ router.get('/pagina_pedidos/detalleVenta/:ID_Detalle_Venta', (req, res) => {
             res.redirect('/pagina_pedidos/login_clientes');
         });
     });
-    router.get('/getClientData', (req, res) => {
-        // Comprobar si el cliente está autenticado
-        if (req.session && req.session.loggedinCliente) {
-            const userIdCliente = req.session.userIdCliente;
-    
-            // Realizar la consulta a la base de datos para obtener los datos del cliente
-            connection.query('SELECT * FROM clientes WHERE ID_Cliente = ?', [userIdCliente], (error, results) => {
-                if (error) {
-                    return res.status(500).send('Error en la consulta a la base de datos');
-                }
-    
-                if (results.length === 0) {
-                    return res.status(404).send('Cliente no encontrado');
-                }
-    
-                // Si el cliente está autenticado, devolver los datos
-                res.json({
-                    id_cliente: results[0].ID_Cliente,
-                    nombre: results[0].Nombre,
-                    apellido: results[0].Apellido,
-                    telefono: results[0].Telefono,
-                    ci: results[0].CI,
-                    nit: results[0].Nit,
-                    codigo: results[0].Codigo,
-                    contrasena: results[0].Contrasena
-                });
-            });
-        } else {
-            return res.status(401).send('No estás autenticado');
-        }
-    });
-    
-
     
     router.get('/pagina_pedidos/clientes_index/:idSucursal', (req, res) => {
         const idSucursal = req.params.idSucursal;
@@ -354,31 +368,9 @@ router.get('/pagina_pedidos/detalleVenta/:ID_Detalle_Venta', (req, res) => {
             res.status(403).json({ error: 'No estás logueado.' });
         }
     });
-    // Ruta para actualizar los datos del cliente
-        router.post('/editarPerfil', (req, res) => {
-            const { name, lastname, phone, ci, nit, code } = req.body;
-            const idCliente = req.session.clientId;  // Obtener el ID del cliente desde la sesión
 
-            const sqlUpdateClient = `
-                UPDATE Clientes
-                SET Nombre = ?, Apellido = ?, Teléfono = ?, C.I. = ?, NIT = ?, Código = ?
-                WHERE ID_Cliente = ?
-            `;
 
-            connection.query(sqlUpdateClient, [name, lastname, phone, ci, nit, code, idCliente], (error, result) => {
-                if (error) {
-                    console.error('Error al actualizar los datos:', error);
-                    return res.status(500).send('Error al actualizar los datos del cliente.');
-                }
-
-                // Redirigir a la página de perfil o mostrar un mensaje de éxito
-                res.redirect('/pagina_pedidos/clientes_index/:idSucursal');
-            });
-        });
-
-    
-
-    
+        
     router.get('/pagina_pedidos/continuar_pedido', (req, res) => {
         console.log('Sesión cliente:', req.session);
     
@@ -388,7 +380,6 @@ router.get('/pagina_pedidos/detalleVenta/:ID_Detalle_Venta', (req, res) => {
     
         const clienteId = req.session.userIdCliente;
     
-        // Consulta para obtener datos del cliente
         const queryCliente = `SELECT * FROM clientes WHERE ID_Cliente = ?`;
         connection.query(queryCliente, [clienteId], (err, resultsCliente) => {
             if (err) {
@@ -396,7 +387,6 @@ router.get('/pagina_pedidos/detalleVenta/:ID_Detalle_Venta', (req, res) => {
                 return res.status(500).send('Error interno');
             }
     
-            // Ahora obtenemos los datos de la venta (ejemplo de la venta más reciente)
             const queryVenta = `
             SELECT v.ID_Venta, v.Fecha_Venta, v.Total_Venta, v.ID_Cliente, v.ID_Empleado, v.ID_Sucursal, v.ID_Caja
             FROM ventas v
@@ -412,14 +402,12 @@ router.get('/pagina_pedidos/detalleVenta/:ID_Detalle_Venta', (req, res) => {
                 }
     
                 if (resultsVenta.length > 0) {
-                    const venta = resultsVenta[0]; // Usamos la primera venta
-                    // Pasamos tanto los datos del cliente como de la venta a la vista
+                    const venta = resultsVenta[0]; 
                     res.render('pagina_pedidos/continuar_pedido', {
                         cliente: resultsCliente[0],
                         venta: venta
                     });
                 } else {
-                    // Si no hay ventas, redirigimos o mostramos un mensaje adecuado
                     res.render('pagina_pedidos/continuar_pedido', {
                         cliente: resultsCliente[0],
                         mensaje: 'No hay ventas recientes.'
@@ -428,47 +416,66 @@ router.get('/pagina_pedidos/detalleVenta/:ID_Detalle_Venta', (req, res) => {
             });
         });
     });
-    
-    
-// Ruta para insertar la venta
-router.post('/insertarVenta', (req, res) => {
-    const { cliente, totalVenta, sucursalId, estado, fecha, idEmpleado, idCaja } = req.body;
 
-    // Consultar para insertar los datos de la venta
-    const sql = `
-        INSERT INTO ventas (Fecha_Venta, Total_Venta, ID_Cliente, ID_Empleado, ID_Sucursal, ID_Caja, Estado)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    `;
-    const values = [fecha, totalVenta, cliente, idEmpleado, sucursalId, idCaja, estado];
 
-    connection.query(sql, values, (err, result) => {
-        if (err) {
-            console.error('Error al insertar la venta:', err);
-            return res.json({ success: false, message: 'Error al insertar la venta' });
+
+
+    // Ruta para insertar una venta
+    router.post('/confirmarVenta', (req, res) => {
+        try {
+            const { productos, cliente, sucursalId, total, fecha } = req.body;
+
+            const query = `
+                INSERT INTO ventas (Fecha_Venta, Total_Venta, ID_Cliente, ID_Empleado, ID_Sucursal, ID_Caja, Estado)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            `;
+            const values = [fecha, total, cliente, 1, sucursalId, 1, 'pendiente'];
+
+            connection.query(query, values, (error, results) => {
+                if (error) {
+                    console.error('Error al insertar la venta:', error);
+                    return res.status(500).json({ success: false, message: 'Error al procesar la venta' });
+                }
+                res.json({ success: true });
+            });
+        } catch (error) {
+            res.status(500).json({ success: false, message: 'Error interno del servidor' });
         }
-
-        // Devolver el ID de la venta que acabamos de insertar
-        res.json({ success: true, id: result.insertId });
     });
-});
 
+    router.post('/insertarVenta', (req, res) => {
+        const { cliente, totalVenta, sucursalId, estado, fecha, idEmpleado, idCaja } = req.body;
     
+        // Validar los campos
+        if (!cliente || !totalVenta || !sucursalId || !estado || !fecha || !idEmpleado || !idCaja) {
+            return res.render('pagina_pedidos/continuar_pedido', { successMessage: 'Faltan datos requeridos' });
+        }
     
+        const sql = `
+            INSERT INTO ventas (Fecha_Venta, Total_Venta, ID_Cliente, ID_Empleado, ID_Sucursal, ID_Caja, Estado)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `;
+        const values = [fecha, totalVenta, cliente, idEmpleado, sucursalId, idCaja, estado];
+    
+        connection.query(sql, values, (err, result) => {
+            if (err) {
+                console.error('Error al insertar la venta:', err);
+                return res.render('pagina_pedidos/continuar_pedido', { successMessage: 'Error al insertar la venta' });
+            }
+    
+            res.render('pagina_pedidos/continuar_pedido', { successMessage: 'Venta registrada con éxito!' });
+        });
+    });
     
     // Ruta para guardar el pedido
     router.post('/pagina_pedidos/guardar_pedido', (req, res) => {
         const { idVenta, idEmpleado, idCliente, direccion, idDistrito } = req.body;
-
-        // Asegúrate de que los valores estén correctamente recibidos
         console.log('Datos recibidos para el pedido:', { idVenta, idEmpleado, idCliente, direccion, idDistrito });
 
-        // Consulta para insertar el pedido en la base de datos
         const query = `
             INSERT INTO pedidos (ID_Venta, ID_Empleado, ID_Cliente, Direccion, ID_Distrito)
             VALUES (?, ?, ?, ?, ?)
         `;
-
-        // Usa connection.query para hacer la consulta
         connection.query(query, [idVenta, idEmpleado, idCliente, direccion, idDistrito], (err, result) => {
             if (err) {
                 console.error('Error al guardar el pedido:', err);
@@ -478,19 +485,390 @@ router.post('/insertarVenta', (req, res) => {
             res.redirect('/pagina_pedidos/miscompras');
         });
     });
+    router.get('/pagina_pedidos/detalleVenta/:id', async (req, res) => {
+        try {
+            const detallesVenta = await pool.query(`
+                SELECT DISTINCT 
+                    p.ID_Producto AS id, 
+                    p.Nombre AS nombre, 
+                    p.Descripcion AS descripcion, 
+                    dr.Dosis AS dosis  
+                FROM Productos p
+                INNER JOIN Detalles_Venta dv ON p.ID_Producto = dv.ID_Producto
+                INNER JOIN Ventas v ON dv.ID_Venta = v.ID_Venta
+                INNER JOIN Recordatorios r ON p.ID_Producto = r.ID_Producto  -- Relacionamos con Recordatorios
+                INNER JOIN detalle_recordatorio dr ON r.ID_Recordatorio = dr.ID_Recordatorio  -- Relacionamos con detalle_recordatorio
+                WHERE v.ID_Cliente = ?
+                ORDER BY p.Nombre;
 
-    
-    router.get('/pagina_pedidos/recordatorio', (req, res) => {
-
-        if (!req.session.loggedinCliente) {
-            return res.redirect('/pagina_pedidos/login_clientes'); 
+            `, [req.params.id]);
+            
+            res.json(detallesVenta);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Error al obtener los detalles de la venta' });
         }
-        res.render('pagina_pedidos/recordatorio');
     });
 
 
-    router.get('/pagina_pedidos/carritopedidos', (req, res) => {
-        res.render('pagina_pedidos/carritopedidos'); 
+    
+
+    
+    // Ruta para mostrar la página de recordatorios
+router.get('/pagina_pedidos/recordatorio', (req, res) => {
+    if (!req.session.loggedinCliente) {
+        return res.redirect('/pagina_pedidos/login_clientes');
+    }
+
+    const idCliente = req.session.userIdCliente;  // Usamos 'userIdCliente' en lugar de 'idCliente'
+
+    // Verificar si el cliente está logueado
+    if (!idCliente) {
+        return res.status(401).json({ error: 'No autorizado. El cliente no está logueado.' });
+    }
+
+    const query = `
+        SELECT 
+            r.ID_Recordatorio,
+            r.ID_Cliente,
+            r.ID_Producto,
+            r.Telefono,
+            dr.fecha,
+            dr.hora,
+            dr.Mensaje,
+            dr.Dosis,
+            dr.Cantidad_Mendicamentos
+        FROM 
+            Recordatorios r
+        JOIN 
+            detalle_recordatorio dr ON r.ID_Recordatorio = dr.ID_Recordatorio
+        WHERE 
+            r.ID_Cliente = ?;
+    `;
+
+    connection.query(query, [idCliente], (err, results) => {
+        if (err) {
+            console.error('Error al obtener recordatorios:', err);
+            return res.status(500).json({ error: 'Error al obtener los recordatorios' });
+        }
+
+        // Verificar si results tiene datos
+        console.log("Recordatorios obtenidos: ", results);
+
+        // Renderizar la vista y pasarle los resultados
+        res.render('pagina_pedidos/recordatorio', { recordatorios: results });
+    });
+});
+
+    router.delete('/pagina_pedidos/eliminar_recordatorio/:id', (req, res) => {
+        const id = req.params.id;
+
+        // Eliminar los registros relacionados en detalle_recordatorio
+        const deleteDetailsQuery = 'DELETE FROM detalle_recordatorio WHERE ID_Recordatorio = ?';
+        connection.query(deleteDetailsQuery, [id], (error, result) => {
+            if (error) {
+                console.error(error);
+                return res.status(500).json({ success: false, message: 'Error al eliminar detalles del recordatorio' });
+            }
+
+            // Eliminar el recordatorio de la tabla recordatorios
+            const deleteReminderQuery = 'DELETE FROM recordatorios WHERE ID_Recordatorio = ?';
+            connection.query(deleteReminderQuery, [id], (error, result) => {
+                if (error) {
+                    console.error(error);
+                    return res.status(500).json({ success: false, message: 'Error al eliminar el recordatorio' });
+                }
+                if (result.affectedRows > 0) {
+                    res.json({ success: true, message: 'Recordatorio eliminado con éxito' });
+                } else {
+                    res.json({ success: false, message: 'No se encontró el recordatorio con ese ID' });
+                }
+            });
+        });
+    });
+    router.post('/api/crear-recordatorio', async (req, res) => {
+        try {
+            if (!req.session.loggedinCliente) {
+                return res.status(401).json({ error: 'No autorizado' });
+            }
+    
+            // Verifica que el cliente esté autenticado
+            console.log('Sesión completa:', req.session);
+            console.log('ID Cliente en sesión:', req.session.userIdCliente);  // Usar 'userIdCliente' aquí
+    
+            const { productoId, dosis, cantidad, telefono, fechaHora } = req.body;
+    
+            if (!productoId || !dosis || !cantidad || !telefono || !fechaHora) {
+                return res.status(400).json({ error: 'Todos los campos son requeridos' });
+            }
+    
+            if (new Date(fechaHora) < new Date()) {
+                return res.status(400).json({ error: 'La fecha debe ser futura' });
+            }
+    
+            // Eliminar el prefijo '591' del teléfono si existe
+            const telefonoLimpio = telefono.replace(/^591/, '');
+    
+            // Insertar el recordatorio principal
+            connection.query(
+                'INSERT INTO Recordatorios (ID_Cliente, ID_Producto, Telefono) VALUES (?, ?, ?)',
+                [req.session.userIdCliente, productoId, telefonoLimpio],  // Usar 'userIdCliente'
+                (err, result) => {
+                    if (err) {
+                        console.error('Error en la primera inserción:', err);
+                        return res.status(500).json({ error: 'Error al crear el recordatorio' });
+                    }
+    
+                    const fecha = new Date(fechaHora).toISOString().split('T')[0];
+                    const hora = new Date(fechaHora).toTimeString().split(' ')[0];
+                    const mensaje = `Es hora de tomar tu medicamento. Dosis: ${dosis}. Cantidad: ${cantidad} unidades.`;
+    
+                    // Insertar el detalle del recordatorio
+                    connection.query(
+                        'INSERT INTO detalle_recordatorio (ID_Recordatorio, fecha, hora, Mensaje, Dosis, Cantidad_Mendicamentos) VALUES (?, ?, ?, ?, ?, ?)',
+                        [result.insertId, fecha, hora, mensaje, dosis, cantidad],
+                        (err) => {
+                            if (err) {
+                                console.error('Error en la segunda inserción:', err);
+                                return res.status(500).json({ error: 'Error al crear el detalle del recordatorio' });
+                            }
+                            res.json({ 
+                                message: 'Recordatorio creado exitosamente', 
+                                id: result.insertId 
+                            });
+                        }
+                    );
+                }
+            );
+        } catch (error) {
+            console.error('Error general:', error);
+            res.status(500).json({ error: 'Error al procesar la solicitud' });
+        }
+    });
+    router.get('/pagina_pedidos/editar_recordatorio/:id', (req, res) => {
+        const id = req.params.id;
+        const query = 'SELECT * FROM recordatorios WHERE ID_Recordatorio = ? AND eliminado = 0';
+        connection.query(query, [id], (error, results) => {
+            if (error) {
+                console.error(error);
+                return res.status(500).json({ success: false, message: 'Error al obtener el recordatorio' });
+            }
+            if (results.length > 0) {
+                res.render('editar_recordatorio', { recordatorio: results[0] });
+            } else {
+                res.status(404).json({ success: false, message: 'Recordatorio no encontrado' });
+            }
+        });
+    });
+    router.get('/pagina_pedidos/editar_recordatorio/:id', (req, res) => {
+        const id = req.params.id;
+        const query = 'SELECT * FROM recordatorios WHERE ID_Recordatorio = ?';
+        
+        connection.query(query, [id], (error, results) => {
+            if (error) {
+                console.error(error);
+                return res.status(500).json({ success: false, message: 'Error al obtener el recordatorio' });
+            }
+            if (results.length > 0) {
+                res.render('pagina_pedidos/recordatorio', { recordatorio: results[0] });
+            } else {
+                res.status(404).json({ success: false, message: 'Recordatorio no encontrado' });
+            }
+        });
+    });
+        
+
+
+
+
+    // Ruta para obtener productos comprados
+    router.get('/api/mis-productos-comprados', async (req, res) => {
+        try {
+            console.log('Estado de la sesión:', {
+                sesionActiva: req.session.loggedinCliente,
+                idCliente: req.session.userIdCliente  // Cambiado para usar userIdCliente
+            });
+
+            if (!req.session.loggedinCliente) {
+                console.log('Cliente no ha iniciado sesión');
+                return res.redirect('/pagina_pedidos/login_clientes');
+            }
+
+            const query = `
+                SELECT DISTINCT 
+                    p.ID_Producto AS id,
+                    p.Nombre AS nombre
+                FROM Productos p
+                INNER JOIN Detalles_Venta dv ON p.ID_Producto = dv.ID_Producto
+                INNER JOIN Ventas v ON dv.ID_Venta = v.ID_Venta
+                WHERE v.ID_Cliente = ?
+                ORDER BY p.Nombre;
+            `;
+
+            // Usar el ID del cliente desde la sesión
+            connection.query(query, [req.session.userIdCliente], (error, results) => {
+                if (error) {
+                    console.error('Error en la consulta:', error);
+                    return res.status(500).json({ error: 'Error al obtener productos' });
+                }
+
+                console.log('Productos encontrados:', results);
+                res.json(results);
+            });
+
+        } catch (error) {
+            console.error('Error general:', error);
+            res.status(500).json({ error: 'Error del servidor' });
+        }
+    });
+
+    
+
+
+    // Ruta para obtener recordatorios del cliente
+    router.get('/api/mis-recordatorios', async (req, res) => {
+        try {
+            if (!req.session.loggedinCliente) {
+                return res.status(401).json({ error: 'No autorizado' });
+            }
+
+            const query = `
+                SELECT 
+                    r.ID_Recordatorio,
+                    p.Nombre,
+                    dr.Dosis,
+                    dr.Cantidad_Mendicamentos AS cantidad,
+                    r.Telefono,
+                    dr.fecha,
+                    dr.hora,
+                    dr.Mensaje
+                FROM 
+                    Recordatorios r
+                INNER JOIN 
+                    detalle_recordatorio dr ON r.ID_Recordatorio = dr.ID_Recordatorio
+                INNER JOIN 
+                    Productos p ON r.ID_Producto = p.ID_Producto
+                WHERE 
+                    r.ID_Cliente = ?
+                ORDER BY 
+                    dr.fecha DESC, dr.hora DESC
+            `;
+
+            connection.query(query, [req.session.idCliente], (error, recordatorios) => {
+                if (error) {
+                    console.error('Error al obtener recordatorios:', error);
+                    return res.status(500).json({ error: 'Error al obtener los recordatorios' });
+                }
+                res.json(recordatorios);
+            });
+
+        } catch (error) {
+            console.error('Error al obtener recordatorios:', error);
+            res.status(500).json({ error: 'Error al obtener los recordatorios' });
+        }
+    }); 
+
+    // Actualizar un recordatorio
+    router.put('/api/actualizar-recordatorio/:id', async (req, res) => {
+        try {
+            if (!req.session.loggedinCliente) {
+                return res.status(401).json({ error: 'No autorizado' });
+            }
+
+            const { dosis, cantidad, telefono, fechaHora } = req.body;
+            const idRecordatorio = req.params.id;
+
+            // Validaciones
+            if (!dosis || !cantidad || !telefono || !fechaHora) {
+                return res.status(400).json({ error: 'Todos los campos son requeridos' });
+            }
+
+            // Validar formato del teléfono
+            if (!/^591\d{8}$/.test(telefono)) {
+                return res.status(400).json({ error: 'Formato de teléfono inválido' });
+            }
+
+            const fechaRecordatorio = new Date(fechaHora);
+            const fecha = fechaRecordatorio.toISOString().split('T')[0];
+            const hora = fechaRecordatorio.toTimeString().split(' ')[0];
+
+            await connection.beginTransaction();
+
+            try {
+                // Actualizar el recordatorio principal
+                await connection.query(
+                    'UPDATE Recordatorio SET Telefono = ? WHERE ID_Recordatorio = ? AND ID_Cliente = ?',
+                    [telefono, idRecordatorio, req.session.idCliente]
+                );
+
+                // Actualizar el detalle del recordatorio
+                const mensaje = `Es hora de tomar tu medicamento. Dosis: ${dosis}. Cantidad: ${cantidad} unidades.`;
+                await connection.query(
+                    `UPDATE detalle_recordatorio 
+                    SET fecha = ?, hora = ?, Mensaje = ?, Dosis = ?, Cantidad_medicamentos = ?
+                    WHERE ID_Recordatorio = ?`,
+                    [fecha, hora, mensaje, dosis, cantidad, idRecordatorio]
+                );
+
+                await connection.commit();
+                res.json({ message: 'Recordatorio actualizado exitosamente' });
+
+            } catch (error) {
+                await connection.rollback();
+                throw error;
+            }
+
+        } catch (error) {
+            console.error('Error al actualizar recordatorio:', error);
+            res.status(500).json({ error: 'Error al actualizar el recordatorio' });
+        }
+    });
+
+    // Eliminar un recordatorio
+    router.delete('/api/eliminar-recordatorio/:id', async (req, res) => {
+        try {
+            if (!req.session.loggedinCliente) {
+                return res.status(401).json({ error: 'No autorizado' });
+            }
+
+            const idRecordatorio = req.params.id;
+
+            await connection.beginTransaction();
+
+            try {
+                // Primero eliminar los detalles
+                await connection.query(
+                    'DELETE FROM detalle_recordatorio WHERE ID_Recordatorio = ?',
+                    [idRecordatorio]
+                );
+
+                // Luego eliminar el recordatorio principal
+                await connection.query(
+                    'DELETE FROM Recordatorio WHERE ID_Recordatorio = ? AND ID_Cliente = ?',
+                    [idRecordatorio, req.session.idCliente]
+                );
+
+                await connection.commit();
+                res.json({ message: 'Recordatorio eliminado exitosamente' });
+
+            } catch (error) {
+                await connection.rollback();
+                throw error;
+            }
+
+        } catch (error) {
+            console.error('Error al eliminar recordatorio:', error);
+            res.status(500).json({ error: 'Error al eliminar el recordatorio' });
+        }
+    });
+
+    // Ruta para mostrar la consulta
+    router.get('/pagina_pedidos/consultas', (req, res) => {
+
+        if (!req.session.loggedinCliente) {
+            return res.redirect('/pagina_pedidos/login_clientes');
+        }
+        res.render('pagina_pedidos/consultas');
     });
     
     

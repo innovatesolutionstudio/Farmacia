@@ -192,134 +192,160 @@
     </div>
 
     <script>
-        function insertarVenta() {
-            const carrito = obtenerCarritoLocal();
-            const totalVenta = calcularTotalVenta(carrito);
-            const fechaVenta = new Date().toISOString().slice(0, 19).replace('T', ' '); // Fecha en formato 'YYYY-MM-DD HH:MM:SS'
+        // Función para obtener los datos del carrito almacenados
+function obtenerCarritoLocal() {
+    const carritoJSON = localStorage.getItem('cart');
+    return carritoJSON ? JSON.parse(carritoJSON) : [];
+}
+
+// Función para generar ID de venta único
+function generateSaleId() {
+    const date = new Date();
+    const dateStr = date.getFullYear() + 
+                   ('0' + (date.getMonth() + 1)).slice(-2) + 
+                   ('0' + date.getDate()).slice(-2);
+    const randomNumber = Math.floor(Math.random() * 100000);
+    return `${dateStr}-${randomNumber}`;
+}
+
+// Función para formatear la fecha
+function formatearFecha(fecha) {
+    return new Date(fecha).toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// Función principal para cargar los datos del recibo
+function cargarDatosRecibo() {
+    // Establecer datos básicos del recibo
+    document.getElementById('saleId').textContent = generateSaleId();
+    document.getElementById('saleDate').textContent = formatearFecha(new Date());
+
+    // Obtener y mostrar datos del carrito
+    const carrito = obtenerCarritoLocal();
+    const tbody = document.getElementById('productsTableBody');
+    tbody.innerHTML = ''; // Limpiar tabla
+
+    let totalVenta = 0;
+
+    // Agregar cada producto a la tabla
+    carrito.forEach(item => {
+        const subtotal = item.price * item.quantity;
+        totalVenta += subtotal;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <img src="/api/placeholder/40/40" 
+                         alt="${item.name}" 
+                         class="product-image">
+                    <span>${item.name}</span>
+                </div>
+            </td>
+            <td>${item.quantity}</td>
+            <td>Bs. ${item.price.toFixed(2)}</td>
+            <td>Bs. ${subtotal.toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    // Actualizar total
+    document.getElementById('totalAmount').textContent = `Bs. ${totalVenta.toFixed(2)}`;
+}
+
+// Función para formatear la fecha al formato 'YYYY-MM-DD HH:MM:SS'
+function formatearFecha(fecha) {
+    const date = new Date(fecha);
+    const anio = date.getFullYear();
+    const mes = String(date.getMonth() + 1).padStart(2, '0');
+    const dia = String(date.getDate()).padStart(2, '0');
+    const horas = String(date.getHours()).padStart(2, '0');
+    const minutos = String(date.getMinutes()).padStart(2, '0');
+    const segundos = String(date.getSeconds()).padStart(2, '0');
+    return `${anio}-${mes}-${dia} ${horas}:${minutos}:${segundos}`;
+}
+
+// Función para confirmar la venta
+async function confirmarVenta() {
+    try {
+        const confirmBtn = document.getElementById('confirmBtn');
+        confirmBtn.disabled = true;
+        
+        const carrito = obtenerCarritoLocal();
+        const clientName = document.getElementById('clientNameInput').value;
+        const sucursalId = document.getElementById('sucursalId').value;
+        
+        if (!clientName.trim()) {
+            throw new Error('Por favor ingrese el nombre del cliente');
+        }
+
+        const ventaData = {
+            productos: carrito,
+            cliente: clientName,
+            sucursalId: sucursalId,
+            total: calcularTotalVenta(carrito),
+            fecha: formatearFecha(new Date()) // Formatear la fecha
+        };
+
+        // Realizar la inserción en la base de datos
+        const response = await fetch('/ruta-para-insertar-venta', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(ventaData)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            mostrarExito('Venta realizada con éxito');
             
-            const venta = {
-                fechaVenta: fechaVenta,
-                totalVenta: totalVenta,
-                idCliente: "", // Aquí puedes poner el ID del cliente si es necesario
-                idEmpleado: 1, // Este es solo un ejemplo, asegúrate de obtener el ID del empleado
-                idSucursal: 2,
-                idCaja: 1,
-                estado: 1
-            };
-
-            const query = `
-                INSERT INTO ventas (Fecha_Venta, Total_Venta, ID_Cliente, ID_Empleado, ID_Sucursal, ID_Caja, Estado)
-                VALUES ('${venta.fechaVenta}', ${venta.totalVenta}, '${venta.idCliente}', ${venta.idEmpleado}, '${venta.idSucursal}', ${venta.idCaja}, '${venta.estado}')
-            `;
-
-            pool.query(query, (error, results) => {
-                if (error) {
-                    console.error("Error al insertar venta:", error);
-                    mostrarError("Hubo un error al procesar la venta.");
-                } else {
-                    mostrarExito("Venta realizada con éxito.");
-                }
-            });
+            // Limpiar carrito después de la venta
+            localStorage.removeItem('cart');
+            
+            // Redireccionar después de 2 segundos
+            setTimeout(() => {
+                window.location.href = '/pagina_pedidos/clientes_index/' + sucursalId;
+            }, 2000);
+        } else {
+            throw new Error(result.message || 'Error al procesar la venta');
         }
 
-        // Función para generar ID de venta con fecha
-        function generateSaleId() {
-            const date = new Date();
-            const dateStr = date.getFullYear() + ('0' + (date.getMonth() + 1)).slice(-2) + ('0' + date.getDate()).slice(-2); // "20241116"
-            const randomNumber = Math.floor(Math.random() * 100000); // 5 dígitos aleatorios
-            return dateStr + '-' + randomNumber; // Ejemplo: 20241116-12345
-        }
-
-        // Función para cargar los datos iniciales
-            function cargarDatosVenta() {
-                // Establecer fecha actual
-                document.getElementById('saleDate').textContent = new Date().toLocaleDateString();
-
-                // Generar y establecer ID de venta
-                document.getElementById('saleId').textContent = generateSaleId();
-
-                // Cargar datos de sucursal
-                const sucursal = localStorage.getItem('sucursalSeleccionada');
-                if (sucursal) {
-                    const sucursalData = JSON.parse(sucursal);
-                    document.getElementById('branchName').textContent = sucursalData.nombre;
-                    document.getElementById('sucursalId').value = sucursalData.id;
-                }
-
-                // Obtener el nombre del cliente desde localStorage
-                const clienteNombre = localStorage.getItem('clienteNombre');
-                if (clienteNombre) {
-                    document.getElementById('clientNameInput').value = clienteNombre; // Mostrar el nombre del cliente en el campo de texto
-                }
-
-                // Cargar y mostrar productos del carrito
-                actualizarTablaProductos();
-            }
+    } catch (error) {
+        mostrarError(error.message || 'Error al procesar la venta');
+        document.getElementById('confirmBtn').disabled = false;
+    }
+}
 
 
-        // Función para actualizar la tabla de productos
-        function actualizarTablaProductos() {
-            const carrito = obtenerCarritoLocal();
-            const tbody = document.getElementById('productsTableBody');
-            tbody.innerHTML = '';
+// Función para calcular el total de la venta
+function calcularTotalVenta(carrito) {
+    return carrito.reduce((total, item) => total + (item.price * item.quantity), 0);
+}
 
-            carrito.forEach(item => {
-                const tr = document.createElement('tr');
-                const subtotal = item.price * item.quantity;
-                
-                tr.innerHTML = `
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <img src="${item.image || '/api/placeholder/40/40'}" 
-                                 alt="${item.name}" 
-                                 class="product-image">
-                            <span>${item.name}</span>
-                        </div>
-                    </td>
-                    <td>${item.quantity}</td>
-                    <td>Bs. ${item.price}</td>
-                    <td>Bs. ${subtotal.toFixed(2)}</td>
-                `;
-                tbody.appendChild(tr);
-            });
+// Funciones para mostrar mensajes
+function mostrarExito(mensaje) {
+    const alert = document.getElementById('successAlert');
+    alert.textContent = mensaje;
+    alert.style.display = 'block';
+    setTimeout(() => alert.style.display = 'none', 5000);
+}
 
-            document.getElementById('totalAmount').textContent = `Bs. ${calcularTotalVenta(carrito).toFixed(2)}`;
-        }
+function mostrarError(mensaje) {
+    const alert = document.getElementById('errorAlert');
+    alert.textContent = mensaje;
+    alert.style.display = 'block';
+    setTimeout(() => alert.style.display = 'none', 5000);
+}
 
-        function obtenerCarritoLocal() {
-            const carrito = localStorage.getItem('carrito');
-            if (!carrito) {
-                return []; // Retorna un array vacío si no hay carrito
-            }
-            return JSON.parse(carrito);
-        }
-
-
-        function calcularTotalVenta(carrito) {
-            return carrito.reduce((total, item) => total + (item.price * item.quantity), 0);
-        }
-
-        // Función para mostrar el mensaje de éxito
-        function mostrarExito(mensaje) {
-            const successAlert = document.getElementById('successAlert');
-            successAlert.textContent = mensaje;
-            successAlert.style.display = 'block';
-        }
-
-        // Función para mostrar el mensaje de error
-        function mostrarError(mensaje) {
-            const errorAlert = document.getElementById('errorAlert');
-            errorAlert.textContent = mensaje;
-            errorAlert.style.display = 'block';
-        }
-
-        // Confirmar venta
-        function confirmarVenta() {
-            insertarVenta();
-        }
-
-        // Cargar datos cuando se inicie la página
-        window.onload = cargarDatosVenta;
+// Inicializar cuando se carga la página
+window.onload = cargarDatosRecibo;
     </script>
 </body>
 </html>

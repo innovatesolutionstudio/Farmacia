@@ -7,11 +7,9 @@
     <link rel="stylesheet" href="/resources/css/productos.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-
-
 <body>
     <div class="top-header">
-        <a href="" class="logo">
+        <a href="/pagina_pedidos/clientes_index/:idSucursal" class="logo">
             <img src="/resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
         </a>    
         <ul>
@@ -19,7 +17,7 @@
             <li><a href="/pagina_pedidos/productos/:idSucursal" class="dropdown">Tienda</a></li>
             <li><a href="/pagina_pedidos/consultas" class="dropdown">Consultas</a></li>
             <li><a href="/pagina_pedidos/miscompras" class="dropdown">Compras</a></li>
-            <li><a href="#" class="dropdown">Recordatorio</a></li>
+            <li><a href="/pagina_pedidos/recordatorio" class="dropdown">Recordatorio</a></li>
         </ul>
                 <a href="#" class="cart-icon" onclick="mostrarCarrito(); return false;">
             <i class="fas fa-shopping-cart"></i>
@@ -35,8 +33,8 @@
             <% }); %>
         </select>
         <!-- Botón de Perfil del Usuario -->
-        <a href="/pagina_pedidos/perfil" class="profile-icon">
-            <i class="fas fa-user"></i> <span class="profile-name">Perfil</span>
+        <a href="javascript:void(0);" onclick="toggleDropdown(event)">
+            <i class="fas fa-user"></i> Perfil
         </a>
     </div>
 
@@ -56,7 +54,7 @@
                 <% products.forEach(product => { %>
                     <div class="product-item" data-sucursal="<%= idSucursal %>">
                         <h3><%= product.Nombre %></h3>
-                        <img src="<%= product.Fotografia %>" alt="<%= product.Nombre %>">
+                        <img class="img-product" src="<%= product.Fotografia ? `/fotos/img_productos/${product.Fotografia}` : '/fotos/img_productos/default.png' %>" alt="Foto del Producto">
                         <p><%= product.Descripcion %></p>
                         <p>Precio: $<%= product.Precio_Unitario %></p>
                         <p>Cantidad en Inventario: <%= product.Cantidad %></p>
@@ -130,6 +128,7 @@
         </div>
     </div>
 </div>
+
     <!-- El modal del producto -->
 <div class="product-modal" id="productModal">
     <div class="product-modal-content">
@@ -255,65 +254,92 @@
         }
         
         function loadProductDetails(id, name, price, image, description, stock) {
-            try {
-                // Primero mostramos los datos básicos que ya tenemos
-                currentProduct = { 
-                    id, 
-                    name, 
-                    price: parseFloat(price), 
-                    image, 
-                    description, 
-                    stock: parseInt(stock) 
-                };
-                modalQuantity = 1;
+    try {
+        currentProduct = { 
+            id, 
+            name, 
+            price: parseFloat(price), 
+            image, 
+            description, 
+            stock: parseInt(stock) 
+        };
+        modalQuantity = 1;
+        
+        // Actualizar elementos del modal con los datos básicos
+        document.getElementById('modalProductName').textContent = name;
+        document.getElementById('modalProductPrice').textContent = `$${price}`;
+        document.getElementById('modalProductImage').src = image;
+        document.getElementById('modalProductDescription').textContent = description;
+        document.getElementById('modalProductStock').textContent = stock;
+        document.getElementById('modalQuantity').textContent = modalQuantity;
+        document.getElementById('modalProductId').textContent = id;
+        
+        // Mostrar el modal
+        const modal = document.getElementById('productModal');
+        modal.style.display = 'flex';
+        
+        // Obtener datos adicionales del producto
+        fetch(`/api/productos/${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Actualizar los campos con los datos recibidos
+                document.getElementById('modalProductIndications').textContent = 
+                    data.Indicaciones || 'No disponible';
+                document.getElementById('modalProductDose').textContent = 
+                    data.Dosis_Medicacmento || 'No disponible';
+                document.getElementById('modalProductSideEffects').textContent = 
+                    data.Efectos_Secundarios || 'No disponible';
+                document.getElementById('modalProductPrecautions').textContent = 
+                    data.Precauciones || 'No disponible';
                 
-                // Actualizar elementos del modal con los datos básicos
-                document.getElementById('modalProductName').textContent = name;
-                document.getElementById('modalProductPrice').textContent = `$${price}`;
-                document.getElementById('modalProductImage').src = image;
-                document.getElementById('modalProductDescription').textContent = description;
-                document.getElementById('modalProductStock').textContent = stock;
-                document.getElementById('modalQuantity').textContent = modalQuantity;
-                document.getElementById('modalProductId').textContent = id;
+                // Actualizar campos técnicos
+                const categoryName = getCategoryName(data.ID_Categoria);
+                const areaName = getAreaName(data.ID_Area_Producto);
+                const unitName = getUnitName(data.ID_Unidad_Venta);
                 
-                // Mostrar el modal
-                const modal = document.getElementById('productModal');
-                modal.style.display = 'flex';
-                
-                // Obtener datos adicionales del producto
-                fetch(`/api/productos/${id}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data) {
-                            document.getElementById('modalProductIndications').textContent = 
-                                data.Indicaciones || 'No disponible';
-                            document.getElementById('modalProductDose').textContent = 
-                                data.Dosis_Medicacmento || 'No disponible';
-                            document.getElementById('modalProductSideEffects').textContent = 
-                                data.Efectos_Secundarios || 'No disponible';
-                            document.getElementById('modalProductPrecautions').textContent = 
-                                data.Precauciones || 'No disponible';
-                            document.getElementById('modalProductCategory').textContent = 
-                                data.ID_Categoria || 'No disponible';
-                            document.getElementById('modalProductArea').textContent = 
-                                data.ID_Area_Producto || 'No disponible';
-                            document.getElementById('modalProductUnit').textContent = 
-                                data.ID_Unidad_Venta || 'No disponible';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error loading product details:', error);
-                        // Opcional: mostrar mensaje de error en el modal
+                document.getElementById('modalProductCategory').textContent = categoryName;
+                document.getElementById('modalProductArea').textContent = areaName;
+                document.getElementById('modalProductUnit').textContent = unitName;
+            })
+            .catch(error => {
+                console.error('Error loading product details:', error);
+                // Mostrar mensaje de error en el modal
+                const tabs = document.querySelectorAll('.tab-content');
+                tabs.forEach(tab => {
+                    const fields = tab.querySelectorAll('p');
+                    fields.forEach(field => {
+                        if (field.textContent === '') {
+                            field.textContent = 'No disponible';
+                        }   
                     });
-            } catch (error) {
-                console.error('Error in loadProductDetails:', error);
-            }
-        }
+                });
+            });
+    } catch (error) {
+        console.error('Error in loadProductDetails:', error);
+    }
+}
+
+// Funciones auxiliares para convertir IDs en nombres (deberás adaptarlas según tus datos)
+function getCategoryName(categoryId) {
+    // Aquí deberías tener un mapeo de IDs a nombres de categorías
+    // Por ahora retornamos el ID
+    return categoryId || 'No disponible';
+}
+
+function getAreaName(areaId) {
+    // Aquí deberías tener un mapeo de IDs a nombres de áreas
+    return areaId || 'No disponible';
+}
+
+function getUnitName(unitId) {
+    // Aquí deberías tener un mapeo de IDs a nombres de unidades
+    return unitId || 'No disponible';
+}
         
         function switchTab(tabName) {
             // Remover clase active de todos los tabs y botones
@@ -373,7 +399,7 @@
             console.log('Script inicializado correctamente');
             console.log('Número de productos encontrados:', document.querySelectorAll('.product-item').length);
         });
-        </script>
+    </script>
             <!-- Asegúrate de incluir Font Awesome -->
     <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
     <script>
@@ -399,28 +425,24 @@
         }
         let carrito = []; // Aquí ya no usaremos localStorage
     
-        function agregarAlCarrito(productId, nombre, precio, imagen = '', stock = 'Disponible', unidad = 'Unidad') {
-            const productoExistente = carrito.find(item => item.id === productId);
-    
-            if (productoExistente) {
-                productoExistente.quantity += 1;
-            } else {
-                carrito.push({
-                    id: productId,
-                    name: nombre,
-                    price: precio,
-                    quantity: 1,
-                    image: imagen,
-                    stock: stock,
-                    unit: unidad
-                });
-            }
-    
-            localStorage.setItem('cart', JSON.stringify(carrito));
-            mostrarCarrito();
-            actualizarContadorCarrito();
-        }
-    
+function agregarAlCarrito(productId, nombre, precio) {
+    const productoExistente = carrito.find(item => item.id === productId);
+
+    if (productoExistente) {
+        productoExistente.quantity += 1;
+    } else {
+        carrito.push({
+            id: productId,
+            name: nombre,
+            price: precio,
+            quantity: 1
+        });
+    }
+
+    localStorage.setItem('cart', JSON.stringify(carrito));
+    mostrarCarrito();
+    actualizarContadorCarrito();
+}
         function mostrarCarrito() {
             const carritoPopup = document.getElementById('cart-popup');
             const listaCarrito = document.getElementById('cart-items');
@@ -578,6 +600,27 @@ function cambiarSucursal() {
     // Redireccionar
     window.location.href = `/pagina_pedidos/productos/${selectedSucursalId}`;
 }
+</script>
+<script>
+    function toggleDropdown(event) {
+
+        const dropdown = document.getElementById('profile-dropdown');
+        
+        // Si el dropdown está visible, lo ocultamos, y viceversa
+        if (dropdown.style.display === 'block') {
+            dropdown.style.display = 'none';
+        } else {
+            dropdown.style.display = 'block';
+        }
+    }
+
+    // Cuando se hace clic fuera del dropdown, lo cerramos
+    window.onclick = function(event) {
+        const dropdown = document.getElementById('profile-dropdown');
+        if (!event.target.closest('.dropdown')) {
+            dropdown.style.display = 'none';
+        }
+    };
 </script>
 </body>
 </html>  
