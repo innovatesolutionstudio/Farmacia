@@ -97,17 +97,24 @@
                 <td><%= pedido.Fecha_Venta.toISOString().substring(0, 19).replace('T', ' ') %></td>
                 <td>
                   <% if (pedido.Estado === 1) { %>
-                  <span class="badge badge-success">Activo</span>
+                    <span class="badge badge-success">Registrado</span>
+                  <% } else if (pedido.Estado === 2) { %>
+                    <span class="badge badge-warning">En proceso</span>
+                  <% } else if (pedido.Estado === 3) { %>
+                    <span class="badge badge-primary">En Camino</span>
+                  <% } else if (pedido.Estado === 4) { %>
+                    <span class="badge badge-info">Entregado</span>
                   <% } else { %>
-                  <span class="badge badge-danger">Inactivo</span>
+                    <span class="badge badge-secondary">Desconocido</span>
                   <% } %>
                 </td>
+                
                 <td>
-                  <button
-                    class="btndetalles"
+                  <a
+                    class="btn btndetalles"
                     data-id="<%= pedido.ID_Pedido %>">
                     Ver Detalles
-                  </button>
+                  </a>
                 </td>
               </tr>
               <% }); %>
@@ -152,10 +159,10 @@
       
 
   <script>
-  fetch('/datoPedidos')
+ fetch('/datoPedidos')
     .then(response => response.json())
     .then(data => {
-     
+      // Asigna los valores a los elementos HTML correspondientes
       document.getElementById('obtenerPedidoss').innerText = data.obtenerPedidoss || "0";
       document.getElementById('ObtenerPedidosEnProcesos').innerText = data.ObtenerPedidosEnProcesos || "0";
       document.getElementById('ObtenerPedidosEnCaminos').innerText = data.ObtenerPedidosEnCaminos || "0";
@@ -164,6 +171,7 @@
     .catch(error => {
       console.error('Error fetching data:', error);
     });
+
 </script>
 
   <script>

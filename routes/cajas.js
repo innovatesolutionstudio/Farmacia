@@ -184,7 +184,7 @@ router.post("/abrir-todas", (req, res) => {
 
   // Actualizar el estado de todas las cajas de la sucursal a '1' (abierto)
   connection.query(
-    "UPDATE cajas SET Estado = 1 WHERE ID_Sucursal = ? AND Figura = 1",
+    "UPDATE cajas SET Estado = 1 WHERE ID_Sucursal = ? AND Figura = 1 AND Codigo != 'Administracion'",
     [sucursalID],
     (error, results) => {
       if (error) {
@@ -234,7 +234,7 @@ router.post("/cerrar-todas", (req, res) => {
 
   // Actualizar el estado de todas las cajas de la sucursal a '2' (cerrado)
   connection.query(
-    "UPDATE cajas SET Estado = 2 WHERE ID_Sucursal = ? AND Figura = 1",
+    "UPDATE cajas SET Estado = 2 WHERE ID_Sucursal = ? AND Figura = 1 AND Codigo != 'Administracion'",
     [sucursalID],
     (error, results) => {
       if (error) {

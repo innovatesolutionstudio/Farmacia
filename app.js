@@ -41,7 +41,7 @@ const vistaComtas = require("./routes/vista_compras");
 const vistaPedidos = require("./routes/vista_pedidos");
 const notificacionesRoutes = require("./routes/notificaciones");
 const pedidos = require("./routes/pedidos");
-
+const reporteganancias = require("./routes/reporte_ganancias");
 //#endregion
 const graficosRouter = require("./routes/graficos"); // Ajusta la ruta según la ubicación de tu archivo graficos.js
 
@@ -268,7 +268,7 @@ app.use(impre_areas_producto);
 app.use(impre_categoria);
 app.use(impre_tipo_paciente);
 app.use(impre_clientes);
-
+app.use(reporteganancias);
 //dashboard
 app.use(graficosRouter);
 
@@ -299,8 +299,12 @@ app.get("/reporte_proveedores", (req, res) => {
 app.get("/reporte_compras", (req, res) => {
   res.render("./reportes/reporte_compras");
 });
-app.get("/reporte_tareas_e", (req, res) => {
-  res.render("./reportes/reporte_tareas");
+app.get("/reporte_ganancias", (req, res) => {
+  res.render("./reportes/reporte_ganancias");
+});
+
+app.get("/reporte_pedidos", (req, res) => {
+  res.render("./reportes/reporte_pedidos");
 });
 
 //#endregion

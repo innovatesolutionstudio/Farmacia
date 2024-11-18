@@ -2,35 +2,16 @@ const express = require("express");
 const router = express.Router();
 const coneccion = require("../database/db");
 
-router.get("/notificacion", (req, res) => {
-  if (req.session.loggedin) {
-    coneccion.query(
-      "SELECT * FROM notificaciones WHERE Estado = 1",
-      (err, notificaciones) => {
-        if (err) {
-          console.error(err); // Muestra el error en consola
-          return res.status(500).send("Error al obtener notificaciones");
-        }
-        console.log(notificaciones); // Log de las notificaciones obtenidas
-        res.render("notificaciones", { notificaciones });
-      }
-    );
-  } else {
-    res.render("./paginas/logout");
-  }
-});
 
 router.post("/notificar", (req, res) => {
-  console.log(req.body); // Log de lo que se recibe
+  const { correo, descripcion } = req.body;
 
-  const { nombre, correo, descripcion } = req.body || {};
-
-  // Verifica si los datos están presentes
-  if (!nombre || !correo || !descripcion) {
-    return res.render("notificaciones", {
+  // Verificar que ambos campos estén presentes
+  if (!correo || !descripcion) {
+    return res.render("login", {
       alert: true,
       alertTitle: "Campos incompletos",
-      alertMessage: "Todos los campos son obligatorios.",
+      alertMessage: "Debe proporcionar un correo y una descripción.",
       alertIcon: "warning",
       showConfirmButton: true,
       timer: false,
@@ -38,41 +19,92 @@ router.post("/notificar", (req, res) => {
     });
   }
 
-  const query =
-    "INSERT INTO notificaciones (Nombre, Correo, Descripcion, Estado) VALUES (?, ?, ?, 1)";
-  coneccion.query(query, [nombre, correo, descripcion], (error, results) => {
-    if (error) {
-      console.error("Error al insertar la notificación:", error);
-      return res.status(500).send("Error al enviar la notificación");
+  // Buscar el empleado por correo
+  const queryBuscarEmpleado = "SELECT ID_Empleado FROM empleados WHERE Email = ?";
+  coneccion.query(queryBuscarEmpleado, [correo], (err, results) => {
+    if (err) {
+      console.error("Error al buscar el empleado:", err);
+      return res.status(500).send("Error al buscar el empleado");
     }
-    res.redirect("/login");
+
+    if (results.length === 0) {
+      // Si no se encuentra el correo
+      return res.render("login", {
+        alert: true,
+        alertTitle: "Correo no encontrado",
+        alertMessage: "El correo no está registrado en el sistema.",
+        alertIcon: "error",
+        showConfirmButton: true,
+        timer: false,
+        ruta: "notificaciones",
+      });
+    }
+
+    // Obtener el ID del empleado
+    const empleadoID = results[0].ID_Empleado;
+
+    // Insertar la notificación en la tabla notificaciones
+    const queryInsertarNotificacion = `
+      INSERT INTO notificaciones (ID_Empleado, Descripcion, Estado)
+      VALUES (?, ?, 1)
+    `;
+    coneccion.query(queryInsertarNotificacion, [empleadoID, descripcion], (err) => {
+      if (err) {
+        console.error("Error al insertar la notificación:", err);
+        return res.status(500).send("Error al insertar la notificación");
+      }
+
+      // Redirigir con éxito
+      return res.render("login", {
+        alert: true,
+        alertTitle: "Notificación enviada",
+        alertMessage: "La notificación ha sido enviada correctamente.",
+        alertIcon: "success",
+        showConfirmButton: true,
+        timer: 2000,
+        ruta: "login",
+      });
+    });
   });
 });
 
-// Ruta para obtener notificaciones
+
 router.get("/notificaciones", (req, res) => {
   if (req.session.loggedin) {
-    connection.query(
-      "SELECT * FROM notificaciones WHERE Estado = 1 ",
-      (err, results) => {
-        if (err) {
-          console.error("Error en la base de datos:", err); // Log para depuración
-          return res.status(500).send("Error en la base de datos");
-        }
-        res.json(results);
+    const query = `
+      SELECT 
+        e.Nombre AS Nombre,
+        e.Email AS Correo,
+        IFNULL(r.Nombre, 'Sin rol asignado') AS Rol,
+        n.Descripcion,
+        n.Fecha
+      FROM notificaciones n
+      JOIN empleados e ON n.ID_Empleado = e.ID_Empleado
+      LEFT JOIN roles r ON e.ID_Rol = r.ID_Rol
+      WHERE n.Estado = 1
+      ORDER BY n.Fecha DESC
+    `;
+    coneccion.query(query, (err, results) => {
+      if (err) {
+        console.error("Error al obtener notificaciones:", err);
+        return res.status(500).send("Error al obtener notificaciones");
       }
-    );
+
+     
+      res.render("notificaciones", { notificaciones: results });
+    });
   } else {
     res.render("./paginas/logout");
   }
 });
 
+
+
 // Ruta para desbloquear cuentas
 router.post("/desbloquear/:correo", (req, res) => {
   const { correo } = req.params; // Obtener el correo de los parámetros
-  console.log("Desbloqueando cuenta para:", correo); // Log para depuración
 
-  connection.query(
+  coneccion.query(
     "SELECT ID_Empleado, Grado FROM empleados WHERE Email = ?",
     [correo],
     (err, result) => {
@@ -83,12 +115,11 @@ router.post("/desbloquear/:correo", (req, res) => {
 
       if (result.length > 0) {
         const empleado = result[0];
-        console.log("Grado del empleado:", empleado.Grado); // Log para depuración
 
         // Verificar si la cuenta está bloqueada (Grado >= 4)
         if (empleado.Grado >= 4) {
           // Desbloquear la cuenta
-          connection.query(
+          coneccion.query(
             "UPDATE empleados SET Grado = 0, Estado = 1 WHERE ID_Empleado = ?",
             [empleado.ID_Empleado],
             (err, updateResult) => {
@@ -117,7 +148,6 @@ router.post("/notificaciones/desbloquear", (req, res) => {
     return res.status(400).json({ message: "Correo es requerido" });
   }
 
-  console.log("Correo recibido:", correo); // Para verificar que el correo llega correctamente
 
   // Consulta SQL para actualizar el Grado en empleados
   const queryGrado = `UPDATE empleados SET Grado = 0 WHERE Email = ?`;
@@ -160,7 +190,7 @@ router.post("/notificaciones/desbloquear", (req, res) => {
       // Recuperar la lista actualizada de notificaciones
       const queryNotificaciones =
         "SELECT Nombre, Correo, Descripcion, Fecha FROM notificaciones WHERE Estado = 1 ORDER BY Fecha DESC";
-      coneccion.query(queryNotificaciones, (error, results) => {
+        coneccion.query(queryNotificaciones, (error, results) => {
         if (error) {
           return res
             .status(500)
@@ -176,22 +206,5 @@ router.post("/notificaciones/desbloquear", (req, res) => {
   });
 });
 
-//validar correo de empleados y notificaiones
-router.post("/login/validar-correo", (req, res) => {
-  const { correo } = req.body;
-
-  // Consulta SQL para verificar si el correo existe en la tabla empleados
-  const query = "SELECT COUNT(*) AS count FROM empleados WHERE Email = ?";
-  coneccion.query(query, [correo], (error, results) => {
-    if (error) {
-      console.error("Error al ejecutar la consulta:", error);
-      return res.status(500).json({ message: "Error en la validación" });
-    }
-
-    // Verifica si el correo existe
-    const exists = results[0].count > 0;
-    res.json({ exists });
-  });
-});
 
 module.exports = router;

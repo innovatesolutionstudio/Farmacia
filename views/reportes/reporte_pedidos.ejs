@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="resources/css/reportes_espe.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <title>Ganancias - Reporte Anual</title>
+  <title>Pedidos - Reporte Anual</title>
 </head>
 
 <body>
@@ -24,7 +24,7 @@
         <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Reportes</h1>
       </a>
       <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
-      <h1 style="font-weight: bold;">Ganancias</h1>
+      <h1 style="font-weight: bold;">Pedidos</h1>
     </div>
   </div>
 
@@ -57,15 +57,15 @@
     </div>
   </div>
 
-  <!-- Contenido de las tarjetas -->
+  <!-- Contenido -->
   <div class="container2">
     <!-- Reporte Gráfico -->
     <div class="card1">
       <div class="header-card1">
-        <div id="chartTitle">Reporte de Ganancias por Años</div>
+        <div id="chartTitle">Reporte de Pedidos por Años</div>
       </div>
       <div>
-        <canvas id="gananciasChart" width="300" height="200"></canvas>
+        <canvas id="pedidosChart" width="300" height="200"></canvas>
       </div>
     </div>
 
@@ -73,14 +73,14 @@
     <div class="card-container">
       <div class="card2">
         <div class="header-card1">
-          <span>Tabla de ganancias por años</span>
+          <span>Tabla de pedidos por años</span>
         </div>
         <div class="table-container">
           <table id="productosTable">
             <thead>
               <tr>
                 <th>Mes</th>
-                <th>Ganancia Total</th>
+                <th>Total de Pedidos</th>
               </tr>
             </thead>
             <tbody>
@@ -103,35 +103,32 @@
       const productosTableBody = document.querySelector('#productosTable tbody');
       const chartTitle1 = document.getElementById('chartTitle').innerText;
 
-      // Nombres de los meses en español
       const nombresMeses = [
         'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
         'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
       ];
 
       function fetchAndRenderChart1(year) {
-        fetch(`/ventas/ganancias_anuales/${year}`)
+        fetch(`/pedidos/pedidos_anuales/${year}`)
           .then(response => response.json())
           .then(data => {
             const labels = data.map(item => nombresMeses[item.Mes - 1]);
-            const totals = data.map(item => item.Ganancia);
-            const ctx = document.getElementById('gananciasChart').getContext('2d');
+            const totals = data.map(item => item.TotalPedidos);
+            const ctx = document.getElementById('pedidosChart').getContext('2d');
 
-            // Destruir el gráfico anterior si existe
             if (window.myChart1) {
               window.myChart1.destroy();
             }
 
-            // Crear el nuevo gráfico
             window.myChart1 = new Chart(ctx, {
-              type: 'line',
+              type: 'bar',
               data: {
                 labels: labels,
                 datasets: [{
-                  label: 'Ganancias por Mes',
+                  label: 'Pedidos por Mes',
                   data: totals,
-                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                  borderColor: 'rgba(75, 192, 192, 1)',
+                  backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                  borderColor: 'rgba(153, 102, 255, 1)',
                   borderWidth: 1
                 }]
               },
@@ -144,33 +141,29 @@
               }
             });
 
-            // Actualizar la tabla
             productosTableBody.innerHTML = '';
             data.forEach(item => {
               const row = `
                 <tr>
                   <td>${nombresMeses[item.Mes - 1]}</td>
-                  <td>Bs. ${item.Ganancia}</td>
+                  <td>${item.TotalPedidos}</td>
                 </tr>
               `;
               productosTableBody.insertAdjacentHTML('beforeend', row);
             });
           })
-          .catch(error => console.error('Error al obtener datos:', error));
+          .catch(error => console.error('Error fetching data:', error));
       }
 
-      // Llamar al inicio
       fetchAndRenderChart1(anioSelect1.value);
 
-      // Actualizar gráfico y tabla al cambiar el año
       anioSelect1.addEventListener('change', function () {
         fetchAndRenderChart1(this.value);
       });
 
-      // Guardar como PDF
       saveChartBtn1.addEventListener('click', function () {
         const year = anioSelect1.value;
-        const image = document.getElementById('gananciasChart').toDataURL('image/png');
+        const image = document.getElementById('pedidosChart').toDataURL('image/png');
 
         fetch('/save_chart_image', {
           method: 'POST',
@@ -188,18 +181,6 @@
           .catch(error => console.error('Error:', error));
       });
     });
-  </script>
-
-  <script>
-    const anioSelect = document.getElementById('anio1');
-    const fechaInput = document.getElementById('fecha');
-
-    function actualizarRangoReporte() {
-      const anioSeleccionado = anioSelect.value;
-      fechaInput.value = `Reporte de la gestión ${anioSeleccionado}`;
-    }
-
-    anioSelect.addEventListener('change', actualizarRangoReporte);
   </script>
 </body>
 

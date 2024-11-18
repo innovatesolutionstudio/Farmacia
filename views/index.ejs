@@ -117,10 +117,22 @@
                                             style="
                                         font-size: 17px; 
                                         margin: 5px 0 0 0;
-                                        width: 300px;
+                                        width: 400px;
                                         color: rgb(229, 206, 5);">
-                                            <% if(sesion === 1) {
+                                            <% if(sesion === 1 || sesion === 4) {
                                             %>Administrador<% } %>
+                                            <% if(sesion === 2) {
+                                            %>Administrador de Ventas<% } %>
+                                            <% if(sesion === 3) {
+                                            %>Administrador de Finanzas<% } %>
+                                            <% if(sesion === 5) {
+                                            %>Administrador de Cajas<% } %>
+                                            <% if(sesion === 6) {
+                                            %>Administrador de Pedidos<% } %>
+                                            <% if(sesion === 7) {
+                                            %>Encargado de Delivey<% } %>
+                                            <% if(sesion === 8) {
+                                            %>Administrador de Compras<% } %>
                                         </h1>
 
                                         <!-- Ícono de tres puntos -->
@@ -171,7 +183,7 @@
                     <div class="sidebar_blog_2" class="panel">
 
                         <% if (sesion === 1 || sesion === 2 || sesion === 3 ||
-                        sesion === 4|| sesion === 5) { %>
+                        sesion === 4) { %>
                         <ul class="list-unstyled components">
                             <li><a href="#"
                                     onclick="cargarContenido('/graficos')"
@@ -181,6 +193,7 @@
                                         style="font-size: 30px;"></i>
                                     <span>&nbsp;&nbsp;Dashboard</span></a></li>
                         </ul>
+                        <% } %>
                         <% if (sesion === 1 || sesion === 3 || sesion === 4) {
                         %>
                         <ul class="list-unstyled components">
@@ -211,7 +224,7 @@
                             </li>
                         </ul>
                         <% } %>
-                        <% if (sesion === 1 || sesion === 3 || sesion === 4) {
+                        <% if (sesion === 1 || sesion === 2 || sesion === 4) {
                         %>
                         <ul class="list-unstyled components">
                             <li class="active">
@@ -242,7 +255,7 @@
                         </ul>
                         <% } %>
 
-                        <% if (sesion === 1 || sesion === 3 || sesion === 4) {
+                        <% if (sesion === 1 || sesion === 8 || sesion === 4) {
                         %>
                         <ul class="list-unstyled components"
                             style="border-bottom: 1px solid #ffffff69">
@@ -276,11 +289,12 @@
                             </li>
                         </ul>
                         <% } %>
-                        <% if (sesion === 1 || sesion === 3 || sesion === 4) {
+                        <% if (sesion === 1 || sesion === 6 || sesion === 4) {
                         %>
                         <ul class="list-unstyled components"
                             style="border-bottom: 1px solid #ffffff69">
                             <li class="active">
+                                
                                 <a href="#pedidos"
                                     onclick="cargarContenido('/vista_pedidos')"
                                     data-toggle="collapse" aria-expanded="false"
@@ -289,22 +303,42 @@
                                     <i class="far fa-calendar-alt"
                                         style="font-size: 30px;"></i>
                                     <span>&nbsp;&nbsp;Pedidos</span></a>
+                                    
                                 <ul class="collapse list-unstyled" id="pedidos">
                                     <li><a href="#"
-                                            onclick="cargarContenido('/mantenimiento')"
+                                            onclick="cargarContenido('/notificaciones_pedidos')"
                                             style="font-size: 18px; font-family: monospace; ">>
                                             <span>Notificaciones</span></a></li>
+                                           
                                     <li><a href="#"
                                             onclick="cargarContenido('/pedidos')"
                                             style="font-size:  18px; font-family: monospace; ">>
                                             <span>Historial de Pedidos</span></a></li>
-
+                                           
                                 </ul>
                             </li>
                         </ul>
                         <% } %>
+                        <% if ( sesion === 7) { %>
+                            <ul class="list-unstyled components"
+                                style="border-bottom: 1px solid #ffffff69">
+                                <li>
+                                    <a href="#"
+                                        onclick="cargarContenido('/notificaciones_pedidos'); marcarComoLeidas();"
+                                        class="btn-group"
+                                        style="font-size: 18px; font-family: monospace;">
+                                        <i class="fa fa-bell"
+                                            style="font-size: 30px;"></i>
+                                        <span>&nbsp;&nbsp;Notificaciones</span>
+                                        <span id="notification-count"
+                                            class="badge">2</span>
+                                        <!-- Contador de notificaciones -->
+                                    </a>
+                                </li>
+                            </ul>
+                        <% } %>
 
-                        <% if (sesion === 1 || sesion === 3 || sesion === 4) {
+                        <% if (sesion === 1 || sesion === 4) {
                         %>
                         <ul class="list-unstyled components ">
                             <li class="active">
@@ -329,12 +363,12 @@
                         </ul>
                         <% } %>
                         <!-- Notificacion solo para administradores  -->
-                        <% if (sesion === 1) { %>
+                        <% if (sesion === 1 || sesion === 4) { %>
                         <ul class="list-unstyled components"
                             style="border-bottom: 1px solid #ffffff69">
                             <li>
                                 <a href="#"
-                                    onclick="cargarContenido('/notificacion'); marcarComoLeidas();"
+                                    onclick="cargarContenido('/notificaciones'); marcarComoLeidas();"
                                     class="btn-group"
                                     style="font-size: 18px; font-family: monospace;">
                                     <i class="fa fa-bell"
@@ -365,7 +399,7 @@
                                         style="font-size: 30px;"></i>
                                     <span>&nbsp;&nbsp;Ayuda</span></a></li>
                         </ul>
-                        <% } %>
+                     
                     </div>
                 </nav>
                 <!-- fin menu -->
@@ -416,17 +450,24 @@
                                 </div>
                             </nav>
                             <div id="contenido">
-                                <% if ( sesion === 5) { %>
+                                <% if ( sesion === 1|| sesion === 4|| sesion === 3) { %>
                                 <iframe id="contenidoFrame" src="/graficos"
                                     frameborder="0"></iframe>
                                 <% } %>
                                 <% if ( sesion === 2) { %>
-                                <iframe id="contenidoFrame" src="/graficos"
+                                <iframe id="contenidoFrame" src="/vista_ventas"
                                     frameborder="0"></iframe>
                                 <% } %>
-                                <% if ( sesion === 1 || sesion === 3 || sesion
-                                === 4) { %>
-                                <iframe id="contenidoFrame" src="/graficos"
+                                <% if ( sesion === 1 || sesion === 8 || sesion=== 4) { %>
+                                <iframe id="contenidoFrame" src="/vista_compras"
+                                    frameborder="0"></iframe>
+                                <% } %>
+                                <% if ( sesion === 1 ||sesion === 6 || sesion=== 4) { %>
+                                    <iframe id="contenidoFrame" src="/vista_pedidos"
+                                    frameborder="0"></iframe>
+                                <% } %>
+                                <% if (sesion === 7 ) { %>
+                                    <iframe id="contenidoFrame" src="/notificaciones_pedidos"
                                     frameborder="0"></iframe>
                                 <% } %>
                             </div>

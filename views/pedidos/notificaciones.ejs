@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+            crossorigin="anonymous" />
+        <link rel="stylesheet" href="/resources/css/notificaciones.css" />
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <title>Proveedores - Gestión</title>
+    </head>
+
+    <body>
+        <!-- Encabezado -->
+        <div class="header-container">
+            <div class="breadcrumb">
+                <a href="#" class="reporte-link">
+                    <h1
+                        style="color: #858B92; font-weight: bold; margin-right: 5px;">Pedidos</h1>
+                </a>
+                <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+                <h1 style="font-weight: bold;">Notificaciones</h1>
+            </div>
+            <p class="subtext">Notificaciones de nuevos pedidos.</p>
+        </div>
+
+        <% pedidos.forEach(function(pedido) { %>
+            <div class="pedido-card">
+              <div class="pedido-icon">
+                <i class="fas fa-info-circle"></i>
+              </div>
+              <div class="pedido-details">
+                <p class="pedido-title">Pedido Pendientes:</p>
+                <br>
+                <p class="pedido-id"><strong>Pedido ID:</strong> <%= pedido.ID_Pedido %></p>
+                <p class="pedido-nombre"><strong>Nombre:</strong> <%= pedido.NombreCliente %></p>
+                <p class="pedido-hora"><strong>Hora del pedido:</strong> <%= pedido.Hora_Venta %></p>
+              </div>
+              
+              <div class="pedido-estado">
+                <!-- Botón de Detalles del Pedido siempre visible -->
+                <a href="/detallespedido_not/<%= pedido.ID_Pedido %>" class="btn btn-conft">Detalles del Pedido</a>
+              
+                <!-- Botón Marcar como Entregado solo si el estado es En Camino (3) -->
+                <% if (pedido.Estado === 3) { %>
+                  <a href="#" class="btn btn-danger" data-id="<%= pedido.ID_Pedido %>">Marcar como Entregado</a>
+                <% } %>
+              
+                <!-- Select con opciones dinámicas según el estado -->
+                <select 
+                  class="select-estado" 
+                  data-id="<%= pedido.ID_Pedido %>" 
+                  <% if (pedido.Estado === 3 || pedido.Estado === 4) { %>disabled<% } %> <!-- Bloquear si el estado es En Camino o Entregado -->
+                >
+                  <% if (pedido.Estado === 1) { %>
+                    <!-- Solo mostrar la opción de En Proceso si el estado es Pendiente -->
+                    <option value="1" selected>Pendiente</option>
+                    <option value="2">En proceso</option>
+                  <% } else if (pedido.Estado === 2) { %>
+                    <!-- Mostrar todas las opciones hasta En Camino si está En Proceso -->
+                    <option value="1">Pendiente</option>
+                    <option value="2" selected>En proceso</option>
+                    <option value="3">En camino</option>
+                  <% } else if (pedido.Estado === 3) { %>
+                    <!-- Mostrar solo En Camino y bloqueado si está en Camino -->
+                    <option value="3" selected>En camino</option>
+                  <% } %>
+                </select>
+              </div>
+              
+            </div>
+        <% }); %>
+          
+                       
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <script>
+        document.querySelectorAll('.btn-danger').forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.preventDefault(); // Evitar el comportamiento por defecto del enlace
+            const pedidoID = this.getAttribute('data-id'); // Obtener el ID del pedido
+
+            Swal.fire({
+            title: 'Confirmar',
+            text: '¿Estás seguro de que deseas marcar este pedido como "Entregado"?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, confirmar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#01a768',
+            cancelButtonColor: '#d33'
+            }).then((result) => {
+            if (result.isConfirmed) {
+                // Hacer la petición para actualizar el estado a "Entregado"
+                fetch(`/actualizar_estado_pedido`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: pedidoID,
+                    nuevoEstado: 4 // Estado "Entregado"
+                })
+                })
+                .then(response => {
+                    if (response.ok) {
+                    Swal.fire(
+                        'Actualizado',
+                        'El pedido ha sido marcado como "Entregado".',
+                        'success'
+                    ).then(() => {
+                        window.location.reload(); // Recargar la página
+                    });
+                    } else {
+                    Swal.fire(
+                        'Error',
+                        'No se pudo actualizar el estado del pedido.',
+                        'error'
+                    );
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire(
+                    'Error',
+                    'Ocurrió un error al intentar actualizar el pedido.',
+                    'error'
+                    );
+                });
+            }
+            });
+        });
+        });
+
+      </script>
+     
+<script>
+    document.querySelectorAll('.select-estado').forEach(select => {
+  select.addEventListener('change', function () {
+    const pedidoID = this.getAttribute('data-id');
+    const nuevoEstado = this.value;
+
+    if (nuevoEstado === "2") { // Cambiar a estado "En proceso"
+      fetch(`/detalle_pedido_datos/${pedidoID}`)
+        .then(response => response.json())
+        .then(data => {
+          Swal.fire({
+            title: 'Resumen',
+            html: `
+              <div style="text-align: left; font-family: Arial, sans-serif;">
+                <h3 style="margin-bottom: 25px; font-size: 30px;">Resumen</h3>
+                <p style="margin: 0; font-size: 20px;"><strong>Total de Productos:</strong> Bs. ${data.Total_Venta}</p>
+                <p style="margin: 0; font-size: 20px;"><strong>Total de Envío:</strong> Bs. ${data.Tarifa}</p>
+                <p style="margin: 10px 0 20px; font-size: 20px; font-weight: bold;"><strong>Total a Cobrar:</strong> Bs. ${data.Total}</p>
+                <h4 style="margin-bottom: 10px; font-size: 30px;">Datos del Cliente</h4>
+                <p style="margin: 0; font-size: 20px;"><strong>Nombre:</strong> ${data.NombreCliente}</p>
+                <p style="margin: 0; font-size: 20px;"><strong>CI:</strong> ${data.CICliente}</p>
+                <p style="margin: 0; font-size: 20px;"><strong>Teléfono:</strong> ${data.TelefonoCliente}</p>
+                <h4 style="margin: 20px 0 10px; font-size: 30px;">Ubicación del Cliente</h4>
+                <p style="margin: 0; font-size: 20px;"><strong>Ciudad:</strong> ${data.Ciudad}</p>
+                <p style="margin: 0; font-size: 20px;"><strong>Distrito:</strong> ${data.Distrito}</p>
+                <p style="margin: 0; font-size: 20px;"><strong>Dirección:</strong> ${data.Direccion}</p>
+              </div>
+            `,
+            showConfirmButton: true,
+            confirmButtonText: 'Continuar',
+            confirmButtonColor: '#01a768',
+            showCloseButton: true,
+            width: '40%',
+            customClass: {
+              popup: 'swal-popup-custom'
+            }
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Swal.fire({
+                title: 'Enviar datos a WhatsApp',
+                html: `
+                  <div style="text-align: left; font-family: Arial, sans-serif;">
+                    <p>Ingresa tu numero de WhatsApp para mandarte los detalles de entrega del pedido del cliente:</p>
+                    <input id="numeroWhatsapp" type="text" placeholder="Ej: 75677777" style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px;" />
+                  </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Enviar y Confirmar',
+                confirmButtonColor: '#01a768',
+                cancelButtonText: 'Cancelar',
+                cancelButtonColor: '#d33',
+                preConfirm: () => {
+                  const numero = document.getElementById('numeroWhatsapp').value;
+                  if (numero.length !== 8 || isNaN(numero) || !numero.startsWith('6') && !numero.startsWith('7')) {
+                    Swal.showValidationMessage('Por favor, ingresa un número válido (8 dígitos, comenzando con 6 o 7)');
+                  }
+                  return `+591${numero}`;
+                }
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  const numeroWhatsApp = result.value;
+                  const mensajeWhatsApp = `
+                    *Nuevo Pedido:*
+                    *Datos del cliente:*
+                    - Nombre: ${data.NombreCliente}
+                    - CI: ${data.CICliente}
+                    - Teléfono: ${data.TelefonoCliente}
+                    
+                    *Otros detalles:*
+                    - Total en Productos: Bs. ${data.Total_Venta}
+                    - Total de Envío: Bs. ${data.Tarifa}
+                    - Total a Cobrar: Bs. ${data.Total}
+                    
+                    *Detalles de la Ubicación:*
+                    - Ciudad: ${data.Ciudad}
+                    - Distrito: ${data.Distrito}
+                    - Dirección: ${data.Direccion}
+                  `;
+
+                  const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensajeWhatsApp)}`;
+
+                  // Redirigir a WhatsApp con el mensaje
+                  window.open(urlWhatsApp, '_blank');
+
+                  // Realizar petición para actualizar el estado y recargar la página
+                  fetch(`/actualizar_estado_pedido`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                      id: pedidoID,
+                      nuevoEstado: 3 // Estado "En camino"
+                    })
+                  }).then(response => {
+                    if (response.ok) {
+                      Swal.fire(
+                        'Actualizado',
+                        'El pedido se ha marcado como "En camino".',
+                        'success'
+                      ).then(() => {
+                        window.location.reload(); // Recargar la página
+                      });
+                    } else {
+                      Swal.fire(
+                        'Error',
+                        'No se pudo actualizar el estado del pedido.',
+                        'error'
+                      );
+                    }
+                  }).catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire(
+                      'Error',
+                      'No se pudo actualizar el estado del pedido.',
+                      'error'
+                    );
+                  });
+                } else {
+                  window.location.reload(); // Recargar la página si se cancela
+                }
+              });
+            }
+          });
+        })
+        .catch(error => console.error('Error:', error));
+    }
+  });
+});
+
+</script>
+          
+    </body>
+</html>

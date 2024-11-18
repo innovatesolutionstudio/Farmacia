@@ -1,140 +1,110 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notificaciones</title>
-    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            color: #1c1e21;
-            font-size: 32px;
-            margin-bottom: 20px;
-        }
-        .notification {
-            background-color: #ffffff;
-            border: 1px solid #dddfe2;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: flex-start;
-        }
-        .notification-icon {
-            color: #65676b;
-            font-size: 20px;
-            margin-right: 12px;
-        }
-        .notification-content {
-            flex-grow: 1;
-        }
-        .notification-title {
-            font-weight: bold;
-            margin-bottom: 4px;
-            color: #1c1e21;
-        }
-        .notification-description {
-            color: #65676b;
-            font-size: 14px;
-            margin: 0;
-        }
-        .notification-right {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-        }
-        .notification-time {
-            color: #4CAF50;
-            font-size: 12px;
-            margin-bottom: 5px;
-        }
-        .notification-button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        .no-notifications {
-            text-align: center;
-            color: #868e96;
-            padding: 20px;
-            font-style: italic;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/resources/css/notificaciones.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>Usuarios - Desbloqueo</title>
 </head>
+
 <body>
-    <div class="contenedor">
-        <h1>Notificaciones</h1>
-        <div class="notification-container">
-            <div class="notification-container">
-                <ul class="notifications-list">
-                    <% if (notificaciones && notificaciones.length > 0) { %>
-                        <% notificaciones.forEach(notification => { %>
-                            <li class="notification">
-                                <i class="fa fa-info-circle notification-icon" aria-hidden="true"></i>
-                                <div class="notification-content">
-                                    <div class="notification-title">
-                                        <%= notification.Nombre %> 
-                                        <br>
-                                        <small style="color: #000000;"><%= notification.Correo %></small>
-                                    </div>
-                                    <p class="notification-description"><%= notification.Descripcion %></p>
-                                </div>
-                                <div class="notification-right">
-                                    <div class="notification-time">
-                                        <%= new Date(notification.Fecha).toLocaleString([], {day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'}) %>
-                                    </div>
-                                    <button class="notification-button" data-correo="<%= notification.Correo %>" onclick="actualizarGradoA0(this)">Desbloquear</button>
-                                </div>
-                            </li>
-                        <% }); %>
-                    <% } else { %>
-                        <li class="no-notifications">No hay notificaciones no leídas.</li>
-                    <% } %>                
-                </ul>
-            </div>            
+    <!-- Encabezado -->
+    <div class="header-container">
+        <div class="breadcrumb">
+            <a href="#" class="reporte-link">
+                <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Notificaciones</h1>
+            </a>
+            
         </div>
-    </div>    
+        <p class="subtext">Notificaciones pendientes.</p>
+    </div>
+
+    <% if (notificaciones && notificaciones.length > 0) { %>
+        <% notificaciones.forEach(function (notification) { %>
+          <div class="pedido-card">
+            <div class="pedido-icon">
+              <i class="fas fa-info-circle"></i>
+            </div>
+            <div class="pedido-details">
+              <p class="pedido-title"><strong>Notificación:</strong></p>
+              <p class="pedido-id"><strong>Nombre:</strong> <%= notification.Nombre %></p>
+              <p class="pedido-rol"><strong>Rol:</strong> <%= notification.Rol %></p>
+              <p class="pedido-nombre"><strong>Correo:</strong> <%= notification.Correo %></p>
+              <p class="pedido-motivo"><strong>Motivo:</strong> <%= notification.Descripcion %></p>
+              <p class="pedido-fecha"><strong>Fecha:</strong> <%= new Date(notification.Fecha).toLocaleString() %></p>
+            </div>
+            <div class="pedido-estado">
+              <button 
+                class="btn btn-conft" 
+                data-correo="<%= notification.Correo %>" 
+                onclick="actualizarGradoA0(this)"
+              >
+                Desbloquear
+              </button>
+            </div>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <div class="no-notifications">No hay usuarios bloqueados pendientes.</div>
+      <% } %>
+      
+
     <script>
         function actualizarGradoA0(button) {
             const correo = button.getAttribute('data-correo'); // Obtener el correo del botón
-    
-            // Crear un objeto con los datos a enviar
-            const data = { correo: correo };
-    
-            // Enviar la solicitud POST
-            fetch('/notificaciones/desbloquear', { // Ruta del endpoint que manejará la solicitud
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data) 
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error en el desbloqueo del usuario');
-                }
-                return response.json(); 
-            })
-            .then(data => {
-                alert('Se desbloqueo el correo: ' + correo);
-                button.parentElement.parentElement.remove(); // Esto eliminará la notificación de la lista
-            })
 
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Hubo un problema al actualizar el grado. Inténtalo nuevamente.');
+            Swal.fire({
+                title: 'Confirmar',
+                text: `¿Estás seguro de que deseas desbloquear al usuario con correo ${correo}?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, desbloquear',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#01a768',
+                cancelButtonColor: '#d33'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Enviar solicitud de desbloqueo
+                    fetch('/notificaciones/desbloquear', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ correo: correo })
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error al desbloquear el usuario');
+                            }
+                            return response.json();
+                        })
+                        .then(() => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Desbloqueado',
+                                text: `El usuario con correo ${correo} ha sido desbloqueado.`,
+                                confirmButtonColor: '#01a768'
+                            }).then(() => {
+                                button.parentElement.parentElement.remove(); // Eliminar la tarjeta de usuario
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Hubo un problema al desbloquear el usuario.',
+                                confirmButtonColor: '#d33'
+                            });
+                        });
+                }
             });
         }
     </script>
 </body>
+
 </html>

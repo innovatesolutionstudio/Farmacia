@@ -1,0 +1,252 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f4f8;
+  margin: 0;
+  padding: 20px;
+}
+.btn-group2 img {
+  width: 15%;
+  height: 15%;
+}
+.btn-group img {
+  width: 30%;
+  height: 30%;
+}
+/* Contenedor del encabezado */
+.header-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+/* Estilos de la "miga de pan" (breadcrumb) */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+}
+
+/* Subtexto debajo del encabezado */
+.subtext {
+  font-size: 23px;
+  color: #191919;
+  margin-top: 10px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-success {
+  background-color: #01a768;
+  height: 70px;
+  width: 260px;
+  font-size: 20px;
+}
+
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* Estilo para el enlace del reporte */
+.reporte-link {
+  color: inherit; /* Usa el color del texto que tenga el contenedor padre */
+  text-decoration: none; /* Quita la subrayado */
+}
+
+.reporte-link:hover {
+  color: inherit; /* Mantiene el color al pasar el cursor */
+  text-decoration: none; /* Sin subrayado al hacer hover */
+}
+
+
+.header-card1 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+
+/* Segunda columna, dividida en 3 filas */
+.column2 {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card-data2 {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  height: 120px;
+}
+
+
+.description {
+  text-align: left;
+}
+
+.header-card1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 10px;
+}
+
+.header-card1 a {
+  text-decoration: none;
+  color: #333;
+  font-size: 16px;
+}
+
+.content-data2 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  text-align: center;
+}
+
+.data-group p {
+  margin: 0;
+  color: #363636;
+}
+.data-group input {
+  margin: 0;
+  color: #363636;
+  height: 45px;
+  font-size: 20px;
+}
+
+.data-group strong {
+  font-size: 30px;
+  color: #121212;
+}
+
+
+.btn-danger {
+  background-color: #d84a03; /* Color de fondo rojo */
+  height: 50px;
+  width: 200px;
+  color: white;
+  border-radius: 4%;
+  margin: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none; /* Quita la subrayado */
+}
+.btn-danger:hover {
+  background-color: #e95f1a; /* Color de fondo rojo */
+  height: 50px;
+  width: 200px;
+  display: flex;
+  border-radius: 4%;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none; /* Quita la subrayado */
+}
+
+.btn-conft {
+  background-color: #006666; /* Color de fondo rojo */
+  height: 50px;
+  width: 200px;
+  color: white;
+  border-radius: 4%;
+  margin: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none; /* Quita la subrayado */
+}
+
+.btn-conft:hover {
+  background-color: #00897b; /* Color de fondo rojo */
+  height: 50px;
+  width: 200px;
+  display: flex;
+  border-radius: 4%;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none; /* Quita la subrayado */
+}
+
+
+.pedido-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
+  min-height: 130px;
+}
+
+.pedido-icon {
+  color: #007bff;
+  font-size: 30px;
+  margin-right: 20px;
+}
+
+.pedido-details {
+  flex: 1;
+}
+
+.pedido-title {
+  font-size: 25px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.pedido-id,
+.pedido-nombre,
+.pedido-hora{
+  font-size: 17px;
+  margin: 5px 0;
+}
+
+
+
+.pedido-estado select {
+  padding: 8px 10px;
+  border: 1px solid #023636;
+  border-radius: 5px;
+  background-color: #ffffff;
+  font-size: 14px;
+  color: #000000;
+  cursor: pointer;
+  height: 50px;
+  width: 200px;
+}
+
+.pedido-estado select:hover {
+  border-color: #000000;
+  background-color: #ffffff;
+}
+
+.pedido-estado {
+  display: flex;
+  align-items: center;
+}
+.swal-popup-custom {
+  font-family: 'Arial', sans-serif;
+  text-align: left;
+}
