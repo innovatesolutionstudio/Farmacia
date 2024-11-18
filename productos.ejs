@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Productos - Farmacia</title>
+    <link rel="stylesheet" href="/resources/css/productos.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="top-header">
+        <a href="/pagina_pedidos/clientes_index/:idSucursal" class="logo">
+            <img src="/resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
+        </a>    
+        <ul>
+            <li><a href="/pagina_pedidos/clientes_index/:idSucursal" class="dropdown">Inicio</a></li>
+            <li><a href="/pagina_pedidos/productos/:idSucursal" class="dropdown">Tienda</a></li>
+            
+            <li><a href="/pagina_pedidos/consultas" class="dropdown">Consultas</a></li>
+            <li><a href="/pagina_pedidos/miscompras" class="dropdown">Compras</a></li>
+            <li><a href="/pagina_pedidos/recordatorio" class="dropdown">Recordatorio</a></li>
+        </ul>
+                <a href="#" class="cart-icon" onclick="mostrarCarrito(); return false;">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">0</span>
+        </a>
+        <!-- Selector de Sucursales -->
+        <select name="sucursal" id="sucursal" class="location-select" onchange="cambiarSucursal()">
+            <% results.forEach(sucursal => { %>
+                <option value="<%= sucursal.ID_Sucursal %>" 
+                    <%= idSucursal == sucursal.ID_Sucursal ? 'selected' : '' %>>
+                    <%= sucursal.Nombre %>
+                </option>
+            <% }); %>
+        </select>
+        <a href="/pagina_pedidos/logout" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Cerrar Sesion</span>
+        </a>
+    </div>
+
+    <div class="products-section">
+        <h2>Nuestros Productos</h2>
+        <!-- Barra de búsqueda -->
+        <form action="/pagina_pedidos/productos/<%= idSucursal %>" method="GET" class="search-container">
+            <input style="font-family: 'Poppins', sans-serif;" type="text" name="search" placeholder="Buscar productos por nombre" id="search-input" value="<%= searchTerm || '' %>">
+            <button type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>        
+    </div>
+    <!-- contenedor productos -->
+    <div id="products-container">
+        <% if (!products || products.length === 0) { %>
+            <p>No hay productos disponibles para esta sucursal.</p>
+        <% } else { %>
+            <div class="products-grid" id="product-list">
+                <% products.forEach(product => { %>
+                    <div class="product-item" data-sucursal="<%= idSucursal %>">
+                        
+                        <img class="img-product" src="<%= product.Fotografia ? `/fotos/img_productos/${product.Fotografia}` : '/fotos/img_productos/default.png' %>" alt="Foto del Producto">
+                        <div class="product-details">
+                            <h3><%= product.Nombre %></h3>
+                            <p><%= product.Descripcion %></p>
+                            <p class="price">Bs <%= product.Precio_Unitario %>/Unidad</p>
+                        </div>
+                        <div class="product-actions">
+                            <button class="add-to-cart-btn" onclick="agregarAlCarrito('<%= product.ID_Producto %>', '<%= product.Nombre %>', <%= product.Precio_Unitario %>, '<%= product.Fotografia %>')">
+                                <i class="fa fa-cart-plus"></i> Añadir al carrito
+                            </button>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+    </div>
+    <!-- Carrito emergente -->
+    <div id="cart-popup">
+        <div class="cart-header">
+            <h2>Mi carrito</h2>
+            <div class="cart-tab" onclick="cerrarCarrito();">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+        </div>
+        <ul id="cart-items"></ul>
+        <div class="cart-buttons">
+            <button onclick="continueToCheckout()">Continuar Pedido</button>
+            <button class="close-cart" onclick="cerrarCarrito()">Ocultar</button>
+        </div>
+    </div>
+
+    <!-- Pestaña para cerrar el carrito -->
+    <div class="cart-tab" onclick="toggleCarrito();">
+        <i class="fas fa-chevron-right"></i>
+    </div>
+
+<!-- Sección de contacto al final -->
+<div id="contacto" class="contact-container">
+    <div class="contact-info">
+        <h2 style="color: #334A69">Contacto</h2>
+        <p>Si tienes alguna duda, no dudes en contactarnos. Estaremos encantados de ayudarte.</p>
+        <div class="contact-details">
+            <div class="detail-item">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <strong>Horario de Atención:</strong>
+                    <p>Lunes a Viernes, 9:00 - 18:00</p>
+                </div>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-phone-alt"></i>
+                <div>
+                    <strong>Teléfono:</strong>
+                    <p>+591 XXXXXXXX</p>
+                </div>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-envelope"></i>
+                <div>
+                    <strong>Correo Electrónico:</strong>
+                    <p>farmacia25julio@ejemplo.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mapa de Google -->
+    <div class="map-container">
+        <h3 style="color: #334A69">Visítanos</h3>
+        <p>Estamos ubicados en El Alto, La Paz, Bolivia:</p>
+        <div class="map-embed">
+            <!-- Aquí agregas el enlace de Google Maps -->
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5977.735616871491!2d-68.11930320270277!3d-16.500038149523107!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93e37874cc2e2c6f%3A0x6977e6a8ffb104ef!2sEl%20Alto%2C%20La%20Paz%2C%20Bolivia!5e0!3m2!1ses!2ses!4v1699388895394!5m2!1ses!2ses" 
+                width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </div>
+</div>
+
+    <!-- El modal del producto -->
+<div class="product-modal" id="productModal">
+    <div class="product-modal-content">
+        <button class="close-modal" onclick="closeProductModal()">×</button>
+        <div class="product-details">
+            <div class="product-image-container">
+                <img id="modalProductImage" class="product-image" src="" alt="">
+                <div class="quantity-selector" style="margin-top: 1rem; text-align: center;">
+                    <button onclick="updateQuantity(-1)">-</button>
+                    <span id="modalQuantity">1</span>
+                    <button onclick="updateQuantity(1)">+</button>
+                </div>
+                <div class="action-buttons">
+                    <button class="add-to-cart" onclick="addToCartFromModal()">Añadir al carrito</button>
+                    <button class="continue-shopping" onclick="closeProductModal()">Seguir comprando</button>
+                </div>
+            </div>
+            <div class="product-info">
+                <h1 id="modalProductName"></h1>
+                <div class="product-tabs">
+                    <div class="tab-buttons">
+                        <button class="tab-button active" onclick="switchTab('general')">Información General</button>
+                        <button class="tab-button" onclick="switchTab('medical')">Información Médica</button>
+                        <button class="tab-button" onclick="switchTab('technical')">Detalles Técnicos</button>
+                    </div>
+                    
+                    <div id="generalTab" class="tab-content active">
+                        <div class="details-grid">
+                            <div class="details-item">
+                                <h4>Descripción</h4>
+                                <p id="modalProductDescription"></p>
+                            </div>
+                            <div class="details-item">
+                                <h4>Precio</h4>
+                                <p>Bs <span id="modalProductPrice"></span></p>
+                            </div>
+                            <div class="details-item">
+                                <h4>Stock Disponible</h4>
+                                <p><span id="modalProductStock"></span> unidades</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="medicalTab" class="tab-content">
+                        <div class="details-grid">
+                            <div class="details-item">
+                                <h4>Indicaciones</h4>
+                                <p id="modalProductIndications"></p>
+                            </div>
+                            <div class="details-item">
+                                <h4>Dosis Medicamento</h4>
+                                <p id="modalProductDose"></p>
+                            </div>
+                            <div class="details-item">
+                                <h4>Efectos Secundarios</h4>
+                                <p id="modalProductSideEffects"></p>
+                            </div>
+                            <div class="details-item">
+                                <h4>Precauciones</h4>
+                                <p id="modalProductPrecautions"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="technicalTab" class="tab-content">
+                        <div class="details-grid">
+                            <div class="details-item">
+                                <h4>ID Producto</h4>
+                                <p id="modalProductId"></p>
+                            </div>
+                            <div class="details-item">
+                                <h4>Categoría</h4>
+                                <p id="modalProductCategory"></p>
+                            </div>
+                            <div class="details-item">
+                                <h4>Área de Producto</h4>
+                                <p id="modalProductArea"></p>
+                            </div>
+                            <div class="details-item">
+                                <h4>Unidad de Venta</h4>
+                                <p id="modalProductUnit"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+        let currentProduct = null;
+        let modalQuantity = 1;
+        
+        // Función para inicializar los event listeners de los productos
+        function initializeProductItems() {
+            document.querySelectorAll('.product-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // No abrir el modal si se hizo clic en el botón de añadir al carrito
+                    if (!e.target.classList.contains('add-to-cart-btn')) {
+                        try {
+                            // Obtener el ID del producto del botón
+                            const addToCartBtn = this.querySelector('.add-to-cart-btn');
+                            const onclickAttr = addToCartBtn.getAttribute('onclick');
+                            const productId = onclickAttr.match(/'([^']+)'/)[1];
+                            
+                            // Obtener el resto de la información
+                            const productName = this.querySelector('h3').textContent;
+                            const productPrice = this.querySelector('p:nth-of-type(2)').textContent
+                                .match(/\$([0-9.]+)/)[1];
+                            const productImage = this.querySelector('img').src;
+                            const productDescription = this.querySelector('p:nth-of-type(1)').textContent;
+                            const productStock = this.querySelector('p:nth-of-type(3)').textContent
+                                .match(/\d+/)[0];
+                            
+                            loadProductDetails(productId, productName, productPrice, productImage, 
+                                             productDescription, productStock);
+                        } catch (error) {
+                            console.error('Error al obtener datos del producto:', error);
+                        }
+                    }
+                });
+            });
+        }
+        
+        function loadProductDetails(id, name, price, image, description, stock) {
+    try {
+        currentProduct = { 
+            id, 
+            name, 
+            price: parseFloat(price), 
+            image, 
+            description, 
+            stock: parseInt(stock) 
+        };
+        modalQuantity = 1;
+        
+        // Actualizar elementos del modal con los datos básicos
+        document.getElementById('modalProductName').textContent = name;
+        document.getElementById('modalProductPrice').textContent = `$${price}`;
+        document.getElementById('modalProductImage').src = image;
+        document.getElementById('modalProductDescription').textContent = description;
+        document.getElementById('modalProductStock').textContent = stock;
+        document.getElementById('modalQuantity').textContent = modalQuantity;
+        document.getElementById('modalProductId').textContent = id;
+        
+        // Mostrar el modal
+        const modal = document.getElementById('productModal');
+        modal.style.display = 'flex';
+        
+        // Obtener datos adicionales del producto
+        fetch(`/api/productos/${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Actualizar los campos con los datos recibidos
+                document.getElementById('modalProductIndications').textContent = 
+                    data.Indicaciones || 'No disponible';
+                document.getElementById('modalProductDose').textContent = 
+                    data.Dosis_Medicacmento || 'No disponible';
+                document.getElementById('modalProductSideEffects').textContent = 
+                    data.Efectos_Secundarios || 'No disponible';
+                document.getElementById('modalProductPrecautions').textContent = 
+                    data.Precauciones || 'No disponible';
+                
+                // Actualizar campos técnicos
+                const categoryName = getCategoryName(data.ID_Categoria);
+                const areaName = getAreaName(data.ID_Area_Producto);
+                const unitName = getUnitName(data.ID_Unidad_Venta);
+                
+                document.getElementById('modalProductCategory').textContent = categoryName;
+                document.getElementById('modalProductArea').textContent = areaName;
+                document.getElementById('modalProductUnit').textContent = unitName;
+            })
+            .catch(error => {
+                console.error('Error loading product details:', error);
+                // Mostrar mensaje de error en el modal
+                const tabs = document.querySelectorAll('.tab-content');
+                tabs.forEach(tab => {
+                    const fields = tab.querySelectorAll('p');
+                    fields.forEach(field => {
+                        if (field.textContent === '') {
+                            field.textContent = 'No disponible';
+                        }   
+                    });
+                });
+            });
+    } catch (error) {
+        console.error('Error in loadProductDetails:', error);
+    }
+}
+
+// Funciones auxiliares para convertir IDs en nombres (deberás adaptarlas según tus datos)
+function getCategoryName(categoryId) {
+    // Aquí deberías tener un mapeo de IDs a nombres de categorías
+    // Por ahora retornamos el ID
+    return categoryId || 'No disponible';
+}
+
+function getAreaName(areaId) {
+    // Aquí deberías tener un mapeo de IDs a nombres de áreas
+    return areaId || 'No disponible';
+}
+
+function getUnitName(unitId) {
+    // Aquí deberías tener un mapeo de IDs a nombres de unidades
+    return unitId || 'No disponible';
+}
+        
+        function switchTab(tabName) {
+            // Remover clase active de todos los tabs y botones
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Activar el tab seleccionado
+            document.getElementById(`${tabName}Tab`).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+            currentProduct = null;
+            modalQuantity = 1;
+        }
+        
+        function updateQuantity(change) {
+            const newQuantity = modalQuantity + change;
+            if (newQuantity > 0 && newQuantity <= parseInt(currentProduct.stock)) {
+                modalQuantity = newQuantity;
+                document.getElementById('modalQuantity').textContent = modalQuantity;
+            }
+        }
+        
+        function addToCartFromModal() {
+            if (currentProduct) {
+                agregarAlCarrito(
+                    currentProduct.id,
+                    currentProduct.name,
+                    currentProduct.price,
+                    currentProduct.image
+                );
+                closeProductModal();
+            }
+        }
+        
+        // Event Listeners al cargar el DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeProductItems();
+        
+            // Cerrar el modal si se hace clic fuera de él
+            const modal = document.getElementById('productModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeProductModal();
+                    }
+                });
+            }
+        
+            // Imprimir en consola para depuración
+            console.log('Script inicializado correctamente');
+            console.log('Número de productos encontrados:', document.querySelectorAll('.product-item').length);
+        });
+    </script>
+            <!-- Asegúrate de incluir Font Awesome -->
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+    <script>
+        function cambiarSucursal() {
+            const idSucursal = document.getElementById('sucursal').value;
+            window.location.href = `/pagina_pedidos/productos/${idSucursal}`;
+        }
+        
+        function buscarProductos() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();  // Obtén el valor de la búsqueda y lo pasas a minúsculas
+            const productItems = document.querySelectorAll('.product-item');  // Selecciona todos los productos en la página
+
+            productItems.forEach(item => {
+                const productName = item.querySelector('h3').textContent.toLowerCase();  // Obtén el nombre del producto y lo pasas a minúsculas
+                
+                // Si el nombre del producto incluye el término de búsqueda, se muestra; de lo contrario, se oculta
+                if (productName.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+        let carrito = []; // Aquí ya no usaremos localStorage
+    
+function agregarAlCarrito(productId, nombre, precio) {
+    const productoExistente = carrito.find(item => item.id === productId);
+
+    if (productoExistente) {
+        productoExistente.quantity += 1;
+    } else {
+        carrito.push({
+            id: productId,
+            name: nombre,
+            price: precio,
+            quantity: 1
+        });
+    }
+
+    localStorage.setItem('cart', JSON.stringify(carrito));
+    mostrarCarrito();
+    actualizarContadorCarrito();
+}
+        function mostrarCarrito() {
+            const carritoPopup = document.getElementById('cart-popup');
+            const listaCarrito = document.getElementById('cart-items');
+            listaCarrito.innerHTML = '';
+    
+            carrito.forEach(item => {
+                const subtotal = item.price * item.quantity;
+    
+                const li = document.createElement('li');
+                li.className = 'cart-item';
+                li.innerHTML = ` 
+                    <div class="cart-item-image">
+                        <img src="${item.image || '/resources/images/default-product.png'}" alt="${item.name}">
+                    </div>
+                    <div class="cart-item-info">
+                        <div class="cart-item-title">${item.name}</div>
+                        <div class="cart-item-price">Bs ${item.price.toFixed(2)}/Unidad</div>
+                        <div class="cart-item-description">
+                            <small>Stock: ${item.stock}</small><br>
+                            <small>Unidad de venta: ${item.unit}</small>
+                        </div>
+                        <div class="cart-item-quantity">
+                            <button class="quantity-btn" onclick="cambiarCantidad('${item.id}', -1)">-</button>
+                            <span class="quantity-display">${item.quantity}</span>
+                            <button class="quantity-btn" onclick="cambiarCantidad('${item.id}', 1)">+</button>
+                        </div>
+                        <div class="cart-item-subtotal">
+                            Subtotal: Bs ${subtotal.toFixed(2)}
+                        </div>
+                    </div>
+                `;
+                listaCarrito.appendChild(li);
+            });
+    
+            const total = carrito.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            const totalElement = document.createElement('div');
+            totalElement.className = 'cart-total';
+            totalElement.innerHTML = `Total: Bs ${total.toFixed(2)}`;
+            listaCarrito.appendChild(totalElement);
+    
+            // Mostrar el carrito
+            carritoPopup.classList.add('visible');
+    
+            // Cambiar el ícono de la pestaña
+            const cartTab = document.querySelector('.cart-tab');
+            cartTab.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        }
+    
+        function cerrarCarrito() {
+            const carritoPopup = document.getElementById('cart-popup');
+            carritoPopup.classList.remove('visible');
+    
+            // Cambiar el ícono de la pestaña
+            const cartTab = document.querySelector('.cart-tab');
+            cartTab.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        }
+    
+        function toggleCarrito() {
+            const carritoPopup = document.getElementById('cart-popup');
+            const cartTab = document.querySelector('.cart-tab');
+            
+            if (carritoPopup.classList.contains('visible')) {
+                cerrarCarrito();
+            } else {
+                mostrarCarrito();
+            }
+        }
+    
+        function actualizarContadorCarrito() {
+            const cartCount = document.querySelector('.cart-count');
+            const totalItems = carrito.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+        }
+                function cambiarCantidad(productId, change) {
+            const producto = carrito.find(item => item.id === productId);
+            
+            if (producto) {
+                producto.quantity += change;
+                if (producto.quantity <= 0) {
+                    carrito = carrito.filter(item => item.id !== productId);
+                }
+                localStorage.setItem('cart', JSON.stringify(carrito));
+                mostrarCarrito();
+                actualizarContadorCarrito();
+            }
+        }
+        function continueToCheckout(event) {
+            event.preventDefault();  // Prevenir comportamiento predeterminado (si está dentro de un formulario)
+            window.location.href = '/pagina_pedidos/continuar_pedido';
+        }
+
+        function realizarCompra() {
+            // Mostrar el modal de carrito
+            const cartModal = document.getElementById('cartModal');
+            cartModal.style.display = 'flex'; // Hacer visible el modal
+
+            // Aquí puedes cargar los detalles del carrito, si es necesario
+            const cartItemsContainer = document.getElementById('cartItems');
+            cartItemsContainer.innerHTML = ''; // Limpiar los items anteriores
+
+            carrito.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'cart-item';
+                itemDiv.innerHTML = `
+                    <img src="${item.image || '/resources/images/default-product.png'}" alt="${item.name}">
+                    <div class="cart-item-info">
+                        <h3>${item.name}</h3>
+                        <p>Precio: Bs ${item.price.toFixed(2)}</p>
+                        <p>Cantidad: ${item.quantity}</p>
+                    </div>
+                `;
+                cartItemsContainer.appendChild(itemDiv);
+            });
+                // Mostrar el resumen del carrito y el total
+                const total = carrito.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                document.getElementById('cartTotal').textContent = `Subtotal: Bs ${total.toFixed(2)}`;
+            }
+
+            function closeCart() {
+            const cartModal = document.getElementById('cartModal');
+            cartModal.style.display = 'none'; // Ocultar el modal
+            }
+            function continueToCheckout() {
+                window.location.href = '/pagina_pedidos/continuar_pedido'; // Redirige a la página de continuar pedido
+            }
+            // Actualizar contador al cargar la página
+                actualizarContadorCarrito();
+
+    </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Verifica si el idSucursal está en la URL antes de redirigir
+        const idSucursal = "<%= idSucursal %>";
+        if (!idSucursal) {
+            const defaultSucursalId = "<%= results[0].ID_Sucursal %>"; // ID de la primera sucursal
+            window.location.href = `/pagina_pedidos/productos/${defaultSucursalId}`;
+        }
+    });
+    
+
+function cambiarSucursal() {
+    const sucursalSelect = document.getElementById('sucursal');
+    const selectedSucursalId = sucursalSelect.value;
+    // Obtener también el nombre de la sucursal del option seleccionado
+    const selectedSucursalNombre = sucursalSelect.options[sucursalSelect.selectedIndex].text;
+    
+    // Guardar en localStorage
+    const sucursalData = {
+        id: selectedSucursalId,
+        nombre: selectedSucursalNombre
+    };
+    localStorage.setItem('sucursalSeleccionada', JSON.stringify(sucursalData));
+    
+    // Redireccionar
+    window.location.href = `/pagina_pedidos/productos/${selectedSucursalId}`;
+}
+</script>
+<script>
+    function toggleDropdown(event) {
+
+        const dropdown = document.getElementById('profile-dropdown');
+        
+        // Si el dropdown está visible, lo ocultamos, y viceversa
+        if (dropdown.style.display === 'block') {
+            dropdown.style.display = 'none';
+        } else {
+            dropdown.style.display = 'block';
+        }
+    }
+
+    // Cuando se hace clic fuera del dropdown, lo cerramos
+    window.onclick = function(event) {
+        const dropdown = document.getElementById('profile-dropdown');
+        if (!event.target.closest('.dropdown')) {
+            dropdown.style.display = 'none';
+        }
+    };
+</script>
+</body>
+</html>  

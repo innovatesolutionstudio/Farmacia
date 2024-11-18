@@ -12,14 +12,13 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
-    "bwip-js": "^4.5.1",
     "chart.js": "^4.4.3",
     "cohere-ai": "^7.11.0",
     "dhtmlx-gantt": "^8.0.6",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
-    "express-session": "^1.18.0",
+    "express-session": "^1.18.1",
     "highcharts": "^11.4.1",
     "html-pdf": "^3.0.1",
     "multer": "^1.4.5-lts.1",
@@ -29,7 +28,6 @@
     "plotly.js": "^2.32.0",
     "plotly.js-dist": "^2.32.0",
     "puppeteer": "^22.7.1",
-    "qrcode": "^1.5.4",
     "xtend": "^4.0.2"
   },
   "devDependencies": {

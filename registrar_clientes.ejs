@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+    <title>Registro de Clientes</title>
+    <link rel="icon" href="/resources/images/iconos/farmacia.ico">
+    <link rel="stylesheet" href="/resources/css/style_login.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
+        
+        body {
+            font-family: "Poppins", sans-serif;
+            background: #f0f4f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 700px;
+            padding: 5px 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .form-container img {
+            margin-bottom: 20px;
+            max-width: 100px;
+        }
+
+        .title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-fields {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            width: 48%;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 10px 15px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            color: #333;
+            background-color: transparent;
+        }
+
+        .input-field i {
+            color: #6c757d;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .input-field:focus-within {
+            border-color: #03a8f5ce;
+        }
+
+        .btn.solid {
+            font-weight: 500;
+            background-color: #5995fd;
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn.solid:hover {
+            background-color: #42a7d6;
+        }
+
+        .social-text {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .social-text a {
+            color: #5995fd;
+            text-decoration: none;
+        }
+
+        .social-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Estilo para pantallas pequeñas */
+        @media (max-width: 768px) {
+            .input-field {
+                width: 100%;
+            }
+
+            .form-fields {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container">
+        <form method="post" action="/registrar">
+            <img src="/resources/images/login/logo1.png" alt="Logo">
+            <h2 class="title">Registrar Cliente</h2>
+            <div class="form-fields">
+                <div class="input-field">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="name" placeholder="Nombre" maxlength="100" required />
+                </div>
+                <div class="input-field">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="apellido" placeholder="Apellido" maxlength="100" required />
+                </div>
+                <div class="input-field">
+                    <i class="fas fa-phone"></i>
+                    <input type="text" name="telefono" placeholder="Teléfono" maxlength="20" required />
+                </div>
+                <div class="input-field">
+                    <i class="fas fa-id-card"></i>
+                    <input type="text" name="ci" placeholder="Cédula de Identidad (CI)" maxlength="50" required />
+                </div>
+                <div class="input-field">
+                    <i class="fas fa-briefcase"></i>
+                    <input type="text" name="nit" placeholder="NIT" maxlength="50" required />
+                </div>
+                <div class="input-field">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="contrasena" placeholder="Contraseña" maxlength="50" required />
+                </div>
+                <div class="input-field">
+                    <i class="fas fa-key"></i>
+                    <input type="text" name="codigo" placeholder="Código" maxlength="50" required />
+                </div>
+            </div>
+            <input type="submit" value="Registrar" class="btn solid" />
+            <p class="social-text">¿Ya tienes cuenta? <a href="/pagina_pedidos/login_clientes" class="register-link">Inicia sesión aquí</a></p>
+        </form>
+    </div>
+</body>
+
+</html>

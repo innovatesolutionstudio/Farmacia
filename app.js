@@ -2,13 +2,24 @@
 const express = require("express");
 const app = express();
 
+//#region - iniciar sesion - login - autenticacion
+const session = require("express-session");
+
+app.use(
+  session({
+    secret: "secret",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+
 const ciudadesRoutes = require("./routes/ciudades");
 const proveedoresRoutes = require("./routes/proveedores");
 const ventasRoutes = require("./routes/ventas");
 const detallesventasRoutes = require("./routes/detalles_ventas");
 const clientesRoutes = require("./routes/clientes");
 const inventarioRoutes = require("./routes/inventario");
-
+const inventario_vistaRoutes = require("./routes/inventario_vista");
 const productosRoutes = require("./routes/productos");
 const nuevaventaRoutes = require("./routes/nueva_venta");
 const ganancias_esRoutes = require("./routes/ganancias_es");
@@ -27,8 +38,6 @@ const venta_espeRoutes = require("./routes/venta_espe");
 const cajasRoutes = require("./routes/cajas");
 const nueva_compraRoutes = require("./routes/nueva_compra");
 
-const generarcodigoproducto = require("./routes/generador_codigos");
-
 const rolesRoutes = require("./routes/roles");
 const sucursalesRoutes = require("./routes/sucursales");
 const vista_ventas = require("./routes/vista_ventas");
@@ -38,10 +47,9 @@ const vistareportes = require("./routes/vista_reportes");
 const registrocagas = require("./routes/registro_cajas");
 const vistafinanzas = require("./routes/vista_Finanzas");
 const vistaComtas = require("./routes/vista_compras");
-const vistaPedidos = require("./routes/vista_pedidos");
+
 const notificacionesRoutes = require("./routes/notificaciones");
-const pedidos = require("./routes/pedidos");
-const reporteganancias = require("./routes/reporte_ganancias");
+
 //#endregion
 const graficosRouter = require("./routes/graficos"); // Ajusta la ruta según la ubicación de tu archivo graficos.js
 
@@ -77,8 +85,18 @@ const compras_pRouter = require("./papeleria/compras");
 const buscadorIARouter = require("./routes/buscador_ai");
 
 const coneccion = require("./database/db");
+const paginapedidos = require('./routes/paginapedidos'); // Ajusta el nombre del archivo de rutas si es necesario 
+
+
+app.use(paginapedidos); // Solo esta línea es necesaria
+
+
 
 //#region - rutas y llamados
+
+//seteamos urlencoded para capturar datos de formularios
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 // invocamos a dotenv
 const dotenv = require("dotenv");
@@ -95,7 +113,7 @@ app.use(bodyParser.json());
 
 // Middleware para procesar datos de formularios
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+
 //#endregion
 
 //#region estilos - js - css
@@ -117,16 +135,7 @@ app.use(
 app.use("/js", express.static(__dirname + "/views/graficos/js"));
 //#endregion
 
-//#region - iniciar sesion - login - autenticacion
-const session = require("express-session");
 
-app.use(
-  session({
-    secret: "secret",
-    resave: true,
-    saveUninitialized: true,
-  })
-);
 
 app.get("/mantenimiento", (req, res) => {
   res.render("./paginas/mantenimiento");
@@ -214,7 +223,7 @@ app.use(ventasRoutes);
 app.use(detallesventasRoutes);
 app.use(clientesRoutes);
 app.use(inventarioRoutes);
-app.use(generarcodigoproducto);
+app.use(inventario_vistaRoutes);
 app.use(productosRoutes);
 app.use(nuevaventaRoutes);
 app.use(ganancias_esRoutes);
@@ -243,9 +252,6 @@ app.use(vistareportes);
 app.use(registrocagas);
 app.use(api_datos);
 app.use(vistaComtas);
-app.use(vistaPedidos);
-app.use(pedidos);
-
 //reportes
 
 app.use(generador_reportesRoutes);
@@ -268,7 +274,7 @@ app.use(impre_areas_producto);
 app.use(impre_categoria);
 app.use(impre_tipo_paciente);
 app.use(impre_clientes);
-app.use(reporteganancias);
+
 //dashboard
 app.use(graficosRouter);
 
@@ -299,17 +305,13 @@ app.get("/reporte_proveedores", (req, res) => {
 app.get("/reporte_compras", (req, res) => {
   res.render("./reportes/reporte_compras");
 });
-app.get("/reporte_ganancias", (req, res) => {
-  res.render("./reportes/reporte_ganancias");
-});
-
-app.get("/reporte_pedidos", (req, res) => {
-  res.render("./reportes/reporte_pedidos");
+app.get("/reporte_tareas_e", (req, res) => {
+  res.render("./reportes/reporte_tareas");
 });
 
 //#endregion
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log(`Servidor conectado en http://localhost:${PORT}`);
 });
