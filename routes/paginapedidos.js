@@ -48,7 +48,50 @@
             }
         });
     });
+    router.post('/authas', (req, res) => {
+        const codigo = req.body.codigo;
+        const contrasena = req.body.contrasena;
     
+        // Cambiar la consulta para buscar por 'Codigo' y 'Contrasena'
+        connection.query('SELECT * FROM clientes WHERE Codigo = ?', [codigo], (error, results) => {
+            if (error) {
+                return res.status(500).send('Error en la consulta a la base de datos');
+            }
+            if (results.length === 0 || results[0].Contrasena !== contrasena) {
+                return res.send('Usuario o contraseña incorrectos');
+            }
+    
+            // Inicia sesión del cliente
+            req.session.loggedinCliente = true;
+            req.session.userIdCliente = results[0].ID_Cliente;
+    
+            return res.redirect(`/pagina_pedidos/clientes_index/${req.session.userIdCliente}`);
+        });
+    });
+    router.get('/pagina_pedidos/verificar-sesion', (req, res) => {
+        if (req.session && req.session.loggedinCliente) {
+            res.json({ estaLogueado: true });
+        } else {
+            res.json({ estaLogueado: false });
+        }
+    });
+    
+        // Ruta para cerrar sesión
+        router.get('/pagina_pedidos/logout', (req, res) => {
+            // Destruir la sesión
+            req.session.destroy((err) => {
+                if (err) {
+                    return res.status(500).send('Error al cerrar sesión');
+                }
+                // Redirigir al login después de cerrar sesión
+                res.redirect('/pagina_pedidos/login_clientes');
+            });
+        });
+
+
+
+
+
         
         router.get('/pagina_pedidos/productos/:idSucursal', (req, res) => {
         // Verificar si el cliente está logueado
@@ -171,37 +214,6 @@
     });
 
 
-        // RUTA PARA MOSTRAR LAS VENTAS
-        router.get('/pagina_pedidos/misventas', (req, res) => {
-            // Verificar si el usuario está logueado
-            if (!req.session.loggedinCliente) {
-                return res.redirect('/pagina_pedidos/login_clientes'); 
-            }
-
-            const idCliente = req.session.userIdCliente;
-
-            // Consulta SQL para obtener las ventas del cliente
-            const sqlVentas = `
-                SELECT ventas.ID_Venta, ventas.Fecha_Venta, ventas.Total_Venta, Sucursales.Nombre AS Sucursal
-                FROM ventas
-                JOIN Sucursales ON ventas.ID_Sucursal = Sucursales.ID_Sucursal
-                WHERE ventas.ID_Cliente = ?
-                ORDER BY ventas.Fecha_Venta DESC
-            `;
-
-            connection.query(sqlVentas, [idCliente], (error, ventas) => {
-                if (error) {
-                    console.error('Error al obtener las ventas:', error);
-                    return res.status(500).send('Error al obtener las ventas.');
-                }
-
-                if (ventas.length === 0) {
-                    return res.render('pagina_pedidos/misventas', { ventas: [] });
-                }
-
-                res.render('pagina_pedidos/misventas', { ventas });
-            });
-        });
 
         // Dentro de tu ruta
         router.get('/pagina_pedidos/miscompras', (req, res) => {
@@ -259,45 +271,8 @@
         });
 
     
-    router.post('/authas', (req, res) => {
-        const codigo = req.body.codigo;
-        const contrasena = req.body.contrasena;
     
-        // Cambiar la consulta para buscar por 'Codigo' y 'Contrasena'
-        connection.query('SELECT * FROM clientes WHERE Codigo = ?', [codigo], (error, results) => {
-            if (error) {
-                return res.status(500).send('Error en la consulta a la base de datos');
-            }
-            if (results.length === 0 || results[0].Contrasena !== contrasena) {
-                return res.send('Usuario o contraseña incorrectos');
-            }
-    
-            // Inicia sesión del cliente
-            req.session.loggedinCliente = true;
-            req.session.userIdCliente = results[0].ID_Cliente;
-    
-            return res.redirect(`/pagina_pedidos/clientes_index/${req.session.userIdCliente}`);
-        });
-    });
-    router.get('/pagina_pedidos/verificar-sesion', (req, res) => {
-        if (req.session && req.session.loggedinCliente) {
-            res.json({ estaLogueado: true });
-        } else {
-            res.json({ estaLogueado: false });
-        }
-    });
-    
-    // Ruta para cerrar sesión
-    router.get('/pagina_pedidos/logout', (req, res) => {
-        // Destruir la sesión
-        req.session.destroy((err) => {
-            if (err) {
-                return res.status(500).send('Error al cerrar sesión');
-            }
-            // Redirigir al login después de cerrar sesión
-            res.redirect('/pagina_pedidos/login_clientes');
-        });
-    });
+
     
     router.get('/pagina_pedidos/clientes_index/:idSucursal', (req, res) => {
         const idSucursal = req.params.idSucursal;
@@ -380,6 +355,7 @@
     
         const clienteId = req.session.userIdCliente;
     
+        // Consultar los datos del cliente
         const queryCliente = `SELECT * FROM clientes WHERE ID_Cliente = ?`;
         connection.query(queryCliente, [clienteId], (err, resultsCliente) => {
             if (err) {
@@ -387,178 +363,133 @@
                 return res.status(500).send('Error interno');
             }
     
+            // Consultar la venta más reciente
             const queryVenta = `
             SELECT v.ID_Venta, v.Fecha_Venta, v.Total_Venta, v.ID_Cliente, v.ID_Empleado, v.ID_Sucursal, v.ID_Caja
             FROM ventas v
             WHERE v.ID_Cliente = ? 
             ORDER BY v.Fecha_Venta DESC 
             LIMIT 1;
-        `;
-        
+            `;
+    
             connection.query(queryVenta, [clienteId], (err, resultsVenta) => {
                 if (err) {
                     console.error('Error obteniendo los datos de la venta:', err);
                     return res.status(500).send('Error interno');
                 }
+                const totalCarrito = req.query.totalCarrito || 0;
     
-                if (resultsVenta.length > 0) {
-                    const venta = resultsVenta[0]; 
-                    res.render('pagina_pedidos/continuar_pedido', {
-                        cliente: resultsCliente[0],
-                        venta: venta
+                // Obtener empleados con rol 5
+                const queryEmpleadosRol5 = `SELECT * FROM empleados WHERE ID_rol = 5`;
+                connection.query(queryEmpleadosRol5, (err, empleadosRol5) => {
+                    if (err) {
+                        console.error('Error obteniendo empleados con rol 5:', err);
+                        return res.status(500).send('Error interno');
+                    }
+    
+                    // Obtener empleados con rol 7
+                    const queryEmpleadosRol7 = `SELECT * FROM empleados WHERE ID_rol = 7`;
+                    connection.query(queryEmpleadosRol7, (err, empleadosRol7) => {
+                        if (err) {
+                            console.error('Error obteniendo empleados con rol 7:', err);
+                            return res.status(500).send('Error interno');
+                        }
+    
+                        // Obtener distritos (corregido el nombre de la columna)
+                        const queryDistritos = `SELECT d.ID_distritos,  c.ID_ciudad
+                                                FROM distritos d
+                                                INNER JOIN ciudades c ON d.ID_ciudad = c.ID_ciudad;
+                                                `;
+                        connection.query(queryDistritos, (err, distritos) => {
+                            if (err) {
+                                console.error('Error obteniendo distritos:', err);
+                                return res.status(500).send('Error interno');
+                            }
+    
+                            const idSucursal = resultsVenta.length > 0 ? resultsVenta[0].ID_Sucursal : null;
+    
+                            if (resultsVenta.length > 0) {
+                                const venta = resultsVenta[0]; 
+                                res.render('pagina_pedidos/continuar_pedido', {
+                                    cliente: resultsCliente[0],
+                                    venta: venta,
+                                    totalCarrito: totalCarrito,
+                                    empleadosRol5: empleadosRol5,
+                                    empleadosRol7: empleadosRol7,
+                                    distritos: distritos,
+                                    idSucursal: idSucursal
+                                });
+                            } else {
+                                res.render('pagina_pedidos/continuar_pedido', {
+                                    cliente: resultsCliente[0],
+                                    mensaje: 'No hay ventas recientes.',
+                                    totalCarrito: totalCarrito,
+                                    empleadosRol5: empleadosRol5,
+                                    empleadosRol7: empleadosRol7,
+                                    distritos: distritos,
+                                    idSucursal: idSucursal
+                                });
+                            }
+                        });
                     });
-                } else {
-                    res.render('pagina_pedidos/continuar_pedido', {
-                        cliente: resultsCliente[0],
-                        mensaje: 'No hay ventas recientes.'
-                    });
-                }
+                });
             });
         });
     });
-
-
-
-
-    // Ruta para insertar una venta
-    router.post('/confirmarVenta', (req, res) => {
-        try {
-            const { productos, cliente, sucursalId, total, fecha } = req.body;
-
-            const query = `
-                INSERT INTO ventas (Fecha_Venta, Total_Venta, ID_Cliente, ID_Empleado, ID_Sucursal, ID_Caja, Estado)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            `;
-            const values = [fecha, total, cliente, 1, sucursalId, 1, 'pendiente'];
-
-            connection.query(query, values, (error, results) => {
-                if (error) {
-                    console.error('Error al insertar la venta:', error);
-                    return res.status(500).json({ success: false, message: 'Error al procesar la venta' });
-                }
-                res.json({ success: true });
-            });
-        } catch (error) {
-            res.status(500).json({ success: false, message: 'Error interno del servidor' });
-        }
-    });
-
-    router.post('/insertarVenta', (req, res) => {
-        const { cliente, totalVenta, sucursalId, estado, fecha, idEmpleado, idCaja } = req.body;
+   
     
-        // Validar los campos
-        if (!cliente || !totalVenta || !sucursalId || !estado || !fecha || !idEmpleado || !idCaja) {
-            return res.render('pagina_pedidos/continuar_pedido', { successMessage: 'Faltan datos requeridos' });
-        }
-    
-        const sql = `
-            INSERT INTO ventas (Fecha_Venta, Total_Venta, ID_Cliente, ID_Empleado, ID_Sucursal, ID_Caja, Estado)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        `;
-        const values = [fecha, totalVenta, cliente, idEmpleado, sucursalId, idCaja, estado];
-    
-        connection.query(sql, values, (err, result) => {
-            if (err) {
-                console.error('Error al insertar la venta:', err);
-                return res.render('pagina_pedidos/continuar_pedido', { successMessage: 'Error al insertar la venta' });
-            }
-    
-            res.render('pagina_pedidos/continuar_pedido', { successMessage: 'Venta registrada con éxito!' });
-        });
-    });
-    
-    // Ruta para guardar el pedido
-    router.post('/pagina_pedidos/guardar_pedido', (req, res) => {
-        const { idVenta, idEmpleado, idCliente, direccion, idDistrito } = req.body;
-        console.log('Datos recibidos para el pedido:', { idVenta, idEmpleado, idCliente, direccion, idDistrito });
 
-        const query = `
-            INSERT INTO pedidos (ID_Venta, ID_Empleado, ID_Cliente, Direccion, ID_Distrito)
-            VALUES (?, ?, ?, ?, ?)
-        `;
-        connection.query(query, [idVenta, idEmpleado, idCliente, direccion, idDistrito], (err, result) => {
-            if (err) {
-                console.error('Error al guardar el pedido:', err);
-                return res.status(500).send('Error en el servidor');
-            }
-            // Si todo es correcto, redirige a la vista de compras
-            res.redirect('/pagina_pedidos/miscompras');
-        });
-    });
-    router.get('/pagina_pedidos/detalleVenta/:id', async (req, res) => {
-        try {
-            const detallesVenta = await pool.query(`
-                SELECT DISTINCT 
-                    p.ID_Producto AS id, 
-                    p.Nombre AS nombre, 
-                    p.Descripcion AS descripcion, 
-                    dr.Dosis AS dosis  
-                FROM Productos p
-                INNER JOIN Detalles_Venta dv ON p.ID_Producto = dv.ID_Producto
-                INNER JOIN Ventas v ON dv.ID_Venta = v.ID_Venta
-                INNER JOIN Recordatorios r ON p.ID_Producto = r.ID_Producto  -- Relacionamos con Recordatorios
-                INNER JOIN detalle_recordatorio dr ON r.ID_Recordatorio = dr.ID_Recordatorio  -- Relacionamos con detalle_recordatorio
-                WHERE v.ID_Cliente = ?
-                ORDER BY p.Nombre;
-
-            `, [req.params.id]);
-            
-            res.json(detallesVenta);
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: 'Error al obtener los detalles de la venta' });
-        }
-    });
+    
 
 
     
 
     
     // Ruta para mostrar la página de recordatorios
-router.get('/pagina_pedidos/recordatorio', (req, res) => {
-    if (!req.session.loggedinCliente) {
-        return res.redirect('/pagina_pedidos/login_clientes');
-    }
+        router.get('/pagina_pedidos/recordatorio', (req, res) => {
+            if (!req.session.loggedinCliente) {
+                return res.redirect('/pagina_pedidos/login_clientes');
+            }
 
-    const idCliente = req.session.userIdCliente;  // Usamos 'userIdCliente' en lugar de 'idCliente'
+            const idCliente = req.session.userIdCliente;  // Usamos 'userIdCliente' en lugar de 'idCliente'
 
-    // Verificar si el cliente está logueado
-    if (!idCliente) {
-        return res.status(401).json({ error: 'No autorizado. El cliente no está logueado.' });
-    }
+            // Verificar si el cliente está logueado
+            if (!idCliente) {
+                return res.status(401).json({ error: 'No autorizado. El cliente no está logueado.' });
+            }
 
-    const query = `
-        SELECT 
-            r.ID_Recordatorio,
-            r.ID_Cliente,
-            r.ID_Producto,
-            r.Telefono,
-            dr.fecha,
-            dr.hora,
-            dr.Mensaje,
-            dr.Dosis,
-            dr.Cantidad_Mendicamentos
-        FROM 
-            Recordatorios r
-        JOIN 
-            detalle_recordatorio dr ON r.ID_Recordatorio = dr.ID_Recordatorio
-        WHERE 
-            r.ID_Cliente = ?;
-    `;
+            const query = `
+                SELECT 
+                    r.ID_Recordatorio,
+                    r.ID_Cliente,
+                    r.ID_Producto,
+                    r.Telefono,
+                    dr.fecha,
+                    dr.hora,
+                    dr.Mensaje,
+                    dr.Dosis,
+                    dr.Cantidad_Mendicamentos
+                FROM 
+                    Recordatorios r
+                JOIN 
+                    detalle_recordatorio dr ON r.ID_Recordatorio = dr.ID_Recordatorio
+                WHERE 
+                    r.ID_Cliente = ?;
+            `;
 
-    connection.query(query, [idCliente], (err, results) => {
-        if (err) {
-            console.error('Error al obtener recordatorios:', err);
-            return res.status(500).json({ error: 'Error al obtener los recordatorios' });
-        }
+            connection.query(query, [idCliente], (err, results) => {
+                if (err) {
+                    console.error('Error al obtener recordatorios:', err);
+                    return res.status(500).json({ error: 'Error al obtener los recordatorios' });
+                }
 
-        // Verificar si results tiene datos
-        console.log("Recordatorios obtenidos: ", results);
+                // Verificar si results tiene datos
+                console.log("Recordatorios obtenidos: ", results);
 
-        // Renderizar la vista y pasarle los resultados
-        res.render('pagina_pedidos/recordatorio', { recordatorios: results });
-    });
-});
+                // Renderizar la vista y pasarle los resultados
+                res.render('pagina_pedidos/recordatorio', { recordatorios: results });
+            });
+        });
 
     router.delete('/pagina_pedidos/eliminar_recordatorio/:id', (req, res) => {
         const id = req.params.id;
@@ -676,55 +607,7 @@ router.get('/pagina_pedidos/recordatorio', (req, res) => {
             }
         });
     });
-        
-
-
-
-
-    // Ruta para obtener productos comprados
-    router.get('/api/mis-productos-comprados', async (req, res) => {
-        try {
-            console.log('Estado de la sesión:', {
-                sesionActiva: req.session.loggedinCliente,
-                idCliente: req.session.userIdCliente  // Cambiado para usar userIdCliente
-            });
-
-            if (!req.session.loggedinCliente) {
-                console.log('Cliente no ha iniciado sesión');
-                return res.redirect('/pagina_pedidos/login_clientes');
-            }
-
-            const query = `
-                SELECT DISTINCT 
-                    p.ID_Producto AS id,
-                    p.Nombre AS nombre
-                FROM Productos p
-                INNER JOIN Detalles_Venta dv ON p.ID_Producto = dv.ID_Producto
-                INNER JOIN Ventas v ON dv.ID_Venta = v.ID_Venta
-                WHERE v.ID_Cliente = ?
-                ORDER BY p.Nombre;
-            `;
-
-            // Usar el ID del cliente desde la sesión
-            connection.query(query, [req.session.userIdCliente], (error, results) => {
-                if (error) {
-                    console.error('Error en la consulta:', error);
-                    return res.status(500).json({ error: 'Error al obtener productos' });
-                }
-
-                console.log('Productos encontrados:', results);
-                res.json(results);
-            });
-
-        } catch (error) {
-            console.error('Error general:', error);
-            res.status(500).json({ error: 'Error del servidor' });
-        }
-    });
-
     
-
-
     // Ruta para obtener recordatorios del cliente
     router.get('/api/mis-recordatorios', async (req, res) => {
         try {
@@ -824,43 +707,50 @@ router.get('/pagina_pedidos/recordatorio', (req, res) => {
         }
     });
 
-    // Eliminar un recordatorio
-    router.delete('/api/eliminar-recordatorio/:id', async (req, res) => {
+    // Ruta para obtener productos comprados
+    router.get('/api/mis-productos-comprados', async (req, res) => {
         try {
+            console.log('Estado de la sesión:', {
+                sesionActiva: req.session.loggedinCliente,
+                idCliente: req.session.userIdCliente  // Cambiado para usar userIdCliente
+            });
+
             if (!req.session.loggedinCliente) {
-                return res.status(401).json({ error: 'No autorizado' });
+                console.log('Cliente no ha iniciado sesión');
+                return res.redirect('/pagina_pedidos/login_clientes');
             }
 
-            const idRecordatorio = req.params.id;
+            const query = `
+                SELECT DISTINCT 
+                    p.ID_Producto AS id,
+                    p.Nombre AS nombre
+                FROM Productos p
+                INNER JOIN Detalles_Venta dv ON p.ID_Producto = dv.ID_Producto
+                INNER JOIN Ventas v ON dv.ID_Venta = v.ID_Venta
+                WHERE v.ID_Cliente = ?
+                ORDER BY p.Nombre;
+            `;
 
-            await connection.beginTransaction();
+            // Usar el ID del cliente desde la sesión
+            connection.query(query, [req.session.userIdCliente], (error, results) => {
+                if (error) {
+                    console.error('Error en la consulta:', error);
+                    return res.status(500).json({ error: 'Error al obtener productos' });
+                }
 
-            try {
-                // Primero eliminar los detalles
-                await connection.query(
-                    'DELETE FROM detalle_recordatorio WHERE ID_Recordatorio = ?',
-                    [idRecordatorio]
-                );
-
-                // Luego eliminar el recordatorio principal
-                await connection.query(
-                    'DELETE FROM Recordatorio WHERE ID_Recordatorio = ? AND ID_Cliente = ?',
-                    [idRecordatorio, req.session.idCliente]
-                );
-
-                await connection.commit();
-                res.json({ message: 'Recordatorio eliminado exitosamente' });
-
-            } catch (error) {
-                await connection.rollback();
-                throw error;
-            }
+                console.log('Productos encontrados:', results);
+                res.json(results);
+            });
 
         } catch (error) {
-            console.error('Error al eliminar recordatorio:', error);
-            res.status(500).json({ error: 'Error al eliminar el recordatorio' });
+            console.error('Error general:', error);
+            res.status(500).json({ error: 'Error del servidor' });
         }
     });
+        
+    
+        
+
 
     // Ruta para mostrar la consulta
     router.get('/pagina_pedidos/consultas', (req, res) => {
