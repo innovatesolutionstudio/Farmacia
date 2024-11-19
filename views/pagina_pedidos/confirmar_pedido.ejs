@@ -10,49 +10,7 @@
             href="/resources/css/sistema_clientes/confirmar_pedido.css">
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <style>
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .table th, .table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-
-        .table th {
-            text-align: left;
-            background-color: #f2f2f2;
-        }
-
-        .table td:last-child {
-            text-align: right;
-        }
-
-        .form-section {
-            margin-bottom: 20px;
-        }
-
-        .order-summary {
-            margin-top: 20px;
-        }
-
-        .login-prompt {
-            margin-bottom: 20px;
-        }
-
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
+        
     </style>
     </head>
     <body>
@@ -100,6 +58,9 @@
                     </select>
                 
                     <button type="submit">Confirmar Pedido</button>
+                    
+                    <a href="/pagina_pedidos/productos/1" class="btn btn-danger" id="cancelar-pedido">Cancelar Pedido</a>
+
                 </form>
                 
             </div>
@@ -151,92 +112,92 @@
 
         </script>
      <script>
-        document.getElementById('pedido-form').addEventListener('submit', async function (event) {
-    event.preventDefault(); // Prevenir el envío normal del formulario
+    document.getElementById('pedido-form').addEventListener('submit', async function (event) {
+        event.preventDefault(); // Prevenir el envío normal del formulario
 
-    // Recopilar datos del carrito
-    const carrito = [];
-    const tableRows = document.querySelectorAll('#tablaProductos tr');
+        // Recopilar datos del carrito
+        const carrito = [];
+        const tableRows = document.querySelectorAll('#tablaProductos tr');
 
-    tableRows.forEach(row => {
-        const productId = row.querySelector('td[data-id]').getAttribute('data-id');
-        const quantity = row.querySelector('td[data-quantity]').getAttribute('data-quantity');
-        const price = row.querySelector('td[data-price]').getAttribute('data-price');
+        tableRows.forEach(row => {
+            const productId = row.querySelector('td[data-id]').getAttribute('data-id');
+            const quantity = row.querySelector('td[data-quantity]').getAttribute('data-quantity');
+            const price = row.querySelector('td[data-price]').getAttribute('data-price');
 
-        carrito.push({
-            id: productId,
-            name: row.querySelector('td[data-id]').textContent.trim(),
-            price: parseFloat(price),
-            quantity: parseInt(quantity, 10)
+            carrito.push({
+                id: productId,
+                name: row.querySelector('td[data-id]').textContent.trim(),
+                price: parseFloat(price),
+                quantity: parseInt(quantity, 10)
+            });
+        });
+
+        // Recolectar datos del cliente y pedido
+        const data = {
+            nombre: document.getElementById('nombre').value,
+            apellido: document.getElementById('apellido').value,
+            direccion: document.getElementById('direccion').value,
+            ci_nit: document.getElementById('ci_nit').value,
+            telefono: document.getElementById('telefono').value,
+            distrito: document.getElementById('distrito').value,
+            tarifaEnvio: document.getElementById('distrito').selectedOptions[0].getAttribute('data-tarifa'),
+            productos: carrito
+        };
+
+        console.log('Datos enviados:', data);
+
+        // Confirmación del pedido
+        Swal.fire({
+            title: '¿Confirmar pedido?',
+            text: 'Una vez confirmado, no podrás deshacer esta acción.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, confirmar',
+            cancelButtonText: 'Cancelar'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const finalizarResponse = await fetch('/pagina_pedidos/finalizar_pedido', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (!finalizarResponse.ok) {
+                        throw new Error('Error al procesar el pedido');
+                    }
+
+                    const finalizarResult = await finalizarResponse.json();
+                    window.open(finalizarResult.facturaUrl, '_blank'); // Abrir factura en nueva pestaña
+
+                    Swal.fire({
+                        title: 'Pedido confirmado',
+                        text: 'Tu pedido ha sido procesado y la factura generada.',
+                        icon: 'success'
+                    }).then(() => {
+                        // Redirigir a la página de productos
+                        window.location.href = '/pagina_pedidos/productos/1';
+                    });
+                } catch (error) {
+                    console.error('Error al procesar el pedido o generar la factura:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un problema al procesar tu pedido. Intenta de nuevo.',
+                        icon: 'error'
+                    });
+                }
+            }
         });
     });
 
-    // Recolectar datos del cliente y pedido
-    const data = {
-        nombre: document.getElementById('nombre').value,
-        apellido: document.getElementById('apellido').value,
-        direccion: document.getElementById('direccion').value,
-        ci_nit: document.getElementById('ci_nit').value,
-        telefono: document.getElementById('telefono').value,
-        distrito: document.getElementById('distrito').value,
-        tarifaEnvio: document.getElementById('distrito').selectedOptions[0].getAttribute('data-tarifa'),
-        productos: carrito
-    };
 
-    console.log('Datos enviados:', data);
+    </script>
 
-    // Confirmación del pedido
-    Swal.fire({
-        title: '¿Confirmar pedido?',
-        text: 'Una vez confirmado, no podrás deshacer esta acción.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, confirmar',
-        cancelButtonText: 'Cancelar'
-    }).then(async (result) => {
-        if (result.isConfirmed) {
-            try {
-                
-
-                const finalizarResponse = await fetch('/pagina_pedidos/finalizar_pedido', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (!finalizarResponse.ok) {
-                    throw new Error('Error al procesar el pedido');
-                }
-
-                const finalizarResult = await finalizarResponse.json();
-                window.open(finalizarResult.facturaUrl, '_blank'); // Abrir factura en nueva pestaña
-
-               
-
-                Swal.fire({
-                    title: 'Pedido confirmado',
-                    text: 'Tu pedido ha sido procesado y la factura generada.',
-                    icon: 'success'
-                });
-            } catch (error) {
-                console.error('Error al procesar el pedido o generar la factura:', error);
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Hubo un problema al procesar tu pedido. Intenta de nuevo.',
-                    icon: 'error'
-                });
-            }
-        }
-    });
-});
-
-     </script>
-
-        <script>
+    <script>
         // Mostrar formulario de inicio de sesión
         function mostrarLogin() {
             Swal.fire({
@@ -296,22 +257,54 @@
         }
     </script>
 
-<script>
-    // Actualizar el costo de envío y el total al seleccionar un distrito
-    function actualizarTotal() {
-        const distritoSelect = document.getElementById('distrito');
-        const tarifa = parseFloat(distritoSelect.options[distritoSelect.selectedIndex].getAttribute('data-tarifa'));
-        const costoEnvioElement = document.getElementById('costoEnvio');
-        const totalCarritoElement = document.getElementById('totalCarrito');
-        const baseTotal = <%= totalCarrito.toFixed(2) %>; // Total base sin tarifa
+    <script>
+        // Actualizar el costo de envío y el total al seleccionar un distrito
+        function actualizarTotal() {
+            const distritoSelect = document.getElementById('distrito');
+            const tarifa = parseFloat(distritoSelect.options[distritoSelect.selectedIndex].getAttribute('data-tarifa'));
+            const costoEnvioElement = document.getElementById('costoEnvio');
+            const totalCarritoElement = document.getElementById('totalCarrito');
+            const baseTotal = <%= totalCarrito.toFixed(2) %>; // Total base sin tarifa
 
-        // Actualizar costo de envío
-        costoEnvioElement.textContent = `Bs. ${tarifa.toFixed(2)}`;
+            // Actualizar costo de envío
+            costoEnvioElement.textContent = `Bs. ${tarifa.toFixed(2)}`;
 
-        // Actualizar total incluyendo el costo de envío
-        const totalConEnvio = baseTotal + tarifa;
-        totalCarritoElement.textContent = `Bs. ${totalConEnvio.toFixed(2)}`;
-    }
-</script>
+            // Actualizar total incluyendo el costo de envío
+            const totalConEnvio = baseTotal + tarifa;
+            totalCarritoElement.textContent = `Bs. ${totalConEnvio.toFixed(2)}`;
+        }
+    </script>
+ 
+    <script>
+        document.getElementById('cancelar-pedido').addEventListener('click', function (event) {
+            event.preventDefault(); // Prevenir la redirección inmediata
+    
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: 'Esto cancelará tu pedido y no podrás recuperarlo.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, cancelar',
+                cancelButtonText: 'No, continuar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Si el usuario confirma, redirigir a la ruta de cancelar pedido
+                    window.location.href = '/pagina_pedidos/productos/1';
+                } else {
+                    // Si el usuario cancela, mostrar un mensaje de que continúa en el pedido
+                    Swal.fire({
+                        title: 'Pedido no cancelado',
+                        text: 'Puedes continuar editando o confirmando tu pedido.',
+                        icon: 'info',
+                        timer: 2000, // Mostrar por 2 segundos
+                        showConfirmButton: false
+                    });
+                }
+            });
+        });
+    </script>
+    
     </body>
 </html>

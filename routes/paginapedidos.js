@@ -4,20 +4,62 @@ const router = express.Router();
 // Invocamos a la conexión de la base de datos
 const connection = require("../database/db");
 const pool = require('../database/db');
+
+
+
 const axios = require('axios'); // Importar Axios
-const PDFDocument = require("pdfkit");
-const fs = require("fs");
-const path = require("path");
-
-
-
-
-
 
 
 
 router.get('/pagina_pedidos/clientes_index', (req, res) => {      
     res.render('pagina_pedidos/clientes_index');
+});
+
+
+// Ruta para buscar productos
+router.get('/buscar_productos_cli', (req, res) => {
+    const search = req.query.search || ''; // Término de búsqueda
+    const idSucursal = parseInt(req.query.idSucursal, 10); // ID de la sucursal
+
+    if (!idSucursal) {
+        return res.status(400).json({ error: 'Se requiere un ID de sucursal válido.' });
+    }
+
+    // Consulta SQL para buscar productos
+    const query = `
+        SELECT 
+            p.ID_Producto,
+            p.Nombre,
+            p.Precio_Unitario,
+            p.Fotografia,
+            p.Descripcion,
+            p.Indicaciones,
+            p.Efectos_Secundarios,
+            i.Cantidad AS Stock,
+            u.Nombre AS Unidad_Venta
+        FROM 
+            productos p
+        JOIN 
+            inventario i ON p.ID_Producto = i.ID_Producto
+        JOIN 
+            sucursales s ON i.ID_Sucursal = s.ID_Sucursal
+        LEFT JOIN
+            unidad_venta u ON p.ID_Unidad_Venta = u.ID_Unidad_Venta
+        WHERE 
+            i.ID_Sucursal = ? AND p.Nombre LIKE ?
+    `;
+
+    const values = [idSucursal, `%${search}%`];
+
+    // Ejecutar la consulta
+    connection.query(query, values, (err, results) => {
+        if (err) {
+            console.error('Error al realizar la consulta:', err);
+            return res.status(500).json({ error: 'Error interno del servidor.' });
+        }
+
+        res.json(results);
+    });
 });
 
 
@@ -253,26 +295,21 @@ router.get('/pagina_pedidos/confirmar_pedido', (req, res) => {
         });
     });
 });
-
 router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
     const { nombre, apellido, direccion, ci_nit, telefono, distrito, tarifaEnvio, productos } = req.body;
-    console.log('Datos recibidos del cliente:');
-    console.log('Nombre:', nombre);
-    console.log('Apellido:', apellido);
-    console.log('Dirección:', direccion);
-    console.log('CI/NIT:', ci_nit);
-    console.log('Teléfono:', telefono);
-    console.log('Distrito:', distrito);
-    console.log('Tarifa de envío:', tarifaEnvio);
-    console.log('Productos recibidos:', productos);
+
+    console.log('Datos recibidos del cliente:', {
+        nombre, apellido, direccion, ci_nit, telefono, distrito, tarifaEnvio, productos
+    });
+
+    if (!Array.isArray(productos) || productos.length === 0) {
+        console.error('El carrito está vacío o inválido');
+        return res.status(400).send('El carrito está vacío o es inválido');
+    }
 
     let connection;
     try {
-        if (!Array.isArray(productos) || productos.length === 0) {
-            console.error('El carrito está vacío o inválido');
-            return res.status(400).send('El carrito está vacío o es inválido');
-        }
-
+        // Mapeo de productos
         const productosMapeados = productos.map((producto) => ({
             ID_Producto: producto.id,
             cantidad: producto.quantity,
@@ -280,6 +317,7 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
 
         console.log('Productos mapeados:', productosMapeados);
 
+        // Obtener conexión del pool
         connection = await new Promise((resolve, reject) => {
             pool.getConnection((err, conn) => {
                 if (err) return reject(err);
@@ -287,6 +325,7 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
             });
         });
 
+        // Iniciar transacción
         await new Promise((resolve, reject) => {
             connection.beginTransaction(err => {
                 if (err) return reject(err);
@@ -294,6 +333,7 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
             });
         });
 
+        // Registrar cliente si no existe
         let clienteId = null;
         const clienteExistente = await new Promise((resolve, reject) => {
             const query = 'SELECT ID_Cliente FROM clientes WHERE CI = ?';
@@ -319,6 +359,7 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
             clienteId = nuevoCliente.insertId;
         }
 
+        // Registrar la venta
         const timestamp = Date.now();
         const fileName = `venta_${timestamp}.pdf`;
         const ventaId = await new Promise((resolve, reject) => {
@@ -334,6 +375,7 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
 
         console.log('Venta registrada con ID:', ventaId);
 
+        // Registrar detalles de la venta
         const detallesVentaValues = productosMapeados.map(item => [ventaId, item.ID_Producto, item.cantidad]);
         await new Promise((resolve, reject) => {
             const query = `
@@ -348,6 +390,7 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
 
         console.log('Detalles de la venta registrados.');
 
+        // Confirmar transacción
         await new Promise((resolve, reject) => {
             connection.commit(err => {
                 if (err) return reject(err);
@@ -365,55 +408,42 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
             fechaVenta: new Date().toISOString(),
             detalles: productos.map(producto => ({
                 cantidad: producto.quantity,
-                producto: producto.name.replace(/\s+/g, ' ').trim(), // Limpiar saltos de línea
-                precio: producto.price
+                producto: producto.name.trim(),
+                precio: producto.price,
             })),
             totalVenta: productos.reduce((total, producto) => total + producto.price * producto.quantity, 0),
             tarifaEnvio: parseFloat(tarifaEnvio),
             ID_Caja: 1,
-            ID_Sucursal: 1
+            ID_Sucursal: 1,
         };
-        
 
-        try {
-            const facturaResponse = await axios.post(
-                'http://localhost:3001/pagina_pedidos/generar_factura_pedido',
-                facturaData,
-                {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-        
-            if (facturaResponse.status !== 200) {
-                throw new Error('Error al generar la factura');
-            }
-        
-            const facturaResult = facturaResponse.data;
-            console.log('Factura generada correctamente:', facturaResult);
-            res.status(200).json({
-                message: 'Pedido finalizado y factura generada',
-                facturaUrl: facturaResult.url
-            });
-        } catch (error) {
-            console.error('Error al generar la factura:', error.response ? error.response.data : error.message);
-            throw new Error('Error al generar la factura');
-        }
         console.log('Datos enviados a generar_factura_pedido:', facturaData);
 
-        if (!facturaResponse.ok) {
+        let facturaResponse;
+
+        try {
+            const response = await axios.post(
+                'http://localhost:3001/pagina_pedidos/generar_factura_pedido',
+                facturaData,
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+
+            if (response.status === 200) {
+                facturaResponse = response.data;
+            } else {
+                throw new Error('Error al generar la factura');
+            }
+        } catch (error) {
+            console.error('Error al generar la factura:', error.message);
             throw new Error('Error al generar la factura');
         }
 
-        const facturaResult = await facturaResponse.json();
-
-        console.log('Factura generada correctamente:', facturaResult);
+        console.log('Factura generada correctamente:', facturaResponse);
 
         req.session.carrito = [];
         res.status(200).json({
             message: 'Pedido finalizado y factura generada',
-            facturaUrl: facturaResult.url
+            facturaUrl: facturaResponse.url,
         });
     } catch (err) {
         console.error('Error al procesar el pedido:', err);
@@ -422,134 +452,208 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
                 connection.rollback(() => resolve());
             });
         }
-        res.status(500).send('Ocurrió un error al procesar tu pedido');
+        if (!res.headersSent) {
+            res.status(500).send('Ocurrió un error al procesar tu pedido');
+        }
     } finally {
         if (connection) connection.release();
     }
 });
 
 
+const fs = require("fs");
+const path = require("path");
+const PDFDocument = require("pdfkit");
 router.post("/pagina_pedidos/generar_factura_pedido", async (req, res) => {
     try {
-        console.log("Datos recibidos para generar factura:", req.body);
-
-        const {
-            ID_Empleado,
-            nombre,
-            apellido,
-            nit,
-            carnet,
-            fechaVenta,
-            detalles,
-            totalVenta,
-            tarifaEnvio,
-            ID_Caja,
-            ID_Sucursal,
-        } = req.body;
-
-        // Validaciones de datos
-        if (
-            !ID_Empleado ||
-            !nombre ||
-            !apellido ||
-            !fechaVenta ||
-            !Array.isArray(detalles) ||
-            isNaN(totalVenta) ||
-            isNaN(tarifaEnvio)
-        ) {
-            return res.status(400).json({ error: "Datos faltantes o inválidos para generar factura" });
-        }
-
-        console.log("Datos validados correctamente. Generando factura...");
-
-        // Calcular el total con envío
-        const totalConEnvio = totalVenta + parseFloat(tarifaEnvio);
-
-        // Configuración del archivo
-        const timestamp = Date.now();
-        const fileName = `venta_${timestamp}.pdf`;
-        const filePath = path.join(__dirname, "../facturas_ventas", fileName);
-
-        // Crear el documento PDF
-        const doc = new PDFDocument({ size: [300, 600], margin: 10 });
-        doc.pipe(fs.createWriteStream(filePath));
-
-        // Encabezado
-        const pageWidth = doc.page.width;
-        const logoWidth = 50;
-        const centerX = (pageWidth - logoWidth) / 2;
-
-        doc.image("assets/images/logo/logo_fm.png", centerX, 10, { width: logoWidth });
-        doc.moveDown(5);
-        doc.font("Helvetica-Bold").fontSize(12).text("FARMACIA 25 DE JULIO", { align: "center" });
-        doc.font("Helvetica").fontSize(8).text("Dirección: Av. Principal #123", { align: "center" });
-        doc.text("Teléfono: (123) 456-7890", { align: "center" });
-        doc.moveDown(1);
-
-        doc.font("Helvetica-Bold").fontSize(16).text("RECIBO", { align: "center" });
-        doc
-            .font("Helvetica")
-            .fontSize(10)
-            .text(`Número de Recibo: ${timestamp}`, { align: "center" });
-        doc.moveDown(1);
-
-        // Datos del cliente
-        doc.font("Helvetica-Bold").text("Datos del Cliente:", { align: "left" });
-        doc.moveDown(0.7);
-        doc.font("Helvetica").fontSize(10).text(`Nombre Completo: ${nombre} ${apellido}`);
-        doc.text(`Teléfono: N/A`); // Asume que el teléfono no está disponible
-        doc.text(`NIT: ${nit || "N/A"}`);
-        doc.text(`Carnet: ${carnet || "N/A"}`);
-        doc.text(`Fecha de Venta: ${fechaVenta}`);
-        doc.text(`Código de Vendedor: ${ID_Empleado}`);
-        doc.text(`Código de Sucursal: ${ID_Sucursal}`);
-        doc.text(`Código de Caja: ${ID_Caja}`);
-        doc.moveDown(1);
-
-        // Detalles de Compra
-        doc.font("Helvetica-Bold").text("Detalles de Compra:");
-        doc.moveDown(1);
-        doc.font("Helvetica-Bold").text("Cantidad   -   Producto   -   Precio Unitario   - Subtotal");
-        detalles.forEach((detalle) => {
-            const subtotal = detalle.cantidad * detalle.precio;
+      console.log("Datos recibidos para generar factura:", req.body);
+  
+      const {
+        ID_Empleado,
+        nombre,
+        apellido,
+        nit,
+        carnet,
+        fechaVenta,
+        detalles,
+        totalVenta,
+        tarifaEnvio,
+        ID_Caja,
+        ID_Sucursal,
+      } = req.body;
+  
+      // Validaciones de datos
+      if (
+        !ID_Empleado ||
+        !nombre ||
+        !apellido ||
+        !fechaVenta ||
+        !Array.isArray(detalles) ||
+        isNaN(totalVenta) ||
+        isNaN(tarifaEnvio)
+      ) {
+        return res.status(400).json({ error: "Datos faltantes o inválidos para generar factura" });
+      }
+  
+      console.log("Datos validados correctamente. Generando factura...");
+  
+      // Función para generar código y contraseña dinámicos
+      const generarCodigoYContrasena = (nombre, apellido, carnet, nit) => {
+        const codigoBase = `${nombre.charAt(0).toLowerCase()}${apellido.charAt(0).toLowerCase()}`;
+        const codigo = carnet
+          ? `${codigoBase}${carnet}`
+          : nit
+          ? `${codigoBase}${nit}`
+          : "sin-codigo";
+        const contrasena = carnet || nit || "sin-contrasena";
+        return { codigo, contrasena };
+      };
+  
+      // Consulta para obtener o generar los datos del cliente
+      const obtenerDatosCliente = () => {
+        return new Promise((resolve, reject) => {
+          const query = "SELECT Telefono, Codigo, Contrasena FROM clientes WHERE CI = ? OR Nit = ?";
+          connection.query(query, [carnet, nit], (error, results) => {
+            if (error) {
+              reject(error);
+            } else if (results.length > 0) {
+              resolve(results[0]); // Retorna los datos del cliente
+            } else {
+              // Generar código y contraseña dinámicos para un nuevo cliente
+              const datosGenerados = generarCodigoYContrasena(nombre, apellido, carnet, nit);
+              resolve({ Telefono: "N/A", ...datosGenerados });
+            }
+          });
+        });
+      };
+  
+      // Obtener los datos del cliente
+      const clienteDatos = await obtenerDatosCliente();
+      const {
+        Telefono: telefonoCliente,
+        Codigo: codigoCliente,
+        Contrasena: contrasenaCliente,
+      } = clienteDatos;
+  
+      console.log("Datos del cliente recuperados:", clienteDatos);
+  
+      // Calcular el total con envío
+      const totalConEnvio = parseFloat(totalVenta) + parseFloat(tarifaEnvio);
+  
+      // Configuración del archivo
+      const timestamp = Date.now();
+      const fileName = `venta_${timestamp}.pdf`;
+      const filePath = path.join(__dirname, "../facturas_ventas", fileName);
+  
+      // Crear el documento PDF
+      const generarPDF = () => {
+        return new Promise((resolve, reject) => {
+          try {
+            const doc = new PDFDocument({ size: [300, 600], margin: 10 });
+            const stream = fs.createWriteStream(filePath);
+  
+            doc.pipe(stream);
+  
+            // Encabezado
+            const pageWidth = doc.page.width;
+            const logoWidth = 50;
+            const centerX = (pageWidth - logoWidth) / 2;
+  
+            doc.image("assets/images/logo/logo_fm.png", centerX, 10, { width: logoWidth });
+            doc.moveDown(5);
+            doc.font("Helvetica-Bold").fontSize(12).text("FARMACIA 25 DE JULIO", { align: "center" });
+            doc.font("Helvetica").fontSize(8).text("Dirección: Av. Principal #123", { align: "center" });
+            doc.text("Teléfono: (123) 456-7890", { align: "center" });
+            doc.moveDown(1);
+  
+            doc.font("Helvetica-Bold").fontSize(16).text("RECIBO", { align: "center" });
             doc
+              .font("Helvetica")
+              .fontSize(10)
+              .text(`Número de Recibo: ${timestamp}`, { align: "center" });
+            doc.moveDown(1);
+  
+            // Datos del cliente
+            doc.font("Helvetica-Bold").text("Datos del Cliente:", { align: "left" });
+            doc.moveDown(0.7);
+            doc.font("Helvetica").fontSize(10).text(`Nombre Completo: ${nombre} ${apellido}`);
+            doc.text(`Teléfono: ${telefonoCliente || "N/A"}`);
+            doc.text(`NIT: ${nit || "N/A"}`);
+            doc.text(`Carnet: ${carnet || "N/A"}`);
+            doc.text(`Fecha de Venta: ${fechaVenta}`);
+            doc.text(`Código de Vendedor: ${ID_Empleado}`);
+            doc.text(`Código de Sucursal: ${ID_Sucursal}`);
+            doc.text(`Código de Caja: ${ID_Caja}`);
+            doc.moveDown(1);
+            doc.font("Helvetica-Bold").text("Datos para el Sitio Web:", { align: "left" });
+            doc.font("Helvetica").text(`Codigo de Usuario: ${codigoCliente}`);
+            doc.text(`Contraseña de Usuario: ${contrasenaCliente}`);
+            doc.moveDown(1);
+  
+            // Detalles de Compra
+            doc.font("Helvetica-Bold").text("Detalles de Compra:");
+            doc.moveDown(1);
+            doc.font("Helvetica-Bold").text("Cantidad   -   Producto   -   Precio Unitario   - Subtotal");
+            detalles.forEach((detalle) => {
+              const subtotal = detalle.cantidad * detalle.precio;
+              doc
                 .font("Helvetica")
                 .fontSize(10)
                 .text(
-                    `${detalle.cantidad}      x      ${detalle.producto}    x    ${detalle.precio.toFixed(2)} Bs = ${subtotal.toFixed(2)} Bs`
+                  `${detalle.cantidad} x ${detalle.producto} x ${detalle.precio.toFixed(2)} Bs = ${subtotal.toFixed(2)} Bs`
                 );
+            });
+  
+            doc.moveDown(1);
+  
+            // Totales
+            doc.font("Helvetica-Bold").fontSize(10).text(`Descuento: 0 Bs`, { align: "right" });
+            doc.text(`Costo de Envío: ${tarifaEnvio.toFixed(2)} Bs`, { align: "right" });
+            doc.text(`Sub Total: ${totalVenta.toFixed(2)} Bs`, { align: "right" });
+            doc.text(`Total a Pagar: ${totalConEnvio.toFixed(2)} Bs`, { align: "right" });
+  
+            doc.moveDown(1);
+  
+            const leftMargin = 10; // Asigna un valor a leftMargin
+            const rightMargin = 10;
+            const textWidth = 300 - leftMargin - rightMargin; // Ancho total menos los márgenes
+            // Derechos reservados
+            doc.font('Helvetica').fontSize(6).text(
+              `Derechos Reservados © ${new Date().getFullYear()} FARMACIA 25 de Julio. Todos los derechos reservados. Este recibo y su contenido están protegidos por las leyes de derechos de autor y no pueden ser reproducidos, distribuidos, transmitidos, exhibidos, publicados o transmitidos sin el permiso previo por escrito del titular de los derechos de autor.`,
+              leftMargin, // Usamos la variable `leftMargin` definida
+              doc.y, 
+              { 
+                align: 'justify', 
+                width: textWidth 
+              }
+            );
+  
+            // Finalizar y guardar el PDF
+            doc.end();
+  
+            stream.on("finish", () => resolve());
+            stream.on("error", (error) => reject(error));
+          } catch (error) {
+            reject(error);
+          }
         });
-
-        doc.moveDown(1);
-
-        // Totales
-        doc.font("Helvetica-Bold").fontSize(10).text(`Descuento: 0 Bs`, { align: "right" });
-        doc.text(`Costo de Envío: ${tarifaEnvio.toFixed(2)} Bs`, { align: "right" });
-        doc.text(`Sub Total: ${totalVenta.toFixed(2)} Bs`, { align: "right" });
-        doc.text(`Total a Pagar: ${totalConEnvio.toFixed(2)} Bs`, { align: "right" });
-
-        doc.moveDown(1);
-
-        // Derechos reservados
-        doc.font("Helvetica").fontSize(6).text(
-            `Derechos Reservados © ${new Date().getFullYear()} FARMACIA 25 de Julio.`,
-            { align: "justify" }
-        );
-
-        // Finalizar y guardar el PDF
-        doc.end();
-
-        console.log("Factura generada en:", filePath);
-
-        res.status(200).json({
-            message: "Factura generada correctamente",
-            url: `/facturas_ventas/${fileName}`,
-        });
+      };
+  
+      // Generar PDF y responder
+      await generarPDF();
+      console.log("Factura generada en:", filePath);
+  
+      return res.status(200).json({
+        message: "Factura generada correctamente",
+        url: `/facturas_ventas/${fileName}`,
+      });
     } catch (error) {
-        console.error("Error al generar la factura:", error);
+      console.error("Error al generar la factura:", error);
+      if (!res.headersSent) {
         res.status(500).json({ error: "Error al generar la factura" });
+      }
     }
-});
-
+  });
+  
 
 module.exports = router;

@@ -52,7 +52,7 @@ const notificacionesRoutes = require("./routes/notificaciones");
 const pedidos = require("./routes/pedidos");
 const reporteganancias = require("./routes/reporte_ganancias");
 const graficosRouter = require("./routes/graficos");
-const paginapedidos = require('./routes/paginapedidos');
+const paginapedidos = require("./routes/paginapedidos");
 //reportes
 const generador_reportesRoutes = require("./routes/generador_reportes");
 const reportestareasRoutes = require("./routes/reporte_tareas");
@@ -108,6 +108,10 @@ const path = require('path');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Middleware para procesar datos de formularios
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+//#endregion
 
 
 // Middleware para manejo de datos Json
@@ -115,10 +119,6 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Middleware para procesar datos de formularios
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-//#endregion
 
 //#region estilos - js - css
 app.use("/resources", express.static("assets"));

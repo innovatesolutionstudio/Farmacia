@@ -62,7 +62,7 @@
                     <a href="#" class="cart-icon"
                         onclick="toggleCart(); return false;">
                         <i class="fas fa-shopping-cart"></i>
-                        <span class="cart-count">0</span>
+                        
                     </a>
                 </form>
 
@@ -96,19 +96,7 @@
                         <li><a href="#">Anticonceptivos</a></li>
                         <li><a href="#">Bioseguridad</a></li>
                     </ul>
-                    <h3 class="category-title">Popular Products</h3>
-                    <ul class="popular-list">
-                        <li class="popular-item">
-                            <img src="/resources/images/product1.png"
-                                alt="Producto 1">
-                            <p>Bs 12.50</p>
-                        </li>
-                        <li class="popular-item">
-                            <img src="/resources/images/product2.png"
-                                alt="Producto 2">
-                            <p>Bs 15.00</p>
-                        </li>
-                    </ul>
+                    
                 </aside>
 
                 <!-- Productos -->
@@ -117,9 +105,11 @@
                         <% products.forEach(product => { %>
                         <div class="product-card">
                             <img class="product-image"
-                                src="<%= product.Fotografia || '/fotos/img_productos/default.png' %>"
+                    
+                                src="<%= product.Fotografia  ? `/fotos/img_productos/${product.Fotografia}` : '/fotos/img_productos/default.png' %>"
                                 alt="<%= product.Nombre %>">
                             <h3 class="product-name"><%= product.Nombre %></h3>
+                            <h3 class="product-name"><%= product.Unidad_Venta %></h3>
                             <p class="product-price">Bs <%=
                                 product.Precio_Unitario %>/Unidad</p>
                                 <button class="add-to-cart" 
@@ -170,7 +160,8 @@
             </div>
 
         </section>
-        <script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
         function changePage(action) {
             let currentPage = <%= currentPage %>;
             const totalPages = <%= totalPages %>;
@@ -188,8 +179,8 @@
             window.location.search = urlParams.toString();
         }
 
-      </script>
-        <script>
+    </script>
+    <script>
         let currentProduct = null;
         let modalQuantity = 1;
         
@@ -225,92 +216,92 @@
         }
         
         function loadProductDetails(id, name, price, image, description, stock) {
-    try {
-        currentProduct = { 
-            id, 
-            name, 
-            price: parseFloat(price), 
-            image, 
-            description, 
-            stock: parseInt(stock) 
-        };
-        modalQuantity = 1;
-        
-        // Actualizar elementos del modal con los datos básicos
-        document.getElementById('modalProductName').textContent = name;
-        document.getElementById('modalProductPrice').textContent = `$${price}`;
-        document.getElementById('modalProductImage').src = image;
-        document.getElementById('modalProductDescription').textContent = description;
-        document.getElementById('modalProductStock').textContent = stock;
-        document.getElementById('modalQuantity').textContent = modalQuantity;
-        document.getElementById('modalProductId').textContent = id;
-        
-        // Mostrar el modal
-        const modal = document.getElementById('productModal');
-        modal.style.display = 'flex';
-        
-        // Obtener datos adicionales del producto
-        fetch(`/api/productos/${id}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Actualizar los campos con los datos recibidos
-                document.getElementById('modalProductIndications').textContent = 
-                    data.Indicaciones || 'No disponible';
-                document.getElementById('modalProductDose').textContent = 
-                    data.Dosis_Medicacmento || 'No disponible';
-                document.getElementById('modalProductSideEffects').textContent = 
-                    data.Efectos_Secundarios || 'No disponible';
-                document.getElementById('modalProductPrecautions').textContent = 
-                    data.Precauciones || 'No disponible';
+            try {
+                currentProduct = { 
+                    id, 
+                    name, 
+                    price: parseFloat(price), 
+                    image, 
+                    description, 
+                    stock: parseInt(stock) 
+                };
+                modalQuantity = 1;
                 
-                // Actualizar campos técnicos
-                const categoryName = getCategoryName(data.ID_Categoria);
-                const areaName = getAreaName(data.ID_Area_Producto);
-                const unitName = getUnitName(data.ID_Unidad_Venta);
+                // Actualizar elementos del modal con los datos básicos
+                document.getElementById('modalProductName').textContent = name;
+                document.getElementById('modalProductPrice').textContent = `$${price}`;
+                document.getElementById('modalProductImage').src = image;
+                document.getElementById('modalProductDescription').textContent = description;
+                document.getElementById('modalProductStock').textContent = stock;
+                document.getElementById('modalQuantity').textContent = modalQuantity;
+                document.getElementById('modalProductId').textContent = id;
                 
-                document.getElementById('modalProductCategory').textContent = categoryName;
-                document.getElementById('modalProductArea').textContent = areaName;
-                document.getElementById('modalProductUnit').textContent = unitName;
-            })
-            .catch(error => {
-                console.error('Error loading product details:', error);
-                // Mostrar mensaje de error en el modal
-                const tabs = document.querySelectorAll('.tab-content');
-                tabs.forEach(tab => {
-                    const fields = tab.querySelectorAll('p');
-                    fields.forEach(field => {
-                        if (field.textContent === '') {
-                            field.textContent = 'No disponible';
-                        }   
+                // Mostrar el modal
+                const modal = document.getElementById('productModal');
+                modal.style.display = 'flex';
+                
+                // Obtener datos adicionales del producto
+                fetch(`/api/productos/${id}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Actualizar los campos con los datos recibidos
+                        document.getElementById('modalProductIndications').textContent = 
+                            data.Indicaciones || 'No disponible';
+                        document.getElementById('modalProductDose').textContent = 
+                            data.Dosis_Medicacmento || 'No disponible';
+                        document.getElementById('modalProductSideEffects').textContent = 
+                            data.Efectos_Secundarios || 'No disponible';
+                        document.getElementById('modalProductPrecautions').textContent = 
+                            data.Precauciones || 'No disponible';
+                        
+                        // Actualizar campos técnicos
+                        const categoryName = getCategoryName(data.ID_Categoria);
+                        const areaName = getAreaName(data.ID_Area_Producto);
+                        const unitName = getUnitName(data.ID_Unidad_Venta);
+                        
+                        document.getElementById('modalProductCategory').textContent = categoryName;
+                        document.getElementById('modalProductArea').textContent = areaName;
+                        document.getElementById('modalProductUnit').textContent = unitName;
+                    })
+                    .catch(error => {
+                        console.error('Error loading product details:', error);
+                        // Mostrar mensaje de error en el modal
+                        const tabs = document.querySelectorAll('.tab-content');
+                        tabs.forEach(tab => {
+                            const fields = tab.querySelectorAll('p');
+                            fields.forEach(field => {
+                                if (field.textContent === '') {
+                                    field.textContent = 'No disponible';
+                                }   
+                            });
+                        });
                     });
-                });
-            });
-    } catch (error) {
-        console.error('Error in loadProductDetails:', error);
-    }
-}
+            } catch (error) {
+                console.error('Error in loadProductDetails:', error);
+            }
+        }
 
-// Funciones auxiliares para convertir IDs en nombres (deberás adaptarlas según tus datos)
-function getCategoryName(categoryId) {
-    // Aquí deberías tener un mapeo de IDs a nombres de categorías
-    // Por ahora retornamos el ID
-    return categoryId || 'No disponible';
-}
+        // Funciones auxiliares para convertir IDs en nombres (deberás adaptarlas según tus datos)
+        function getCategoryName(categoryId) {
+            // Aquí deberías tener un mapeo de IDs a nombres de categorías
+            // Por ahora retornamos el ID
+            return categoryId || 'No disponible';
+        }
 
-function getAreaName(areaId) {
-    // Aquí deberías tener un mapeo de IDs a nombres de áreas
-    return areaId || 'No disponible';
-}
+        function getAreaName(areaId) {
+            // Aquí deberías tener un mapeo de IDs a nombres de áreas
+            return areaId || 'No disponible';
+        }
 
-function getUnitName(unitId) {
-    // Aquí deberías tener un mapeo de IDs a nombres de unidades
-    return unitId || 'No disponible';
-}
+        function getUnitName(unitId) {
+            // Aquí deberías tener un mapeo de IDs a nombres de unidades
+            return unitId || 'No disponible';
+        }
         
         function switchTab(tabName) {
             // Remover clase active de todos los tabs y botones
@@ -371,79 +362,106 @@ function getUnitName(unitId) {
             console.log('Número de productos encontrados:', document.querySelectorAll('.product-item').length);
         });
     </script>
-        <!-- Asegúrate de incluir Font Awesome -->
-        <script src="https://kit.fontawesome.com/64d58efce2.js"
+       
+    <script src="https://kit.fontawesome.com/64d58efce2.js"
             crossorigin="anonymous"></script>
-        <script>
+    <script>
         function cambiarSucursal() {
             const idSucursal = document.getElementById('sucursal').value;
             window.location.href = `/pagina_pedidos/productos/${idSucursal}`;
         }
         
         function buscarProductos(event) {
-    event.preventDefault(); // Evita la recarga de la página
+            event.preventDefault(); // Evita la recarga de la página
 
-    const searchTerm = document.getElementById('search-input').value;
-    const idSucursal = document.getElementById('sucursal').value;
+            const searchTerm = document.getElementById('search-input').value.trim(); // Asegura que no haya espacios innecesarios
+            const idSucursal = document.getElementById('sucursal').value;
 
-    fetch(`/buscar_productos_cli?search=${encodeURIComponent(searchTerm)}&idSucursal=${idSucursal}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Error: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            actualizarProductos(data); // Actualiza los productos en la página
-        })
-        .catch(error => {
-            console.error('Error al buscar productos:', error);
-        });
-}
+            fetch(`/buscar_productos_cli?search=${encodeURIComponent(searchTerm)}&idSucursal=${idSucursal}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    actualizarProductos(data); // Actualiza los productos en la página
+                })
+                .catch(error => {
+                    console.error('Error al buscar productos:', error);
+                });
+        }
 
-function limpiarFiltro() {
-    const idSucursal = document.getElementById('sucursal').value;
+        function buscarProductos(event) {
+            event.preventDefault(); // Evita la recarga de la página
 
-    // Limpia el campo de búsqueda
-    document.getElementById('search-input').value = '';
+            const searchTerm = document.getElementById('search-input').value.trim(); // Limpia espacios adicionales
+            const idSucursal = document.getElementById('sucursal').value;
 
-    // Realiza una solicitud para obtener todos los productos
-    fetch(`/buscar_productos_cli?search=&idSucursal=${idSucursal}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Error: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            actualizarProductos(data); // Actualiza los productos en la página
-        })
-        .catch(error => {
-            console.error('Error al limpiar el filtro:', error);
-        });
-}
+            fetch(`/buscar_productos_cli?search=${encodeURIComponent(searchTerm)}&idSucursal=${idSucursal}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    actualizarProductos(data); // Actualiza solo los productos visibles
+                })
+                .catch(error => {
+                    console.error('Error al buscar productos:', error);
+                });
+        }
+
+        function limpiarFiltro() {
+            const idSucursal = document.getElementById('sucursal').value;
+
+            // Limpia el campo de búsqueda
+            document.getElementById('search-input').value = '';
+
+            // Realiza una solicitud para obtener todos los productos
+            fetch(`/buscar_productos_cli?search=&idSucursal=${idSucursal}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    actualizarProductos(data); // Actualiza solo los productos visibles
+                })
+                .catch(error => {
+                    console.error('Error al limpiar el filtro:', error);
+                });
+        }
+
+        function actualizarProductos(productos) {
+            const productsGrid = document.querySelector('.products-grid');
+            productsGrid.innerHTML = ''; // Limpia solo la cuadrícula de productos
+
+            productos.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.classList.add('product-card');
+                productCard.innerHTML = `
+                    <img class="product-image" src="${product.Fotografia || '/fotos/img_productos/default.png'}" alt="${product.Nombre}">
+                    <h3 class="product-name">${product.Nombre}</h3>
+                    <p class="product-price">Bs ${product.Precio_Unitario}/Unidad</p>
+                    <button class="add-to-cart" 
+                        onclick="agregarAlCarrito('${product.ID_Producto}', '${product.Nombre}', ${product.Precio_Unitario}, ${product.Cantidad || 0}, '${product.Unidad_Venta || "No definida"}')">
+                        Añadir
+                    </button>
+                `;
+                productsGrid.appendChild(productCard);
+            });
+
+            // No se toca el carrito
+            console.log('Productos actualizados, el carrito permanece intacto.');
+        }
 
 
 
-function actualizarProductos(productos) {
-    const productsGrid = document.querySelector('.products-grid');
-    productsGrid.innerHTML = ''; // Limpia la cuadrícula de productos actual
 
-    productos.forEach(product => {
-        const productCard = document.createElement('div');
-        productCard.classList.add('product-card');
-        productCard.innerHTML = `
-            <img class="product-image" src="${product.Fotografia || '/fotos/img_productos/default.png'}" alt="${product.Nombre}">
-            <h3 class="product-name">${product.Nombre}</h3>
-            <p class="product-price">Bs ${product.Precio_Unitario}/Unidad</p>
-            <button class="add-to-cart" 
-                onclick="agregarAlCarrito('${product.ID_Producto}', '${product.Nombre}', ${product.Precio_Unitario}, ${product.Cantidad}, '${product.Unidad_Venta}')">
-                Añadir
-            </button>
-        `;
-        productsGrid.appendChild(productCard);
-    });
-}
+       
 
 
         let carrito = [];
@@ -491,14 +509,16 @@ function actualizarProductos(productos) {
         
         // Función para calcular el total del carrito usando localStorage
         function calcularTotalCarrito() {
-        const carrito = JSON.parse(localStorage.getItem('cart')) || [];
-        const total = carrito.reduce((total, item) => {
-            return total + (item.price * item.quantity);  // Calcula el total de cada producto
-        }, 0);
+            const carrito = JSON.parse(localStorage.getItem('cart')) || [];
+            const total = carrito.reduce((total, item) => {
+                return total + (item.price * item.quantity);  // Calcula el total de cada producto
+            }, 0);
 
-        // Mostrar el total en la interfaz (por ejemplo, en un div con id 'total-carrito')
-        document.getElementById('total-carrito').textContent = `Total: $${total.toFixed(2)}`;
+            // Mostrar el total en la interfaz (por ejemplo, en un div con id 'total-carrito')
+            document.getElementById('total-carrito').textContent = `Total: $${total.toFixed(2)}`;
         }
+
+
         function mostrarCarrito() {
             const carritoPopup = document.getElementById('cart-popup');
             const listaCarrito = document.getElementById('cart-items');
@@ -519,11 +539,13 @@ function actualizarProductos(productos) {
                         <div class="cart-item-unit">
                             <small><strong>Unidad de venta:</strong> ${item.unit || 'No definida'}</small>
                         </div>
-                        <div class="cart-item-quantity">
-                            <button class="quantity-btn" onclick="cambiarCantidad('${item.id}', -1)">-</button>
+                         <div class="cart-item-quantity">
+                           
                             <span class="quantity-display">${item.quantity}</span>
-                            <button class="quantity-btn" onclick="cambiarCantidad('${item.id}', 1)">+</button>
+                            
+                           
                         </div>
+                         <span class = "mensaje"> "la cantidad de su producto se modificara cuando pase a continuar pedido"</span>
                     </div>
                     <div class="cart-item-subtotal">
                         <strong>Subtotal:</strong> Bs ${subtotal.toFixed(2)}
@@ -535,22 +557,68 @@ function actualizarProductos(productos) {
                 listaCarrito.appendChild(li);
             });
 
-    const total = carrito.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const total = carrito.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-    // Actualizar el total en el pie de carrito
-    const totalElement = document.getElementById('total-carrito');
-    totalElement.textContent = `Total: Bs ${total.toFixed(2)}`;
+            // Actualizar el total en el pie de carrito
+            const totalElement = document.getElementById('total-carrito');
+            totalElement.textContent = `Total: Bs ${total.toFixed(2)}`;
 
-    carritoPopup.classList.add('visible'); // Mostrar carrito
-}
-function eliminarDelCarrito(productId) {
-    carrito = carrito.filter(item => item.id !== productId); // Filtrar el carrito y eliminar el producto
-    localStorage.setItem('cart', JSON.stringify(carrito)); // Actualizar el carrito en localStorage
-    mostrarCarrito(); // Actualizar la vista del carrito
-}
+            carritoPopup.classList.add('visible'); // Mostrar carrito
+        }
 
 
-    
+        function cambiarCantidad(id, cambio) {
+            // Buscar el elemento de cantidad asociado al ID del producto
+            const cartItem = document.querySelector(`#cart-items [data-id="${id}"]`);
+
+            if (!cartItem) {
+                console.error(`No se encontró un elemento con data-id="${id}"`);
+                return;
+            }
+
+            const quantitySpan = cartItem.querySelector('.quantity-display');
+
+            // Asegurarse de que el elemento quantitySpan exista
+            if (!quantitySpan) {
+                console.error('No se encontró el elemento para mostrar la cantidad');
+                return;
+            }
+
+            // Obtener la cantidad actual
+            let cantidadActual = parseInt(quantitySpan.textContent, 10);
+
+            // Calcular la nueva cantidad
+            const nuevaCantidad = cantidadActual + cambio;
+
+            // Asegurarse de que no sea menor que 0
+            if (nuevaCantidad >= 0) {
+                quantitySpan.textContent = nuevaCantidad; // Actualizar la cantidad en el span
+
+                // Actualizar la cantidad en el carrito (array)
+                const producto = carrito.find(item => item.id === id);
+                if (producto) {
+                    producto.quantity = nuevaCantidad;
+                    localStorage.setItem('cart', JSON.stringify(carrito)); // Guardar en localStorage
+                    calcularTotalCarrito(); // Actualizar el total del carrito
+                }
+            } else {
+                Swal.fire({
+                    title: 'Cantidad no válida',
+                    text: 'La cantidad no puede ser menor a 0.',
+                    icon: 'warning',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+        }
+
+
+        function eliminarDelCarrito(productId) {
+            carrito = carrito.filter(item => item.id !== productId); // Filtrar el carrito y eliminar el producto
+            localStorage.setItem('cart', JSON.stringify(carrito)); // Actualizar el carrito en localStorage
+            mostrarCarrito(); // Actualizar la vista del carrito
+        }
+
         function cerrarCarrito() {
             const carritoPopup = document.getElementById('cart-popup');
             carritoPopup.classList.remove('visible');
@@ -561,40 +629,40 @@ function eliminarDelCarrito(productId) {
         }
     
         function toggleCart() {
-    const cartSidebar = document.getElementById("cart-sidebar");
-    if (cartSidebar.classList.contains("hidden")) {
-        cartSidebar.classList.remove("hidden");
-        cartSidebar.classList.add("visible");
-    } else {
-        cartSidebar.classList.remove("visible");
-        cartSidebar.classList.add("hidden");
-    }
-}
+            const cartSidebar = document.getElementById("cart-sidebar");
+            if (cartSidebar.classList.contains("hidden")) {
+                cartSidebar.classList.remove("hidden");
+                cartSidebar.classList.add("visible");
+            } else {
+                cartSidebar.classList.remove("visible");
+                cartSidebar.classList.add("hidden");
+            }
+        }
 
     
         // Modificar tu función actualizarCarritoUI
-function actualizarCarritoUI() {
-    const cartItems = document.getElementById('cart-items');
-    cartItems.innerHTML = '';
-    
-    carrito.forEach(item => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-            ${item.nombre} - Cantidad: ${item.cantidad} - Precio: S/.${item.precio * item.cantidad}
-            <button onclick="eliminarDelCarrito(${item.id})">Eliminar</button>
-        `;
-        cartItems.appendChild(li);
-    });
+        function actualizarCarritoUI() {
+            const cartItems = document.getElementById('cart-items');
+            cartItems.innerHTML = '';
+            
+            carrito.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    ${item.nombre} - Cantidad: ${item.cantidad} - Precio: S/.${item.precio * item.cantidad}
+                    <button onclick="eliminarDelCarrito(${item.id})">Eliminar</button>
+                `;
+                cartItems.appendChild(li);
+            });
 
-    // Mostrar el total
-    const total = calcularTotal();
-    if (cartItems.children.length > 0) {
-        const totalElement = document.createElement('li');
-        totalElement.className = 'total';
-        totalElement.innerHTML = `<strong>Total: S/.${total}</strong>`;
-        cartItems.appendChild(totalElement);
-    }
-}
+            // Mostrar el total
+            const total = calcularTotal();
+            if (cartItems.children.length > 0) {
+                const totalElement = document.createElement('li');
+                totalElement.className = 'total';
+                totalElement.innerHTML = `<strong>Total: S/.${total}</strong>`;
+                cartItems.appendChild(totalElement);
+            }
+        }
         function realizarCompra() {
             // Mostrar el modal de carrito
             const cartModal = document.getElementById('cartModal');
@@ -620,65 +688,98 @@ function actualizarCarritoUI() {
                 // Mostrar el resumen del carrito y el total
                 const total = carrito.reduce((sum, item) => sum + (item.price * item.quantity), 0);
                 document.getElementById('cartTotal').textContent = `Subtotal: Bs ${total.toFixed(2)}`;
-            }
+        }
 
-            function closeCart() {
+        function closeCart() {
             const cartModal = document.getElementById('cartModal');
             cartModal.style.display = 'none'; // Ocultar el modal
-            }
-            
-            function continueToCheckout() {
-                window.location.href = '/pagina_pedidos/continuar_pedido'; // Redirige a la página de continuar pedido
-            }
-            // Actualizar contador al cargar la página
-                actualizarContadorCarrito();
-
-            document.addEventListener("DOMContentLoaded", function() {
-                // Verifica si el idSucursal está en la URL antes de redirigir
-                const idSucursal = "<%= idSucursal %>";
-                if (!idSucursal) {
-                    const defaultSucursalId = "<%= results[0].ID_Sucursal %>"; // ID de la primera sucursal
-                    window.location.href = `/pagina_pedidos/productos/${defaultSucursalId}`;
-                }
-            });
-            
-
-function cambiarSucursal() {
-    const sucursalSelect = document.getElementById('sucursal');
-    const selectedSucursalId = sucursalSelect.value;
-    // Obtener también el nombre de la sucursal del option seleccionado
-    const selectedSucursalNombre = sucursalSelect.options[sucursalSelect.selectedIndex].text;
-    
-    // Guardar en localStorage
-    const sucursalData = {
-        id: selectedSucursalId,
-        nombre: selectedSucursalNombre
-    };
-    localStorage.setItem('sucursalSeleccionada', JSON.stringify(sucursalData));
-    
-    // Redireccionar
-    window.location.href = `/pagina_pedidos/productos/${selectedSucursalId}`;
-}
-
-    function toggleDropdown(event) {
-
-        const dropdown = document.getElementById('profile-dropdown');
-        
-        // Si el dropdown está visible, lo ocultamos, y viceversa
-        if (dropdown.style.display === 'block') {
-            dropdown.style.display = 'none';
-        } else {
-            dropdown.style.display = 'block';
         }
-    }
-
-    // Cuando se hace clic fuera del dropdown, lo cerramos
-    window.onclick = function(event) {
-        const dropdown = document.getElementById('profile-dropdown');
-        if (!event.target.closest('.dropdown')) {
-            dropdown.style.display = 'none';
+            
+        function continueToCheckout() {
+            window.location.href = '/pagina_pedidos/continuar_pedido'; // Redirige a la página de continuar pedido
         }
-    };
+        // Actualizar contador al cargar la página
+        actualizarContadorCarrito();
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Verifica si el idSucursal está en la URL antes de redirigir
+            const idSucursal = "<%= idSucursal %>";
+             if (!idSucursal) {
+                const defaultSucursalId = "<%= results[0].ID_Sucursal %>"; // ID de la primera sucursal
+                window.location.href = `/pagina_pedidos/productos/${defaultSucursalId}`;
+            }
+        });
+            
+
+        function cambiarSucursal() {
+            const sucursalSelect = document.getElementById('sucursal');
+            const selectedSucursalId = sucursalSelect.value;
+            // Obtener también el nombre de la sucursal del option seleccionado
+            const selectedSucursalNombre = sucursalSelect.options[sucursalSelect.selectedIndex].text;
+
+            // Verificar si hay una sucursal guardada previamente
+            const previousSucursalData = JSON.parse(localStorage.getItem('sucursalSeleccionada')) || { id: '1', nombre: 'Sucursal 1' };
+
+            if (selectedSucursalId !== previousSucursalData.id) {
+                // Mostrar mensaje de confirmación al cambiar de sucursal usando SweetAlert2
+                Swal.fire({
+                    title: 'Cambio de sucursal',
+                    text: `Está a punto de cambiar de la sucursal ${previousSucursalData.nombre} a ${selectedSucursalNombre}. Esto reiniciará su carrito. ¿Desea continuar?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, cambiar',
+                    cancelButtonText: 'Cancelar',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Reiniciar el carrito
+                        localStorage.removeItem('cart');
+
+                        // Guardar la nueva sucursal en localStorage
+                        const sucursalData = {
+                            id: selectedSucursalId,
+                            nombre: selectedSucursalNombre
+                        };
+                        localStorage.setItem('sucursalSeleccionada', JSON.stringify(sucursalData));
+
+                        // Redireccionar
+                        window.location.href = `/pagina_pedidos/productos/${selectedSucursalId}`;
+                    } else {
+                        // Restaurar la selección anterior si se cancela el cambio
+                        sucursalSelect.value = previousSucursalData.id;
+                    }
+                });
+
+                return;
+            }
+
+            // Guardar la nueva sucursal en localStorage (si no cambió)
+            const sucursalData = {
+                id: selectedSucursalId,
+                nombre: selectedSucursalNombre
+            };
+            localStorage.setItem('sucursalSeleccionada', JSON.stringify(sucursalData));
+        }
+
+        function toggleDropdown(event) {
+
+            const dropdown = document.getElementById('profile-dropdown');
+            
+            // Si el dropdown está visible, lo ocultamos, y viceversa
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            } else {
+                dropdown.style.display = 'block';
+            }
+        }
+
+        // Cuando se hace clic fuera del dropdown, lo cerramos
+        window.onclick = function(event) {
+            const dropdown = document.getElementById('profile-dropdown');
+            if (!event.target.closest('.dropdown')) {
+                dropdown.style.display = 'none';
+            }
+        };
     </script>
         <script>
         localStorage.removeItem('cart');

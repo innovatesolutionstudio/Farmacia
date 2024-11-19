@@ -491,10 +491,18 @@ router.post("/generar_factura", async (req, res) => {
 
     doc.moveDown(1);
 
+    const leftMargin = 10; // Asigna un valor a leftMargin
+    const rightMargin = 10;
+    const textWidth = 300 - leftMargin - rightMargin; // Ancho total menos los márgenes
     // Derechos reservados
-    doc.font("Helvetica").fontSize(6).text(
-      `Derechos Reservados © ${new Date().getFullYear()} FARMACIA 25 de Julio.`,
-      { align: "justify" }
+    doc.font('Helvetica').fontSize(6).text(
+      `Derechos Reservados © ${new Date().getFullYear()} FARMACIA 25 de Julio. Todos los derechos reservados. Este recibo y su contenido están protegidos por las leyes de derechos de autor y no pueden ser reproducidos, distribuidos, transmitidos, exhibidos, publicados o transmitidos sin el permiso previo por escrito del titular de los derechos de autor.`,
+      leftMargin, // Usamos la variable `leftMargin` definida
+      doc.y, 
+      { 
+        align: 'justify', 
+        width: textWidth 
+      }
     );
 
     // Finalizar y guardar el PDF

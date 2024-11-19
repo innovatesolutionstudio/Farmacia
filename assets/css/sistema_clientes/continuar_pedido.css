@@ -92,6 +92,11 @@
     background-color: #cc7000;
 }
 
+
+
+
+
+
 body {
     font-family: Arial, sans-serif;
     background-color: #f9f9f9;
@@ -162,10 +167,72 @@ header {
     background-color: #28a745;
     color: white;
 }
+.cart-actions .btn-primary:hover {
+    background-color: #64bb78;
+    color: white;
+}
+
+
 
 .cart-actions .btn-secondary {
-    background-color: #ffc107;
-    color: black;
+    background-color: #ff2407;
+    color: white;
+}
+
+.cart-actions .btn-secondary:hover {
+    background-color: #e95f4d;
+    color: white;
+}
+
+
+.btn-max{
+background-color: #28a74600;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-color: #28a74600;
+
+
+}
+
+
+.btn-min{
+    background-color: #28a74600;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-color: #28a74600;
+
+}
+
+.btn-min:hover, .btn-max:hover {
+    background-color: #28a7467f;
+}
+    
+    
+
+.cantidad-texto{
+    font-size: 18px;
+    color: white;
+
+}
+
+.quantity-controls{
+    background-color: #0BAB7C;
+    border-radius: 5px;
+    width: 80px;
+}
+
+.remove-btn{
+    background: none;
+    border-color: #ffffff00;
+    color: #e0d7d7;
+    width: 80px;
+    font-size: 40px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+.remove-btn:hover{
+    color: #d53232;
 }
 
 .product-suggestions {
