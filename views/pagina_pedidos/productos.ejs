@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Catálogo de Productos - Farmacia</title>
+        <!-- site icon -->
+        <link rel="icon" href="/resources/images/iconos/farmacia.ico">
+
+        <link rel="stylesheet"
+            href="/resources/css/sistema_clientes/paginapedidos_tienda.css" />
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    </head>
+    <body>
+        <!--Cavecera-->
+        <header class="custom-header">
+            <div class="header-container">
+                <a href="/pagina_pedidos/clientes_index" class="custom-logo">
+                    <img src="/resources/images/iconos/farmacia.ico"
+                        alt="Farmacia 25 de Julio">
+                    <span class="logo-text">
+                        <span class="logo-main">Bienvenido a la Farmacia 25 de
+                            Julio</span>
+                        <span class="logo-sub">Tu mejor opcion</span>
+                    </span>
+                </a>
+                <nav class="custom-nav">
+                    <ul class="nav-list">
+                        <li><a href="/pagina_pedidos/clientes_index"
+                                class="nav-link">Inicio</a></li>
+                        <li><a href="/pagina_pedidos/productos/1"
+                                class="nav-link">Tienda</a></li>
+                        <li><a href="#contacto"
+                                class="nav-link">Contacto</a></li>
+                    </ul>
+                </nav>
+
+                <a href="/pagina_pedidos/login_clientes"
+                    class="btn-login">Iniciar sesión</a>
+            </div>
+        </header>
+
+        <div class="top-header">
+
+        </div>
+
+        <section class="product-page">
+            <!-- Título y Barra de Búsqueda -->
+            <div class="search-section">
+                <h2 class="page-title">Nuestros Productos</h2>
+                <form class="search-bar" onsubmit="buscarProductos(event)">
+                    <input type="text" id="search-input" name="search" placeholder="Buscar productos por nombre">
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+           
+                
+                    <button type="button" class="clear-button" onclick="limpiarFiltro()">Limpiar Filtros</button>
+
+                    <p>Ver Mi Carrito</p>
+                    <a href="#" class="cart-icon"
+                        onclick="toggleCart(); return false;">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a>
+                </form>
+
+            </div>
+
+            <!-- Categorías, Productos y Carrito -->
+
+            <div class="main-container">
+
+                <!-- Categorías -->
+                <aside class="category-section">
+                    <h3 class="category-title">Selecciona tu Sucursal mas
+                        Sercano</h3>
+                    <!-- Selector de Sucursales -->
+                    <select name="sucursal" id="sucursal"
+                        class="location-select" onchange="cambiarSucursal()">
+                        <% results.forEach(sucursal => { %>
+                        <option value="<%= sucursal.ID_Sucursal %>"
+                            <%=idSucursal == sucursal.ID_Sucursal ? 'selected' :
+                            '' %>>
+                            <%= sucursal.Nombre %>
+                        </option>
+                        <% }); %>
+                    </select>
+                    <h3 class="category-title">Categoría Productos</h3>
+                    <ul class="category-list">
+                        <li><a href="#">Belleza</a></li>
+                        <li><a href="#">Dispositivos Médicos</a></li>
+                        <li><a href="#">Vitaminas</a></li>
+                        <li><a href="#">Suplementos</a></li>
+                        <li><a href="#">Anticonceptivos</a></li>
+                        <li><a href="#">Bioseguridad</a></li>
+                    </ul>
+                    <h3 class="category-title">Popular Products</h3>
+                    <ul class="popular-list">
+                        <li class="popular-item">
+                            <img src="/resources/images/product1.png"
+                                alt="Producto 1">
+                            <p>Bs 12.50</p>
+                        </li>
+                        <li class="popular-item">
+                            <img src="/resources/images/product2.png"
+                                alt="Producto 2">
+                            <p>Bs 15.00</p>
+                        </li>
+                    </ul>
+                </aside>
+
+                <!-- Productos -->
+                <div class="products-section">
+                    <div class="products-grid">
+                        <% products.forEach(product => { %>
+                        <div class="product-card">
+                            <img class="product-image"
+                                src="<%= product.Fotografia || '/fotos/img_productos/default.png' %>"
+                                alt="<%= product.Nombre %>">
+                            <h3 class="product-name"><%= product.Nombre %></h3>
+                            <p class="product-price">Bs <%=
+                                product.Precio_Unitario %>/Unidad</p>
+                                <button class="add-to-cart" 
+                                onclick="agregarAlCarrito('<%= product.ID_Producto %>', '<%= product.Nombre %>', <%= product.Precio_Unitario %>, <%= product.Cantidad || 0 %>, '<%= product.Unidad_Venta || "No definida" %>')">
+                                Añadir
+                            </button>
+                            
+                        </div>
+                        <% }); %>
+                    </div>
+                    <div class="pagination">
+                        <button class="page-btn" onclick="changePage('prev')"
+                            <%=currentPage === 1 ? 'disabled' : ''
+                            %>>&lt;</button>
+                        <% pageButtons.forEach(button => { %>
+                        <% if (button === "...") { %>
+                        <span class="page-dots">...</span>
+                        <% } else { %>
+                        <button
+                            class="page-btn <%= button === currentPage ? 'active' : '' %>"
+                            onclick="changePage(<%= button %>)">
+                            <%= button %>
+                        </button>
+                        <% } %>
+                        <% }); %>
+                        <button class="page-btn" onclick="changePage('next')"
+                            <%=currentPage === totalPages ? 'disabled' : ''
+                            %>>&gt;</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Ventana deslizante del carrito -->
+            <div id="cart-sidebar" class="cart-sidebar hidden">
+                <div class="cart-header">
+                    <h3>Mi Carrito</h3>
+                    <button class="close-cart" onclick="toggleCart()">×</button>
+                </div>
+                <ul id="cart-items" class="cart-items">
+                    <!-- Productos del carrito -->
+                </ul>
+                <div class="cart-footer">
+                    <p class="cart-total" id="total-carrito">Total: Bs 0.00</p>
+                    <button class="btn-checkout" onclick="continuarPedido()">Continuar</button>
+
+                </div>
+            </div>
+
+        </section>
+        <script>
+        function changePage(action) {
+            let currentPage = <%= currentPage %>;
+            const totalPages = <%= totalPages %>;
+
+            if (action === 'prev' && currentPage > 1) {
+                currentPage--;
+            } else if (action === 'next' && currentPage < totalPages) {
+                currentPage++;
+            } else if (typeof action === 'number') {
+                currentPage = action;
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('page', currentPage);
+            window.location.search = urlParams.toString();
+        }
+
+      </script>
+        <script>
+        let currentProduct = null;
+        let modalQuantity = 1;
+        
+        // Función para inicializar los event listeners de los productos
+        function initializeProductItems() {
+            document.querySelectorAll('.product-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // No abrir el modal si se hizo clic en el botón de añadir al carrito
+                    if (!e.target.classList.contains('add-to-cart-btn')) {
+                        try {
+                            // Obtener el ID del producto del botón
+                            const addToCartBtn = this.querySelector('.add-to-cart-btn');
+                            const onclickAttr = addToCartBtn.getAttribute('onclick');
+                            const productId = onclickAttr.match(/'([^']+)'/)[1];
+                            
+                            // Obtener el resto de la información
+                            const productName = this.querySelector('h3').textContent;
+                            const productPrice = this.querySelector('p:nth-of-type(2)').textContent
+                                .match(/\$([0-9.]+)/)[1];
+                            const productImage = this.querySelector('img').src;
+                            const productDescription = this.querySelector('p:nth-of-type(1)').textContent;
+                            const productStock = this.querySelector('p:nth-of-type(3)').textContent
+                                .match(/\d+/)[0];
+                            
+                            loadProductDetails(productId, productName, productPrice, productImage, 
+                                             productDescription, productStock);
+                        } catch (error) {
+                            console.error('Error al obtener datos del producto:', error);
+                        }
+                    }
+                });
+            });
+        }
+        
+        function loadProductDetails(id, name, price, image, description, stock) {
+    try {
+        currentProduct = { 
+            id, 
+            name, 
+            price: parseFloat(price), 
+            image, 
+            description, 
+            stock: parseInt(stock) 
+        };
+        modalQuantity = 1;
+        
+        // Actualizar elementos del modal con los datos básicos
+        document.getElementById('modalProductName').textContent = name;
+        document.getElementById('modalProductPrice').textContent = `$${price}`;
+        document.getElementById('modalProductImage').src = image;
+        document.getElementById('modalProductDescription').textContent = description;
+        document.getElementById('modalProductStock').textContent = stock;
+        document.getElementById('modalQuantity').textContent = modalQuantity;
+        document.getElementById('modalProductId').textContent = id;
+        
+        // Mostrar el modal
+        const modal = document.getElementById('productModal');
+        modal.style.display = 'flex';
+        
+        // Obtener datos adicionales del producto
+        fetch(`/api/productos/${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Actualizar los campos con los datos recibidos
+                document.getElementById('modalProductIndications').textContent = 
+                    data.Indicaciones || 'No disponible';
+                document.getElementById('modalProductDose').textContent = 
+                    data.Dosis_Medicacmento || 'No disponible';
+                document.getElementById('modalProductSideEffects').textContent = 
+                    data.Efectos_Secundarios || 'No disponible';
+                document.getElementById('modalProductPrecautions').textContent = 
+                    data.Precauciones || 'No disponible';
+                
+                // Actualizar campos técnicos
+                const categoryName = getCategoryName(data.ID_Categoria);
+                const areaName = getAreaName(data.ID_Area_Producto);
+                const unitName = getUnitName(data.ID_Unidad_Venta);
+                
+                document.getElementById('modalProductCategory').textContent = categoryName;
+                document.getElementById('modalProductArea').textContent = areaName;
+                document.getElementById('modalProductUnit').textContent = unitName;
+            })
+            .catch(error => {
+                console.error('Error loading product details:', error);
+                // Mostrar mensaje de error en el modal
+                const tabs = document.querySelectorAll('.tab-content');
+                tabs.forEach(tab => {
+                    const fields = tab.querySelectorAll('p');
+                    fields.forEach(field => {
+                        if (field.textContent === '') {
+                            field.textContent = 'No disponible';
+                        }   
+                    });
+                });
+            });
+    } catch (error) {
+        console.error('Error in loadProductDetails:', error);
+    }
+}
+
+// Funciones auxiliares para convertir IDs en nombres (deberás adaptarlas según tus datos)
+function getCategoryName(categoryId) {
+    // Aquí deberías tener un mapeo de IDs a nombres de categorías
+    // Por ahora retornamos el ID
+    return categoryId || 'No disponible';
+}
+
+function getAreaName(areaId) {
+    // Aquí deberías tener un mapeo de IDs a nombres de áreas
+    return areaId || 'No disponible';
+}
+
+function getUnitName(unitId) {
+    // Aquí deberías tener un mapeo de IDs a nombres de unidades
+    return unitId || 'No disponible';
+}
+        
+        function switchTab(tabName) {
+            // Remover clase active de todos los tabs y botones
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Activar el tab seleccionado
+            document.getElementById(`${tabName}Tab`).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+            currentProduct = null;
+            modalQuantity = 1;
+        }
+        
+        function updateQuantity(change) {
+            const newQuantity = modalQuantity + change;
+            if (newQuantity > 0 && newQuantity <= parseInt(currentProduct.stock)) {
+                modalQuantity = newQuantity;
+                document.getElementById('modalQuantity').textContent = modalQuantity;
+            }
+        }
+        
+        function addToCartFromModal() {
+            if (currentProduct) {
+                agregarAlCarrito(
+                    currentProduct.id,
+                    currentProduct.name,
+                    currentProduct.price,
+                    currentProduct.image
+                );
+                closeProductModal();
+            }
+        }
+        
+        // Event Listeners al cargar el DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeProductItems();
+        
+            // Cerrar el modal si se hace clic fuera de él
+            const modal = document.getElementById('productModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeProductModal();
+                    }
+                });
+            }
+        
+            // Imprimir en consola para depuración
+            console.log('Script inicializado correctamente');
+            console.log('Número de productos encontrados:', document.querySelectorAll('.product-item').length);
+        });
+    </script>
+        <!-- Asegúrate de incluir Font Awesome -->
+        <script src="https://kit.fontawesome.com/64d58efce2.js"
+            crossorigin="anonymous"></script>
+        <script>
+        function cambiarSucursal() {
+            const idSucursal = document.getElementById('sucursal').value;
+            window.location.href = `/pagina_pedidos/productos/${idSucursal}`;
+        }
+        
+        function buscarProductos(event) {
+    event.preventDefault(); // Evita la recarga de la página
+
+    const searchTerm = document.getElementById('search-input').value;
+    const idSucursal = document.getElementById('sucursal').value;
+
+    fetch(`/buscar_productos_cli?search=${encodeURIComponent(searchTerm)}&idSucursal=${idSucursal}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            actualizarProductos(data); // Actualiza los productos en la página
+        })
+        .catch(error => {
+            console.error('Error al buscar productos:', error);
+        });
+}
+
+function limpiarFiltro() {
+    const idSucursal = document.getElementById('sucursal').value;
+
+    // Limpia el campo de búsqueda
+    document.getElementById('search-input').value = '';
+
+    // Realiza una solicitud para obtener todos los productos
+    fetch(`/buscar_productos_cli?search=&idSucursal=${idSucursal}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            actualizarProductos(data); // Actualiza los productos en la página
+        })
+        .catch(error => {
+            console.error('Error al limpiar el filtro:', error);
+        });
+}
+
+
+
+function actualizarProductos(productos) {
+    const productsGrid = document.querySelector('.products-grid');
+    productsGrid.innerHTML = ''; // Limpia la cuadrícula de productos actual
+
+    productos.forEach(product => {
+        const productCard = document.createElement('div');
+        productCard.classList.add('product-card');
+        productCard.innerHTML = `
+            <img class="product-image" src="${product.Fotografia || '/fotos/img_productos/default.png'}" alt="${product.Nombre}">
+            <h3 class="product-name">${product.Nombre}</h3>
+            <p class="product-price">Bs ${product.Precio_Unitario}/Unidad</p>
+            <button class="add-to-cart" 
+                onclick="agregarAlCarrito('${product.ID_Producto}', '${product.Nombre}', ${product.Precio_Unitario}, ${product.Cantidad}, '${product.Unidad_Venta}')">
+                Añadir
+            </button>
+        `;
+        productsGrid.appendChild(productCard);
+    });
+}
+
+
+        let carrito = [];
+        function calcularTotal() {
+            return carrito.reduce((total, item) => total + (item.precio * item.cantidad), 0);
+        }
+
+        function continuarPedido() {
+            const carrito = JSON.parse(localStorage.getItem('cart')) || [];
+            if (carrito.length === 0) {
+                alert("Tu carrito está vacío. Por favor, agrega productos antes de continuar.");
+                return;
+            }
+
+            // Serializa el carrito y almacénalo en localStorage o envíalo como parámetro
+            localStorage.setItem('cartForCheckout', JSON.stringify(carrito));
+
+            // Redirige a la página de continuar pedido
+            window.location.href = '/pagina_pedidos/continuar_pedido';
+        }
+
+    
+        function agregarAlCarrito(productId, name, price, stock, unit) {
+            console.log("Datos recibidos:", { productId, name, price, stock, unit });
+            const productoExistente = carrito.find(item => item.id === productId);
+
+            if (productoExistente) {
+                productoExistente.quantity += 1;
+            } else {
+                carrito.push({
+                    id: productId,
+                    name: name,
+                    price: parseFloat(price),
+                    stock: stock || 'No disponible',
+                    unit: unit || 'No definida',
+                    quantity: 1
+                });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(carrito));
+            mostrarCarrito();
+            actualizarCarritoUI();
+        }
+
+        
+        // Función para calcular el total del carrito usando localStorage
+        function calcularTotalCarrito() {
+        const carrito = JSON.parse(localStorage.getItem('cart')) || [];
+        const total = carrito.reduce((total, item) => {
+            return total + (item.price * item.quantity);  // Calcula el total de cada producto
+        }, 0);
+
+        // Mostrar el total en la interfaz (por ejemplo, en un div con id 'total-carrito')
+        document.getElementById('total-carrito').textContent = `Total: $${total.toFixed(2)}`;
+        }
+        function mostrarCarrito() {
+            const carritoPopup = document.getElementById('cart-popup');
+            const listaCarrito = document.getElementById('cart-items');
+            listaCarrito.innerHTML = ''; // Limpiar contenido previo
+
+            carrito.forEach(item => {
+                const subtotal = item.price * item.quantity;
+
+                const li = document.createElement('li');
+                    li.className = 'cart-item';
+                    li.innerHTML = `
+                    <div class="cart-item-info">
+                        <div class="cart-item-title"><strong>${item.name}</strong></div>
+                        <div class="cart-item-price">Precio: Bs ${item.price.toFixed(2)}/Unidad</div>
+                        <div class="cart-item-stock">
+                            <small><strong>Stock disponible:</strong> ${item.stock || 'No disponible'}</small>
+                        </div>
+                        <div class="cart-item-unit">
+                            <small><strong>Unidad de venta:</strong> ${item.unit || 'No definida'}</small>
+                        </div>
+                        <div class="cart-item-quantity">
+                            <button class="quantity-btn" onclick="cambiarCantidad('${item.id}', -1)">-</button>
+                            <span class="quantity-display">${item.quantity}</span>
+                            <button class="quantity-btn" onclick="cambiarCantidad('${item.id}', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="cart-item-subtotal">
+                        <strong>Subtotal:</strong> Bs ${subtotal.toFixed(2)}
+                    </div>
+                    <button class="remove-btn" onclick="eliminarDelCarrito('${item.id}')">Quitar</button>
+                `;
+
+
+                listaCarrito.appendChild(li);
+            });
+
+    const total = carrito.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    // Actualizar el total en el pie de carrito
+    const totalElement = document.getElementById('total-carrito');
+    totalElement.textContent = `Total: Bs ${total.toFixed(2)}`;
+
+    carritoPopup.classList.add('visible'); // Mostrar carrito
+}
+function eliminarDelCarrito(productId) {
+    carrito = carrito.filter(item => item.id !== productId); // Filtrar el carrito y eliminar el producto
+    localStorage.setItem('cart', JSON.stringify(carrito)); // Actualizar el carrito en localStorage
+    mostrarCarrito(); // Actualizar la vista del carrito
+}
+
+
+    
+        function cerrarCarrito() {
+            const carritoPopup = document.getElementById('cart-popup');
+            carritoPopup.classList.remove('visible');
+    
+            // Cambiar el ícono de la pestaña
+            const cartTab = document.querySelector('.cart-tab');
+            cartTab.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        }
+    
+        function toggleCart() {
+    const cartSidebar = document.getElementById("cart-sidebar");
+    if (cartSidebar.classList.contains("hidden")) {
+        cartSidebar.classList.remove("hidden");
+        cartSidebar.classList.add("visible");
+    } else {
+        cartSidebar.classList.remove("visible");
+        cartSidebar.classList.add("hidden");
+    }
+}
+
+    
+        // Modificar tu función actualizarCarritoUI
+function actualizarCarritoUI() {
+    const cartItems = document.getElementById('cart-items');
+    cartItems.innerHTML = '';
+    
+    carrito.forEach(item => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+            ${item.nombre} - Cantidad: ${item.cantidad} - Precio: S/.${item.precio * item.cantidad}
+            <button onclick="eliminarDelCarrito(${item.id})">Eliminar</button>
+        `;
+        cartItems.appendChild(li);
+    });
+
+    // Mostrar el total
+    const total = calcularTotal();
+    if (cartItems.children.length > 0) {
+        const totalElement = document.createElement('li');
+        totalElement.className = 'total';
+        totalElement.innerHTML = `<strong>Total: S/.${total}</strong>`;
+        cartItems.appendChild(totalElement);
+    }
+}
+        function realizarCompra() {
+            // Mostrar el modal de carrito
+            const cartModal = document.getElementById('cartModal');
+            cartModal.style.display = 'flex'; // Hacer visible el modal
+
+            // Aquí puedes cargar los detalles del carrito, si es necesario
+            const cartItemsContainer = document.getElementById('cartItems');
+            cartItemsContainer.innerHTML = ''; // Limpiar los items anteriores
+
+            carrito.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'cart-item';
+                itemDiv.innerHTML = `
+                    <img src="${item.image || '/resources/images/default-product.png'}" alt="${item.name}">
+                    <div class="cart-item-info">
+                        <h3>${item.name}</h3>
+                        <p>Precio: Bs ${item.price.toFixed(2)}</p>
+                        <p>Cantidad: ${item.quantity}</p>
+                    </div>
+                `;
+                cartItemsContainer.appendChild(itemDiv);
+            });
+                // Mostrar el resumen del carrito y el total
+                const total = carrito.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                document.getElementById('cartTotal').textContent = `Subtotal: Bs ${total.toFixed(2)}`;
+            }
+
+            function closeCart() {
+            const cartModal = document.getElementById('cartModal');
+            cartModal.style.display = 'none'; // Ocultar el modal
+            }
+            
+            function continueToCheckout() {
+                window.location.href = '/pagina_pedidos/continuar_pedido'; // Redirige a la página de continuar pedido
+            }
+            // Actualizar contador al cargar la página
+                actualizarContadorCarrito();
+
+            document.addEventListener("DOMContentLoaded", function() {
+                // Verifica si el idSucursal está en la URL antes de redirigir
+                const idSucursal = "<%= idSucursal %>";
+                if (!idSucursal) {
+                    const defaultSucursalId = "<%= results[0].ID_Sucursal %>"; // ID de la primera sucursal
+                    window.location.href = `/pagina_pedidos/productos/${defaultSucursalId}`;
+                }
+            });
+            
+
+function cambiarSucursal() {
+    const sucursalSelect = document.getElementById('sucursal');
+    const selectedSucursalId = sucursalSelect.value;
+    // Obtener también el nombre de la sucursal del option seleccionado
+    const selectedSucursalNombre = sucursalSelect.options[sucursalSelect.selectedIndex].text;
+    
+    // Guardar en localStorage
+    const sucursalData = {
+        id: selectedSucursalId,
+        nombre: selectedSucursalNombre
+    };
+    localStorage.setItem('sucursalSeleccionada', JSON.stringify(sucursalData));
+    
+    // Redireccionar
+    window.location.href = `/pagina_pedidos/productos/${selectedSucursalId}`;
+}
+
+    function toggleDropdown(event) {
+
+        const dropdown = document.getElementById('profile-dropdown');
+        
+        // Si el dropdown está visible, lo ocultamos, y viceversa
+        if (dropdown.style.display === 'block') {
+            dropdown.style.display = 'none';
+        } else {
+            dropdown.style.display = 'block';
+        }
+    }
+
+    // Cuando se hace clic fuera del dropdown, lo cerramos
+    window.onclick = function(event) {
+        const dropdown = document.getElementById('profile-dropdown');
+        if (!event.target.closest('.dropdown')) {
+            dropdown.style.display = 'none';
+        }
+    };
+    </script>
+        <script>
+        localStorage.removeItem('cart');
+    </script>
+    </body>
+</html>

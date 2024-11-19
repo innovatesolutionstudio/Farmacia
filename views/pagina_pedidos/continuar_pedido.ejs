@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Catálogo de Productos - Farmacia</title>
+        <!-- site icon -->
+        <link rel="icon" href="/resources/images/iconos/farmacia.ico">
+
+        <link rel="stylesheet"
+            href="/resources/css/sistema_clientes/continuar_pedido.css" />
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    </head>
+    <body>
+        <!--Cavecera-->
+        <header class="custom-header">
+            <div class="header-container">
+                <a href="/pagina_pedidos/clientes_index" class="custom-logo">
+                    <img src="/resources/images/iconos/farmacia.ico"
+                        alt="Farmacia 25 de Julio">
+                    <span class="logo-text">
+                        <span class="logo-main">Bienvenido a la Farmacia 25 de
+                            Julio</span>
+                        <span class="logo-sub">Tu mejor opcion</span>
+                    </span>
+                </a>
+                <nav class="custom-nav">
+                    <ul class="nav-list">
+                        <li><a href="/pagina_pedidos/clientes_index"
+                                class="nav-link">Inicio</a></li>
+                        <li><a href="/pagina_pedidos/productos/1"
+                                class="nav-link">Tienda</a></li>
+                        <li><a href="#contacto"
+                                class="nav-link">Contacto</a></li>
+                    </ul>
+                </nav>
+
+                <a href="/pagina_pedidos/login_clientes"
+                    class="btn-login">Iniciar sesión</a>
+            </div>
+        </header>
+
+        <header class="custom-header">
+            <h1>Mi Carrito</h1>
+        </header>
+        <main>
+            <section class="cart-details">
+                <!-- Tabla de Productos -->
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-items">
+                        <!-- Los productos del carrito se cargarán aquí -->
+                    </tbody>
+                </table>
+    
+                <!-- Resumen del Pedido -->
+                <div class="cart-summary">
+                    <h2>Resumen</h2>
+                    <div id="cart-summary-details"></div>
+                    <p class="cart-total">Subtotal: <span id="cart-subtotal">Bs 0.00</span></p>
+                    <div class="cart-actions">
+                        <button class="btn btn-primary" onclick="finalizarCompra()">Continuar pedido</button>
+                        <button class="btn btn-secondary" onclick="seguirComprando()">Seguir Comprando</button>
+                    </div>
+                </div>
+            </section>
+    
+            
+        </main>
+    
+        <script>
+            const carrito = JSON.parse(localStorage.getItem('cart')) || [];
+    
+            function mostrarCarrito() {
+                const cartItems = document.getElementById('cart-items');
+                const cartSummary = document.getElementById('cart-summary-details');
+                let subtotal = 0;
+    
+                cartItems.innerHTML = '';
+                cartSummary.innerHTML = '';
+    
+                carrito.forEach(item => {
+                    const row = document.createElement('tr');
+                    const itemSubtotal = item.price * item.quantity;
+                    subtotal += itemSubtotal;
+    
+                    row.innerHTML = `
+                        <td>
+                            <div class="product-info">
+                                <img src="${item.image || '/fotos/img_productos/default.png'}" alt="${item.name}">
+                                <div>
+                                    <strong>${item.name}</strong>
+                                    <p>${item.description || ''}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Bs ${item.price.toFixed(2)}/Unidad</td>
+                        <td>
+                            <div class="quantity-controls">
+                                <button onclick="cambiarCantidad('${item.id}', -1)">-</button>
+                                <span>${item.quantity}</span>
+                                <button onclick="cambiarCantidad('${item.id}', 1)">+</button>
+                            </div>
+                        </td>
+                        <td>Bs ${itemSubtotal.toFixed(2)}</td>
+                        <td>
+                            <button class="remove-btn" onclick="eliminarDelCarrito('${item.id}')">×</button>
+                        </td>
+                    `;
+                    cartItems.appendChild(row);
+    
+                    // Resumen del carrito
+                    const summaryRow = document.createElement('div');
+                    summaryRow.className = 'summary-item';
+                    summaryRow.innerHTML = `
+                        ${item.name} | ${item.quantity} ${item.unit || 'Unidad'}: Bs ${itemSubtotal.toFixed(2)}
+                    `;
+                    cartSummary.appendChild(summaryRow);
+                });
+    
+                // Actualizar subtotal
+                document.getElementById('cart-subtotal').textContent = `Bs ${subtotal.toFixed(2)}`;
+            }
+    
+            function eliminarDelCarrito(productId) {
+                const index = carrito.findIndex(item => item.id === productId);
+                if (index !== -1) {
+                    carrito.splice(index, 1);
+                    localStorage.setItem('cart', JSON.stringify(carrito));
+                    mostrarCarrito();
+                }
+            }
+    
+            function cambiarCantidad(productId, amount) {
+                const item = carrito.find(product => product.id === productId);
+                if (item && item.quantity + amount > 0) {
+                    item.quantity += amount;
+                    localStorage.setItem('cart', JSON.stringify(carrito));
+                    mostrarCarrito();
+                }
+            }
+    
+            function finalizarCompra() {
+    const carritoQueryParam = encodeURIComponent(JSON.stringify(carrito));
+    window.location.href = `/pagina_pedidos/confirmar_pedido?carrito=${carritoQueryParam}`;
+}
+
+
+
+
+    
+            function seguirComprando() {
+                window.location.href = '/pagina_pedidos/productos';
+            }
+    
+            function mostrarProductosSugeridos() {
+                const suggestedProductsContainer = document.getElementById('suggested-products');
+    
+                // Simula productos sugeridos
+                const sugeridos = [
+                    { name: 'Vitamina B12', price: 12.50, image: '/images/vitamina_b12.png' },
+                    { name: 'Vitamina D', price: 12.50, image: '/images/vitamina_d.png' }
+                ];
+    
+                sugeridos.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'product-suggestion';
+                    productCard.innerHTML = `
+                        <img src="${product.image}" alt="${product.name}">
+                        <div>
+                            <strong>${product.name}</strong>
+                            <p>Bs ${product.price.toFixed(2)}</p>
+                            <button onclick="agregarAlCarrito('${product.name}', ${product.price})">+</button>
+                        </div>
+                    `;
+                    suggestedProductsContainer.appendChild(productCard);
+                });
+            }
+    
+            document.addEventListener('DOMContentLoaded', () => {
+                mostrarCarrito();
+                mostrarProductosSugeridos();
+            });
+        </script>
+    </body>
+    </html>

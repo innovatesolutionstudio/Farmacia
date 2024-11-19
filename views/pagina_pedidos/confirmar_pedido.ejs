@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Confirmar Pedido</title>
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet"
+            href="/resources/css/sistema_clientes/confirmar_pedido.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <style>
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table th {
+            text-align: left;
+            background-color: #f2f2f2;
+        }
+
+        .table td:last-child {
+            text-align: right;
+        }
+
+        .form-section {
+            margin-bottom: 20px;
+        }
+
+        .order-summary {
+            margin-top: 20px;
+        }
+
+        .login-prompt {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Opción para iniciar sesión -->
+            <% if (!cliente) { %>
+            <div class="login-prompt">
+                <h2>¿Ya tienes cuenta?</h2>
+                <p>Inicia sesión para usar tus datos guardados y confirmar tu
+                    pedido rápidamente.</p>
+                <button onclick="mostrarLogin()">Iniciar Sesión</button>
+            </div>
+            <% } %>
+
+            <!-- Formulario de datos del cliente -->
+            <div class="form-section">
+                <h2>Datos Recibo</h2>
+                <form action="/pagina_pedidos/finalizar_pedido" method="POST" id="pedido-form">
+                    <input type="hidden" id="carrito" name="carrito">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" value="<%= cliente ? cliente.Nombre : '' %>" required>
+                
+                    <label for="apellido">Apellido:</label>
+                    <input type="text" id="apellido" name="apellido" value="<%= cliente ? cliente.Apellido : '' %>" required>
+                
+                    <label for="ci_nit">CI/NIT:</label>
+                    <input type="text" id="ci_nit" name="ci_nit" value="<%= cliente ? cliente.CI : '' %>" required>
+                
+                    <label for="direccion">Dirección:</label>
+                    <input type="text" id="direccion" name="direccion" required>
+                
+                    <label for="telefono">Celular:</label>
+                    <input type="text" id="telefono" name="telefono" value="<%= cliente ? cliente.Telefono : '' %>" required>
+                
+                    <label for="notas">Notas:</label>
+                    <textarea id="notas" name="notas" rows="3" placeholder="Notas sobre tu pedido..."></textarea>
+                
+                    <label for="distrito">Distrito:</label>
+                    <select id="distrito" name="distrito" class="district-select" required onchange="actualizarTotal()">
+                        <% distritos.forEach(distrito => { %>
+                            <option value="<%= distrito.ID_Distritos %>" data-tarifa="<%= distrito.Tatifa %>">
+                                Distrito <%= distrito.Numero_Distrito %> - Tarifa: Bs. <%= distrito.Tatifa %> - Tiempo: <%= distrito.Tiempo_Estimado %> minutos
+                            </option>
+                        <% }); %>
+                    </select>
+                
+                    <button type="submit">Confirmar Pedido</button>
+                </form>
+                
+            </div>
+
+            <!-- Resumen del pedido -->
+            <div class="order-summary">
+                <h2>Mi Orden</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaProductos">
+                        <% carrito.forEach(item => { %>
+                        <tr>
+                            <td data-id="<%= item.id %>">
+                                <strong><%= item.name %></strong><br>
+                                <small><%= item.unit %></small>
+                            </td>
+                            <td data-price="<%= item.price %>">Bs. <%= item.price.toFixed(2) %></td>
+                            <td data-quantity="<%= item.quantity %>"><%= item.quantity %></td>
+                            <td>Bs. <%= (item.price * item.quantity).toFixed(2) %></td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                                        
+                    
+                </table>
+                
+            </div>
+        </div>
+        <script>
+            router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
+                const carrito = JSON.parse(req.body.carrito || '[]');
+
+                if (!Array.isArray(carrito) || carrito.length === 0) {
+                    console.error('El carrito está vacío o inválido');
+                    return res.status(400).send('El carrito está vacío o es inválido');
+                }
+
+                console.log('Datos del carrito recibidos:', carrito);
+                // Continúa con la lógica de inserción en las tablas
+                res.send('Carrito procesado exitosamente');
+            });
+
+        </script>
+     <script>
+        document.getElementById('pedido-form').addEventListener('submit', async function (event) {
+    event.preventDefault(); // Prevenir el envío normal del formulario
+
+    // Recopilar datos del carrito
+    const carrito = [];
+    const tableRows = document.querySelectorAll('#tablaProductos tr');
+
+    tableRows.forEach(row => {
+        const productId = row.querySelector('td[data-id]').getAttribute('data-id');
+        const quantity = row.querySelector('td[data-quantity]').getAttribute('data-quantity');
+        const price = row.querySelector('td[data-price]').getAttribute('data-price');
+
+        carrito.push({
+            id: productId,
+            name: row.querySelector('td[data-id]').textContent.trim(),
+            price: parseFloat(price),
+            quantity: parseInt(quantity, 10)
+        });
+    });
+
+    // Recolectar datos del cliente y pedido
+    const data = {
+        nombre: document.getElementById('nombre').value,
+        apellido: document.getElementById('apellido').value,
+        direccion: document.getElementById('direccion').value,
+        ci_nit: document.getElementById('ci_nit').value,
+        telefono: document.getElementById('telefono').value,
+        distrito: document.getElementById('distrito').value,
+        tarifaEnvio: document.getElementById('distrito').selectedOptions[0].getAttribute('data-tarifa'),
+        productos: carrito
+    };
+
+    console.log('Datos enviados:', data);
+
+    // Confirmación del pedido
+    Swal.fire({
+        title: '¿Confirmar pedido?',
+        text: 'Una vez confirmado, no podrás deshacer esta acción.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, confirmar',
+        cancelButtonText: 'Cancelar'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                
+
+                const finalizarResponse = await fetch('/pagina_pedidos/finalizar_pedido', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!finalizarResponse.ok) {
+                    throw new Error('Error al procesar el pedido');
+                }
+
+                const finalizarResult = await finalizarResponse.json();
+                window.open(finalizarResult.facturaUrl, '_blank'); // Abrir factura en nueva pestaña
+
+               
+
+                Swal.fire({
+                    title: 'Pedido confirmado',
+                    text: 'Tu pedido ha sido procesado y la factura generada.',
+                    icon: 'success'
+                });
+            } catch (error) {
+                console.error('Error al procesar el pedido o generar la factura:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al procesar tu pedido. Intenta de nuevo.',
+                    icon: 'error'
+                });
+            }
+        }
+    });
+});
+
+     </script>
+
+        <script>
+        // Mostrar formulario de inicio de sesión
+        function mostrarLogin() {
+            Swal.fire({
+                title: 'Iniciar Sesión',
+                html: `
+                    <form id="login-form">
+                        <label for="Codigo">Código:</label>
+                        <input type="text" id="Codigo" name="Codigo" required class="swal2-input">
+
+                        <label for="Contrasena">Contraseña:</label>
+                        <input type="password" id="Contrasena" name="Contrasena" required class="swal2-input">
+                    </form>
+                `,
+                confirmButtonText: 'Iniciar Sesión',
+                focusConfirm: false,
+                preConfirm: () => {
+                    const Codigo = Swal.getPopup().querySelector('#Codigo').value;
+                    const Contrasena = Swal.getPopup().querySelector('#Contrasena').value;
+                    if (!Codigo || !Contrasena) {
+                        Swal.showValidationMessage('Por favor ingresa ambos campos');
+                    }
+                    return { Codigo, Contrasena };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Enviar datos al servidor
+                    fetch('/pagina_pedidos/login_clientes', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(result.value)
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            Swal.fire('Éxito', 'Inicio de sesión exitoso', 'success').then(() => {
+                                location.reload(); // Recargar para actualizar los datos del cliente
+                            });
+                        } else {
+                            throw new Error('Credenciales incorrectas');
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire('Error', error.message, 'error');
+                    });
+                }
+            });
+        }
+
+        // Actualizar el total al seleccionar un distrito
+        function actualizarTotal() {
+            const distritoSelect = document.getElementById('distrito');
+            const tarifa = parseFloat(distritoSelect.options[distritoSelect.selectedIndex].getAttribute('data-tarifa'));
+            const totalCarritoElement = document.getElementById('totalCarrito');
+            let totalCarrito = parseFloat(<%= totalCarrito.toFixed(2) %>);
+
+            totalCarrito += tarifa;
+            totalCarritoElement.textContent = `Bs. ${totalCarrito.toFixed(2)}`;
+        }
+    </script>
+
+<script>
+    // Actualizar el costo de envío y el total al seleccionar un distrito
+    function actualizarTotal() {
+        const distritoSelect = document.getElementById('distrito');
+        const tarifa = parseFloat(distritoSelect.options[distritoSelect.selectedIndex].getAttribute('data-tarifa'));
+        const costoEnvioElement = document.getElementById('costoEnvio');
+        const totalCarritoElement = document.getElementById('totalCarrito');
+        const baseTotal = <%= totalCarrito.toFixed(2) %>; // Total base sin tarifa
+
+        // Actualizar costo de envío
+        costoEnvioElement.textContent = `Bs. ${tarifa.toFixed(2)}`;
+
+        // Actualizar total incluyendo el costo de envío
+        const totalConEnvio = baseTotal + tarifa;
+        totalCarritoElement.textContent = `Bs. ${totalConEnvio.toFixed(2)}`;
+    }
+</script>
+    </body>
+</html>

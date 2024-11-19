@@ -366,6 +366,9 @@ router.post("/nueva_venta", async (req, res) => {
     return res.status(500).send("Error interno del servidor: " + error.message);
   }
 });
+
+
+
 // Ruta para generar la factura
 router.post("/generar_factura", async (req, res) => {
   try {

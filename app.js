@@ -2,13 +2,24 @@
 const express = require("express");
 const app = express();
 
+
+//#region - iniciar sesion - login - autenticacion
+const session = require("express-session");
+
+app.use(
+  session({
+    secret: "secret",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+
 const ciudadesRoutes = require("./routes/ciudades");
 const proveedoresRoutes = require("./routes/proveedores");
 const ventasRoutes = require("./routes/ventas");
 const detallesventasRoutes = require("./routes/detalles_ventas");
 const clientesRoutes = require("./routes/clientes");
 const inventarioRoutes = require("./routes/inventario");
-
 const productosRoutes = require("./routes/productos");
 const nuevaventaRoutes = require("./routes/nueva_venta");
 const ganancias_esRoutes = require("./routes/ganancias_es");
@@ -26,9 +37,7 @@ const unidad_empaqueRoutes = require("./routes/unidad_empaque");
 const venta_espeRoutes = require("./routes/venta_espe");
 const cajasRoutes = require("./routes/cajas");
 const nueva_compraRoutes = require("./routes/nueva_compra");
-
 const generarcodigoproducto = require("./routes/generador_codigos");
-
 const rolesRoutes = require("./routes/roles");
 const sucursalesRoutes = require("./routes/sucursales");
 const vista_ventas = require("./routes/vista_ventas");
@@ -42,9 +51,8 @@ const vistaPedidos = require("./routes/vista_pedidos");
 const notificacionesRoutes = require("./routes/notificaciones");
 const pedidos = require("./routes/pedidos");
 const reporteganancias = require("./routes/reporte_ganancias");
-//#endregion
-const graficosRouter = require("./routes/graficos"); // Ajusta la ruta según la ubicación de tu archivo graficos.js
-
+const graficosRouter = require("./routes/graficos");
+const paginapedidos = require('./routes/paginapedidos');
 //reportes
 const generador_reportesRoutes = require("./routes/generador_reportes");
 const reportestareasRoutes = require("./routes/reporte_tareas");
@@ -72,11 +80,15 @@ const api_datos = require("./routes/apis");
 //papeleria
 const ventas_pRouter = require("./papeleria/ventas");
 const compras_pRouter = require("./papeleria/compras");
-//AI
 
+//AI
 const buscadorIARouter = require("./routes/buscador_ai");
 
+//coneccion a la base de datos
 const coneccion = require("./database/db");
+
+
+
 
 //#region - rutas y llamados
 
@@ -85,8 +97,18 @@ const dotenv = require("dotenv");
 dotenv.config({ path: "./env/.env" });
 
 // motor de plantillas
-app.set("view engine", "ejs");
-const path = require("path");
+
+
+
+// Middleware para analizar JSON en solicitudes
+app.use(express.json());
+
+
+const path = require('path');
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+
 
 // Middleware para manejo de datos Json
 const bodyParser = require("body-parser");
@@ -113,20 +135,12 @@ app.use(
   "/facturas_ventas",
   express.static(path.join(__dirname, "facturas_ventas"))
 );
+app.use("/facturas_ventas", express.static(path.resolve(__dirname, "facturas_ventas")));
 
 app.use("/js", express.static(__dirname + "/views/graficos/js"));
 //#endregion
 
-//#region - iniciar sesion - login - autenticacion
-const session = require("express-session");
 
-app.use(
-  session({
-    secret: "secret",
-    resave: true,
-    saveUninitialized: true,
-  })
-);
 
 app.get("/mantenimiento", (req, res) => {
   res.render("./paginas/mantenimiento");
@@ -136,7 +150,13 @@ app.get("/login", (req, res) => {
   res.render("login");
 });
 
+
 app.get("/", (req, res) => {
+  res.redirect("/pagina_pedidos/clientes_index");
+});
+
+
+app.get("/index", (req, res) => {
   if (req.session.loggedin) {
     const primerNombre = req.session.Nombre.split(" ")[0];
     const primerApellido = req.session.Apellido.split(" ")[0];
@@ -245,7 +265,7 @@ app.use(api_datos);
 app.use(vistaComtas);
 app.use(vistaPedidos);
 app.use(pedidos);
-
+app.use(paginapedidos);
 //reportes
 
 app.use(generador_reportesRoutes);

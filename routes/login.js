@@ -142,7 +142,7 @@ router.post("/auth", async (req, res) => {
             alertIcon: "success",
             showConfirmButton: true,
             timer: false,
-            ruta: "",
+            ruta: "index",
           });
         }
       }
