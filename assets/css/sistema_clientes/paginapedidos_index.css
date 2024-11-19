@@ -1,0 +1,386 @@
+/*------------------Cabecera-------------------------*/
+
+/* Header Styles */
+.custom-header {
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 70px;
+}
+
+/* Logo Section */
+.custom-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.custom-logo img {
+    height: 70px;
+    margin-right: 10px;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    color: #333;
+}
+
+.logo-main {
+    font-size: 18px;
+    font-weight: bold;
+    color: #555;
+}
+
+.logo-sub {
+    font-size: 12px;
+    color: #888;
+}
+
+/* Navigation */
+.custom-nav .nav-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.custom-nav .nav-link {
+    text-decoration: none;
+    color: #333;
+    margin: 0 15px;
+    font-size: 14px;
+}
+
+.custom-nav .nav-link:hover {
+    color: #ff8800; /* Highlight color */
+}
+
+/* Actions Section */
+.header-actions {
+    display: flex;
+    align-items: center;
+}
+
+.location-select {
+    margin-right: 15px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.btn-login {
+    background-color: #ff8800;
+    color: white;
+    padding: 8px 12px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.btn-login:hover {
+    background-color: #cc7000;
+}
+
+/*---------------------bienbenida-------------------*/
+/* Welcome Section */
+.welcome-section {
+    background-color: #2a4158;
+    color: white;
+    padding: 50px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+  }
+  
+  .welcome-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    width: 100%;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .welcome-text {
+    flex: 1;
+    max-width: 50%;
+    padding: 20px;
+  }
+  
+  .welcome-title {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .welcome-subtitle {
+    font-size: 18px;
+    margin-bottom: 30px;
+    line-height: 1.6;
+  }
+  
+  .btn-buy {
+    background-color: #00c087;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-buy:hover {
+    background-color: #008f65;
+  }
+  
+  .welcome-image {
+    flex: 1;
+    max-width: 50%;
+    text-align: center;
+  }
+  
+  .welcome-image img {
+    max-width: 800px;
+    height: 500px;
+  }
+  
+  /*--------------------Nuestros servicios------------------*/
+
+  /* Servicios Section */
+.services-section {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .services-title {
+    font-size: 44px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #333;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .services-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .service-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 20px;
+    flex: 1;
+    max-width: 300px;
+    min-width: 250px;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .service-icon {
+    margin-bottom: 15px;
+  }
+  
+  .service-icon img {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .service-icon2 img {
+    width: 150px;
+    height: 150px;
+  }
+  
+  
+  .service-name1 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #498fc9;
+  }
+  .service-name2 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #f2ad63;
+  }
+  .service-name3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #41ae4c;
+  }
+  
+  .service-description {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  /* Custom Colors for Cards */
+  .service-card-blue {
+    background-color: #f3f3f3;
+  }
+  
+  .service-card-orange {
+    background-color: #f3f3f3;
+  }
+  
+  .service-card-green {
+    background-color: #f3f3f3;
+  }
+
+
+/* ---------------Pie de Pagina--------------- */
+
+
+.contact-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* Para alinear los elementos al inicio verticalmente */
+  padding: 40px;
+  background-color: #f3f4f6;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  gap: 20px; /* Añade espacio entre los elementos */
+  font-family: 'Arial', sans-serif; /* Tipo de letra aplicado al contenedor */
+}
+
+.contact-info,
+.map-container {
+  flex: 1; /* Ajusta el ancho de los elementos para que se distribuyan uniformemente */
+  max-width: 48%; /* Limita el ancho para que no ocupen todo el espacio */
+}
+
+/* Estilos para el título del mapa */
+.map-container h3 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 10px;
+  font-family: 'Arial', sans-serif; /* Tipo de letra */
+}
+
+.map-container iframe {
+  width: 100%; /* Asegúrate de que el mapa ocupe todo el contenedor */
+  height: 100%; /* Ajusta la altura según lo necesario */
+}
+
+/* Estilos para el texto debajo del título del mapa */
+.map-container p {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 20px;
+  font-family: 'Arial', sans-serif; /* Tipo de letra */
+}
+
+/* Estilos del iframe */
+.map-embed iframe {
+  border-radius: 8px;
+  width: 100%;
+  height: 300px; /* Fija una altura más específica para el mapa */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Detalles de contacto */
+.contact-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  transition: transform 0.3s ease; /* Efecto al pasar el mouse */
+  font-family: 'Arial', sans-serif; /* Tipo de letra */
+}
+
+/* Estilo de los íconos */
+.detail-item i {
+  margin-right: 15px;
+  font-size: 1.6rem;
+  color: #007BFF; /* Color azul para íconos */
+  transition: color 0.3s ease; /* Efecto al pasar el mouse */
+}
+
+/* Estilo de los detalles */
+.detail-item div {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-item strong {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+  font-family: 'Arial', sans-serif; /* Tipo de letra */
+}
+
+.detail-item p {
+  color: #666;
+  font-size: 1rem;
+  font-family: 'Arial', sans-serif; /* Tipo de letra */
+}
+
+/* Efectos al pasar el mouse por los íconos */
+.detail-item:hover i {
+  color: #0056b3; /* Cambio de color en hover */
+}
+
+.detail-item:hover {
+  transform: translateX(10px); /* Desplazamiento de los detalles al pasar el mouse */
+}
+
+/* Estilo para los títulos */
+h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 600;
+  font-family: 'Arial', sans-serif; /* Tipo de letra */
+}
+
+h3 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 15px;
+  font-weight: 600;
+  font-family: 'Arial', sans-serif; /* Tipo de letra */
+}
+
+p {
+  font-size: 1.1rem;
+  color: #666;
+  font-family: 'Arial', sans-serif; /* Tipo de letra */
+}
+
+/* Responsividad */
+@media screen and (max-width: 768px) {
+  .contact-container {
+      flex-direction: column; /* Pone los elementos en columna en pantallas pequeñas */
+      padding: 20px;
+      font-family: 'Arial', sans-serif; /* Tipo de letra */
+  }
+
+  .contact-info, .map-container {
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 20px;
+  }
+}

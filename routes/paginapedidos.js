@@ -270,80 +270,34 @@
             });
         });
 
-    
-    
 
-    
-    router.get('/pagina_pedidos/clientes_index/:idSucursal', (req, res) => {
-        const idSucursal = req.params.idSucursal;
-    
-        // Verifica el estado de sesión del cliente
-        const estaLogueadoCliente = req.session && req.session.loggedinCliente === true;
-        console.log('Estado de la sesión:', req.session);
-    
-        // Consultas de base de datos
-        const sqlSucursales = `SELECT * FROM Sucursales`;
-        const sqlProductos = `
-            SELECT Inventario.ID_Producto, Productos.Nombre, Productos.Descripcion,
-                Productos.Precio_Unitario, Inventario.Cantidad, Inventario.ID_Sucursal
-            FROM Inventario
-            JOIN Productos ON Inventario.ID_Producto = Productos.ID_Producto
-            WHERE Inventario.ID_Sucursal = ?
-            ORDER BY RAND()
-            LIMIT 12
-        `;
-    
-        connection.query(sqlSucursales, (error, results) => {
-            if (error) {
-                console.error('Error al obtener las sucursales:', error);
-                return res.status(500).send('Error al obtener los datos de sucursales.');
-            }
-    
-            connection.query(sqlProductos, [idSucursal], (error, products) => {
-                if (error) {
-                    console.error('Error al obtener los productos:', error);
-                    return res.status(500).send('Error al obtener los productos.');
-                }
-    
-                // Envía 'estaLogueadoCliente' a la vista para controlar los botones visibles
-                res.render('pagina_pedidos/clientes_index', { results, products, idSucursal, estaLogueadoCliente });
-            });
-        });
-    });
-    router.get('/getClientData', (req, res) => {
-        // Verifica si el cliente está logueado
-        if (req.session && req.session.loggedinCliente === true) {
-            const clientId = req.session.clientId; // Suponiendo que has guardado el ID del cliente en la sesión
-            const sql = `SELECT * FROM Clientes WHERE ID_Cliente = ?`;
-            
-            connection.query(sql, [clientId], (error, results) => {
-                if (error) {
-                    console.error('Error al obtener los datos del cliente:', error);
-                    return res.status(500).json({ error: 'Error al obtener los datos del cliente.' });
-                }
-                
-                if (results.length > 0) {
-                    // Enviar los datos del cliente al frontend
-                    const clientData = results[0];
-                    res.json({
-                        id_cliente: clientData.ID_Cliente,
-                        nombre: clientData.Nombre,
-                        apellido: clientData.Apellido,
-                        telefono: clientData.Telefono,
-                        ci: clientData.CI,
-                        nit: clientData.NIT,
-                        codigo: clientData.Codigo,
-                        contrasena: clientData.Contrasena
-                    });
-                } else {
-                    res.status(404).json({ error: 'Cliente no encontrado.' });
-                }
-            });
+
+// Ruta para mostrar la vista de login de clientes
+router.get("/pagina_pedidos/login_clientes", (req, res) => {
+    res.render("pagina_pedidos/login_clientes");
+  });
+  
+  router.post('/pagina_pedidos/login_clientes', (req, res) => {
+    const { Codigo, Contrasena } = req.body;
+
+    const sql = 'SELECT * FROM clientes WHERE Codigo = ? AND Contrasena = ?';
+    connection.query(sql, [Codigo, Contrasena], (err, results) => {
+        if (err) {
+            console.error('Error al autenticar al cliente:', err);
+            return res.status(500).json({ error: 'Error interno del servidor' });
+        }
+
+        if (results.length > 0) {
+            const cliente = results[0];
+            req.session.loggedinCliente = true;
+            req.session.userIdCliente = cliente.ID_Cliente;
+            req.session.clienteDatos = cliente;
+            res.status(200).json(cliente);
         } else {
             res.status(403).json({ error: 'No estás logueado.' });
         }
     });
-
+});
 
         
     router.get('/pagina_pedidos/continuar_pedido', (req, res) => {
@@ -605,162 +559,137 @@
             } else {
                 res.status(404).json({ success: false, message: 'Recordatorio no encontrado' });
             }
+          });
         });
-    });
-    
-    // Ruta para obtener recordatorios del cliente
-    router.get('/api/mis-recordatorios', async (req, res) => {
-        try {
-            if (!req.session.loggedinCliente) {
-                return res.status(401).json({ error: 'No autorizado' });
-            }
-
-            const query = `
-                SELECT 
-                    r.ID_Recordatorio,
-                    p.Nombre,
-                    dr.Dosis,
-                    dr.Cantidad_Mendicamentos AS cantidad,
-                    r.Telefono,
-                    dr.fecha,
-                    dr.hora,
-                    dr.Mensaje
-                FROM 
-                    Recordatorios r
-                INNER JOIN 
-                    detalle_recordatorio dr ON r.ID_Recordatorio = dr.ID_Recordatorio
-                INNER JOIN 
-                    Productos p ON r.ID_Producto = p.ID_Producto
-                WHERE 
-                    r.ID_Cliente = ?
-                ORDER BY 
-                    dr.fecha DESC, dr.hora DESC
-            `;
-
-            connection.query(query, [req.session.idCliente], (error, recordatorios) => {
-                if (error) {
-                    console.error('Error al obtener recordatorios:', error);
-                    return res.status(500).json({ error: 'Error al obtener los recordatorios' });
-                }
-                res.json(recordatorios);
-            });
-
-        } catch (error) {
-            console.error('Error al obtener recordatorios:', error);
-            res.status(500).json({ error: 'Error al obtener los recordatorios' });
-        }
-    }); 
-
-    // Actualizar un recordatorio
-    router.put('/api/actualizar-recordatorio/:id', async (req, res) => {
-        try {
-            if (!req.session.loggedinCliente) {
-                return res.status(401).json({ error: 'No autorizado' });
-            }
-
-            const { dosis, cantidad, telefono, fechaHora } = req.body;
-            const idRecordatorio = req.params.id;
-
-            // Validaciones
-            if (!dosis || !cantidad || !telefono || !fechaHora) {
-                return res.status(400).json({ error: 'Todos los campos son requeridos' });
-            }
-
-            // Validar formato del teléfono
-            if (!/^591\d{8}$/.test(telefono)) {
-                return res.status(400).json({ error: 'Formato de teléfono inválido' });
-            }
-
-            const fechaRecordatorio = new Date(fechaHora);
-            const fecha = fechaRecordatorio.toISOString().split('T')[0];
-            const hora = fechaRecordatorio.toTimeString().split(' ')[0];
-
-            await connection.beginTransaction();
-
-            try {
-                // Actualizar el recordatorio principal
-                await connection.query(
-                    'UPDATE Recordatorio SET Telefono = ? WHERE ID_Recordatorio = ? AND ID_Cliente = ?',
-                    [telefono, idRecordatorio, req.session.idCliente]
+      };
+  
+      // Obtener los datos del cliente
+      const clienteDatos = await obtenerDatosCliente();
+      const {
+        Telefono: telefonoCliente,
+        Codigo: codigoCliente,
+        Contrasena: contrasenaCliente,
+      } = clienteDatos;
+  
+      console.log("Datos del cliente recuperados:", clienteDatos);
+  
+      // Calcular el total con envío
+      const totalConEnvio = parseFloat(totalVenta) + parseFloat(tarifaEnvio);
+  
+      // Configuración del archivo
+      const timestamp = Date.now();
+      const fileName = `venta_${timestamp}.pdf`;
+      const filePath = path.join(__dirname, "../facturas_ventas", fileName);
+  
+      // Crear el documento PDF
+      const generarPDF = () => {
+        return new Promise((resolve, reject) => {
+          try {
+            const doc = new PDFDocument({ size: [300, 600], margin: 10 });
+            const stream = fs.createWriteStream(filePath);
+  
+            doc.pipe(stream);
+  
+            // Encabezado
+            const pageWidth = doc.page.width;
+            const logoWidth = 50;
+            const centerX = (pageWidth - logoWidth) / 2;
+  
+            doc.image("assets/images/logo/logo_fm.png", centerX, 10, { width: logoWidth });
+            doc.moveDown(5);
+            doc.font("Helvetica-Bold").fontSize(12).text("FARMACIA 25 DE JULIO", { align: "center" });
+            doc.font("Helvetica").fontSize(8).text("Dirección: Av. Principal #123", { align: "center" });
+            doc.text("Teléfono: (123) 456-7890", { align: "center" });
+            doc.moveDown(1);
+  
+            doc.font("Helvetica-Bold").fontSize(16).text("RECIBO", { align: "center" });
+            doc
+              .font("Helvetica")
+              .fontSize(10)
+              .text(`Número de Recibo: ${timestamp}`, { align: "center" });
+            doc.moveDown(1);
+  
+            // Datos del cliente
+            doc.font("Helvetica-Bold").text("Datos del Cliente:", { align: "left" });
+            doc.moveDown(0.7);
+            doc.font("Helvetica").fontSize(10).text(`Nombre Completo: ${nombre} ${apellido}`);
+            doc.text(`Teléfono: ${telefonoCliente || "N/A"}`);
+            doc.text(`NIT: ${nit || "N/A"}`);
+            doc.text(`Carnet: ${carnet || "N/A"}`);
+            doc.text(`Fecha de Venta: ${fechaVenta}`);
+            doc.text(`Código de Vendedor: ${ID_Empleado}`);
+            doc.text(`Código de Sucursal: ${ID_Sucursal}`);
+            doc.text(`Código de Caja: ${ID_Caja}`);
+            doc.moveDown(1);
+            doc.font("Helvetica-Bold").text("Datos para el Sitio Web:", { align: "left" });
+            doc.font("Helvetica").text(`Codigo de Usuario: ${codigoCliente}`);
+            doc.text(`Contraseña de Usuario: ${contrasenaCliente}`);
+            doc.moveDown(1);
+  
+            // Detalles de Compra
+            doc.font("Helvetica-Bold").text("Detalles de Compra:");
+            doc.moveDown(1);
+            doc.font("Helvetica-Bold").text("Cantidad   -   Producto   -   Precio Unitario   - Subtotal");
+            detalles.forEach((detalle) => {
+              const subtotal = detalle.cantidad * detalle.precio;
+              doc
+                .font("Helvetica")
+                .fontSize(10)
+                .text(
+                  `${detalle.cantidad} x ${detalle.producto} x ${detalle.precio.toFixed(2)} Bs = ${subtotal.toFixed(2)} Bs`
                 );
-
-                // Actualizar el detalle del recordatorio
-                const mensaje = `Es hora de tomar tu medicamento. Dosis: ${dosis}. Cantidad: ${cantidad} unidades.`;
-                await connection.query(
-                    `UPDATE detalle_recordatorio 
-                    SET fecha = ?, hora = ?, Mensaje = ?, Dosis = ?, Cantidad_medicamentos = ?
-                    WHERE ID_Recordatorio = ?`,
-                    [fecha, hora, mensaje, dosis, cantidad, idRecordatorio]
-                );
-
-                await connection.commit();
-                res.json({ message: 'Recordatorio actualizado exitosamente' });
-
-            } catch (error) {
-                await connection.rollback();
-                throw error;
-            }
-
-        } catch (error) {
-            console.error('Error al actualizar recordatorio:', error);
-            res.status(500).json({ error: 'Error al actualizar el recordatorio' });
-        }
-    });
-
-    // Ruta para obtener productos comprados
-    router.get('/api/mis-productos-comprados', async (req, res) => {
-        try {
-            console.log('Estado de la sesión:', {
-                sesionActiva: req.session.loggedinCliente,
-                idCliente: req.session.userIdCliente  // Cambiado para usar userIdCliente
             });
-
-            if (!req.session.loggedinCliente) {
-                console.log('Cliente no ha iniciado sesión');
-                return res.redirect('/pagina_pedidos/login_clientes');
-            }
-
-            const query = `
-                SELECT DISTINCT 
-                    p.ID_Producto AS id,
-                    p.Nombre AS nombre
-                FROM Productos p
-                INNER JOIN Detalles_Venta dv ON p.ID_Producto = dv.ID_Producto
-                INNER JOIN Ventas v ON dv.ID_Venta = v.ID_Venta
-                WHERE v.ID_Cliente = ?
-                ORDER BY p.Nombre;
-            `;
-
-            // Usar el ID del cliente desde la sesión
-            connection.query(query, [req.session.userIdCliente], (error, results) => {
-                if (error) {
-                    console.error('Error en la consulta:', error);
-                    return res.status(500).json({ error: 'Error al obtener productos' });
-                }
-
-                console.log('Productos encontrados:', results);
-                res.json(results);
-            });
-
-        } catch (error) {
-            console.error('Error general:', error);
-            res.status(500).json({ error: 'Error del servidor' });
-        }
-    });
-        
-    
-        
-
-
-    // Ruta para mostrar la consulta
-    router.get('/pagina_pedidos/consultas', (req, res) => {
-
-        if (!req.session.loggedinCliente) {
-            return res.redirect('/pagina_pedidos/login_clientes');
-        }
-        res.render('pagina_pedidos/consultas');
-    });
-    
-    
+  
+            doc.moveDown(1);
+  
+            // Totales
+            doc.font("Helvetica-Bold").fontSize(10).text(`Descuento: 0 Bs`, { align: "right" });
+            doc.text(`Costo de Envío: ${tarifaEnvio.toFixed(2)} Bs`, { align: "right" });
+            doc.text(`Sub Total: ${totalVenta.toFixed(2)} Bs`, { align: "right" });
+            doc.text(`Total a Pagar: ${totalConEnvio.toFixed(2)} Bs`, { align: "right" });
+  
+            doc.moveDown(1);
+  
+            const leftMargin = 10; // Asigna un valor a leftMargin
+            const rightMargin = 10;
+            const textWidth = 300 - leftMargin - rightMargin; // Ancho total menos los márgenes
+            // Derechos reservados
+            doc.font('Helvetica').fontSize(6).text(
+              `Derechos Reservados © ${new Date().getFullYear()} FARMACIA 25 de Julio. Todos los derechos reservados. Este recibo y su contenido están protegidos por las leyes de derechos de autor y no pueden ser reproducidos, distribuidos, transmitidos, exhibidos, publicados o transmitidos sin el permiso previo por escrito del titular de los derechos de autor.`,
+              leftMargin, // Usamos la variable `leftMargin` definida
+              doc.y, 
+              { 
+                align: 'justify', 
+                width: textWidth 
+              }
+            );
+  
+            // Finalizar y guardar el PDF
+            doc.end();
+  
+            stream.on("finish", () => resolve());
+            stream.on("error", (error) => reject(error));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      };
+  
+      // Generar PDF y responder
+      await generarPDF();
+      console.log("Factura generada en:", filePath);
+  
+      return res.status(200).json({
+        message: "Factura generada correctamente",
+        url: `/facturas_ventas/${fileName}`,
+      });
+    } catch (error) {
+      console.error("Error al generar la factura:", error);
+      if (!res.headersSent) {
+        res.status(500).json({ error: "Error al generar la factura" });
+      }
+    }
+  });
+  
 
     module.exports = router;

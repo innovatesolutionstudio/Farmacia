@@ -3,82 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/resources/css/micompras.css" />
+    <link rel="stylesheet" href="/resources/css/sistema_clientes/micompras.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Mis Compras</title>
-    <style>
-        .recordatorio-btn {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-left: 10px;
-            font-size: 0.9em;
-        }
-
-        .recordatorio-btn:hover {
-            background-color: #45a049;
-        }
-
-        .product-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .product-actions {
-            display: flex;
-            gap: 10px;
-        }
-    </style>
 </head>
 <body>
-    <div class="top-header">
-        <a href="/pagina_pedidos/clientes_index/:idSucursal" class="logo">
-            <img src="/resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
-        </a>     
-        <ul>
-            <li><a href="/pagina_pedidos/clientes_index/:idSucursal" class="dropdown">Inicio</a></li>
-            <li><a href="/pagina_pedidos/productos/1" class="dropdown">Tienda</a></li>
-            <li><a href="/pagina_pedidos/consultas" class="dropdown">Consultas</a></li>
-            <li><a href="/pagina_pedidos/miscompras" class="dropdown">Compras</a></li>
-            <li><a href="/pagina_pedidos/recordatorio" class="dropdown">Recordatorio</a></li>
-        </ul>
-        <div style="display: flex; gap: 20px;">
-            <a href="/pagina_pedidos/productos/1" style="text-decoration: none; color: #333;">
-                <i class="fas fa-shopping-cart"></i>
-            </a>
-            <a href="/pagina_pedidos/logout" class="logout-btn">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Cerrar Sesion</span>
-            </a>
-        </div>
-    </div>
-
     <div class="main-container">
-        <h1>Mis Ventas</h1>
-        <% if (ventas && ventas.length > 0) { %>
+        <h1>Mis Pedidos</h1>
+        <% if (pedidos && pedidos.length > 0) { %>
             <ul id="ventas-lista">
-                <% ventas.forEach(venta => { %>
+                <% pedidos.forEach(pedido => { %>
                     <li class="venta-item">
-                        <strong>Venta:</strong> <span data-id-venta><%= venta.ID_Venta %></span><br>
-                        <strong>Fecha:</strong> <span data-fecha><%= venta.Fecha_Venta %></span><br>
-                        <strong>Total:</strong> <span data-total><%= venta.Total_Venta %></span> Bs.<br>
-                        <strong>Sucursal:</strong> <span data-sucursal><%= venta.Sucursal %></span><br>
-                        <button class="venta-item-button" onclick="verDetallesVenta('<%= venta.ID_Venta %>')">Detalles</button>
+                        <strong>Pedido:</strong> <span data-id-pedido><%= pedido.ID_Pedido %></span><br>
+                        <strong>Venta:</strong> <span data-id-venta><%= pedido.ID_Venta %></span><br>
+                        <strong>Empleado:</strong> <span data-id-empleado><%= pedido.Empleado %></span><br> <!-- Usando el nombre del empleado -->
+                        <strong>Cliente:</strong> <span data-id-cliente><%= pedido.Cliente %></span><br> <!-- Usando el nombre del cliente -->
+                        <strong>Dirección:</strong> <span data-direccion><%= pedido.Direccion %></span><br>
+                        <strong>Distrito:</strong> <span data-distrito><%= pedido.ID_Distrito %></span><br>
+                        <strong>Fecha:</strong> <span data-fecha><%= pedido.Fecha_Venta %></span><br>
+                        <strong>Total:</strong> <span data-total><%= pedido.Total_Venta %></span> Bs.<br>
+                        <strong>Sucursal:</strong> <span data-sucursal><%= pedido.Sucursal %></span><br>
+                        <button class="venta-item-button" onclick="verDetallesVenta('<%= pedido.ID_Venta %>')">Detalles</button>
                         <a href="#" class="download-pdf">Descargar</a>
                     </li>
                 <% }) %>
             </ul>
         <% } else { %>
-            <p>No tienes ventas registradas.</p>
-        <% } %>        
+            <p>No tienes pedidos registrados.</p>
+        <% } %>           
     </div>
     
+
     <!-- Modal de Detalles -->
     <div id="detallesModal" class="modal">
         <div class="modal-content">
@@ -272,7 +227,7 @@
             }));
             
             // Redirigir a la página de recordatorios
-            window.location.href = '/pagina_pedidos/recordatorio';
+            window.location.href = '#';
         }
 
         function cerrarModal() {

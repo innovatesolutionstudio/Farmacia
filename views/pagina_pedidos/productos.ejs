@@ -174,9 +174,44 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+
+            <!-- Ventana deslizante del carrito -->
+            <div id="cart-sidebar" class="cart-sidebar hidden">
+                <div class="cart-header">
+                    <h3>Mi Carrito</h3>
+                    <button class="close-cart" onclick="toggleCart()">×</button>
+                </div>
+                <ul id="cart-items" class="cart-items">
+                    <!-- Productos del carrito -->
+                </ul>
+                <div class="cart-footer">
+                    <p class="cart-total" id="total-carrito">Total: Bs 0.00</p>
+                    <button class="btn-checkout" onclick="continuarPedido()">Continuar</button>
+
+                </div>
+            </div>
+
+        </section>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function changePage(action) {
+            let currentPage = <%= currentPage %>;
+            const totalPages = <%= totalPages %>;
+
+            if (action === 'prev' && currentPage > 1) {
+                currentPage--;
+            } else if (action === 'next' && currentPage < totalPages) {
+                currentPage++;
+            } else if (typeof action === 'number') {
+                currentPage = action;
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('page', currentPage);
+            window.location.search = urlParams.toString();
+        }
+
+    </script>
     <script>
         let currentProduct = null;
         let modalQuantity = 1;
