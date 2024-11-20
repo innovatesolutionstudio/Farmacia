@@ -1,97 +1,146 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Formulario de Perfil</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f9f9f9;
-      margin: 0;
-    }
-    .profile-container {
-      background-color: #fff;
-      border-radius: 15px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      max-width: 400px;
-      text-align: center;
-      position: relative;
-    }
-    .profile-image {
-      position: absolute;
-      top: -50px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 100px;
-      border: 3px solid #e6e6e6;
-      border-radius: 50%;
-      background-color: #fff;
-    }
-    .profile-image img {
-      width: 100%;
-      border-radius: 50%;
-    }
-    .profile-form {
-      margin-top: 60px;
-    }
-    .form-group {
-      margin-bottom: 15px;
-      display: flex;
-      gap: 10px;
-    }
-    .form-group input {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid #dcdcdc;
-      border-radius: 8px;
-      width: calc(50% - 5px);
-    }
-    .profile-form input {
-      width: 100%;
-    }
-    button {
-      background-color: #00b4d8;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    button:hover {
-      background-color: #0096c7;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil del Cliente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #ffffff;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .sidebar-header {
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar-menu a {
+            color: #666;
+            text-decoration: none;
+            font-size: 16px;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: #f8f9fa;
+            color: #0d6efd;
+        }
+
+        .profile-content {
+            padding: 30px;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .profile-header {
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .profile-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-item:last-child {
+            border-bottom: none;
+        }
+
+        .profile-label {
+            font-weight: 600;
+            color: #666;
+            width: 120px;
+        }
+
+        .profile-value {
+            color: #333;
+            flex-grow: 1;
+        }
+
+        .btn-custom {
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+    </style>
 </head>
 <body>
-    <div class="profile-container">
-      <div class="profile-image">
-        <img src="avatar.png" alt="Avatar">
-      </div>
-      <form action="/pagina_pedidos/perfil" method="POST" class="profile-form">
-        <div class="form-group">
-            <input type="text" name="name" placeholder="Nombres" value="<%= user.name %>" />
-            <input type="email" name="email" placeholder="Correo electrónico" value="<%= user.email %>" />
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <div class="sidebar-header">
+                    <h4>Hola <%= cliente.Nombre %></h4>
+                </div>
+                <ul class="sidebar-menu">
+                    <li><a href="/pagina_pedidos/otros/miscompras">Mis pedidos</a></li>
+                    <li><a href="/pagina_pedidos/otros/consultas">Consultas</a></li>
+                    <li><a href="/pagina_pedidos/otros/recordatorio">MIs recordatorios</a></li>
+                    <li><a href="/pagina_pedidos/logout">Cerrar sesión</a></li>
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 profile-content">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <h3>Perfil del Cliente</h3>
+                    </div>  
+                    <div class="profile-item">
+                        <span class="profile-label">Nombre:</span>
+                        <span class="profile-value"><%= cliente.Nombre %></span>
+                    </div>
+
+                    <div class="profile-item">
+                        <span class="profile-label">Apellido:</span>
+                        <span class="profile-value"><%= cliente.Apellido %></span>
+                    </div>
+
+                    <div class="profile-item">
+                        <span class="profile-label">Teléfono:</span>
+                        <span class="profile-value"><%= cliente.Telefono %></span>
+                    </div>
+
+                    <div class="profile-item">
+                        <span class="profile-label">CI:</span>
+                        <span class="profile-value"><%= cliente.CI %></span>
+                    </div>
+
+                    <div class="profile-item">
+                        <span class="profile-label">NIT:</span>
+                        <span class="profile-value"><%= cliente.Nit %></span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-          <input type="text" name="address" placeholder="Dirección" value="<%= user.address %>" />
-        </div>
-        <div class="form-group">
-          <input type="text" name="ciNit" placeholder="CI/NIT" value="<%= user.ciNit %>" />
-          <input type="text" name="phoneNumber" placeholder="Celular" value="<%= user.phoneNumber %>" />
-        </div>
-        <div class="form-group">
-          <input type="email" name="email" placeholder="Correo" value="<%= user.email %>" />
-        </div>
-        <button type="submit">Guardar cambios</button>
-      </form>
     </div>
-  </body>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

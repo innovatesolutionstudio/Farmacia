@@ -205,12 +205,12 @@ router.get('/pagina_pedidos/continuar_pedido', (req, res) => {
 
 
 
-// Ruta para mostrar la vista de login de clientes
-router.get("/pagina_pedidos/login_clientes", (req, res) => {
+ // Ruta para mostrar la vista de login de clientes
+ router.get("/pagina_pedidos/login_clientes", (req, res) => {
     res.render("pagina_pedidos/login_clientes");
-  });
-  
-  router.post('/pagina_pedidos/login_clientes', (req, res) => {
+});
+
+router.post('/pagina_pedidos/login_clientes', (req, res) => {
     const { Codigo, Contrasena } = req.body;
 
     const sql = 'SELECT * FROM clientes WHERE Codigo = ? AND Contrasena = ?';
@@ -225,12 +225,116 @@ router.get("/pagina_pedidos/login_clientes", (req, res) => {
             req.session.loggedinCliente = true;
             req.session.userIdCliente = cliente.ID_Cliente;
             req.session.clienteDatos = cliente;
-            res.status(200).json(cliente);
+
+
+            res.redirect('/pagina_pedidos/otros/perfil'); 
         } else {
             res.status(401).json({ error: 'Código o contraseña incorrectos' });
         }
     });
 });
+
+// Ruta para mostrar la vista de perfil después de iniciar sesión
+router.get('/pagina_pedidos/otros/perfil', (req, res) => {
+    if (req.session.loggedinCliente) {
+
+        res.render('pagina_pedidos/otros/perfil', { cliente: req.session.clienteDatos });
+    } else {
+
+        res.redirect('/pagina_pedidos/login_clientes');
+    }
+});
+
+// Ruta para cerrar sesión
+router.get('/pagina_pedidos/logout', (req, res) => {
+
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).send('Error al cerrar sesión');
+        }
+
+        res.redirect('/pagina_pedidos/clientes_index');
+    });
+}); 
+
+//ruta de consulta de IA
+router.get('/pagina_pedidos/otros/consultas', (req, res) => {
+
+    if (!req.session.loggedinCliente) {
+        return res.redirect('/pagina_pedidos/login_clientes');
+    }
+    res.render('pagina_pedidos/otros/consultas');
+});
+
+router.get('/pagina_pedidos/otros/miscompras', (req, res) => {
+    const idCliente = req.session.userIdCliente;
+
+    const sqlVentas = `
+    SELECT 
+        pedidos.ID_Pedido,
+        pedidos.ID_Venta,
+        empleados.Nombre AS Empleado,  
+        clientes.Nombre AS Cliente,    
+        pedidos.Direccion,
+        pedidos.ID_Distrito,
+        ventas.Fecha_Venta,
+        ventas.Total_Venta,
+        Sucursales.Nombre AS Sucursal
+    FROM pedidos 
+    JOIN ventas ON pedidos.ID_Venta = ventas.ID_Venta
+    JOIN Sucursales ON ventas.ID_Sucursal = Sucursales.ID_Sucursal
+    JOIN empleados ON pedidos.ID_Empleado = empleados.ID_Empleado
+    JOIN clientes ON pedidos.ID_Cliente = clientes.ID_Cliente      
+    WHERE pedidos.ID_Cliente = ? 
+    ORDER BY ventas.Fecha_Venta DESC
+`;
+
+    connection.query(sqlVentas, [idCliente], (error, resultados) => {
+        if (error) {
+            console.error('Error al obtener los pedidos:', error);
+            return res.status(500).send('Error al obtener los pedidos');
+        }
+
+        res.render('pagina_pedidos/otros/miscompras', { 
+            pedidos: resultados,
+            loggedin: req.session.loggedin,
+            nombre: req.session.nombre
+        }); 
+    });
+});
+
+// Ruta para obtener los detalles de la venta por ID_Detalle_Venta
+router.get('/pagina_pedidos/detalleVenta/:ID_Detalle_Venta', (req, res) => {
+    const { ID_Detalle_Venta } = req.params;
+
+    const sqlDetalles = `
+        SELECT 
+            D.ID_Detalle_Venta, 
+            D.ID_Venta, 
+            D.ID_Producto, 
+            D.Cantidad, 
+            P.Nombre AS Nombre_Producto
+        FROM 
+            Detalles_Venta D
+        JOIN 
+            Productos P ON D.ID_Producto = P.ID_Producto
+        WHERE 
+            D.ID_Detalle_Venta = ?
+
+    `;
+
+    connection.query(sqlDetalles, [ID_Detalle_Venta], (error, detalles) => {
+        if (error) {
+            console.error('Error al obtener los detalles de la venta:', error);
+            return res.status(500).send('Error al obtener los detalles de la venta.');
+        }
+
+        res.json(detalles);
+    });
+});
+
+
+
 
 
 router.get('/pagina_pedidos/continuar_pedido', (req, res) => {
@@ -654,6 +758,7 @@ router.post("/pagina_pedidos/generar_factura_pedido", async (req, res) => {
       }
     }
   });
+  
   
 
 module.exports = router;

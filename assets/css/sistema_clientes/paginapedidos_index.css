@@ -246,5 +246,140 @@
     background-color: #f3f3f3;
   }
 
-
 /* ---------------Pie de Pagina--------------- */
+
+.contact-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* Para alinear los elementos al inicio verticalmente */
+  padding: 40px;
+  background-color: #f3f4f6;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  gap: 20px; /* Añade espacio entre los elementos */
+  font-family: 'Arial', sans-serif; /* Tipo de letra aplicado al contenedor */
+}
+
+.contact-info,
+.map-container {
+  flex: 1; /* Ajusta el ancho de los elementos para que se distribuyan uniformemente */
+  max-width: 48%; /* Limita el ancho para que no ocupen todo el espacio */
+}
+
+/* Estilos para el título del mapa */
+.map-container h3 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 10px;
+  font-family: 'Arial', sans-serif; /* Tipo de letra */
+}
+
+.map-container iframe {
+  width: 100%; /* Asegúrate de que el mapa ocupe todo el contenedor */
+  height: 100%; /* Ajusta la altura según lo necesario */
+}
+
+/* Estilos para el texto debajo del título del mapa */
+.map-container p {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 20px;
+  font-family: 'Arial', sans-serif; /* Tipo de letra */
+}
+
+/* Estilos del iframe */
+.map-embed iframe {
+  border-radius: 8px;
+  width: 100%;
+  height: 300px; /* Fija una altura más específica para el mapa */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Detalles de contacto */
+.contact-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  transition: transform 0.3s ease; /* Efecto al pasar el mouse */
+  font-family: 'Arial', sans-serif; /* Tipo de letra */
+}
+
+/* Estilo de los íconos */
+.detail-item i {
+  margin-right: 15px;
+  font-size: 1.6rem;
+  color: #007BFF; /* Color azul para íconos */
+  transition: color 0.3s ease; /* Efecto al pasar el mouse */
+}
+
+/* Estilo de los detalles */
+.detail-item div {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-item strong {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+  font-family: 'Arial', sans-serif; /* Tipo de letra */
+}
+
+.detail-item p {
+  color: #666;
+  font-size: 1rem;
+  font-family: 'Arial', sans-serif; /* Tipo de letra */
+}
+
+/* Efectos al pasar el mouse por los íconos */
+.detail-item:hover i {
+  color: #0056b3; /* Cambio de color en hover */
+}
+
+.detail-item:hover {
+  transform: translateX(10px); /* Desplazamiento de los detalles al pasar el mouse */
+}
+
+/* Estilo para los títulos */
+h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 600;
+  font-family: 'Arial', sans-serif; /* Tipo de letra */
+}
+
+h3 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 15px;
+  font-weight: 600;
+  font-family: 'Arial', sans-serif; /* Tipo de letra */
+}
+
+p {
+  font-size: 1.1rem;
+  color: #666;
+  font-family: 'Arial', sans-serif; /* Tipo de letra */
+}
+
+/* Responsividad */
+@media screen and (max-width: 768px) {
+  .contact-container {
+      flex-direction: column; /* Pone los elementos en columna en pantallas pequeñas */
+      padding: 20px;
+      font-family: 'Arial', sans-serif; /* Tipo de letra */
+  }
+
+  .contact-info, .map-container {
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 20px;
+  }
+}
+
