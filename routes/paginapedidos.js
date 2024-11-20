@@ -248,7 +248,7 @@ router.post('/pagina_pedidos/guardar_carrito', (req, res) => {
 
     // Guardar el carrito en la sesión
     req.session.carrito = carrito;
-    console.log('Carrito guardado en sesión:', carrito);
+   
     res.status(200).send('Carrito guardado exitosamente');
 });
 
@@ -262,7 +262,6 @@ router.get('/pagina_pedidos/confirmar_pedido', (req, res) => {
         return res.status(400).send('El carrito está vacío o es inválido');
     }
 
-    console.log("Detalles del carrito recibidos:", carrito);
 
     // Obtener distritos desde la base de datos
     const sqlDistritos = `SELECT ID_Distritos, Numero_Distrito, Tatifa, Tiempo_Estimado FROM distritos`;
@@ -295,11 +294,13 @@ router.get('/pagina_pedidos/confirmar_pedido', (req, res) => {
         });
     });
 });
+
+
 router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
-    const { nombre, apellido, direccion, ci_nit, telefono, distrito, tarifaEnvio, productos } = req.body;
+    const { nombre, apellido, direccion, ci_nit, telefono, distrito, notas, tarifaEnvio, productos } = req.body;
 
     console.log('Datos recibidos del cliente:', {
-        nombre, apellido, direccion, ci_nit, telefono, distrito, tarifaEnvio, productos
+        nombre, apellido, direccion, ci_nit, telefono, distrito, tarifaEnvio, productos,notas
     });
 
     if (!Array.isArray(productos) || productos.length === 0) {
@@ -309,7 +310,6 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
 
     let connection;
     try {
-        // Mapeo de productos
         const productosMapeados = productos.map((producto) => ({
             ID_Producto: producto.id,
             cantidad: producto.quantity,
@@ -317,7 +317,6 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
 
         console.log('Productos mapeados:', productosMapeados);
 
-        // Obtener conexión del pool
         connection = await new Promise((resolve, reject) => {
             pool.getConnection((err, conn) => {
                 if (err) return reject(err);
@@ -325,7 +324,6 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
             });
         });
 
-        // Iniciar transacción
         await new Promise((resolve, reject) => {
             connection.beginTransaction(err => {
                 if (err) return reject(err);
@@ -333,7 +331,6 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
             });
         });
 
-        // Registrar cliente si no existe
         let clienteId = null;
         const clienteExistente = await new Promise((resolve, reject) => {
             const query = 'SELECT ID_Cliente FROM clientes WHERE CI = ?';
@@ -359,7 +356,6 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
             clienteId = nuevoCliente.insertId;
         }
 
-        // Registrar la venta
         const timestamp = Date.now();
         const fileName = `venta_${timestamp}.pdf`;
         const ventaId = await new Promise((resolve, reject) => {
@@ -375,7 +371,6 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
 
         console.log('Venta registrada con ID:', ventaId);
 
-        // Registrar detalles de la venta
         const detallesVentaValues = productosMapeados.map(item => [ventaId, item.ID_Producto, item.cantidad]);
         await new Promise((resolve, reject) => {
             const query = `
@@ -390,7 +385,43 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
 
         console.log('Detalles de la venta registrados.');
 
-        // Confirmar transacción
+        // Registrar pedido en la tabla pedidos
+        const pedidoId = await new Promise(async (resolve, reject) => {
+            const query = `
+                INSERT INTO pedidos (ID_Venta, ID_Empleado, ID_Cliente, ID_Distrito, Direccion, Estado, Fecha_Entrega,notas)
+                VALUES (?, ?, ?, ?, ?, 1, ?,?)
+            `;
+
+            try {
+                const distritoInfo = await new Promise((resolve, reject) => {
+                    const queryDistrito = `
+                        SELECT Tiempo_Estimado FROM distritos WHERE ID_Distritos = ?
+                    `;
+                    connection.query(queryDistrito, [distrito], (err, results) => {
+                        if (err) return reject(err);
+                        if (results.length === 0) return reject(new Error('Distrito no encontrado'));
+                        resolve(results[0]);
+                    });
+                });
+
+                const tiempoEstimadoMinutos = parseInt(distritoInfo.Tiempo_Estimado, 10);
+                const fechaEntrega = new Date(new Date().getTime() + tiempoEstimadoMinutos * 60000);
+
+                connection.query(
+                    query,
+                    [ventaId, 24, clienteId, distrito, direccion, fechaEntrega,notas],
+                    (err, results) => {
+                        if (err) return reject(err);
+                        resolve(results.insertId);
+                    }
+                );
+            } catch (err) {
+                return reject(err);
+            }
+        });
+
+        console.log('Pedido registrado con ID:', pedidoId);
+
         await new Promise((resolve, reject) => {
             connection.commit(err => {
                 if (err) return reject(err);
@@ -398,7 +429,6 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
             });
         });
 
-        // Llamar a la ruta de generar factura
         const facturaData = {
             ID_Empleado: 1,
             nombre,
@@ -655,5 +685,374 @@ router.post("/pagina_pedidos/generar_factura_pedido", async (req, res) => {
     }
   });
   
+////////////////////////////////////////////////////////////////////////////rutas para sistema clientes////////////////////////////////
+
+
+
+
+router.post('/pagina_pedidos/otros/login_clientes/', (req, res) => {
+    const { Codigo, Contrasena } = req.body;
+
+    const sql = 'SELECT * FROM clientes WHERE Codigo = ? AND Contrasena = ?';
+    connection.query(sql, [Codigo, Contrasena], (err, results) => {
+        if (err) {
+            console.error('Error al autenticar al cliente:', err);
+            return res.status(500).json({ error: 'Error interno del servidor' });
+        }
+
+        if (results.length > 0) {
+            const cliente = results[0];
+            req.session.loggedinCliente = true;
+            req.session.userIdCliente = cliente.ID_Cliente;
+            req.session.clienteDatos = cliente;
+
+
+            res.redirect('/pagina_pedidos/otros/perfil'); 
+        } else {
+            res.status(401).json({ error: 'Código o contraseña incorrectos' });
+        }
+    });
+});
+
+
+  // Ruta para mostrar la vista de perfil después de iniciar sesión
+router.get('/pagina_pedidos/otros/perfil', (req, res) => {
+    if (req.session.loggedinCliente) {
+
+        res.render('pagina_pedidos/otros/perfil', { cliente: req.session.clienteDatos });
+    } else {
+
+        res.redirect('/pagina_pedidos/404');
+    }
+});
+
+// Ruta para cerrar sesión
+router.get('/pagina_pedidos/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).send('Error al cerrar sesión');
+        }
+
+        // Redirección completa fuera del dashboard
+        res.send(`
+            <script>
+                window.location.href = '/pagina_pedidos/clientes_index';
+            </script>
+        `);
+    });
+});
+
+
+//ruta de consulta de IA
+router.get('/pagina_pedidos/otros/contactanos', (req, res) => {
+
+    res.render('pagina_pedidos/otros/contactanos');
+});
+
+//ruta de consulta de IA
+router.get('/pagina_pedidos/otros/contactanosP', (req, res) => {
+
+    res.render('pagina_pedidos/contactanosP');
+});
+
+//ruta de consulta de IA
+router.get('/pagina_pedidos/404', (req, res) => {
+
+    
+    res.render('pagina_pedidos/otros/404');
+});
+
+
+//ruta de consulta de IA
+router.get('/pagina_pedidos/otros/consultas', (req, res) => {
+
+    if (!req.session.loggedinCliente) {
+        return res.redirect('/pagina_pedidos/404');
+    }
+    res.render('pagina_pedidos/otros/consultas');
+});
+
+
+
+router.get('/pagina_pedidos/otros/miscompras', (req, res) => {
+    const idCliente = req.session.userIdCliente;
+
+    const sqlVentas = `
+    SELECT 
+        pedidos.ID_Pedido,
+        pedidos.ID_Venta,
+        empleados.Nombre AS Empleado,  
+        clientes.Nombre AS Cliente,    
+        pedidos.Direccion,
+        pedidos.ID_Distrito,
+        ventas.Fecha_Venta,
+        ventas.Total_Venta,
+        Sucursales.Nombre AS Sucursal
+    FROM pedidos 
+    JOIN ventas ON pedidos.ID_Venta = ventas.ID_Venta
+    JOIN Sucursales ON ventas.ID_Sucursal = Sucursales.ID_Sucursal
+    JOIN empleados ON pedidos.ID_Empleado = empleados.ID_Empleado
+    JOIN clientes ON pedidos.ID_Cliente = clientes.ID_Cliente      
+    WHERE pedidos.ID_Cliente = ? 
+    ORDER BY ventas.Fecha_Venta DESC
+`;
+
+    connection.query(sqlVentas, [idCliente], (error, resultados) => {
+        if (error) {
+            console.error('Error al obtener los pedidos:', error);
+            return res.status(500).send('Error al obtener los pedidos');
+        }
+
+        res.render('pagina_pedidos/otros/miscompras', { 
+            pedidos: resultados,
+            loggedin: req.session.loggedin,
+            nombre: req.session.nombre
+        }); 
+    });
+});
+
+
+
+// Ruta para obtener los detalles de la venta por ID_Detalle_Venta
+router.get('/pagina_pedidos/detalleVenta/:ID_Detalle_Venta', (req, res) => {
+    const { ID_Detalle_Venta } = req.params;
+
+    const sqlDetalles = `
+        SELECT 
+            D.ID_Detalle_Venta, 
+            D.ID_Venta, 
+            D.ID_Producto, 
+            D.Cantidad, 
+            P.Nombre AS Nombre_Producto
+        FROM 
+            Detalles_Venta D
+        JOIN 
+            Productos P ON D.ID_Producto = P.ID_Producto
+        WHERE 
+            D.ID_Detalle_Venta = ?
+
+    `;
+
+    connection.query(sqlDetalles, [ID_Detalle_Venta], (error, detalles) => {
+        if (error) {
+            console.error('Error al obtener los detalles de la venta:', error);
+            return res.status(500).send('Error al obtener los detalles de la venta.');
+        }
+
+        res.json(detalles);
+    });
+});
+
+
+// Ruta para obtener recordatorios del cliente
+router.get('/api/mis-recordatorios', async (req, res) => {
+    try {
+        if (!req.session.loggedinCliente) {
+            return res.status(401).json({ error: 'No autorizado' });
+        }
+    
+        const query = `
+            SELECT 
+                r.ID_Recordatorio,
+                p.Nombre,
+                dr.Dosis,
+                dr.Cantidad_Mendicamentos AS cantidad,
+                r.Telefono,
+                dr.fecha,
+                dr.hora,
+                dr.Mensaje
+            FROM 
+                Recordatorios r
+            INNER JOIN 
+                detalle_recordatorio dr ON r.ID_Recordatorio = dr.ID_Recordatorio
+            INNER JOIN 
+                Productos p ON r.ID_Producto = p.ID_Producto
+            WHERE 
+                r.ID_Cliente = ?
+            ORDER BY 
+                dr.fecha DESC, dr.hora DESC
+        `;
+    
+        connection.query(query, [req.session.idCliente], (error, recordatorios) => {
+            if (error) {
+                console.error('Error al obtener recordatorios:', error);
+                return res.status(500).json({ error: 'Error al obtener los recordatorios' });
+            }
+            res.json(recordatorios);
+        });
+    
+    } catch (error) {
+        console.error('Error al obtener recordatorios:', error);
+        res.status(500).json({ error: 'Error al obtener los recordatorios' });
+    }
+}); 
+    
+
+    router.post('/api/crear-recordatorio', async (req, res) => {
+        try {
+            if (!req.session.loggedinCliente) {
+                return res.status(401).json({ error: 'No autorizado' });
+            }
+        
+            // Verifica que el cliente esté autenticado
+            console.log('Sesión completa:', req.session);
+            console.log('ID Cliente en sesión:', req.session.userIdCliente);  // Usar 'userIdCliente' aquí
+        
+            const { productoId, dosis, cantidad, telefono, fechaHora } = req.body;
+        
+            if (!productoId || !dosis || !cantidad || !telefono || !fechaHora) {
+                return res.status(400).json({ error: 'Todos los campos son requeridos' });
+            }
+        
+            if (new Date(fechaHora) < new Date()) {
+                return res.status(400).json({ error: 'La fecha debe ser futura' });
+            }
+        
+            // Eliminar el prefijo '591' del teléfono si existe
+            const telefonoLimpio = telefono.replace(/^591/, '');
+        
+            // Insertar el recordatorio principal
+            connection.query(
+                'INSERT INTO Recordatorios (ID_Cliente, ID_Producto, Telefono) VALUES (?, ?, ?)',
+                [req.session.userIdCliente, productoId, telefonoLimpio],  // Usar 'userIdCliente'
+                (err, result) => {
+                    if (err) {
+                        console.error('Error en la primera inserción:', err);
+                        return res.status(500).json({ error: 'Error al crear el recordatorio' });
+                    }
+        
+                    const fecha = new Date(fechaHora).toISOString().split('T')[0];
+                    const hora = new Date(fechaHora).toTimeString().split(' ')[0];
+                    const mensaje = "Es hora de tomar tu medicamento. Dosis: ${dosis}. Cantidad: ${cantidad} unidades.";
+        
+                    // Insertar el detalle del recordatorio
+                    connection.query(
+                        'INSERT INTO detalle_recordatorio (ID_Recordatorio, fecha, hora, Mensaje, Dosis, Cantidad_Mendicamentos) VALUES (?, ?, ?, ?, ?, ?)',
+                        [result.insertId, fecha, hora, mensaje, dosis, cantidad],
+                        (err) => {
+                            if (err) {
+                                console.error('Error en la segunda inserción:', err);
+                                return res.status(500).json({ error: 'Error al crear el detalle del recordatorio' });
+                            }
+                            res.json({ 
+                                message: 'Recordatorio creado exitosamente', 
+                                id: result.insertId 
+                            });
+                        }
+                    );
+                }
+            );
+        } catch (error) {
+            console.error('Error general:', error);
+            res.status(500).json({ error: 'Error al procesar la solicitud' });
+        }
+        });
+
+
+
+        // Rutas para mostrar la página de recordatorios
+ router.get('/pagina_pedidos/otros/recordatorio', (req, res) => {
+    if (!req.session.loggedinCliente) {
+        return res.redirect('/pagina_pedidos/404');
+    }
+
+    const idCliente = req.session.userIdCliente;  // Usamos 'userIdCliente' en lugar de 'idCliente'
+
+    // Verificar si el cliente está logueado
+    if (!idCliente) {
+        return res.status(401).json({ error: 'No autorizado. El cliente no está logueado.' });
+    }
+
+    const query = `
+        SELECT 
+            r.ID_Recordatorio,
+            r.ID_Cliente,
+            r.ID_Producto,
+            r.Telefono,
+            dr.fecha,
+            dr.hora,
+            dr.Mensaje,
+            dr.Dosis,
+            dr.Cantidad_Mendicamentos
+        FROM 
+            Recordatorios r
+        JOIN 
+            detalle_recordatorio dr ON r.ID_Recordatorio = dr.ID_Recordatorio
+        WHERE 
+            r.ID_Cliente = ?;
+    `;
+
+    connection.query(query, [idCliente], (err, results) => {
+        if (err) {
+            console.error('Error al obtener recordatorios:', err);
+            return res.status(500).json({ error: 'Error al obtener los recordatorios' });
+        }
+        
+        // Renderizar la vista y pasarle los resultados
+        res.render('pagina_pedidos/otros/recordatorio', { recordatorios: results });
+    });
+});
+
+    router.get('/pagina_pedidos/editar_recordatorio/:id', (req, res) => {
+        const id = req.params.id;
+        const query = 'SELECT * FROM recordatorios WHERE ID_Recordatorio = ?';
+        
+        connection.query(query, [id], (error, results) => {
+            if (error) {
+                console.error(error);
+                return res.status(500).json({ success: false, message: 'Error al obtener el recordatorio' });
+            }
+            if (results.length > 0) {
+                res.render('pagina_pedidos/recordatorio', { recordatorio: results[0] });
+            } else {
+                res.status(404).json({ success: false, message: 'Recordatorio no encontrado' });
+            }
+        });
+        });
+        
+// Ruta para obtener productos de pedido
+router.get('/api/mis-productos-comprados', async (req, res) => {
+    try {
+        console.log('Estado de la sesión:', {
+            sesionActiva: req.session.loggedinCliente,
+            idCliente: req.session.userIdCliente  // Cambiado para usar userIdCliente
+        });
+    
+        if (!req.session.loggedinCliente) {
+            console.log('Cliente no ha iniciado sesión');
+            return res.redirect('/pagina_pedidos/404');
+        }
+    
+        const query = `
+            SELECT 
+                p.ID_Producto AS id_producto,
+                p.Nombre AS nombre_producto,
+                dv.Cantidad AS cantidad,
+                p.Indicaciones AS indicaciones,
+                p.Precauciones AS precauciones
+            FROM pedidos ped
+            INNER JOIN ventas v ON ped.ID_Venta = v.ID_Venta
+            INNER JOIN Detalles_Venta dv ON v.ID_Venta = dv.ID_Venta
+            INNER JOIN Productos p ON dv.ID_Producto = p.ID_Producto
+            WHERE ped.ID_Cliente = ?  
+            ORDER BY p.Nombre`;
+    
+        // Usar el ID del cliente desde la sesión
+        connection.query(query, [req.session.userIdCliente], (error, results) => {
+            if (error) {
+                console.error('Error en la consulta:', error);
+                return res.status(500).json({ error: 'Error al obtener productos' });
+            }
+    
+            console.log('Productos encontrados:', results);
+            res.json(results);
+        });
+    
+    } catch (error) {
+        console.error('Error general:', error);
+        res.status(500).json({ error: 'Error del servidor' });
+    }
+    });
+
 
 module.exports = router;

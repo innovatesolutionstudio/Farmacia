@@ -313,6 +313,7 @@ router.get("/detalle_pedido_datos/:id", (req, res) => {
       c.CI AS CICliente,
       c.Telefono AS TelefonoCliente,
       p.Direccion AS Direccion,
+      p.notas AS notas,
       dis.Numero_Distrito AS Distrito,
       ci.Nombre AS Ciudad
     FROM pedidos p

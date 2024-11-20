@@ -4,6 +4,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Confirmar Pedido</title>
+        <link rel="icon" href="/resources/images/iconos/farmacia.ico">
+
         <link rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link rel="stylesheet"
@@ -14,6 +16,38 @@
     </style>
     </head>
     <body>
+
+        <header class="custom-header">
+            <p>inicio de sesion para administradores <a href="/login"></a></p>
+            <div class="header-container">
+                <a href="/pagina_pedidos/clientes_index" class="custom-logo">
+                    <img src="/resources/images/iconos/farmacia.ico"
+                        alt="Farmacia 25 de Julio">
+                    <span class="logo-text">
+                        <span class="logo-main">Bienvenido a la Farmacia 25 de
+                            Julio</span>
+                        <span class="logo-sub">Tu mejor opcion </span>
+                    </span>
+                </a>
+        
+                <nav class="custom-nav">
+        
+                    <ul class="nav-list">
+        
+                        <li><a href="/pagina_pedidos/clientes_index"
+                                class="nav-link">Inicio</a></li>
+                        <li><a href="/pagina_pedidos/productos/1"
+                                class="nav-link">Tienda</a></li>
+                        <li><a href="/pagina_pedidos/otros/contactanosP"
+                                class="nav-link">Contacto</a></li>
+                        <li><a href="/pagina_pedidos/login_clientes"
+                                class="nav-link">Mis Compras</a></li>
+                    </ul>
+                </nav>
+        
+                <a href="#" class></a>
+            </div>
+        </header>
         <div class="container">
             <!-- Opción para iniciar sesión -->
             <% if (!cliente) { %>
@@ -105,7 +139,7 @@
                     return res.status(400).send('El carrito está vacío o es inválido');
                 }
 
-                console.log('Datos del carrito recibidos:', carrito);
+               
                 // Continúa con la lógica de inserción en las tablas
                 res.send('Carrito procesado exitosamente');
             });
@@ -139,6 +173,7 @@
             direccion: document.getElementById('direccion').value,
             ci_nit: document.getElementById('ci_nit').value,
             telefono: document.getElementById('telefono').value,
+            notas: document.getElementById('notas').value,
             distrito: document.getElementById('distrito').value,
             tarifaEnvio: document.getElementById('distrito').selectedOptions[0].getAttribute('data-tarifa'),
             productos: carrito

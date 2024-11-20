@@ -4,40 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asistente Virtual de Farmacia</title>
-    <link rel="stylesheet" href="/resources/css/consulta.css" />
+    <link rel="stylesheet" href="/resources/css/sistema_clientes/consulta.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Estilo para la barra de carga */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+    </style>
 </head>
 <body>
-    <div class="top-header">
-        <a href="/pagina_pedidos/clientes_index/:idSucursal" class="logo">
-            <img src="/resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
-        </a>     
-        <ul>
-            <li><a href="/pagina_pedidos/clientes_index/:idSucursal">Inicio</a></li>
-            <li><a href="/pagina_pedidos/productos/1">Tienda</a></li>
-            <li><a href="/pagina_pedidos/consultas">Consultas</a></li>
-            <li><a href="/pagina_pedidos/miscompras">Compras</a></li>
-            <li><a href="/pagina_pedidos/recordatorio">Recordatorio</a></li>
-        </ul>
-        <div>
-            <a href="/pagina_pedidos/productos/1" style="text-decoration: none; color: #333;">
-                <i class="fas fa-shopping-cart"></i>
-            </a>
-            <select class="sucursal-select">
-                <option>25 de julio "Santiago"</option>
-            </select>
-            <a href="/pagina_pedidos/logout" class="logout-btn">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Cerrar Sesion</span>
-            </a>
-        </div>
-    </div>
+    <div class="loading-overlay" id="loadingOverlay">Cargando...</div>
+
     <div class="container">
         <h1>¿En qué puedo ayudarte hoy?</h1>
         <p class="welcome-message">¡Hola! 👋 Soy tu asistente virtual de la Farmacia 25 de Julio.<br>
         Estoy aquí para ayudarte a encontrar el mejor producto o medicamento según tus síntomas.</p>
 
-        <div class="options-grid">
+        <div class="options-grid" id="optionsGrid">
             <div class="option-card" onclick="mostrarBuscador()">
                 <h3>Necesito ayuda con un síntoma específico</h3>
                 <p>Ingresa tus síntomas...</p>
@@ -60,7 +59,7 @@
             </div>
         </div>
 
-        <div class="search-container" id="searchContainer">
+        <div class="search-container" id="searchContainer" style="display: none;">
             <form id="buscador-form" class="search-form">
                 <input type="text" id="medicamento" class="search-input" 
                        placeholder="Describe tus síntomas o el medicamento que buscas" required>
@@ -69,61 +68,26 @@
                 </button>
             </form>
             <div id="resultado" class="resultado"></div>
-            <ul id="lista-items" class="lista-items"></ul>
-        </div>
-    </div>
-    <!-- Sección de contacto al final -->
-<div id="contacto" class="contact-container">
-    <div class="contact-info">
-        <h2>Contacto</h2>
-        <p>Si tienes alguna duda, no dudes en contactarnos. Estaremos encantados de ayudarte.</p>
-        <div class="contact-details">
-            <div class="detail-item">
-                <i class="fas fa-clock"></i>
-                <div>
-                    <strong>Horario de Atención:</strong>
-                    <p>Lunes a Viernes, 9:00 - 18:00</p>
-                </div>
-            </div>
-            <div class="detail-item">
-                <i class="fas fa-phone-alt"></i>
-                <div>
-                    <strong>Teléfono:</strong>
-                    <p>+591 XXXXXXXX</p>
-                </div>
-            </div>
-            <div class="detail-item">
-                <i class="fas fa-envelope"></i>
-                <div>
-                    <strong>Correo Electrónico:</strong>
-                    <p>farmacia25julio@ejemplo.com</p>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- Mapa de Google -->
-    <div class="map-container">
-        <h3>Visítanos</h3>
-        <p>Estamos ubicados en El Alto, La Paz, Bolivia:</p>
-        <div class="map-embed">
-            <!-- Aquí agregas el enlace de Google Maps -->
-            <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5977.735616871491!2d-68.11930320270277!3d-16.500038149523107!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93e37874cc2e2c6f%3A0x6977e6a8ffb104ef!2sEl%20Alto%2C%20La%20Paz%2C%20Bolivia!5e0!3m2!1ses!2ses!4v1699388895394!5m2!1ses!2ses" 
-                width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-        </div>
-    </div>
-</div>
-        <!-- Asegúrate de incluir Font Awesome -->
-     <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
     <script>
         function mostrarBuscador() {
-            document.getElementById('searchContainer').classList.add('active');
+            document.getElementById('searchContainer').style.display = 'block';
+            document.getElementById('optionsGrid').style.display = 'none';
         }
 
         document.getElementById('buscador-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+
             const medicamento = document.getElementById('medicamento').value;
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const resultadoDiv = document.getElementById('resultado');
+
+            // Mostrar barra de carga
+            loadingOverlay.classList.add('active');
+
             try {
                 const response = await fetch('/buscar', {
                     method: 'POST',
@@ -132,12 +96,26 @@
                     },
                     body: JSON.stringify({ medicamento }),
                 });
+
                 const data = await response.json();
-                document.getElementById('resultado').innerText = data.informacion;
+
+                // Esconder la barra de carga
+                loadingOverlay.classList.remove('active');
+
+                // Mostrar resultado
+                resultadoDiv.innerHTML = `
+                    <h2>Resultado para "${medicamento}":</h2>
+                    <p>${data.informacion}</p>
+                `;
             } catch (error) {
                 console.error('Error:', error);
-                document.getElementById('resultado').innerText = 
-                    'Lo siento, hubo un error al procesar tu solicitud. Por favor, intenta de nuevo.';
+
+                // Esconder la barra de carga
+                loadingOverlay.classList.remove('active');
+
+                resultadoDiv.innerHTML = `
+                    <p style="color: red;">Lo siento, hubo un error al procesar tu solicitud. Por favor, intenta de nuevo.</p>
+                `;
             }
         });
     </script>

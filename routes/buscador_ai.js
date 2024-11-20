@@ -18,7 +18,7 @@ router.post('/buscar', async (req, res) => {
         const response = await cohere.generate({
             model: 'command-xlarge-nightly',
             prompt: `Dame información sobre ${medicamento}, quiero datos especificos para un cliente de una farmacia .`,
-            max_tokens: 1000,
+            max_tokens: 300,
         });
         // Verifica la estructura de la respuesta
         if (response && response.generations && response.generations.length > 0) {

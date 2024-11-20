@@ -4,34 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Recordatorios - Farmacia 25 de Julio</title>
-    <link rel="stylesheet" href="/resources/css/recordatorio.css" />
+    <link rel="stylesheet" href="/resources/css/sistema_clientes/recordatorio.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 </head>
 <body>
-    <!-- Header -->
-    <div class="top-header">
-        <a href="/pagina_pedidos/clientes_index/:idSucursal" class="logo">
-            <img src="/resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
-        </a>      
-        <ul>
-            <li><a href="/pagina_pedidos/clientes_index/:idSucursal">Inicio</a></li>
-            <li><a href="/pagina_pedidos/productos/1">Tienda</a></li>
-            <li><a href="/pagina_pedidos/consultas">Consultas</a></li>
-            <li><a href="/pagina_pedidos/miscompras">Compras</a></li>
-            <li><a href="/pagina_pedidos/recordatorio">Recordatorio</a></li>
-        </ul>
-        <div style="display: flex; gap: 20px;">
-            <a href="/pagina_pedidos/productos/1" style="text-decoration: none; color: #333;">
-                <i class="fas fa-shopping-cart"></i>
-            </a>
-            <a href="/pagina_pedidos/logout" class="logout-btn">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Cerrar Sesion</span>
-            </a>
-        </div>
-    </div>
-
     <div class="container">
         <h1>Mis Recordatorios</h1>
 
@@ -80,20 +57,13 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Descripción/Instrucciones</label>
-                    <div id="descripcionProducto" class="descripcion-box">
-                        Selecciona un medicamento para ver sus instrucciones.
-                    </div>
+                    <label>Indicaciones</label>
+                    <div id="indicacionesProducto" class="info-box"></div>
                 </div>
-
+                
                 <div class="form-group">
-                    <label>Dosis recomendada</label>
-                    <div id="dosisRecomendada" class="info-box"></div>
-                </div>
-
-                <div class="form-group">
-                    <label>Frecuencia recomendada</label>
-                    <div id="frecuenciaRecomendada" class="info-box"></div>
+                    <label>Precauciones</label>
+                    <div id="precaucionesProducto" class="info-box"></div>
                 </div>
 
                 <div class="form-group">
@@ -103,8 +73,9 @@
 
                 <div class="form-group">
                     <label>Cantidad de medicamentos *</label>
-                    <input type="number" id="cantidadInput" required>
+                    <input type="number" id="cantidadInput" required readonly>
                 </div>
+                
 
                 <div class="form-group">
                     <label>Número de teléfono (WhatsApp) *</label>
@@ -126,83 +97,7 @@
         </div>
     </div>
 
-    <!-- Contact Section -->
-    <div id="contacto" class="contact-container">
-        <div class="contact-info">
-            <h2>Contacto</h2>
-            <p>Si tienes alguna duda, no dudes en contactarnos. Estaremos encantados de ayudarte.</p>
-            <div class="contact-details">
-                <div class="detail-item">
-                    <i class="fas fa-clock"></i>
-                    <div>
-                        <strong>Horario de Atención:</strong>
-                        <p>Lunes a Viernes, 9:00 - 18:00</p>
-                    </div>
-                </div>
-                <div class="detail-item">
-                    <i class="fas fa-phone-alt"></i>
-                    <div>
-                        <strong>Teléfono:</strong>
-                        <p>+591 XXXXXXXX</p>
-                    </div>
-                </div>
-                <div class="detail-item">
-                    <i class="fas fa-envelope"></i>
-                    <div>
-                        <strong>Correo Electrónico:</strong>
-                        <p>farmacia25julio@ejemplo.com</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- <h1>Editar Recordatorio</h1>
-        <% if (typeof recordatorio !== 'undefined' && recordatorio) { %>
-            <form action="/pagina_pedidos/actualizar_recordatorio/<%= recordatorio.ID_Recordatorio %>" method="POST">
-                <div>
-                    <label for="producto">Producto</label>
-                    <input type="text" id="producto" name="producto" value="<%= recordatorio.ID_Producto %>" required>
-                </div>
-                <div>
-                    <label for="fecha">Fecha</label>
-                    <input type="date" id="fecha" name="fecha" value="<%= recordatorio.fecha %>" required>
-                </div>
-                <div>
-                    <label for="hora">Hora</label>
-                    <input type="time" id="hora" name="hora" value="<%= recordatorio.hora %>" required>
-                </div>
-                <div>
-                    <label for="mensaje">Mensaje</label>
-                    <textarea id="mensaje" name="mensaje" required><%= recordatorio.Mensaje %></textarea>
-                </div>
-                <div>
-                    <label for="dosis">Dosis</label>
-                    <input type="text" id="dosis" name="dosis" value="<%= recordatorio.Dosis %>" required>
-                </div>
-                <div>
-                    <label for="cantidad">Cantidad</label>
-                    <input type="number" id="cantidad" name="cantidad" value="<%= recordatorio.Cantidad_Mendicamentos %>" required>
-                </div>
-                <button type="submit">Actualizar Recordatorio</button>
-            </form>
-        <% } else { %>
-            <p>No se encontró el recordatorio</p>
-        <% } %> -->
-
-        <div class="map-container">
-            <h3>Visítanos</h3>
-            <p>Estamos ubicados en El Alto, La Paz, Bolivia:</p>
-            <div class="map-embed">
-                <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5977.735616871491!2d-68.11930320270277!3d-16.500038149523107!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93e37874cc2e2c6f%3A0x6977e6a8ffb104ef!2sEl%20Alto%2C%20La%20Paz%2C%20Bolivia!5e0!3m2!1ses!2ses!4v1699388895394!5m2!1ses!2ses" 
-                    width="100%" 
-                    height="300" 
-                    style="border:0;" 
-                    allowfullscreen="" 
-                    loading="lazy">
-                </iframe>
-            </div>
-        </div>
-    </div>
+  
     <script>
         function validarYCrearRecordatorio() {
     // Obtener valores
@@ -269,14 +164,14 @@
         function editarRecordatorio(id) {
             console.log('ID a editar:', id); // Añade este log
             if (id) {
-                window.location.href = `/pagina_pedidos/editar_recordatorio/${id}`;
+                window.location.href = `/pagina_pedidos/otros/editar_recordatorio/${id}`;
             } else {
                 console.error('ID de recordatorio no proporcionado');
             }
         }
         function eliminarRecordatorio(id) {
             if (confirm('¿Estás seguro de que deseas eliminar este recordatorio?')) {
-                fetch(`/pagina_pedidos/eliminar_recordatorio/${id}`, {
+                fetch(`/pagina_pedidos/otros/eliminar_recordatorio/${id}`, {
                     method: 'DELETE'
                 })
                 .then(response => response.json())
@@ -293,63 +188,92 @@
             }
         }
 
-        // Función para cargar los productos cuando la página se inicializa
         function cargarProductosComprados() {
-            console.log('Iniciando carga de productos...');
+    console.log('Iniciando carga de productos...');
+    
+    fetch('/api/mis-productos-comprados')
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+                return;
+            }
+            if (!response.ok) {
+                throw new Error(`Error del servidor: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(productos => {
+            const select = document.getElementById('productoSelect');
             
-            fetch('/api/mis-productos-comprados')
-                .then(response => {
-                    console.log('Estado de la respuesta:', response.status);
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                        return;
-                    }
-                    if (!response.ok) {
-                        throw new Error(`Error del servidor: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(productos => {
-                    console.log('Productos recibidos:', productos);
-                    const select = document.getElementById('productoSelect');
+            if (!select) {
+                console.error('No se encontró el elemento select en el DOM');
+                return;
+            }
+            
+            // Limpiar select
+            select.innerHTML = '<option value="">Seleccione un medicamento</option>';
+            
+            if (productos && productos.length > 0) {
+                productos.forEach(producto => {
+                    const option = document.createElement('option');
+                    option.value = producto.id_producto;
+                    option.textContent = producto.nombre_producto;
                     
-                    if (!select) {
-                        console.error('No se encontró el elemento select en el DOM');
-                        return;
-                    }
+                    // Establecer todos los datos como atributos de datos
+                    option.dataset.cantidad = producto.cantidad;
+                    option.dataset.indicaciones = producto.indicaciones || 'No hay indicaciones disponibles';
+                    option.dataset.precauciones = producto.precauciones || 'No hay precauciones especificadas';
                     
-                    // Limpiar select
-                    select.innerHTML = '<option value="">Seleccione un medicamento</option>';
-                    
-                    if (productos && productos.length > 0) {
-                        productos.forEach(producto => {
-                            const option = document.createElement('option');
-                            option.value = producto.id;
-                            option.textContent = producto.nombre;
-                            select.appendChild(option);
-                        });
-                        console.log('Productos cargados en el select');
-                    } else {
-                        const option = document.createElement('option');
-                        option.value = "";
-                        option.textContent = "No hay productos disponibles";
-                        select.appendChild(option);
-                        console.log('No se encontraron productos para mostrar');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al cargar productos:', error);
-                    const select = document.getElementById('productoSelect');
-                    if (select) {
-                        select.innerHTML = '<option value="">Error al cargar productos</option>';
-                    }
+                    select.appendChild(option);
                 });
+                console.log('Productos cargados en el select');
+            } else {
+                const option = document.createElement('option');
+                option.value = "";
+                option.textContent = "No hay productos disponibles";
+                select.appendChild(option);
+            }
+        })
+        .catch(error => {
+            console.error('Error al cargar productos:', error);
+            const select = document.getElementById('productoSelect');
+            if (select) {
+                select.innerHTML = '<option value="">Error al cargar productos</option>';
+            }
+        });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    cargarProductosComprados();
+
+    const productoSelect = document.getElementById('productoSelect');
+    const indicacionesProducto = document.getElementById('indicacionesProducto');
+    const precaucionesProducto = document.getElementById('precaucionesProducto');
+    const cantidadInput = document.getElementById('cantidadInput');
+
+    productoSelect.addEventListener('change', (event) => {
+        const selectedOption = event.target.selectedOptions[0];
+        const productoId = event.target.value;
+
+        if (!productoId) {
+            // Resetear campos
+            indicacionesProducto.textContent = '';
+            precaucionesProducto.textContent = '';
+            cantidadInput.value = '';
+            return;
         }
 
-        // Iniciar cuando el documento esté listo
-        document.addEventListener('DOMContentLoaded', cargarProductosComprados);
+        // Mostrar indicaciones y precauciones
+        indicacionesProducto.textContent = selectedOption.dataset.indicaciones;
+        precaucionesProducto.textContent = selectedOption.dataset.precauciones;
+        
+        // Establecer cantidad
+        cantidadInput.value = selectedOption.dataset.cantidad;
+    });
+});
 
-        // Función actualizada para obtener detalles del producto
+
+// Función actualizada para obtener detalles del producto
         function actualizarCamposMedicamento() {
             const productoId = document.getElementById('productoSelect').value;
             console.log('ID del producto seleccionado:', productoId);

@@ -1,0 +1,373 @@
+
+/* Reset y estilos generales */
+.recordatorio-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+.recordatorio-actions {
+    margin-top: 10px;
+}
+.btn {
+    padding: 5px 15px;
+    margin-right: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.btn-edit {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+.btn-delete {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
+.btn-add {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+.no-records {
+    text-align: center;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f4f6f8;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Content Styles */
+.content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.recordatorio-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #2c3e50;
+}
+
+.recordatorio-list {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.recordatorio-item {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.recordatorio-item:hover {
+    transform: translateY(-5px);
+}
+
+.recordatorio-item h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #e1e8ed;
+    padding-bottom: 0.5rem;
+}
+
+.mensaje-recordatorio {
+    background: #e8f4ff;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    border-left: 4px solid #007bff;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #ffffff;
+    width: 90%;
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #dce0e3;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group small {
+    display: block;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+.info-box {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    border: 1px solid #e9ecef;
+    margin-top: 0.5rem;
+}
+
+.descripcion-box {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    border: 1px solid #e9ecef;
+    margin-top: 0.5rem;
+    min-height: 80px;
+}
+
+/* Button Styles */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-crear {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-crear:hover {
+    background-color: #218838;
+}
+
+.btn-descartar {
+    background-color: #dc3545;
+    color: white;
+    margin-left: 1rem;
+}
+
+.btn-descartar:hover {
+    background-color: #c82333;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 2rem;
+}
+
+/* Header Styles */
+.top-header {
+    background-color: #ffffff;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo img {
+    height: 40px;
+}
+
+.top-header ul {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.top-header a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.top-header a:hover {
+    color: #007bff;
+}
+
+
+/* Contenedor principal de contacto */
+.contact-container {
+    display: flex; /* Organiza los elementos en fila */
+    justify-content: space-between; /* Distribuye el espacio entre los elementos */
+    padding: 40px;
+    background-color: #f3f4f6; /* Color de fondo suave */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Información de contacto */
+.contact-info {
+    width: 48%; /* Asigna el 48% del espacio para los detalles de contacto */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-right: 4%; /* Aumenta el margen para más separación */
+}
+
+/* Mapa */
+.map-container {
+    width: 48%; /* Asigna el 48% del espacio para el mapa */
+    text-align: center;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el título del mapa */
+.map-container h3 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Estilos para el texto debajo del título del mapa */
+.map-container p {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Estilos del iframe */
+.map-embed iframe {
+    border-radius: 8px;
+    width: 100%;
+    height: 300px; /* Fija una altura más específica para el mapa */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Detalles de contacto */
+.contact-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease; /* Efecto al pasar el mouse */
+}
+
+/* Estilo de los íconos */
+.detail-item i {
+    margin-right: 15px;
+    font-size: 1.6rem;
+    color: #007BFF; /* Color azul para íconos */
+    transition: color 0.3s ease; /* Efecto al pasar el mouse */
+}
+
+/* Estilo de los detalles */
+.detail-item div {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-item strong {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.detail-item p {
+    color: #666;
+    font-size: 1rem;
+}
+
+/* Efectos al pasar el mouse por los íconos */
+.detail-item:hover i {
+    color: #0056b3; /* Cambio de color en hover */
+}
+
+.detail-item:hover {
+    transform: translateX(10px); /* Desplazamiento de los detalles al pasar el mouse */
+}
+
+/* Estilo para los títulos */
+h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+h3 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+p {
+    font-size: 1.1rem;
+    color: #666;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .top-header {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .top-header ul {
+        margin: 1rem 0;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 1rem;
+    }
+}

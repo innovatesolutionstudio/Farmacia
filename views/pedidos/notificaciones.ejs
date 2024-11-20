@@ -164,6 +164,8 @@
                 <p style="margin: 0; font-size: 20px;"><strong>Ciudad:</strong> ${data.Ciudad}</p>
                 <p style="margin: 0; font-size: 20px;"><strong>Distrito:</strong> ${data.Distrito}</p>
                 <p style="margin: 0; font-size: 20px;"><strong>Dirección:</strong> ${data.Direccion}</p>
+                <p style="margin: 0; font-size: 20px;"><strong>Notas adicionales:</strong></p>
+                  <p style="margin: 0; font-size: 20px;"> ${data.notas}</p>
               </div>
             `,
             showConfirmButton: true,
@@ -215,6 +217,7 @@
                     - Ciudad: ${data.Ciudad}
                     - Distrito: ${data.Distrito}
                     - Dirección: ${data.Direccion}
+                    - Notas adicionales: ${data.notas}
                   `;
 
                   const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensajeWhatsApp)}`;

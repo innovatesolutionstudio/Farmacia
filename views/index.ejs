@@ -119,7 +119,8 @@
                                         margin: 5px 0 0 0;
                                         width: 400px;
                                         color: rgb(229, 206, 5);">
-                                            <% if(sesion === 1 || sesion === 4) {
+                                            <% if(sesion === 1 || sesion === 4)
+                                            {
                                             %>Administrador<% } %>
                                             <% if(sesion === 2) {
                                             %>Administrador de Ventas<% } %>
@@ -244,7 +245,8 @@
                                     <li><a href="#"
                                             onclick="cargarContenido('/inventario_vista')"
                                             style="font-size: 18px; font-family: monospace; ">>
-                                            <span>Stock Disponible</span></a></li>
+                                            <span>Stock
+                                                Disponible</span></a></li>
                                     <li><a href="#"
                                             onclick="cargarContenido('/ventas')"
                                             style="font-size: 18px; font-family: monospace; ">>
@@ -276,7 +278,8 @@
                                     <li><a href="#"
                                             onclick="cargarContenido('/compras')"
                                             style="font-size: 18px; font-family: monospace; ">>
-                                            <span>Historial de Compras</span></a></li>
+                                            <span>Historial de
+                                                Compras</span></a></li>
                                     <li><a href="#"
                                             onclick="cargarContenido('/proveedores')"
                                             style="font-size:  18px; font-family: monospace; ">>
@@ -294,7 +297,7 @@
                         <ul class="list-unstyled components"
                             style="border-bottom: 1px solid #ffffff69">
                             <li class="active">
-                                
+
                                 <a href="#pedidos"
                                     onclick="cargarContenido('/vista_pedidos')"
                                     data-toggle="collapse" aria-expanded="false"
@@ -303,39 +306,40 @@
                                     <i class="far fa-calendar-alt"
                                         style="font-size: 30px;"></i>
                                     <span>&nbsp;&nbsp;Pedidos</span></a>
-                                    
+
                                 <ul class="collapse list-unstyled" id="pedidos">
                                     <li><a href="#"
                                             onclick="cargarContenido('/notificaciones_pedidos')"
                                             style="font-size: 18px; font-family: monospace; ">>
                                             <span>Notificaciones</span></a></li>
-                                           
+
                                     <li><a href="#"
                                             onclick="cargarContenido('/pedidos')"
                                             style="font-size:  18px; font-family: monospace; ">>
-                                            <span>Historial de Pedidos</span></a></li>
-                                           
+                                            <span>Historial de
+                                                Pedidos</span></a></li>
+
                                 </ul>
                             </li>
                         </ul>
                         <% } %>
                         <% if ( sesion === 7) { %>
-                            <ul class="list-unstyled components"
-                                style="border-bottom: 1px solid #ffffff69">
-                                <li>
-                                    <a href="#"
-                                        onclick="cargarContenido('/notificaciones_pedidos'); marcarComoLeidas();"
-                                        class="btn-group"
-                                        style="font-size: 18px; font-family: monospace;">
-                                        <i class="fa fa-bell"
-                                            style="font-size: 30px;"></i>
-                                        <span>&nbsp;&nbsp;Notificaciones</span>
-                                        <span id="notification-count"
-                                            class="badge">2</span>
-                                        <!-- Contador de notificaciones -->
-                                    </a>
-                                </li>
-                            </ul>
+                        <ul class="list-unstyled components"
+                            style="border-bottom: 1px solid #ffffff69">
+                            <li>
+                                <a href="#"
+                                    onclick="cargarContenido('/notificaciones_pedidos'); marcarComoLeidas();"
+                                    class="btn-group"
+                                    style="font-size: 18px; font-family: monospace;">
+                                    <i class="fa fa-bell"
+                                        style="font-size: 30px;"></i>
+                                    <span>&nbsp;&nbsp;Notificaciones</span>
+                                    <span id="notification-count"
+                                        class="badge">2</span>
+                                    <!-- Contador de notificaciones -->
+                                </a>
+                            </li>
+                        </ul>
                         <% } %>
 
                         <% if (sesion === 1 || sesion === 4) {
@@ -399,58 +403,82 @@
                                         style="font-size: 30px;"></i>
                                     <span>&nbsp;&nbsp;Ayuda</span></a></li>
                         </ul>
-                     
+
                     </div>
+
                 </nav>
-                <!-- fin menu -->
 
                 <!-- cabecera -->
                 <div id="content">
                     <!-- topbar -->
+
                     <div class="topbar">
-                        <nav class="navbar navbar-expand-lg navbar-light">
-                            <div class="full">
 
-                                <!--  boton para esconder menu -->
-                                <button type="button" id="sidebarCollapse"
-                                    class="sidebar_toggle"><i
-                                        class="fa fa-angle-left"></i></button>
-                                <!-- logo  -->
-
-                                <!-- menu de perfil  -->
-                                <div class="right_topbar">
-                                    <div class="icon_info">
-                                        <ul>
-                                            <li
-                                                style="margin: 10px 15px 0 15px; width: 350px;">
-                                                <div>
-                                                    <p
-                                                        style="color: #000; font-family:sansserif ; text-align: right; font-size: 18px;"><span
-                                                            class='online_animation'
-                                                            style="margin-right: 5px;">
-                                                        </span><%=
-                                                        NombreSucursal %>
-                                                        <p
-                                                            style="color: #000; font-family:math ; text-align: right;font-size: 18px;"
-                                                            id="fechaHora">16 de
-                                                            septiembre 2024 </p>
-                                                    </div>
-                                                </li>
-
-                                            </ul>
-
-                                            <ul class="user_profile_dd">
-                                                <li>
-                                                    <img src />
-                                                </li>
-                                            </ul>
-                                        </div>
+                        
+                            <nav class="navbar navbar-expand-lg navbar-light">
+                                <div class="full d-flex align-items-center">
+                                    <!-- Botón de flecha para esconder el menú -->
+                                    <button type="button" id="sidebarCollapse" class="sidebar_toggle me-3">
+                                        <i class="fa fa-angle-left"></i>
+                                    </button>
+                        
+                                    <!-- Buscador centrado y botón de asistente -->
+                                    <div class="search_assistant_section mx-auto d-flex align-items-center">
+                                        <!-- Campo de búsqueda -->
+                                        <input
+                                            type="text"
+                                            id="searchInput"
+                                            class="form-control"
+                                            placeholder="Buscar..."
+                                            style="max-width: 400px; margin-right: 10px;"
+                                        />
+                                        <!-- Botón de asistente -->
+                                        <button
+                                            id="microphoneButton"
+                                            class="btn btn-primary d-flex align-items-center"
+                                            onclick="activarMicrofono()"
+                                            style="gap: 5px;"
+                                        >
+                                            <i class="fa fa-microphone"></i> Asistente
+                                        </button>
                                     </div>
-
+                        
+                                    <!-- Sucursal y fecha alineados a la derecha -->
+                                    <div class="right_topbar">
+                                        <div class="icon_info">
+                                            <ul>
+                                                <li
+                                                    style="margin: 10px 15px 0 15px; width: 350px;">
+                                                    <div>
+                                                        <p
+                                                            style="color: #000; font-family:sansserif ; text-align: right; font-size: 18px;"><span
+                                                                class='online_animation'
+                                                                style="margin-right: 5px;">
+                                                            </span><%=
+                                                            NombreSucursal %>
+                                                            <p
+                                                                style="color: #000; font-family:math ; text-align: right;font-size: 18px;"
+                                                                id="fechaHora">16 de
+                                                                septiembre 2024 </p>
+                                                        </div>
+                                                    </li>
+    
+                                                </ul>
+    
+                                                <ul class="user_profile_dd">
+                                                    <li>
+                                                        <img src />
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
                                 </div>
                             </nav>
+                    
+
                             <div id="contenido">
-                                <% if ( sesion === 1|| sesion === 4|| sesion === 3) { %>
+                                <% if ( sesion === 1|| sesion === 4|| sesion ===
+                                3) { %>
                                 <iframe id="contenidoFrame" src="/graficos"
                                     frameborder="0"></iframe>
                                 <% } %>
@@ -458,16 +486,19 @@
                                 <iframe id="contenidoFrame" src="/vista_ventas"
                                     frameborder="0"></iframe>
                                 <% } %>
-                                <% if ( sesion === 1 || sesion === 8 || sesion=== 4) { %>
+                                <% if ( sesion === 1 || sesion === 8 ||
+                                sesion=== 4) { %>
                                 <iframe id="contenidoFrame" src="/vista_compras"
                                     frameborder="0"></iframe>
                                 <% } %>
-                                <% if ( sesion === 1 ||sesion === 6 || sesion=== 4) { %>
-                                    <iframe id="contenidoFrame" src="/vista_pedidos"
+                                <% if ( sesion === 1 ||sesion === 6 || sesion===
+                                4) { %>
+                                <iframe id="contenidoFrame" src="/vista_pedidos"
                                     frameborder="0"></iframe>
                                 <% } %>
                                 <% if (sesion === 7 ) { %>
-                                    <iframe id="contenidoFrame" src="/notificaciones_pedidos"
+                                <iframe id="contenidoFrame"
+                                    src="/notificaciones_pedidos"
                                     frameborder="0"></iframe>
                                 <% } %>
                             </div>
@@ -544,6 +575,39 @@
             <!-- custom js -->
             <script src="resources/js/custom.js"></script>
             <script src="resources/js/chart_custom_style1.js"></script>
+            <script>
+                function activarMicrofono() {
+    if (!('webkitSpeechRecognition' in window)) {
+        alert('Tu navegador no soporta reconocimiento de voz.');
+        return;
+    }
+
+    const recognition = new webkitSpeechRecognition();
+    recognition.lang = 'es-ES'; // Idioma español
+    recognition.interimResults = false;
+
+    recognition.onstart = () => {
+        console.log('Reconocimiento de voz iniciado');
+    };
+
+    recognition.onerror = (event) => {
+        console.error('Error en el reconocimiento:', event.error);
+    };
+
+    recognition.onresult = (event) => {
+        const resultado = event.results[0][0].transcript;
+        console.log('Resultado:', resultado);
+        document.getElementById('searchInput').value = resultado; // Coloca el texto reconocido en el buscador
+    };
+
+    recognition.onend = () => {
+        console.log('Reconocimiento de voz terminado');
+    };
+
+    recognition.start();
+}
+
+            </script>
         </body>
     </html>
     <style>
