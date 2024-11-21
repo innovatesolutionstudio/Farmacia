@@ -124,22 +124,29 @@ router.post("/nueva_compra", async (req, res) => {
 });
 
 
-router.get("/buscar_productos", (req, res) => {
+router.get("/buscar_productos_compra/", (req, res) => {
   const terminoBusqueda = req.query.q;
+  if (!terminoBusqueda) {
+    return res.status(400).send("El término de búsqueda es obligatorio");
+  }
+
   const query = `
         SELECT p.ID_Producto, p.Nombre AS NombreProducto, u.Nombre AS UnidadVenta
         FROM productos p
         JOIN unidad_venta u ON p.ID_Unidad_Venta = u.ID_Unidad_Venta
         WHERE p.Nombre LIKE ?
     `;
+
   connection.query(query, [`%${terminoBusqueda}%`], (err, results) => {
     if (err) {
       console.error("Error ejecutando la consulta:", err);
       return res.status(500).send("Error en el servidor");
     }
+    console.log("Resultados enviados:", results); // Verifica la respuesta
     res.json(results);
   });
 });
+
 
 router.get("/obtener_unidades_empaque", (req, res) => {
   const query = "SELECT ID_Unidad_Empaque, Nombre FROM unidad_empaque";

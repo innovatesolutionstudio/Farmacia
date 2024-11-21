@@ -25,6 +25,12 @@ fetch("/datos")
       data.obtenerProveedorMasComprado || "no hay proveedores"; // Manejar el caso null
     document.getElementById("obtenerTotalComprasC").innerText =
       data.obtenerTotalComprasC + " Bs." || "No hay compras";
+
+
+    document.getElementById("obtenerTotalPedidosEstado1_G").innerText =
+      data.obtenerTotalPedidosEstado1_G || "No hay pedidos pendientes";
+    document.getElementById("obtenerTotalPedidosMesActual_m").innerText =
+      data.obtenerTotalPedidosMesActual_m|| "No hay pedidos";
   })
   .catch((error) => {
     console.error("Error fetching data:", error);

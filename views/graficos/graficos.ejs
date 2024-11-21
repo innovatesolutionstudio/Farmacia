@@ -27,7 +27,7 @@
     <body>
 
         <div class="header-container">
-            <h1>Dashboard</h1>
+            <h1>Tablero</h1>
         </div>
 
         <div class="container">
@@ -139,21 +139,22 @@
             <!-- Card 3: Pedidos -->
             <div class="card2">
                 <div class="header-card2">
-                    <span>Pedidos</span>
-                    <a href="#">Ver más &raquo;</a>
+                    <span>Pedidos Mensuales</span>
+                    <a href="#" onclick="verPedidosMensualesAno()">Ver más &raquo;</a>
                 </div>
                 <div class="content-card2">
                     <div class="anchor">
-                        <h2>04</h2>
-                        <p>Total pedidos</p>
+                        <h2 id="obtenerTotalPedidosMesActual_m">Cargando...</h2>
+                        <p>Total pedidos en el mes</p>
                     </div>
                     <div class="anchor">
-                        <h2>5</h2>
+                        <h2 id="obtenerTotalPedidosEstado1_G">Cargando</h2>
                         <p>Pedidos pendientes</p>
                     </div>
                 </div>
             </div>
-
+            
+            
             <!-- Card 4: Compras -->
             <div class="card2">
                 <div class="header-card2">
@@ -192,4 +193,5 @@
     <script src="js/graficoventas.js"></script>
     <script src="js/graficoproductos.js"></script>
     <script src="js/gaficoCompras.js"></script>
+    <script src="js/graficoPedidos.js"></script>
 </html>

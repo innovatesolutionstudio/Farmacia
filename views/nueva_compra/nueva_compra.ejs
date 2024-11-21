@@ -175,7 +175,7 @@ productoFiltro.addEventListener("input", async function () {
     return;
   }
 
-  const url = `/buscar_productos?q=${encodeURIComponent(searchTerm)}`;
+  const url = `/buscar_productos_compra?q=${encodeURIComponent(searchTerm)}`;
 
   try {
     const response = await fetch(url);

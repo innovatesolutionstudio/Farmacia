@@ -1,60 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador de Medicamentos</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Asistente Virtual de Farmacia</title>
+    <link rel="stylesheet" href="/resources/css/sistema_clientes/consulta.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .container {
-            margin-top: 30px;
+        body{
+            margin: 0px 0px 0px 300px;
         }
-        .search-form {
-            margin-bottom: 30px;
+        /* Estilo para la barra de carga */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .loading-overlay.active {
+            display: flex;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="text-center">Buscador de Medicamentos</h1>
+    <div class="loading-overlay" id="loadingOverlay">Cargando...</div>
 
-        <!-- Buscador de Medicamentos por Nombre -->
-        <div class="search-form">
-            <h2>1. Buscar Medicamento por Nombre</h2>
-            <form id="buscador-form" class="form-inline">
-                <input type="text" id="medicamento" class="form-control mr-2" placeholder="Ingrese el nombre del medicamento" required>
-                <button type="submit" class="btn btn-primary">Buscar</button>
-            </form>
-            <div id="resultado" class="mt-3"></div>
+    <div class="container">
+        <h1>¿En qué puedo ayudarte hoy?</h1>
+        <p class="welcome-message">¡Hola! 👋 Soy tu asistente virtual de la Farmacia 25 de Julio.<br>
+        Estoy aquí para ayudarte a encontrar el mejor producto o medicamento según tus síntomas.</p>
+
+        <div class="options-grid" id="optionsGrid">
+            <div class="option-card" onclick="mostrarBuscador()">
+                <h3>Necesito ayuda con un síntoma específico</h3>
+                <p>Ingresa tus síntomas...</p>
+                <i class="fas fa-chevron-right arrow-icon"></i>
+            </div>
+            <div class="option-card" onclick="mostrarBuscador()">
+                <h3>Quiero saber qué puedo tomar para un malestar</h3>
+                <p>Podremos sugerirte la acción...</p>
+                <i class="fas fa-chevron-right arrow-icon"></i>
+            </div>
+            <div class="option-card" onclick="mostrarBuscador()">
+                <h3>Opciones de productos para el alivio general</h3>
+                <p>Podemos enviarte algunos productos...</p>
+                <i class="fas fa-chevron-right arrow-icon"></i>
+            </div>
+            <div class="option-card" onclick="mostrarBuscador()">
+                <h3>Necesito asesoría sobre medicamentos</h3>
+                <p>Te podemos dar información...</p>
+                <i class="fas fa-chevron-right arrow-icon"></i>
+            </div>
         </div>
 
-       
+        <div class="search-container" id="searchContainer" style="display: none;">
+            <form id="buscador-form" class="search-form">
+                <input type="text" id="medicamento" class="search-input" 
+                       placeholder="Describe tus síntomas o el medicamento que buscas" required>
+                <button type="submit" class="search-button">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </form>
+            <div id="resultado" class="resultado"></div>
+        </div>
     </div>
 
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
     <script>
-   
+        function mostrarBuscador() {
+            document.getElementById('searchContainer').style.display = 'block';
+            document.getElementById('optionsGrid').style.display = 'none';
+        }
+
         document.getElementById('buscador-form').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const medicamento = document.getElementById('medicamento').value;
-            const response = await fetch('/buscar', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ medicamento }),
-            });
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const resultadoDiv = document.getElementById('resultado');
 
-            const data = await response.json();
-            document.getElementById('resultado').innerText = data.informacion;
+            // Mostrar barra de carga
+            loadingOverlay.classList.add('active');
+
+            try {
+                const response = await fetch('/buscar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ medicamento }),
+                });
+
+                const data = await response.json();
+
+                // Esconder la barra de carga
+                loadingOverlay.classList.remove('active');
+
+                // Mostrar resultado
+                resultadoDiv.innerHTML = `
+                    <h2>Resultado para "${medicamento}":</h2>
+                    <p>${data.informacion}</p>
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+
+                // Esconder la barra de carga
+                loadingOverlay.classList.remove('active');
+
+                resultadoDiv.innerHTML = `
+                    <p style="color: red;">Lo siento, hubo un error al procesar tu solicitud. Por favor, intenta de nuevo.</p>
+                `;
+            }
         });
-
-       
     </script>
-
-    <!-- Include Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

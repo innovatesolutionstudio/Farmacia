@@ -192,10 +192,21 @@
                                     style="font-size: 18px; font-family: monospace;">
                                     <i class="fa fa-area-chart"
                                         style="font-size: 30px;"></i>
-                                    <span>&nbsp;&nbsp;Dashboard</span></a></li>
+                                    <span>&nbsp;&nbsp;Tablero</span></a></li>
                         </ul>
                         <% } %>
-                        <% if (sesion === 1 || sesion === 3 || sesion === 4) {
+                        <% if (sesion === 1 || sesion === 2 || sesion === 3 || sesion === 4|| sesion === 5|| sesion === 6|| sesion === 7 ) { %>
+                        <ul class="list-unstyled components">
+                            <li><a href="#"
+                                    onclick="cargarContenido('/buscador_ia')"
+                                    class="btn-group"
+                                    style="font-size: 18px; font-family: monospace;">
+                                    <i class="fa fa-robot"
+                                        style="font-size: 30px;"></i>
+                                    <span>&nbsp;&nbsp;Consultas</span></a></li>
+                        </ul>
+                        <% } %>
+                        <% if (sesion === 1 || sesion === 3 || sesion === 4|| sesion === 5) {
                         %>
                         <ul class="list-unstyled components">
                             <li class="active">
@@ -385,24 +396,7 @@
                             </li>
                         </ul>
                         <% } %>
-                        <ul class="list-unstyled components">
-                            <li><a href="#"
-                                    onclick="cargarContenido('/mantenimiento')"
-                                    class="btn-group"
-                                    style="font-size: 18px; font-family: monospace;">
-                                    <i class="far fa-sun"
-                                        style="font-size: 30px;"></i>
-                                    <span>&nbsp;&nbsp;Configuraciones</span></a></li>
-                        </ul>
-                        <ul class="list-unstyled components">
-                            <li><a href="#"
-                                    onclick="cargarContenido('/mantenimiento')"
-                                    class="btn-group"
-                                    style="font-size: 18px; font-family: monospace;">
-                                    <i class="fas fa-calendar-times"
-                                        style="font-size: 30px;"></i>
-                                    <span>&nbsp;&nbsp;Ayuda</span></a></li>
-                        </ul>
+                        
 
                     </div>
 
@@ -414,64 +408,45 @@
 
                     <div class="topbar">
 
-                        
-                            <nav class="navbar navbar-expand-lg navbar-light">
-                                <div class="full d-flex align-items-center">
-                                    <!-- Botón de flecha para esconder el menú -->
-                                    <button type="button" id="sidebarCollapse" class="sidebar_toggle me-3">
-                                        <i class="fa fa-angle-left"></i>
-                                    </button>
-                        
-                                    <!-- Buscador centrado y botón de asistente -->
-                                    <div class="search_assistant_section mx-auto d-flex align-items-center">
-                                        <!-- Campo de búsqueda -->
-                                        <input
-                                            type="text"
-                                            id="searchInput"
-                                            class="form-control"
-                                            placeholder="Buscar..."
-                                            style="max-width: 400px; margin-right: 10px;"
-                                        />
-                                        <!-- Botón de asistente -->
-                                        <button
-                                            id="microphoneButton"
-                                            class="btn btn-primary d-flex align-items-center"
-                                            onclick="activarMicrofono()"
-                                            style="gap: 5px;"
-                                        >
-                                            <i class="fa fa-microphone"></i> Asistente
-                                        </button>
-                                    </div>
-                        
-                                    <!-- Sucursal y fecha alineados a la derecha -->
-                                    <div class="right_topbar">
-                                        <div class="icon_info">
-                                            <ul>
-                                                <li
-                                                    style="margin: 10px 15px 0 15px; width: 350px;">
-                                                    <div>
+                        <nav class="navbar navbar-expand-lg navbar-light">
+                            <div class="full">
+
+                                <!--  boton para esconder menu -->
+                                <button type="button" id="sidebarCollapse"
+                                    class="sidebar_toggle"><i
+                                        class="fa fa-angle-left"></i></button>
+                                <!-- logo  -->
+
+                                <!-- menu de perfil  -->
+                                <div class="right_topbar">
+                                    <div class="icon_info">
+                                        <ul>
+                                            <li
+                                                style="margin: 10px 15px 0 15px; width: 350px;">
+                                                <div>
+                                                    <p
+                                                        style="color: #000; font-family:sansserif ; text-align: right; font-size: 18px;"><span
+                                                            class='online_animation'
+                                                            style="margin-right: 5px;">
+                                                        </span><%=
+                                                        NombreSucursal %>
                                                         <p
-                                                            style="color: #000; font-family:sansserif ; text-align: right; font-size: 18px;"><span
-                                                                class='online_animation'
-                                                                style="margin-right: 5px;">
-                                                            </span><%=
-                                                            NombreSucursal %>
-                                                            <p
-                                                                style="color: #000; font-family:math ; text-align: right;font-size: 18px;"
-                                                                id="fechaHora">16 de
-                                                                septiembre 2024 </p>
-                                                        </div>
-                                                    </li>
-    
-                                                </ul>
-    
-                                                <ul class="user_profile_dd">
-                                                    <li>
-                                                        <img src />
-                                                    </li>
-                                                </ul>
-                                            </div>
+                                                            style="color: #000; font-family:math ; text-align: right;font-size: 18px;"
+                                                            id="fechaHora">16 de
+                                                            septiembre 2024 </p>
+                                                    </div>
+                                                </li>
+
+                                            </ul>
+
+                                            <ul class="user_profile_dd">
+                                                <li>
+                                                    <img src />
+                                                </li>
+                                            </ul>
                                         </div>
+                                    </div>
+
                                 </div>
                             </nav>
                     
