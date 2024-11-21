@@ -29,7 +29,7 @@
             <ul class="sidebar-menu">
                 <li><a href="#" class="menu-link" data-page="/pagina_pedidos/otros/miscompras"><i class="fas fa-shopping-cart"></i> Mis pedidos</a></li>
                 <li><a href="#" class="menu-link" data-page="/pagina_pedidos/otros/consultas"><i class="fas fa-question-circle"></i> Consultas</a></li>
-                <li><a href="#" class="menu-link" data-page="/pagina_pedidos/otros/recordatorio"><i class="fas fa-bell"></i> Mis recordatorios</a></li>
+                <li><a href="#" class="menu-link" data-page="/pagina_pedidos/otros/recordatorio"><i class="fas fa-bell"></i> Mi lista de compras</a></li>
                 <li><a href="#" class="menu-link" data-page="/pagina_pedidos/otros/contactanos"><i class="fas fa-envelope"></i> Contáctanos</a></li>
             </ul>
             <a href="/pagina_pedidos/logout" class="create-account">Cerrar sesión</a>
@@ -45,6 +45,7 @@
             <iframe id="content-frame" src="/pagina_pedidos/otros/miscompras" frameborder="0"></iframe>
         </div>
     </div>
+    
 
     <!-- FontAwesome -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
@@ -93,6 +94,7 @@
                         <strong>NIT:</strong> <span style="color: #555;">${cliente.Nit}</span>
                     </div>
                 </div>
+                
             `,
             showCloseButton: true,
             confirmButtonText: 'Cerrar',

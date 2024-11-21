@@ -12,7 +12,6 @@
         <div class="main-content" id="main-content">
            
             <!-- Comienzo de contenido -->
-           
             <div class="table-container">
                 <h3>Mis pedidos</h3>
                 <table>
@@ -43,12 +42,504 @@
                                 <td colspan="6" style="text-align: center;">No se encontraron pedidos</td>
                             </tr>
                         <% } %>
+                        <button class="btn-crear" onclick="showModal()">
+                            <i class="fas fa-plus"></i> Crear Recordatorio
+                        </button>
                     </tbody>
                 </table>
             </div>
-
-            <!-- fin de contenido -->
+            
+            <!--fin de contenido de mis pedidos-->
         </div>
+        <!-- <div class="table-container">
+            <div class="header-container">
+                <h3>Mis Recordatorios de Medicación</h3>
 
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Medicamento</th>
+                        <th>Dosis</th>
+                        <th>Cantidad</th>
+                        <th>Teléfono</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                    </tr>
+                </thead>
+                <tbody id="recordatoriosTableBody">
+                </tbody>
+            </table>
+        </div> -->
+        
+            <!-- Modal de Recordatorio -->
+            <div class="modal" id="recordatorioModal">
+                <div class="modal-content">
+                    <div class="modal-left">
+                        <h3>Farmacia 25 De Julio</h3>
+                        <h2>Crear Nuevo Horario</h2>
+            
+                        <div class="form-group">
+                            <label>Selecciona el medicamento *</label>
+                            <select id="productoSelect" required>
+                                <option value="">Seleccione un medicamento</option>
+                            </select>
+                        </div>
+            
+                        <div class="form-group">
+                            <label>Indicaciones</label>
+                            <div id="indicacionesProducto" class="info-box"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Precauciones</label>
+                            <div id="precaucionesProducto" class="info-box"></div>
+                        </div>
+            
+                        <div class="form-group">
+                            <label>Cantidad de medicamentos *</label>
+                            <input type="number" id="cantidadInput" placeholder="Cantidad de pastillas compradas" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Intervalo de toma (horas) *</label>
+                            <input type="number" id="intervaloHoras" placeholder="Número de horas entre cada toma" required>
+                            <small>Ejemplo: 6 para cada 6 horas, 12 para cada 12 horas</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Dosis diaria (calculada automáticamente)</label>
+                            <input type="number" id="dosisPorDia" readonly>
+                        </div>
+                        
+                        <!-- Mensaje de advertencia -->
+                        <div id="advertenciaMensaje" style="color: red; display: none;">
+                            No tienes suficientes pastillas para este intervalo de dosis.
+                        </div>
+            
+                        <div class="form-group">
+                            <label>Número de teléfono (WhatsApp) *</label>
+                            <input type="tel" id="telefonoInput" placeholder="77775374" required>
+                        </div>
+                        
+                            
+                        <div class="form-group">
+                            <label>Fecha y Hora del Recordatorio *</label>
+                            <input type="datetime-local" id="fechaHoraInput" required>
+                            <small>Selecciona la fecha y hora de inicio</small>
+                        </div>
+                        
+            
+                        <div class="action-buttons">
+                            <button class="btn btn-crear" onclick="generarListaHorarios()">Generar Lista y Enviar</button>
+                            <button class="btn btn-descartar" onclick="closeModal()">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>  
+        function generarMensajePersonalizado(horarios, dosisPorDia, cantidadTotal, intervaloHoras) {
+            const selectElement = document.getElementById('productoSelect');
+            const nombreMedicamento = selectElement.options[selectElement.selectedIndex].text || 'tu medicamento';
+
+            const introduccion = `*Recordatorio de Medicación*
+
+        ¡Hola! Aquí está tu plan de medicación detallado para *${nombreMedicamento}*. 
+        Es importante seguir este horario para tu recuperación.
+
+        *Detalles del Tratamiento:* 
+        - Medicamento: ${nombreMedicamento} 
+        - Dosis diarias: ${dosisPorDia} 
+        - Intervalo entre tomas: Cada ${intervaloHoras} horas 
+        - Cantidad total de medicamentos: ${cantidadTotal} 
+
+        *Horarios de Medicación:* 
+        `;
+
+            const listaHorarios = horarios.map((horariosDelDia, indexDia) => {
+                const horariosFormateados = horariosDelDia.map((hora, indexHora) => 
+                    `Toma ${indexDia * dosisPorDia + indexHora + 1}: *${hora}*`
+                ).join('\n');
+                return `*Día ${indexDia + 1}:*\n${horariosFormateados}`;
+            }).join('\n\n');
+
+            const conclusion = `\n\n*Consejos Importantes:* 
+        - Toma tu medicamento a la misma hora cada día. 
+        - Si olvidas una dosis, tómala lo antes posible. 
+        - Consulta con tu médico si tienes dudas.
+
+        ¡Cuídate mucho!`;
+
+            return introduccion + listaHorarios + conclusion;
+        }
+
+        function generarListaHorarios() {
+            const telefono = document.getElementById('telefonoInput').value;
+            const intervaloHoras = parseFloat(document.getElementById('intervaloHoras').value);
+            const dosisPorDia = parseInt(document.getElementById('dosisPorDia').value);
+            const cantidadTotal = parseInt(document.getElementById('cantidadInput').value);
+            const fechaHoraInicial = document.getElementById('fechaHoraInput').value;
+
+            // Validaciones (mantener las existentes)
+            if (!telefono || !intervaloHoras || !dosisPorDia || !cantidadTotal || !fechaHoraInicial) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campos Incompletos',
+                    text: 'Por favor completa todos los campos requeridos.',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Entendido'
+                });
+                return;
+            }
+
+
+            if (!telefono.startsWith('591') || telefono.length < 10) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Número Inválido',
+                    text: 'Número de teléfono inválido. Asegúrate de incluir el código de país (591).',
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Corregir'
+                });
+                return;
+            }
+
+            const selectElement = document.getElementById('productoSelect');
+            if (selectElement.value === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Medicamento no Seleccionado',
+                    text: 'Por favor selecciona un medicamento.',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Seleccionar'
+                });
+                return;
+            }
+
+            // Calcular días de tratamiento de manera precisa
+            const diasTratamiento = Math.ceil(cantidadTotal / dosisPorDia);
+            if (diasTratamiento > 7) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Duración del Tratamiento',
+                    html: `Con ${cantidadTotal} medicamentos y ${dosisPorDia} dosis por día, el tratamiento duraría <strong>${diasTratamiento} días</strong>. 
+                    Por favor, ajusta la cantidad de medicamentos o las dosis diarias.`,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Entendido'
+                });
+                return;
+            }
+            // Generación de horarios por día
+            const horariosPorDia = [];
+            let fechaHora = new Date(fechaHoraInicial);
+            let dosisRestantes = cantidadTotal;
+
+            for (let dia = 0; dia < diasTratamiento; dia++) {
+                const horariosDelDia = [];
+                
+                // Determinar cuántas dosis se tomarán en este día
+                const dosisDiaActual = Math.min(dosisPorDia, dosisRestantes);
+                
+                for (let dosis = 0; dosis < dosisDiaActual; dosis++) {
+                    // Formatear la fecha y hora de manera más legible
+                    const opciones = { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric', 
+                        hour: '2-digit', 
+                        minute: '2-digit',
+                        hour12: true // Formato de 12 horas
+                    };
+                    horariosDelDia.push(fechaHora.toLocaleString('es-ES', opciones));
+                    
+                    // Incrementar horas para la siguiente dosis
+                    fechaHora.setHours(fechaHora.getHours() + intervaloHoras);
+                    
+                    // Reducir dosis restantes
+                    dosisRestantes--;
+                }
+                
+                horariosPorDia.push(horariosDelDia);
+                
+                // Salir del bucle si no quedan más dosis
+                if (dosisRestantes <= 0) break;
+            }
+
+            // Crear mensaje personalizado
+            const mensaje = generarMensajePersonalizado(
+                horariosPorDia,
+                dosisPorDia,
+                cantidadTotal,
+                intervaloHoras
+            );
+
+            // Enviar por WhatsApp
+            const urlWhatsApp = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+            window.open(urlWhatsApp, '_blank');
+
+        }
+
+
+        function enviarWhatsApp(telefono, mensaje) {
+            const urlWhatsApp = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+            window.open(urlWhatsApp, '_blank');
+        }
+
+        const intervaloInput = document.getElementById('intervaloHoras');
+        const dosisInput = document.getElementById('dosisPorDia');
+        const cantidadInput = document.getElementById('cantidadInput');
+        const advertenciaMensaje = document.getElementById('advertenciaMensaje');
+        const generarListaButton = document.querySelector('.btn-crear'); // Select the button
+
+        intervaloInput.addEventListener('input', () => {
+            const intervaloHoras = parseFloat(intervaloInput.value);
+            const cantidadPastillas = parseInt(cantidadInput.value);
+
+            if (intervaloHoras > 0) {
+                // Calcular las dosis necesarias al día
+                const dosisPorDia = Math.floor(24 / intervaloHoras);
+
+                // Actualizar el campo de dosis diaria
+                dosisInput.value = dosisPorDia;
+
+                // Verificar si la cantidad de pastillas es suficiente para las dosis
+                if (cantidadPastillas > 0 && dosisPorDia > cantidadPastillas) {
+                    // Mostrar el mensaje de advertencia si no hay suficientes pastillas
+                    advertenciaMensaje.style.display = 'block';
+                    generarListaButton.disabled = true; // Disable the button
+                } else {
+                    // Ocultar el mensaje si las pastillas son suficientes o no se ha ingresado cantidad
+                    advertenciaMensaje.style.display = 'none';
+                    generarListaButton.disabled = false; // Enable the button
+                }
+            } else {
+                dosisInput.value = '';
+                advertenciaMensaje.style.display = 'none';
+                generarListaButton.disabled = false; // Enable the button
+            }
+        });
+
+        const telefonoInput = document.getElementById('telefonoInput');
+
+        // Al detectar que el campo de teléfono está enfocado
+        telefonoInput.addEventListener('focus', function() {
+            // Si el valor del campo está vacío, añadir el código de país al inicio
+            if (telefonoInput.value === '') {
+                telefonoInput.value = '591'; // Código de país (591)
+            }
+        });
+
+        // Al detectar que el campo de teléfono ha perdido el foco (cuando el usuario termina de escribir)
+        telefonoInput.addEventListener('blur', function() {
+
+            if (telefonoInput.value.startsWith('591')) {
+                telefonoInput.value = '591' + telefonoInput.value.slice(3); 
+            }
+        });
+
+        // Esto asegura que el código de país se mantenga y el usuario solo agregue el número después del 591
+        telefonoInput.addEventListener('input', function() {
+            if (!telefonoInput.value.startsWith('591')) {
+                telefonoInput.value = '591' + telefonoInput.value.slice(0); 
+            }
+        });
+        document.addEventListener("DOMContentLoaded", function() {
+        const fechaHoraInput = document.getElementById('fechaHoraInput');
+
+        // Obtener la fecha y hora actual
+        const ahora = new Date();
+
+        // Formatear la fecha en el formato que espera el input de tipo datetime-local (YYYY-MM-DDTHH:MM)
+        const fechaActual = ahora.toISOString().slice(0, 16); // Eliminar los segundos y milisegundos
+
+        // Establecer la fecha mínima en el input
+        fechaHoraInput.setAttribute('min', fechaActual);
+});
+
+function mostrarModalPersonalizado(tipo, titulo, mensaje) {
+    // Crear el modal
+    const modal = document.createElement('div');
+    modal.className = 'custom-modal';
+    modal.innerHTML = `
+        <div class="modal-content ${tipo}">
+            <div class="modal-header">
+                <h2>${titulo}</h2>
+                <span class="close-btn">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>${mensaje}</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-ok">Entendido</button>
+            </div>
+        </div>
+    `;
+
+    // Agregar estilos CSS
+    const style = document.createElement('style');
+    style.textContent = `
+        .custom-modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .modal-content.warning { border-left: 5px solid #ffc107; }
+        .modal-content.error { border-left: 5px solid #dc3545; }
+        .modal-content.info { border-left: 5px solid #17a2b8; }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .modal-body {
+            padding: 20px;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            padding: 15px;
+            border-top: 1px solid #e9ecef;
+        }
+        .btn-ok {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .close-btn {
+            cursor: pointer;
+            font-size: 24px;
+        }
+    `;
+
+    // Agregar al documento
+    document.body.appendChild(style);
+    document.body.appendChild(modal);
+
+    // Eventos
+    const closeBtn = modal.querySelector('.close-btn');
+    const okBtn = modal.querySelector('.btn-ok');
+    
+    const cerrarModal = () => {
+        document.body.removeChild(modal);
+        document.body.removeChild(style);
+    };
+
+    closeBtn.addEventListener('click', cerrarModal);
+    okBtn.addEventListener('click', cerrarModal);
+}
+
+        </script>        
+        <script>
+            
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarProductosComprados();
+            cargarRecordatorios();
+        });
+        
+        function cargarRecordatorios() {
+            fetch('/api/mis-recordatorios')
+                .then(response => response.json())
+                .then(recordatorios => {
+                    const tbody = document.getElementById('recordatoriosTableBody');
+                    tbody.innerHTML = '';
+        
+                    if (recordatorios.length === 0) {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = '<td colspan="6" style="text-align: center;">No hay recordatorios registrados</td>';
+                        tbody.appendChild(tr);
+                        return;
+                    }
+        
+                    recordatorios.forEach(recordatorio => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${recordatorio.Nombre}</td>
+                            <td>${recordatorio.Dosis}</td>
+                            <td>${recordatorio.cantidad}</td>
+                            <td>${recordatorio.Telefono}</td>
+                            <td>${new Date(recordatorio.fecha).toLocaleDateString('es-ES')}</td>
+                            <td>${recordatorio.hora}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al cargar recordatorios:', error);
+                });
+        }
+        
+        function showModal() {
+            document.getElementById('recordatorioModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('recordatorioModal').style.display = 'none';
+            location.reload();
+        }
+        
+        function cargarProductosComprados() {
+            fetch('/api/mis-productos-comprados')
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                        return;
+                    }
+                    return response.json();
+                })
+                .then(productos => {
+                    const select = document.getElementById('productoSelect');
+                    select.innerHTML = '<option value="">Seleccione un medicamento</option>';
+                    
+                    productos.forEach(producto => {
+                        const option = document.createElement('option');
+                        option.value = producto.id_producto;
+                        option.textContent = producto.nombre_producto;
+                        option.dataset.cantidad = producto.cantidad;
+                        option.dataset.indicaciones = producto.indicaciones || 'No hay indicaciones disponibles';
+                        option.dataset.precauciones = producto.precauciones || 'No hay precauciones especificadas';
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al cargar productos:', error);
+                });
+        }
+        
+        // Event listeners para el modal
+        document.getElementById('productoSelect').addEventListener('change', function(event) {
+            const selectedOption = event.target.selectedOptions[0];
+            document.getElementById('indicacionesProducto').textContent = selectedOption.dataset.indicaciones;
+            document.getElementById('precaucionesProducto').textContent = selectedOption.dataset.precauciones;
+            document.getElementById('cantidadInput').value = selectedOption.dataset.cantidad;
+        });
+        
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('recordatorioModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+        </script>
 </body>
 </html>

@@ -888,75 +888,75 @@ router.get('/api/mis-recordatorios', async (req, res) => {
 }); 
     
 
-    router.post('/api/crear-recordatorio', async (req, res) => {
-        try {
-            if (!req.session.loggedinCliente) {
-                return res.status(401).json({ error: 'No autorizado' });
-            }
-        
-            // Verifica que el cliente esté autenticado
-            console.log('Sesión completa:', req.session);
-            console.log('ID Cliente en sesión:', req.session.userIdCliente);  // Usar 'userIdCliente' aquí
-        
-            const { productoId, dosis, cantidad, telefono, fechaHora } = req.body;
-        
-            if (!productoId || !dosis || !cantidad || !telefono || !fechaHora) {
-                return res.status(400).json({ error: 'Todos los campos son requeridos' });
-            }
-        
-            if (new Date(fechaHora) < new Date()) {
-                return res.status(400).json({ error: 'La fecha debe ser futura' });
-            }
-        
-            // Eliminar el prefijo '591' del teléfono si existe
-            const telefonoLimpio = telefono.replace(/^591/, '');
-        
-            // Insertar el recordatorio principal
-            connection.query(
-                'INSERT INTO Recordatorios (ID_Cliente, ID_Producto, Telefono) VALUES (?, ?, ?)',
-                [req.session.userIdCliente, productoId, telefonoLimpio],  // Usar 'userIdCliente'
-                (err, result) => {
-                    if (err) {
-                        console.error('Error en la primera inserción:', err);
-                        return res.status(500).json({ error: 'Error al crear el recordatorio' });
-                    }
-        
-                    const fecha = new Date(fechaHora).toISOString().split('T')[0];
-                    const hora = new Date(fechaHora).toTimeString().split(' ')[0];
-                    const mensaje = "Es hora de tomar tu medicamento. Dosis: ${dosis}. Cantidad: ${cantidad} unidades.";
-        
-                    // Insertar el detalle del recordatorio
-                    connection.query(
-                        'INSERT INTO detalle_recordatorio (ID_Recordatorio, fecha, hora, Mensaje, Dosis, Cantidad_Mendicamentos) VALUES (?, ?, ?, ?, ?, ?)',
-                        [result.insertId, fecha, hora, mensaje, dosis, cantidad],
-                        (err) => {
-                            if (err) {
-                                console.error('Error en la segunda inserción:', err);
-                                return res.status(500).json({ error: 'Error al crear el detalle del recordatorio' });
-                            }
-                            res.json({ 
-                                message: 'Recordatorio creado exitosamente', 
-                                id: result.insertId 
-                            });
-                        }
-                    );
-                }
-            );
-        } catch (error) {
-            console.error('Error general:', error);
-            res.status(500).json({ error: 'Error al procesar la solicitud' });
+router.post('/api/crear-recordatorio', async (req, res) => {
+    try {
+        if (!req.session.loggedinCliente) {
+            return res.status(401).json({ error: 'No autorizado' });
         }
-        });
+
+        // Verifica que el cliente esté autenticado
+        console.log('Sesión completa:', req.session);
+        console.log('ID Cliente en sesión:', req.session.userIdCliente);
+
+        const { productoId, dosis, cantidad, telefono, fechaHora } = req.body;
+
+        if (!productoId || !dosis || !cantidad || !telefono || !fechaHora) {
+            return res.status(400).json({ error: 'Todos los campos son requeridos' });
+        }
+
+        if (new Date(fechaHora) < new Date()) {
+            return res.status(400).json({ error: 'La fecha debe ser futura' });
+        }
+
+        // Eliminar el prefijo '591' del teléfono si existe
+        const telefonoLimpio = telefono.replace(/^591/, '');
+
+        // Insertar el recordatorio principal
+        connection.query(
+            'INSERT INTO Recordatorios (ID_Cliente, ID_Producto, Telefono) VALUES (?, ?, ?)',
+            [req.session.userIdCliente, productoId, telefonoLimpio],
+            (err, result) => {
+                if (err) {
+                    console.error('Error en la primera inserción:', err);
+                    return res.status(500).json({ error: 'Error al crear el recordatorio' });
+                }
+
+                const fecha = new Date(fechaHora).toISOString().split('T')[0];
+                const hora = new Date(fechaHora).toTimeString().split(' ')[0];
+                const mensaje = `Es hora de tomar tu medicamento. Dosis: ${dosis}. Cantidad: ${cantidad} unidades.`;
+
+                // Insertar el detalle del recordatorio
+                connection.query(
+                    'INSERT INTO detalle_recordatorio (ID_Recordatorio, fecha, hora, Mensaje, Dosis, Cantidad_Mendicamentos) VALUES (?, ?, ?, ?, ?, ?)',
+                    [result.insertId, fecha, hora, mensaje, dosis, cantidad],
+                    (err) => {
+                        if (err) {
+                            console.error('Error en la segunda inserción:', err);
+                            return res.status(500).json({ error: 'Error al crear el detalle del recordatorio' });
+                        }
+                        res.json({ 
+                            message: 'Recordatorio creado exitosamente', 
+                            id: result.insertId 
+                        });
+                    }
+                );
+            }
+        );
+    } catch (error) {
+        console.error('Error general:', error);
+        res.status(500).json({ error: 'Error al procesar la solicitud' });
+    }
+});
 
 
 
-        // Rutas para mostrar la página de recordatorios
- router.get('/pagina_pedidos/otros/recordatorio', (req, res) => {
+      // Ruta para mostrar el historial de ventas
+router.get('/pagina_pedidos/otros/recordatorio', (req, res) => {
     if (!req.session.loggedinCliente) {
         return res.redirect('/pagina_pedidos/404');
     }
 
-    const idCliente = req.session.userIdCliente;  // Usamos 'userIdCliente' en lugar de 'idCliente'
+    const idCliente = req.session.userIdCliente;
 
     // Verificar si el cliente está logueado
     if (!idCliente) {
@@ -965,51 +965,38 @@ router.get('/api/mis-recordatorios', async (req, res) => {
 
     const query = `
         SELECT 
-            r.ID_Recordatorio,
-            r.ID_Cliente,
-            r.ID_Producto,
-            r.Telefono,
-            dr.fecha,
-            dr.hora,
-            dr.Mensaje,
-            dr.Dosis,
-            dr.Cantidad_Mendicamentos
-        FROM 
-            Recordatorios r
-        JOIN 
-            detalle_recordatorio dr ON r.ID_Recordatorio = dr.ID_Recordatorio
-        WHERE 
-            r.ID_Cliente = ?;
+            ventas.Fecha_Venta,
+            ventas.Total_Venta,
+            empleados.Nombre AS Empleado,
+            sucursales.Nombre AS Sucursal,
+            cajas.Codigo
+        FROM ventas
+        JOIN empleados ON ventas.ID_Empleado = empleados.ID_Empleado
+        JOIN sucursales ON ventas.ID_Sucursal = sucursales.ID_Sucursal
+        JOIN cajas ON ventas.ID_Caja = cajas.ID_Caja
+        WHERE ventas.ID_Cliente = ?
+        ORDER BY ventas.Fecha_Venta DESC;
+
     `;
 
     connection.query(query, [idCliente], (err, results) => {
         if (err) {
-            console.error('Error al obtener recordatorios:', err);
-            return res.status(500).json({ error: 'Error al obtener los recordatorios' });
+            console.error('Error al obtener historial de ventas:', err);
+            return res.status(500).json({ error: 'Error al obtener el historial de ventas' });
         }
         
+        // Log the results for debugging
+        console.log('Ventas encontradas:', results);
+        
         // Renderizar la vista y pasarle los resultados
-        res.render('pagina_pedidos/otros/recordatorio', { recordatorios: results });
+        res.render('pagina_pedidos/otros/recordatorio', { 
+            ventas: results,
+            cliente: req.session.cliente // Pasar información del cliente para consistencia
+        });
     });
 });
 
-    router.get('/pagina_pedidos/editar_recordatorio/:id', (req, res) => {
-        const id = req.params.id;
-        const query = 'SELECT * FROM recordatorios WHERE ID_Recordatorio = ?';
-        
-        connection.query(query, [id], (error, results) => {
-            if (error) {
-                console.error(error);
-                return res.status(500).json({ success: false, message: 'Error al obtener el recordatorio' });
-            }
-            if (results.length > 0) {
-                res.render('pagina_pedidos/recordatorio', { recordatorio: results[0] });
-            } else {
-                res.status(404).json({ success: false, message: 'Recordatorio no encontrado' });
-            }
-        });
-        });
-        
+
 // Ruta para obtener productos de pedido
 router.get('/api/mis-productos-comprados', async (req, res) => {
     try {
@@ -1055,4 +1042,41 @@ router.get('/api/mis-productos-comprados', async (req, res) => {
     });
 
 
+    router.get('/api/obtener-recordatorio/:id', (req, res) => {
+        if (!req.session.loggedinCliente) {
+            return res.status(401).json({ error: 'No autorizado' });
+        }
+    
+        const id = req.params.id;
+        const query = `
+            SELECT 
+                r.ID_Recordatorio,
+                r.ID_Producto,
+                r.Telefono,
+                dr.fecha,
+                dr.hora,
+                dr.Mensaje,
+                dr.Dosis,
+                dr.Cantidad_Mendicamentos
+            FROM 
+                Recordatorios r
+            JOIN 
+                detalle_recordatorio dr ON r.ID_Recordatorio = dr.ID_Recordatorio
+            WHERE 
+                r.ID_Recordatorio = ? AND r.ID_Cliente = ?
+        `;
+    
+        connection.query(query, [id, req.session.userIdCliente], (error, results) => {
+            if (error) {
+                console.error('Error al obtener recordatorio:', error);
+                return res.status(500).json({ error: 'Error al obtener el recordatorio' });
+            }
+    
+            if (results.length === 0) {
+                return res.status(404).json({ error: 'Recordatorio no encontrado' });
+            }
+    
+            res.json(results[0]);
+        });
+    });
 module.exports = router;
