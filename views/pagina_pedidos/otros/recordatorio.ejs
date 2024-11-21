@@ -3,430 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Recordatorios - Farmacia 25 de Julio</title>
-    <link rel="stylesheet" href="/resources/css/sistema_clientes/recordatorio.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
+    <title>Historial de Ventas</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+        .sales-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .table-responsive {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .table thead {
+            position: sticky;
+            top: 0;
+            background-color: #6c63ff;
+            color: white;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #6c63ff;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Mis Recordatorios</h1>
-
-        <% if (recordatorios && recordatorios.length > 0) { %>
-            <% recordatorios.forEach(recordatorio => { %>
-                <div class="recordatorio-card">
-                    <div class="recordatorio-info">
-                        <p><strong>Producto:</strong> <%= recordatorio.ID_Producto %></p>
-                        <p><strong>Fecha:</strong> <%= recordatorio.fecha.toLocaleDateString() %></p>
-                        <p><strong>Hora:</strong> <%= recordatorio.hora %></p>
-                        <p><strong>Mensaje:</strong> <%= recordatorio.Mensaje %></p>
-                        <p><strong>Dosis:</strong> <%= recordatorio.Dosis %></p>
-                        <p><strong>Cantidad:</strong> <%= recordatorio.Cantidad_Mendicamentos %></p>
-                    </div>
-                    <div class="recordatorio-actions">
-                        <button onclick="editarRecordatorio(<%= recordatorio.ID_Recordatorio %>)">Editar</button>
-                        <button onclick="eliminarRecordatorio(<%= recordatorio.ID_Recordatorio %>)">Eliminar</button>    
-                    </div>
-                </div>
-            <% }); %>
-        <% } else { %>
-            <div class="no-records">
-                <p>No tienes recordatorios registrados.</p>
-            </div>
-        <% } %>
-
-        <div style="margin-top: 20px; text-align: center;">
-            <button class="btn btn-crear" onclick="showModal()">Agregar Recordatorio</button>
-            </a>
-        </div>
-    </div>
-
-</div>
-
-    <!-- Modal de Recordatorio -->
-    <div class="modal" id="recordatorioModal">
-        <div class="modal-content">
-            <div class="modal-left">
-                <h3>Farmacia 25 De Julio</h3>
-                <h2>Crear Nuevo Recordatorio</h2>
-
-                <div class="form-group">
-                    <label>Selecciona el medicamento *</label>
-                    <select id="productoSelect" required>
-                        <option value="">Seleccione un medicamento</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Indicaciones</label>
-                    <div id="indicacionesProducto" class="info-box"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Precauciones</label>
-                    <div id="precaucionesProducto" class="info-box"></div>
-                </div>
-
-                <div class="form-group">
-                    <label>Dosis a tomar *</label>
-                    <input type="text" id="dosisInput" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Cantidad de medicamentos *</label>
-                    <input type="number" id="cantidadInput" required readonly>
-                </div>
-                
-
-                <div class="form-group">
-                    <label>Número de teléfono (WhatsApp) *</label>
-                    <input type="tel" id="telefonoInput" placeholder="Ej: 591XXXXXXXX" required>
-                    <small>Incluye el código de país (591 para Bolivia)</small>
-                </div>
-
-                <div class="form-group">
-                    <label>Fecha y Hora del Recordatorio *</label>
-                    <input type="datetime-local" id="fechaHoraInput" required>
-                    <small>Selecciona la fecha y hora para el recordatorio</small>
-                </div>
-
-                <div class="action-buttons">
-                    <button class="btn btn-crear" onclick="validarYCrearRecordatorio()">Crear Recordatorio</button>
-                    <button class="btn btn-descartar" onclick="closeModal()">Cancelar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-  
-    <script>
-        function validarYCrearRecordatorio() {
-    // Obtener valores
-    const producto = document.getElementById('productoSelect').value;
-    const dosis = document.getElementById('dosisInput').value;
-    const cantidad = document.getElementById('cantidadInput').value;
-    const telefono = document.getElementById('telefonoInput').value;
-    const fechaHora = document.getElementById('fechaHoraInput').value;
-
-    // Validar campos
-    if (!producto || !dosis || !cantidad || !telefono || !fechaHora) {
-        alert('Por favor, complete todos los campos obligatorios');
-        return;
-    }
-
-    // Validar formato del teléfono
-    const telefonoLimpio = telefono.replace(/\D/g, '');
-    if (!telefonoLimpio.match(/^591\d{8}$/)) {
-        alert('Por favor, ingrese un número de teléfono válido (591XXXXXXXX)');
-        return;
-    }
-
-    // Crear mensaje
-    const mensaje = `🏥 *Recordatorio de Medicamento*\n\n` +
-                   `📌 Medicamento: ${producto}\n` +
-                   `💊 Dosis: ${dosis}\n` +
-                   `🔢 Cantidad: ${cantidad}\n` +
-                   `📅 Fecha y Hora: ${fechaHora}\n\n` +
-                   `⏰ Recordatorio programado!\n\n` +
-                   `_Farmacia 25 De Julio_`;
-
-    // Guardar en la base de datos y enviar WhatsApp
-    fetch('/crear-recordatorio', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            producto,
-            dosis,
-            cantidad,
-            telefono: telefonoLimpio,
-            fechaHora
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Enviar WhatsApp
-            const url = `https://wa.me/${telefonoLimpio}?text=${encodeURIComponent(mensaje)}`;
-            window.open(url, '_blank');
+        <div class="sales-container">
+            <h2 class="mb-4">
+                <i class="fas fa-receipt me-2"></i>Mi Historial de Compras
+            </h2>
             
-            alert('Recordatorio creado exitosamente');
-            closeModal();
-        } else {
-            alert('Error al crear el recordatorio: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error al crear el recordatorio');
-    });
-}
-        function editarRecordatorio(id) {
-            console.log('ID a editar:', id); // Añade este log
-            if (id) {
-                window.location.href = `/pagina_pedidos/otros/editar_recordatorio/${id}`;
-            } else {
-                console.error('ID de recordatorio no proporcionado');
-            }
-        }
-        function eliminarRecordatorio(id) {
-            if (confirm('¿Estás seguro de que deseas eliminar este recordatorio?')) {
-                fetch(`/pagina_pedidos/otros/eliminar_recordatorio/${id}`, {
-                    method: 'DELETE'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);  // Mensaje de éxito o error
-                        // Aquí puedes eliminar el elemento de la interfaz si se eliminó correctamente
-                        document.getElementById(`recordatorio-${id}`).remove();
-                    } else {
-                    }
-                })
-                .catch(error => {
-                });
-            }
-        }
+            <% if (locals.cliente && cliente.Nombre) { %>
+                <div class="alert alert-info" role="alert">
+                    Bienvenido, <%= cliente.Nombre %> <%= cliente.Apellido || '' %>
+                </div>
+            <% } %>
 
-        function cargarProductosComprados() {
-    console.log('Iniciando carga de productos...');
+            <% if (locals.ventas && ventas.length > 0) { %>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Fecha de Compra</th>
+                                <th>Total</th>
+                                <th>Empleado</th>
+                                <th>Sucursal</th>
+                                <th>Código de Caja</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% ventas.forEach(function(venta) { %>
+                                <tr>
+                                    <td><%= new Date(venta.Fecha_Venta).toLocaleDateString() %></td> <!-- Formatea la fecha de venta -->
+                                    <td>Bs. <%= venta.Total_Venta.toFixed(2) %></td> <!-- Muestra el total con dos decimales -->
+                                    <td><%= venta.Empleado %></td> <!-- Nombre del empleado -->
+                                    <td><%= venta.Sucursal %></td> <!-- Nombre de la sucursal -->
+                                    <td><%= venta.Codigo %></td> <!-- Código de la caja -->
+                                </tr>
+                            <% }); %>                            
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-muted mt-3">
+                    Total de compras: <%= ventas.length %>
+                </div>
+            <% } else { %>
+                <div class="empty-state">
+                    <i class="fas fa-shopping-cart fa-4x mb-3"></i>
+                    <h3>Aún no tiene compras registradas</h3>
+                    <p>Sus compras aparecerán aquí cuando realice una transacción.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    fetch('/api/mis-productos-comprados')
-        .then(response => {
-            if (response.redirected) {
-                window.location.href = response.url;
-                return;
-            }
-            if (!response.ok) {
-                throw new Error(`Error del servidor: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(productos => {
-            const select = document.getElementById('productoSelect');
-            
-            if (!select) {
-                console.error('No se encontró el elemento select en el DOM');
-                return;
-            }
-            
-            // Limpiar select
-            select.innerHTML = '<option value="">Seleccione un medicamento</option>';
-            
-            if (productos && productos.length > 0) {
-                productos.forEach(producto => {
-                    const option = document.createElement('option');
-                    option.value = producto.id_producto;
-                    option.textContent = producto.nombre_producto;
-                    
-                    // Establecer todos los datos como atributos de datos
-                    option.dataset.cantidad = producto.cantidad;
-                    option.dataset.indicaciones = producto.indicaciones || 'No hay indicaciones disponibles';
-                    option.dataset.precauciones = producto.precauciones || 'No hay precauciones especificadas';
-                    
-                    select.appendChild(option);
-                });
-                console.log('Productos cargados en el select');
-            } else {
-                const option = document.createElement('option');
-                option.value = "";
-                option.textContent = "No hay productos disponibles";
-                select.appendChild(option);
-            }
-        })
-        .catch(error => {
-            console.error('Error al cargar productos:', error);
-            const select = document.getElementById('productoSelect');
-            if (select) {
-                select.innerHTML = '<option value="">Error al cargar productos</option>';
-            }
-        });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    cargarProductosComprados();
-
-    const productoSelect = document.getElementById('productoSelect');
-    const indicacionesProducto = document.getElementById('indicacionesProducto');
-    const precaucionesProducto = document.getElementById('precaucionesProducto');
-    const cantidadInput = document.getElementById('cantidadInput');
-
-    productoSelect.addEventListener('change', (event) => {
-        const selectedOption = event.target.selectedOptions[0];
-        const productoId = event.target.value;
-
-        if (!productoId) {
-            // Resetear campos
-            indicacionesProducto.textContent = '';
-            precaucionesProducto.textContent = '';
-            cantidadInput.value = '';
-            return;
-        }
-
-        // Mostrar indicaciones y precauciones
-        indicacionesProducto.textContent = selectedOption.dataset.indicaciones;
-        precaucionesProducto.textContent = selectedOption.dataset.precauciones;
-        
-        // Establecer cantidad
-        cantidadInput.value = selectedOption.dataset.cantidad;
-    });
-});
-
-
-// Función actualizada para obtener detalles del producto
-        function actualizarCamposMedicamento() {
-            const productoId = document.getElementById('productoSelect').value;
-            console.log('ID del producto seleccionado:', productoId);
-            
-            if (productoId) {
-                fetch(`/api/detalles-producto/${productoId}`)
-                    .then(response => {
-                        console.log('Respuesta detalles:', response.status);
-                        if (!response.ok) {
-                            throw new Error(`Error en la respuesta: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(producto => {
-                        console.log('Detalles del producto:', producto);
-                        document.getElementById('descripcionProducto').textContent = 
-                            producto.descripcion || 'Descripción no disponible';
-                        document.getElementById('dosisRecomendada').textContent = 
-                            producto.dosis || 'Dosis no especificada';
-                    })
-                    .catch(error => {
-                        console.error('Error al obtener detalles del producto:', error);
-                        document.getElementById('descripcionProducto').textContent = 
-                            'Error al cargar los detalles del producto';
-                        document.getElementById('dosisRecomendada').textContent = '';
-                    });
-            } else {
-                document.getElementById('descripcionProducto').textContent = 
-                    'Selecciona un medicamento para ver sus detalles.';
-                document.getElementById('dosisRecomendada').textContent = '';
-            }
-        }
-
-        // Asegurarse de que el DOM esté cargado antes de ejecutar
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', cargarProductosComprados);
-        } else {
-            cargarProductosComprados();
-        }
-
-        // Función para mostrar el modal
-        function showModal() {
-            document.getElementById('recordatorioModal').style.display = 'block';
-        }
-
-        // Función para cerrar el modal y refrescar la página
-        function closeModal() {
-            document.getElementById('recordatorioModal').style.display = 'none';
-            location.reload(); // Recarga la página
-        }
-
-
-        // Función para formatear la fecha
-        function formatearFecha(fecha) {
-            return new Date(fecha).toLocaleDateString('es-ES', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+    <script>
+        // Optional: Add interactivity for sale details
+        document.querySelectorAll('.detalle-venta').forEach(button => {
+            button.addEventListener('click', function() {
+                const codigoCaja = this.getAttribute('data-id');
+                // Here you could add logic to show sale details, 
+                // perhaps via a modal or AJAX request
+                alert('Detalles de venta - Código de Caja: ' + codigoCaja);
             });
-        }
-
-        // Función para formatear la hora
-        function formatearHora(hora) {
-            return hora.substring(0, 5); // Mostrar solo HH:MM
-        }
-
-        // Función para validar el teléfono
-        function validarTelefono(telefono) {
-            return /^591\d{8}$/.test(telefono);
-        }
-
-        // Función para validar la fecha
-        function validarFecha(fechaHora) {
-            const fecha = new Date(fechaHora);
-            const ahora = new Date();
-            return fecha > ahora;
-        }
-
-        // Función para limpiar el formulario
-        function limpiarFormulario() {
-            document.getElementById('productoSelect').value = '';
-            document.getElementById('dosisInput').value = '';
-            document.getElementById('cantidadInput').value = '';
-            document.getElementById('telefonoInput').value = '';
-            document.getElementById('fechaHoraInput').value = '';
-            actualizarCamposMedicamento();
-        }
-
-        // Función para validar y crear el recordatorio
-        async function validarYCrearRecordatorio() {
-            const productoId = document.getElementById('productoSelect').value;
-            const dosis = document.getElementById('dosisInput').value;
-            const cantidad = document.getElementById('cantidadInput').value;
-            const telefono = document.getElementById('telefonoInput').value;
-            const fechaHora = document.getElementById('fechaHoraInput').value;
-
-            // Validaciones
-            if (!productoId || !dosis || !cantidad || !telefono || !fechaHora) {
-                alert('Por favor, complete todos los campos obligatorios');
-                return;
-            }
-
-            if (!validarTelefono(telefono)) {
-                alert('El número de teléfono debe comenzar con 591 seguido de 8 dígitos');
-                return;
-            }
-
-            if (!validarFecha(fechaHora)) {
-                alert('La fecha y hora del recordatorio debe ser posterior a la actual');
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/crear-recordatorio', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        productoId: parseInt(productoId),
-                        dosis,
-                        cantidad: parseInt(cantidad),
-                        telefono,
-                        fechaHora
-                    })
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    alert('Recordatorio creado exitosamente');
-                    closeModal();
-                    limpiarFormulario();
-                    cargarRecordatorios();
-                } else {
-                }
-            } catch (error) {
-
-            }
-        }
-
-        // Event Listeners al cargar la página
-        document.addEventListener('DOMContentLoaded', () => {
-            cargarProductosComprados();
-            cargarRecordatorios();
         });
-
-        // Cerrar el modal si se hace clic fuera de él
-        window.onclick = function(event) {
-            const modal = document.getElementById('recordatorioModal');
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
     </script>
 </body>
 </html>

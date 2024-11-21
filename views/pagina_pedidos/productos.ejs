@@ -34,7 +34,7 @@
                                 class="nav-link">Inicio</a></li>
                         <li><a href="/pagina_pedidos/productos/1"
                                 class="nav-link">Tienda</a></li>
-                        <li><a href="/pagina_pedidos/otros/contactanos"
+                        <li><a href="/pagina_pedidos/otros/contactanosP"
                                 class="nav-link">Contacto</a></li>
                         <li><a href="/pagina_pedidos/login_clientes"
                                 class="nav-link">Mis Compras</a></li>
@@ -110,8 +110,14 @@
                         <div class="product-card">
                             <img class="product-image"
                     
-                                src="<%= product.Fotografia  ? `/fotos/img_productos/${product.Fotografia}` : '/fotos/img_productos/default.png' %>"
-                                alt="<%= product.Nombre %>">
+                            <img 
+                                src="<%= product.Fotografia ? `/fotos/img_productos/${product.Fotografia}` : '/fotos/img_productos/default.png' %>" 
+                                alt="Imagen del Producto"
+                                onerror="this.src='/fotos/img_productos/default.png'; console.log('Imagen no encontrada:', this.src);"
+                                >
+
+                          
+                             
                             <h3 class="product-name"><%= product.Nombre %></h3>
                             <h3 class="product-name"><%= product.Unidad_Venta %></h3>
                             <p class="product-price">Bs <%=

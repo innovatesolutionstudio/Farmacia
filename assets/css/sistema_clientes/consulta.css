@@ -114,7 +114,7 @@ header {
     max-width: 800px;
     width: 100%;
     text-align: center;
-    margin-top: 40px;
+   
 }
 
 h1 {
@@ -359,11 +359,7 @@ align-items: center;
 gap: 5px;
 }
 
-/* Ajustar el contenido principal para que no quede detrás de la barra fija */
-body {
-margin: 0;
-padding-top: 60px; /* Altura de la barra + un poco de espacio */
-}
+
 
 /* Contenedor principal de contacto */
 .contact-container {

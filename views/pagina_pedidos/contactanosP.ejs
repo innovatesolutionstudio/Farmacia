@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,71 +8,80 @@
     <link rel="stylesheet" href="/resources/css/sistema_clientes/consulta.css" />
 
     <style>
-        /* Estilo para la barra de carga */
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 18px;
-        }
 
-        .loading-overlay.active {
-            display: flex;
-        }
     </style>
 </head>
+
 <body>
-  
-  <!-- Sección de contacto al final -->
-  <div id="contacto" class="contact-container">
-    <div class="contact-info">
-        <h2>Contacto</h2>
-        <p>Si tienes alguna duda, no dudes en contactarnos. Estaremos encantados de ayudarte.</p>
-        <div class="contact-details">
-            <div class="detail-item">
-                <i class="fas fa-clock"></i>
-                <div>
-                    <strong>Horario de Atención:</strong>
-                    <p>Lunes a Viernes, 9:00 - 18:00</p>
+    <header class="custom-header">
+        <div class="header-container">
+            <a href="/pagina_pedidos/clientes_index" class="custom-logo">
+                <img src="/resources/images/iconos/farmacia.ico" alt="Farmacia 25 de Julio">
+                <span class="logo-text">
+                    <span class="logo-main">Bienvenido a la Farmacia 25 de
+                        Julio</span>
+                    <span class="logo-sub">Tu mejor opcion </span>
+                </span>
+            </a>
+
+            <nav class="custom-nav">
+
+                <ul class="nav-list">
+
+                    <li><a href="/pagina_pedidos/clientes_index" class="nav-link">Inicio</a></li>
+                    <li><a href="/pagina_pedidos/productos/1" class="nav-link">Tienda</a></li>
+                    <li><a href="/pagina_pedidos/otros/contactanosP" class="nav-link">Contacto</a></li>
+                    <li><a href="/pagina_pedidos/login_clientes" class="nav-link">Mis Compras</a></li>
+                </ul>
+            </nav>
+
+            <a href="#" class></a>
+        </div>
+    </header>
+    <!-- Sección de contacto al final -->
+    <div id="contacto" class="contact-container">
+        
+        <div class="contact-info">
+            <h2>Contacto</h2>
+            <p>Si tienes alguna duda, no dudes en contactarnos. Estaremos encantados de ayudarte.</p>
+            <div class="contact-details">
+                <div class="detail-item">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <strong>Horario de Atención:</strong>
+                        <p>Lunes a Viernes, 9:00 - 18:00</p>
+                    </div>
                 </div>
-            </div>
-            <div class="detail-item">
-                <i class="fas fa-phone-alt"></i>
-                <div>
-                    <strong>Teléfono:</strong>
-                    <p>+591 XXXXXXXX</p>
+                <div class="detail-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <div>
+                        <strong>Teléfono:</strong>
+                        <p>+591 XXXXXXXX</p>
+                    </div>
                 </div>
-            </div>
-            <div class="detail-item">
-                <i class="fas fa-envelope"></i>
-                <div>
-                    <strong>Correo Electrónico:</strong>
-                    <p>farmacia25julio@ejemplo.com</p>
+                <div class="detail-item">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <strong>Correo Electrónico:</strong>
+                        <p>farmacia25julio@ejemplo.com</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Mapa de Google -->
-    <div class="map-container">
-        <h3>Visítanos</h3>
-        <p>Estamos ubicados en El Alto, La Paz, Bolivia:</p>
-        <div class="map-embed">
-            <!-- Aquí agregas el enlace de Google Maps -->
-            <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5977.735616871491!2d-68.11930320270277!3d-16.500038149523107!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93e37874cc2e2c6f%3A0x6977e6a8ffb104ef!2sEl%20Alto%2C%20La%20Paz%2C%20Bolivia!5e0!3m2!1ses!2ses!4v1699388895394!5m2!1ses!2ses" 
-                width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        <!-- Mapa de Google -->
+        <div class="map-container">
+            <h3>Visítanos</h3>
+            <p>Estamos ubicados en El Alto, La Paz, Bolivia:</p>
+            <div class="map-embed">
+                <!-- Aquí agregas el enlace de Google Maps -->
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5977.735616871491!2d-68.11930320270277!3d-16.500038149523107!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93e37874cc2e2c6f%3A0x6977e6a8ffb104ef!2sEl%20Alto%2C%20La%20Paz%2C%20Bolivia!5e0!3m2!1ses!2ses!4v1699388895394!5m2!1ses!2ses"
+                    width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
         </div>
+        <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
     </div>
-    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
-
 </body>
+
 </html>
