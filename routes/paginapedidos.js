@@ -696,7 +696,6 @@ router.post('/pagina_pedidos/otros/login_clientes/', (req, res) => {
     const sql = 'SELECT * FROM clientes WHERE Codigo = ? AND Contrasena = ?';
     connection.query(sql, [Codigo, Contrasena], (err, results) => {
         if (err) {
-            console.error('Error al autenticar al cliente:', err);
             return res.status(500).json({ error: 'Error interno del servidor' });
         }
 
@@ -706,14 +705,95 @@ router.post('/pagina_pedidos/otros/login_clientes/', (req, res) => {
             req.session.userIdCliente = cliente.ID_Cliente;
             req.session.clienteDatos = cliente;
 
-
-            res.redirect('/pagina_pedidos/otros/perfil'); 
+            res.redirect('/pagina_pedidos/otros/perfil');  // Redirige al perfil si las credenciales son correctas
         } else {
-            res.status(401).json({ error: 'Código o contraseña incorrectos' });
+            res.render("pagina_pedidos/login_clientes", {
+                alert: true,
+                alertTitle: "Error",
+                alertMessage: "Usuario o contraseña incorrectos",
+                alertIcon: "error",
+                showConfirmButton: true,
+                timer: false,
+                ruta: "pagina_pedidos/clientes_index"
+            });          
         }
     });
 });
+router.get('/productos/categoria/:id', (req, res) => {
+    const categoriaId = req.params.id;
+    
+    const sql = `
+    SELECT 
+        p.ID_Producto,
+        p.Nombre,
+        p.Precio_Unitario,
+        p.Fotografia,
+        p.Descripcion,
+        p.Indicaciones,
+        p.Efectos_Secundarios,
+        i.Cantidad AS Stock,
+        u.Nombre AS Unidad_Venta
+    FROM 
+        productos p
+    JOIN 
+        inventario i ON p.ID_Producto = i.ID_Producto
+    JOIN 
+        sucursales s ON i.ID_Sucursal = s.ID_Sucursal
+    LEFT JOIN
+        unidad_venta u ON p.ID_Unidad_Venta = u.ID_Unidad_Venta
+    INNER JOIN
+        categorias_productos c ON p.ID_Categoria = c.ID_Categoria
+    WHERE 
+        i.ID_Sucursal = 1 AND
+        c.ID_Categoria = ?`;
+    
+    console.log('Ejecutando consulta con categoría:', categoriaId); // Debug
 
+    connection.query(sql, [categoriaId], (error, results) => {
+        if (error) {
+            return res.status(500).json({ 
+                error: 'Error al obtener productos',
+                details: error.message 
+            });
+        }
+        res.json(results);
+    });
+});
+
+// Ruta para obtener todos los productos (sin filtro de categoría)
+router.get('/productos', (req, res) => {
+    const sql = `
+    SELECT 
+        p.ID_Producto,
+        p.Nombre,
+        p.Precio_Unitario,
+        p.Fotografia,
+        p.Descripcion,
+        p.Indicaciones,
+        p.Efectos_Secundarios,
+        i.Cantidad AS Stock,
+        u.Nombre AS Unidad_Venta
+    FROM 
+        productos p
+    JOIN 
+        inventario i ON p.ID_Producto = i.ID_Producto
+    JOIN 
+        sucursales s ON i.ID_Sucursal = s.ID_Sucursal
+    LEFT JOIN
+        unidad_venta u ON p.ID_Unidad_Venta = u.ID_Unidad_Venta
+    INNER JOIN
+        categorias_productos c ON p.ID_Categoria = c.ID_Categoria
+    WHERE 
+        i.ID_Sucursal = 1`;
+    
+    connection.query(sql, (error, results) => {
+        if (error) {
+            console.error('Error al obtener productos:', error);
+            return res.status(500).json({ error: 'Error al obtener productos' });
+        }
+        res.json(results);
+    });
+});
 
   // Ruta para mostrar la vista de perfil después de iniciar sesión
 router.get('/pagina_pedidos/otros/perfil', (req, res) => {
@@ -773,10 +853,11 @@ router.get('/pagina_pedidos/otros/consultas', (req, res) => {
 });
 
 
-
+//Cambio desde aca
 router.get('/pagina_pedidos/otros/miscompras', (req, res) => {
     const idCliente = req.session.userIdCliente;
 
+    // Consulta para obtener los pedidos
     const sqlVentas = `
     SELECT 
         pedidos.ID_Pedido,
@@ -795,21 +876,89 @@ router.get('/pagina_pedidos/otros/miscompras', (req, res) => {
     JOIN clientes ON pedidos.ID_Cliente = clientes.ID_Cliente      
     WHERE pedidos.ID_Cliente = ? 
     ORDER BY ventas.Fecha_Venta DESC
-`;
+    `;
 
-    connection.query(sqlVentas, [idCliente], (error, resultados) => {
+    // Consulta para obtener los recordatorios
+    const sqlRecordatorios = `
+            SELECT 
+            productos.Nombre AS Medicamento,
+            detalle_recordatorio.Dosis,
+            detalle_recordatorio.Cantidad_Mendicamentos AS Cantidad,
+            recordatorios.Telefono,
+            recordatorios.Tiempo -- Eliminada la coma extra
+        FROM recordatorios
+        JOIN detalle_recordatorio ON recordatorios.ID_Recordatorio = detalle_recordatorio.ID_Recordatorio
+        JOIN productos ON recordatorios.ID_Producto = productos.ID_Producto
+        WHERE recordatorios.ID_Cliente = ?
+        ORDER BY recordatorios.Tiempo DESC;
+
+    `;
+
+    // Ejecutar las consultas
+    connection.query(sqlVentas, [idCliente], (error, resultadosVentas) => {
         if (error) {
-            console.error('Error al obtener los pedidos:', error);
             return res.status(500).send('Error al obtener los pedidos');
         }
 
-        res.render('pagina_pedidos/otros/miscompras', { 
-            pedidos: resultados,
-            loggedin: req.session.loggedin,
-            nombre: req.session.nombre
-        }); 
+        connection.query(sqlRecordatorios, [idCliente], (error, resultadosRecordatorios) => {
+            if (error) {
+                return res.status(500).send('Error al obtener los recordatorios');
+            }
+
+            // Renderizar la página pasando ambos resultados
+            res.render('pagina_pedidos/otros/miscompras', { 
+                pedidos: resultadosVentas,
+                recordatorios: resultadosRecordatorios,
+                loggedin: req.session.loggedin,
+                nombre: req.session.nombre,
+                idCliente: idCliente 
+            }); 
+        });
     });
 });
+
+// Ruta POST para guardar un nuevo recordatorio
+router.post('/guardar_recordatorio', (req, res) => {
+    const { 
+        idCliente, 
+        productoId, 
+        cantidad, 
+        intervaloHoras, 
+        dosisPorDia, 
+        telefono, 
+        fechaHora 
+    } = req.body; // Recibimos los datos del formulario
+
+    // Guardar el recordatorio en la tabla 'recordatorios'
+    const sqlInsertRecordatorio = `
+    INSERT INTO recordatorios (ID_Cliente, ID_Producto, Telefono, Tiempo)
+    VALUES (?, ?, ?, ?);
+    `;
+
+    connection.query(sqlInsertRecordatorio, [idCliente, productoId, telefono, fechaHora], (error, resultadoRecordatorio) => {
+        if (error) {
+            return res.status(500).send('Error al guardar el recordatorio');
+        }
+
+        // Ahora guardamos los detalles del recordatorio en la tabla 'detalle_recordatorio'
+        const recordatorioId = resultadoRecordatorio.insertId; // Obtenemos el ID del recordatorio insertado
+
+        const sqlInsertDetalleRecordatorio = `
+        INSERT INTO detalle_recordatorio (ID_Recordatorio, Dosis, Cantidad_Mendicamentos)
+        VALUES (?, ?, ?);
+        `;
+        
+        connection.query(sqlInsertDetalleRecordatorio, [recordatorioId, dosisPorDia, cantidad, intervaloHoras], (errorDetalle) => {
+            if (errorDetalle) {
+                return res.status(500).send('Error al guardar el detalle del recordatorio');
+            }
+
+            // Si todo es exitoso, respondemos con éxito
+            res.status(200).send('Recordatorio guardado exitosamente');
+        });
+    });
+});
+
 
 
 
@@ -835,119 +984,12 @@ router.get('/pagina_pedidos/detalleVenta/:ID_Detalle_Venta', (req, res) => {
 
     connection.query(sqlDetalles, [ID_Detalle_Venta], (error, detalles) => {
         if (error) {
-            console.error('Error al obtener los detalles de la venta:', error);
             return res.status(500).send('Error al obtener los detalles de la venta.');
         }
 
         res.json(detalles);
     });
 });
-
-
-// Ruta para obtener recordatorios del cliente
-router.get('/api/mis-recordatorios', async (req, res) => {
-    try {
-        if (!req.session.loggedinCliente) {
-            return res.status(401).json({ error: 'No autorizado' });
-        }
-    
-        const query = `
-            SELECT 
-                r.ID_Recordatorio,
-                p.Nombre,
-                dr.Dosis,
-                dr.Cantidad_Mendicamentos AS cantidad,
-                r.Telefono,
-                dr.fecha,
-                dr.hora,
-                dr.Mensaje
-            FROM 
-                Recordatorios r
-            INNER JOIN 
-                detalle_recordatorio dr ON r.ID_Recordatorio = dr.ID_Recordatorio
-            INNER JOIN 
-                Productos p ON r.ID_Producto = p.ID_Producto
-            WHERE 
-                r.ID_Cliente = ?
-            ORDER BY 
-                dr.fecha DESC, dr.hora DESC
-        `;
-    
-        connection.query(query, [req.session.idCliente], (error, recordatorios) => {
-            if (error) {
-                console.error('Error al obtener recordatorios:', error);
-                return res.status(500).json({ error: 'Error al obtener los recordatorios' });
-            }
-            res.json(recordatorios);
-        });
-    
-    } catch (error) {
-        console.error('Error al obtener recordatorios:', error);
-        res.status(500).json({ error: 'Error al obtener los recordatorios' });
-    }
-}); 
-    
-
-router.post('/api/crear-recordatorio', async (req, res) => {
-    try {
-        if (!req.session.loggedinCliente) {
-            return res.status(401).json({ error: 'No autorizado' });
-        }
-
-        // Verifica que el cliente esté autenticado
-        console.log('Sesión completa:', req.session);
-        console.log('ID Cliente en sesión:', req.session.userIdCliente);
-
-        const { productoId, dosis, cantidad, telefono, fechaHora } = req.body;
-
-        if (!productoId || !dosis || !cantidad || !telefono || !fechaHora) {
-            return res.status(400).json({ error: 'Todos los campos son requeridos' });
-        }
-
-        if (new Date(fechaHora) < new Date()) {
-            return res.status(400).json({ error: 'La fecha debe ser futura' });
-        }
-
-        // Eliminar el prefijo '591' del teléfono si existe
-        const telefonoLimpio = telefono.replace(/^591/, '');
-
-        // Insertar el recordatorio principal
-        connection.query(
-            'INSERT INTO Recordatorios (ID_Cliente, ID_Producto, Telefono) VALUES (?, ?, ?)',
-            [req.session.userIdCliente, productoId, telefonoLimpio],
-            (err, result) => {
-                if (err) {
-                    console.error('Error en la primera inserción:', err);
-                    return res.status(500).json({ error: 'Error al crear el recordatorio' });
-                }
-
-                const fecha = new Date(fechaHora).toISOString().split('T')[0];
-                const hora = new Date(fechaHora).toTimeString().split(' ')[0];
-                const mensaje = `Es hora de tomar tu medicamento. Dosis: ${dosis}. Cantidad: ${cantidad} unidades.`;
-
-                // Insertar el detalle del recordatorio
-                connection.query(
-                    'INSERT INTO detalle_recordatorio (ID_Recordatorio, fecha, hora, Mensaje, Dosis, Cantidad_Mendicamentos) VALUES (?, ?, ?, ?, ?, ?)',
-                    [result.insertId, fecha, hora, mensaje, dosis, cantidad],
-                    (err) => {
-                        if (err) {
-                            console.error('Error en la segunda inserción:', err);
-                            return res.status(500).json({ error: 'Error al crear el detalle del recordatorio' });
-                        }
-                        res.json({ 
-                            message: 'Recordatorio creado exitosamente', 
-                            id: result.insertId 
-                        });
-                    }
-                );
-            }
-        );
-    } catch (error) {
-        console.error('Error general:', error);
-        res.status(500).json({ error: 'Error al procesar la solicitud' });
-    }
-});
-
 
 
       // Ruta para mostrar el historial de ventas
@@ -981,13 +1023,8 @@ router.get('/pagina_pedidos/otros/recordatorio', (req, res) => {
 
     connection.query(query, [idCliente], (err, results) => {
         if (err) {
-            console.error('Error al obtener historial de ventas:', err);
             return res.status(500).json({ error: 'Error al obtener el historial de ventas' });
         }
-        
-        // Log the results for debugging
-        console.log('Ventas encontradas:', results);
-        
         // Renderizar la vista y pasarle los resultados
         res.render('pagina_pedidos/otros/recordatorio', { 
             ventas: results,
@@ -1006,7 +1043,6 @@ router.get('/api/mis-productos-comprados', async (req, res) => {
         });
     
         if (!req.session.loggedinCliente) {
-            console.log('Cliente no ha iniciado sesión');
             return res.redirect('/pagina_pedidos/404');
         }
     
@@ -1027,16 +1063,12 @@ router.get('/api/mis-productos-comprados', async (req, res) => {
         // Usar el ID del cliente desde la sesión
         connection.query(query, [req.session.userIdCliente], (error, results) => {
             if (error) {
-                console.error('Error en la consulta:', error);
                 return res.status(500).json({ error: 'Error al obtener productos' });
             }
-    
-            console.log('Productos encontrados:', results);
             res.json(results);
         });
     
     } catch (error) {
-        console.error('Error general:', error);
         res.status(500).json({ error: 'Error del servidor' });
     }
     });
@@ -1068,7 +1100,6 @@ router.get('/api/mis-productos-comprados', async (req, res) => {
     
         connection.query(query, [id, req.session.userIdCliente], (error, results) => {
             if (error) {
-                console.error('Error al obtener recordatorio:', error);
                 return res.status(500).json({ error: 'Error al obtener el recordatorio' });
             }
     

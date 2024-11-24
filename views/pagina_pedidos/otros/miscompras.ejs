@@ -35,7 +35,7 @@
                                     <td><%= pedido.Sucursal %></td>
                                     <td><%= pedido.Direccion %></td>
                                     <td><%= pedido.Empleado %></td>
-                                    <td>$<%= pedido.Total_Venta.toFixed(2) %></td>
+                                    <td>$<%= (pedido.Total_Venta ?? 0).toFixed(2) %></td>
                                     <td><%= new Date(pedido.Fecha_Venta).toLocaleDateString('es-ES') %></td>
                                 </tr>
                             <% }); %>
@@ -53,10 +53,11 @@
             
             <!--fin de contenido de mis pedidos-->
         </div>
-        <!-- <div class="table-container">
-            <div class="header-container">
-                <h3>Mis Recordatorios de Medicación</h3>
 
+        
+        <div class="table-container">
+            <div class="header-container">
+                <h3>Mis Lista de Medicación</h3>
             </div>
             <table>
                 <thead>
@@ -69,11 +70,26 @@
                         <th>Hora</th>
                     </tr>
                 </thead>
-                <tbody id="recordatoriosTableBody">
+                <tbody>
+                    <% recordatorios.forEach(recordatorio => { 
+                        const tiempo = new Date(recordatorio.Tiempo); // Convierte el valor en un objeto Date
+                        const fecha = tiempo.toLocaleDateString("es-BO"); // Formatea la fecha
+                        const hora = tiempo.toLocaleTimeString("es-BO", { hour: '2-digit', minute: '2-digit' }); // Formatea la hora
+                    %>
+                        <tr>
+                            <td><%= recordatorio.Medicamento %></td>
+                            <td><%= recordatorio.Dosis %> patillas</td>
+                            <td><%= recordatorio.Cantidad %></td>
+                            <td><%= recordatorio.Telefono %></td>
+                            <td><%= fecha %></td> <!-- Muestra solo la fecha -->
+                            <td><%= hora %></td> <!-- Muestra solo la hora -->
+                        </tr>
+                    <% }) %>
                 </tbody>
             </table>
-        </div> -->
+        </div>
         
+
             <!-- Modal de Recordatorio -->
             <div class="modal" id="recordatorioModal">
                 <div class="modal-content">
@@ -153,51 +169,53 @@
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
             <script>  
-          function validarTelefono() {
-    const telefonoInput = document.getElementById('telefonoInput');
-    const telefono = telefonoInput.value;
-
-    // Validar que el número comience con "591" seguido de 8 dígitos, y que esos 8 dígitos comiencen con 6 o 7
-    if (!/^591[67]\d{7}$/.test(telefono)) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Número Inválido',
-            text: 'El número debe comenzar con 591 y después tener 8 dígitos que comiencen con 6 o 7.',
-            confirmButtonColor: '#d33',
-            confirmButtonText: 'Corregir',
-        }).then(() => {
-            // Enfocar nuevamente el campo de entrada para que el usuario lo corrija
-            telefonoInput.focus();
-        });
-    }
-}
-
-
-
-       function generarMensajePersonalizado(horarios, dosisPorDia, cantidadTotal, intervaloHoras) {
-    const selectElement = document.getElementById('productoSelect');
-    const nombreMedicamento = selectElement.options[selectElement.selectedIndex].text || 'tu medicamento';
-
-    const introduccion = `*Recordatorio de Medicación*\n\n¡Hola! Aquí está tu plan de medicación detallado para *${nombreMedicamento}*. Es importante seguir este horario para tu recuperación.\n\n*Detalles del Tratamiento:*\n- Medicamento: ${nombreMedicamento}\n- Dosis diarias: ${dosisPorDia}\n- Intervalo entre tomas: Cada ${intervaloHoras} horas\n- Cantidad total de medicamentos: ${cantidadTotal}\n\n*Horarios de Medicación:*\n`;
-
-    const listaHorarios = horarios.map((horariosDelDia, indexDia) => {
-        const horariosFormateados = horariosDelDia.map((hora, indexHora) =>
-            `Toma ${indexDia * dosisPorDia + indexHora + 1}: *${hora}*`
-        ).join('\n');
-        return `*Día ${indexDia + 1}:*\n${horariosFormateados}`;
-    }).join('\n\n');
-
-    const conclusion = `\n\n*Consejos Importantes:*\n- Toma tu medicamento a la misma hora cada día.\n- Si olvidas una dosis, tómala lo antes posible.\n- Consulta con tu médico si tienes dudas.\n\n¡Cuídate mucho!`;
-
-    return introduccion + listaHorarios + conclusion;
-}
-
-        function generarListaHorarios() {
-    const telefono = document.getElementById('telefonoInput').value;
-    const intervaloHoras = parseFloat(document.getElementById('intervaloHoras').value);
+                function validarTelefono() {
+          const telefonoInput = document.getElementById('telefonoInput');
+          const telefono = telefonoInput.value;
+      
+          // Validar que el número comience con "591" seguido de 8 dígitos, y que esos 8 dígitos comiencen con 6 o 7
+          if (!/^591[67]\d{7}$/.test(telefono)) {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Número Inválido',
+                  text: 'El número debe comenzar con 591 y después tener 8 dígitos que comiencen con 6 o 7.',
+                  confirmButtonColor: '#d33',
+                  confirmButtonText: 'Corregir',
+              }).then(() => {
+                  // Enfocar nuevamente el campo de entrada para que el usuario lo corrija
+                  telefonoInput.focus();
+              });
+          }
+      }
+      
+      
+      
+             function generarMensajePersonalizado(horarios, dosisPorDia, cantidadTotal, intervaloHoras) {
+          const selectElement = document.getElementById('productoSelect');
+          const nombreMedicamento = selectElement.options[selectElement.selectedIndex].text || 'tu medicamento';
+      
+          const introduccion = `*Recordatorio de Medicación*\n\n¡Hola! Aquí está tu plan de medicación detallado para *${nombreMedicamento}*. Es importante seguir este horario para tu recuperación.\n\n*Detalles del Tratamiento:*\n- Medicamento: ${nombreMedicamento}\n- Dosis diarias: ${dosisPorDia}\n- Intervalo entre tomas: Cada ${intervaloHoras} horas\n- Cantidad total de medicamentos: ${cantidadTotal}\n\n*Horarios de Medicación:*\n`;
+      
+          const listaHorarios = horarios.map((horariosDelDia, indexDia) => {
+              const horariosFormateados = horariosDelDia.map((hora, indexHora) =>
+                  `Toma ${indexDia * dosisPorDia + indexHora + 1}: *${hora}*`
+              ).join('\n');
+              return `*Día ${indexDia + 1}:*\n${horariosFormateados}`;
+          }).join('\n\n');
+      
+          const conclusion = `\n\n*Consejos Importantes:*\n- Toma tu medicamento a la misma hora cada día.\n- Si olvidas una dosis, tómala lo antes posible.\n- Consulta con tu médico si tienes dudas.\n\n¡Cuídate mucho!`;
+      
+          return introduccion + listaHorarios + conclusion;
+      }
+      
+      function generarListaHorarios() {
+    // Obtener los datos del formulario
+    const productoId = document.getElementById('productoSelect').value;
     const cantidadTotal = parseInt(document.getElementById('cantidadInput').value);
-    const fechaHoraInicial = document.getElementById('fechaHoraInput').value;
+    const intervaloHoras = parseFloat(document.getElementById('intervaloHoras').value);
     const dosisPorDia = parseInt(document.getElementById('dosisPorDia').value);
+    const telefono = document.getElementById('telefonoInput').value;
+    const fechaHoraInicial = document.getElementById('fechaHoraInput').value;
 
     // Validaciones básicas
     if (!intervaloHoras || !cantidadTotal || !fechaHoraInicial || !telefono) {
@@ -230,202 +248,216 @@
     for (let i = 0; i < cantidadTotal; i++) {
         const opciones = { hour: '2-digit', minute: '2-digit', hour12: true };
         horarios.push(fechaHora.toLocaleTimeString('es-ES', opciones));
-
-        // Incrementar el tiempo según el intervalo
         fechaHora.setHours(fechaHora.getHours() + intervaloHoras);
     }
 
-    // Crear mensaje personalizado usando la función generarMensajePersonalizado
+    // Crear mensaje personalizado
     const mensaje = generarMensajePersonalizado(
-        [horarios], // Los horarios se organizan por días
+        [horarios],
         dosisPorDia,
         cantidadTotal,
         intervaloHoras
     );
 
-    // Mostrar los horarios generados en una alerta
-    Swal.fire({
-        icon: 'success',
-        title: 'Horarios Generados',
-        html: mensaje.replace(/\n/g, '<br>'),
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Enviar por WhatsApp',
-    }).then(() => {
-        // Llamar a enviarWhatsApp después de confirmar
-        enviarWhatsApp(telefono, mensaje);
-    });
-}
+    // Obtener el ID del cliente
+    const idCliente = "<%= idCliente %>";
 
-function enviarWhatsApp(telefono, mensaje) {
-    const urlWhatsApp = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
-    window.open(urlWhatsApp, '_blank');
-}
-
-        const intervaloInput = document.getElementById('intervaloHoras');
-        const dosisInput = document.getElementById('dosisPorDia');
-        const cantidadInput = document.getElementById('cantidadInput');
-        const advertenciaMensaje = document.getElementById('advertenciaMensaje');
-        const generarListaButton = document.querySelector('.btn-crear'); // Select the button
-
-        intervaloInput.addEventListener('input', () => {
-    const intervaloHoras = parseFloat(intervaloInput.value);
-    const cantidadPastillas = parseInt(cantidadInput.value);
-
-    if (intervaloHoras > 0 && cantidadPastillas > 0) {
-        // Calcula cuántas dosis son posibles en un día (máximo de 24 horas)
-        const maxDosisDia = Math.floor(24 / intervaloHoras);
-
-        // Calcula cuántas dosis se tomarán en base a la cantidad de medicamentos disponibles
-        const dosisPorDia = Math.min(cantidadPastillas, maxDosisDia);
-
-        // Actualiza el campo de dosis diaria
-        dosisInput.value = dosisPorDia;
-
-        // Verifica si las pastillas son suficientes para cubrir las dosis del intervalo
-        if (dosisPorDia > cantidadPastillas) {
-            advertenciaMensaje.style.display = 'block';
-            generarListaButton.disabled = true; // Deshabilitar el botón
-        } else {
-            advertenciaMensaje.style.display = 'none';
-            generarListaButton.disabled = false; // Habilitar el botón
-        }
-    } else {
-        dosisInput.value = '';
-        advertenciaMensaje.style.display = 'none';
-        generarListaButton.disabled = false; // Habilitar el botón
-    }
-});
-
-
-        const telefonoInput = document.getElementById('telefonoInput');
-
-        // Al detectar que el campo de teléfono está enfocado
-        telefonoInput.addEventListener('focus', function() {
-            // Si el valor del campo está vacío, añadir el código de país al inicio
-            if (telefonoInput.value === '') {
-                telefonoInput.value = '591'; // Código de país (591)
-            }
-        });
-
-        // Al detectar que el campo de teléfono ha perdido el foco (cuando el usuario termina de escribir)
-        telefonoInput.addEventListener('blur', function() {
-
-            if (telefonoInput.value.startsWith('591')) {
-                telefonoInput.value = '591' + telefonoInput.value.slice(3); 
-            }
-        });
-
-        // Esto asegura que el código de país se mantenga y el usuario solo agregue el número después del 591
-        telefonoInput.addEventListener('input', function() {
-            if (!telefonoInput.value.startsWith('591')) {
-                telefonoInput.value = '591' + telefonoInput.value.slice(0); 
-            }
-        });
-        document.addEventListener("DOMContentLoaded", function() {
-        const fechaHoraInput = document.getElementById('fechaHoraInput');
-
-        // Obtener la fecha y hora actual
-        const ahora = new Date();
-
-        // Formatear la fecha en el formato que espera el input de tipo datetime-local (YYYY-MM-DDTHH:MM)
-        const fechaActual = ahora.toISOString().slice(0, 16); // Eliminar los segundos y milisegundos
-
-        // Establecer la fecha mínima en el input
-        fechaHoraInput.setAttribute('min', fechaActual);
-});
-
-function mostrarModalPersonalizado(tipo, titulo, mensaje) {
-    // Crear el modal
-    const modal = document.createElement('div');
-    modal.className = 'custom-modal';
-    modal.innerHTML = `
-        <div class="modal-content ${tipo}">
-            <div class="modal-header">
-                <h2>${titulo}</h2>
-                <span class="close-btn">&times;</span>
-            </div>
-            <div class="modal-body">
-                <p>${mensaje}</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-ok">Entendido</button>
-            </div>
-        </div>
-    `;
-
-    // Agregar estilos CSS
-    const style = document.createElement('style');
-    style.textContent = `
-        .custom-modal {
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: #fefefe;
-            border-radius: 10px;
-            width: 80%;
-            max-width: 500px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .modal-content.warning { border-left: 5px solid #ffc107; }
-        .modal-content.error { border-left: 5px solid #dc3545; }
-        .modal-content.info { border-left: 5px solid #17a2b8; }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px;
-            border-bottom: 1px solid #e9ecef;
-        }
-        .modal-body {
-            padding: 20px;
-        }
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            padding: 15px;
-            border-top: 1px solid #e9ecef;
-        }
-        .btn-ok {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .close-btn {
-            cursor: pointer;
-            font-size: 24px;
-        }
-    `;
-
-    // Agregar al documento
-    document.body.appendChild(style);
-    document.body.appendChild(modal);
-
-    // Eventos
-    const closeBtn = modal.querySelector('.close-btn');
-    const okBtn = modal.querySelector('.btn-ok');
-    
-    const cerrarModal = () => {
-        document.body.removeChild(modal);
-        document.body.removeChild(style);
+    // Crear el objeto con los datos
+    const data = {
+        idCliente: idCliente,
+        productoId: productoId,
+        cantidad: cantidadTotal,
+        intervaloHoras: intervaloHoras,
+        dosisPorDia: dosisPorDia,
+        telefono: telefono,
+        fechaHora: fechaHoraInicial
     };
 
-    closeBtn.addEventListener('click', cerrarModal);
-    okBtn.addEventListener('click', cerrarModal);
+    // Enviar los datos al servidor
+    fetch('/guardar_recordatorio', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(() => {
+        // Inmediatamente abrir WhatsApp y cerrar el modal
+        enviarWhatsApp(telefono, mensaje);
+        closeModal();
+    });
 }
-
-        </script>        
+      
+      function enviarWhatsApp(telefono, mensaje) {
+          const urlWhatsApp = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+          window.open(urlWhatsApp, '_blank');
+      }
+      
+              const intervaloInput = document.getElementById('intervaloHoras');
+              const dosisInput = document.getElementById('dosisPorDia');
+              const cantidadInput = document.getElementById('cantidadInput');
+              const advertenciaMensaje = document.getElementById('advertenciaMensaje');
+              const generarListaButton = document.querySelector('.btn-crear'); // Select the button
+      
+              intervaloInput.addEventListener('input', () => {
+          const intervaloHoras = parseFloat(intervaloInput.value);
+          const cantidadPastillas = parseInt(cantidadInput.value);
+      
+          if (intervaloHoras > 0 && cantidadPastillas > 0) {
+              // Calcula cuántas dosis son posibles en un día (máximo de 24 horas)
+              const maxDosisDia = Math.floor(24 / intervaloHoras);
+      
+              // Calcula cuántas dosis se tomarán en base a la cantidad de medicamentos disponibles
+              const dosisPorDia = Math.min(cantidadPastillas, maxDosisDia);
+      
+              // Actualiza el campo de dosis diaria
+              dosisInput.value = dosisPorDia;
+      
+              // Verifica si las pastillas son suficientes para cubrir las dosis del intervalo
+              if (dosisPorDia > cantidadPastillas) {
+                  advertenciaMensaje.style.display = 'block';
+                  generarListaButton.disabled = true; // Deshabilitar el botón
+              } else {
+                  advertenciaMensaje.style.display = 'none';
+                  generarListaButton.disabled = false; // Habilitar el botón
+              }
+          } else {
+              dosisInput.value = '';
+              advertenciaMensaje.style.display = 'none';
+              generarListaButton.disabled = false; // Habilitar el botón
+          }
+      });
+      
+      
+              const telefonoInput = document.getElementById('telefonoInput');
+      
+              // Al detectar que el campo de teléfono está enfocado
+              telefonoInput.addEventListener('focus', function() {
+                  // Si el valor del campo está vacío, añadir el código de país al inicio
+                  if (telefonoInput.value === '') {
+                      telefonoInput.value = '591'; // Código de país (591)
+                  }
+              });
+      
+              // Al detectar que el campo de teléfono ha perdido el foco (cuando el usuario termina de escribir)
+              telefonoInput.addEventListener('blur', function() {
+      
+                  if (telefonoInput.value.startsWith('591')) {
+                      telefonoInput.value = '591' + telefonoInput.value.slice(3); 
+                  }
+              });
+      
+              // Esto asegura que el código de país se mantenga y el usuario solo agregue el número después del 591
+              telefonoInput.addEventListener('input', function() {
+                  if (!telefonoInput.value.startsWith('591')) {
+                      telefonoInput.value = '591' + telefonoInput.value.slice(0); 
+                  }
+              });
+              document.addEventListener("DOMContentLoaded", function() {
+              const fechaHoraInput = document.getElementById('fechaHoraInput');
+      
+              // Obtener la fecha y hora actual
+              const ahora = new Date();
+      
+              // Formatear la fecha en el formato que espera el input de tipo datetime-local (YYYY-MM-DDTHH:MM)
+              const fechaActual = ahora.toISOString().slice(0, 16); // Eliminar los segundos y milisegundos
+      
+              // Establecer la fecha mínima en el input
+              fechaHoraInput.setAttribute('min', fechaActual);
+      });
+      
+      function mostrarModalPersonalizado(tipo, titulo, mensaje) {
+          // Crear el modal
+          const modal = document.createElement('div');
+          modal.className = 'custom-modal';
+          modal.innerHTML = `
+              <div class="modal-content ${tipo}">
+                  <div class="modal-header">
+                      <h2>${titulo}</h2>
+                      <span class="close-btn">&times;</span>
+                  </div>
+                  <div class="modal-body">
+                      <p>${mensaje}</p>
+                  </div>
+                  <div class="modal-footer">
+                      <button class="btn-ok">Entendido</button>
+                  </div>
+              </div>
+          `;
+      
+          // Agregar estilos CSS
+          const style = document.createElement('style');
+          style.textContent = `
+              .custom-modal {
+                  position: fixed;
+                  z-index: 1000;
+                  left: 0;
+                  top: 0;
+                  width: 100%;
+                  height: 100%;
+                  overflow: auto;
+                  background-color: rgba(0,0,0,0.4);
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+              }
+              .modal-content {
+                  background-color: #fefefe;
+                  border-radius: 10px;
+                  width: 80%;
+                  max-width: 500px;
+                  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+              }
+              .modal-content.warning { border-left: 5px solid #ffc107; }
+              .modal-content.error { border-left: 5px solid #dc3545; }
+              .modal-content.info { border-left: 5px solid #17a2b8; }
+              .modal-header {
+                  display: flex;
+                  justify-content: space-between;
+                  padding: 15px;
+                  border-bottom: 1px solid #e9ecef;
+              }
+              .modal-body {
+                  padding: 20px;
+              }
+              .modal-footer {
+                  display: flex;
+                  justify-content: flex-end;
+                  padding: 15px;
+                  border-top: 1px solid #e9ecef;
+              }
+              .btn-ok {
+                  background-color: #007bff;
+                  color: white;
+                  border: none;
+                  padding: 10px 20px;
+                  border-radius: 5px;
+                  cursor: pointer;
+              }
+              .close-btn {
+                  cursor: pointer;
+                  font-size: 24px;
+              }
+          `;
+      
+          // Agregar al documento
+          document.body.appendChild(style);
+          document.body.appendChild(modal);
+      
+          // Eventos
+          const closeBtn = modal.querySelector('.close-btn');
+          const okBtn = modal.querySelector('.btn-ok');
+          
+          const cerrarModal = () => {
+              document.body.removeChild(modal);
+              document.body.removeChild(style);
+          };
+      
+          closeBtn.addEventListener('click', cerrarModal);
+          okBtn.addEventListener('click', cerrarModal);
+      }
+      
+              </script>          
         <script>
             
         document.addEventListener('DOMContentLoaded', function() {

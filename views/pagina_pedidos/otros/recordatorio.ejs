@@ -48,7 +48,7 @@
                     Bienvenido, <%= cliente.Nombre %> <%= cliente.Apellido || '' %>
                 </div>
             <% } %>
-
+    
             <% if (locals.ventas && ventas.length > 0) { %>
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -59,17 +59,20 @@
                                 <th>Empleado</th>
                                 <th>Sucursal</th>
                                 <th>Código de Caja</th>
-
                             </tr>
                         </thead>
                         <tbody>
-                            <% ventas.forEach(function(venta) { %>
+                            <% ventas.forEach(function(venta) { 
+                                const totalVenta = venta.Total_Venta !== null && venta.Total_Venta !== undefined 
+                                    ? venta.Total_Venta.toFixed(2) 
+                                    : '0.00'; // Manejo del caso de valor nulo o indefinido
+                            %>
                                 <tr>
-                                    <td><%= new Date(venta.Fecha_Venta).toLocaleDateString() %></td> <!-- Formatea la fecha de venta -->
-                                    <td>Bs. <%= venta.Total_Venta.toFixed(2) %></td> <!-- Muestra el total con dos decimales -->
-                                    <td><%= venta.Empleado %></td> <!-- Nombre del empleado -->
-                                    <td><%= venta.Sucursal %></td> <!-- Nombre de la sucursal -->
-                                    <td><%= venta.Codigo %></td> <!-- Código de la caja -->
+                                    <td><%= venta.Fecha_Venta ? new Date(venta.Fecha_Venta).toLocaleDateString() : 'Sin fecha' %></td> <!-- Maneja Fecha_Venta nula -->
+                                    <td>Bs. <%= totalVenta %></td> <!-- Total con dos decimales o 0.00 por defecto -->
+                                    <td><%= venta.Empleado || 'Sin asignar' %></td> <!-- Empleado por defecto -->
+                                    <td><%= venta.Sucursal || 'Sin asignar' %></td> <!-- Sucursal por defecto -->
+                                    <td><%= venta.Codigo || 'N/A' %></td> <!-- Código de caja por defecto -->
                                 </tr>
                             <% }); %>                            
                         </tbody>
@@ -87,7 +90,7 @@
             <% } %>
         </div>
     </div>
-
+    
     <!-- Bootstrap JS (optional) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     

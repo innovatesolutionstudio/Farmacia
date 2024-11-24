@@ -11,9 +11,7 @@
         <link rel="stylesheet"
             href="/resources/css/sistema_clientes/confirmar_pedido.css">
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <style>
-        
-    </style>
+
     </head>
     <body>
 
@@ -135,7 +133,6 @@
                 const carrito = JSON.parse(req.body.carrito || '[]');
 
                 if (!Array.isArray(carrito) || carrito.length === 0) {
-                    console.error('El carrito está vacío o inválido');
                     return res.status(400).send('El carrito está vacío o es inválido');
                 }
 
@@ -179,7 +176,6 @@
             productos: carrito
         };
 
-        console.log('Datos enviados:', data);
 
         // Confirmación del pedido
         Swal.fire({
@@ -218,7 +214,6 @@
                         window.location.href = '/pagina_pedidos/productos/1';
                     });
                 } catch (error) {
-                    console.error('Error al procesar el pedido o generar la factura:', error);
                     Swal.fire({
                         title: 'Error',
                         text: 'Hubo un problema al procesar tu pedido. Intenta de nuevo.',
@@ -311,9 +306,13 @@
     </script>
  
     <script>
-        document.getElementById('cancelar-pedido').addEventListener('click', function (event) {
-            event.preventDefault(); // Prevenir la redirección inmediata
+       document.addEventListener('DOMContentLoaded', function() {
+    const botonCancelar = document.getElementById('cancelar-pedido');
     
+    if (botonCancelar) {
+        botonCancelar.addEventListener('click', function (event) {
+            event.preventDefault();
+            
             Swal.fire({
                 title: '¿Estás seguro?',
                 text: 'Esto cancelará tu pedido y no podrás recuperarlo.',
@@ -325,21 +324,190 @@
                 cancelButtonText: 'No, continuar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Si el usuario confirma, redirigir a la ruta de cancelar pedido
-                    window.location.href = '/pagina_pedidos/productos/1';
-                } else {
-                    // Si el usuario cancela, mostrar un mensaje de que continúa en el pedido
+                    // Primero mostrar mensaje de éxito
                     Swal.fire({
+                        title: 'Pedido Cancelado',
+                        text: 'Redirigiendo...',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        // Después redirigir
+                        window.location.replace('/pagina_pedidos/productos/1');
+                    });
+                } else {
+                    Swal.fire({
+                        position: 'center',
                         title: 'Pedido no cancelado',
                         text: 'Puedes continuar editando o confirmando tu pedido.',
                         icon: 'info',
-                        timer: 2000, // Mostrar por 2 segundos
-                        showConfirmButton: false
+                        showConfirmButton: false,
+                        timer: 2000
                     });
                 }
             });
         });
+    }
+});
     </script>
+    <script>
+        // Función para validar en tiempo real que no se ingresen números en nombre y apellido
+function soloLetras(e) {
+    const char = String.fromCharCode(e.keyCode || e.which);
+    // Permite letras, espacios y algunos caracteres especiales para nombres compuestos
+    if (!/^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s']$/.test(char)) {
+        e.preventDefault();
+        return false;
+    }
+    return true;
+}
+
+// Función para validar en tiempo real que no se ingresen letras en CI/NIT
+function soloNumeros(e) {
+    const char = String.fromCharCode(e.keyCode || e.which);
+    if (!/^\d$/.test(char)) {
+        e.preventDefault();
+        return false;
+    }
+    return true;
+}
+
+// Función para validar el formulario completo
+function validarFormulario(e) {
+    e.preventDefault();
+    let errores = [];
+
+    // Validar Nombre
+    const nombre = document.getElementById('nombre').value.trim();
+    if (nombre.length < 2) {
+        errores.push('El nombre debe tener al menos 2 caracteres');
+    }
+    if (!/^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s']+$/.test(nombre)) {
+        errores.push('El nombre solo debe contener letras');
+    }
+
+    // Validar Apellido
+    const apellido = document.getElementById('apellido').value.trim();
+    if (apellido.length < 2) {
+        errores.push('El apellido debe tener al menos 2 caracteres');
+    }
+    if (!/^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s']+$/.test(apellido)) {
+        errores.push('El apellido solo debe contener letras');
+    }
+
+    // Validar CI/NIT
+    const ciNit = document.getElementById('ci_nit').value.trim();
+    if (!/^\d{5,12}$/.test(ciNit)) {
+        errores.push('El CI/NIT debe contener entre 5 y 12 números (sin letras)');
+    }
+
+    // Validar Dirección
+    const direccion = document.getElementById('direccion').value.trim();
+    if (direccion.length < 5) {
+        errores.push('La dirección debe tener al menos 5 caracteres');
+    }
+
+    // Validar Teléfono (formato Bolivia)
+    const telefono = document.getElementById('telefono').value.trim();
+    if (!/^[67]\d{7}$/.test(telefono)) {
+        errores.push('El número de celular debe comenzar con 6 o 7 y tener 8 dígitos en total');
+    }
+
+    // Validar Distrito
+    const distrito = document.getElementById('distrito').value;
+    if (!distrito) {
+        errores.push('Debe seleccionar un distrito');
+    }
+
+    // Validar que el carrito no esté vacío
+    const carrito = document.getElementById('carrito').value;
+    if (!carrito || carrito === '[]') {
+        errores.push('El carrito no puede estar vacío');
+    }
+
+    // Si hay errores, mostrarlos
+    if (errores.length > 0) {
+        mostrarErrores(errores);
+        return false;
+    }
+
+    // Si todo está correcto, enviar el formulario
+    document.getElementById('pedido-form').submit();
+    return true;
+}
+
+// Función para mostrar errores
+function mostrarErrores(errores) {
+    // Eliminar alertas previas si existen
+    const alertaPrevia = document.querySelector('.alerta-errores');
+    if (alertaPrevia) {
+        alertaPrevia.remove();
+    }
+
+    // Crear contenedor de errores
+    const contenedorErrores = document.createElement('div');
+    contenedorErrores.className = 'alerta-errores alert alert-danger';
     
+    // Crear lista de errores
+    const listaErrores = document.createElement('ul');
+    errores.forEach(error => {
+        const li = document.createElement('li');
+        li.textContent = error;
+        listaErrores.appendChild(li);
+    });
+
+    contenedorErrores.appendChild(listaErrores);
+    
+    // Insertar antes del formulario
+    const formulario = document.getElementById('pedido-form');
+    formulario.parentNode.insertBefore(contenedorErrores, formulario);
+}
+
+// Agregar los event listeners para validación en tiempo real
+document.addEventListener('DOMContentLoaded', function() {
+    // Validación en tiempo real para nombre y apellido
+    document.getElementById('nombre').addEventListener('keypress', soloLetras);
+    document.getElementById('apellido').addEventListener('keypress', soloLetras);
+    
+    // Validación en tiempo real para CI/NIT
+    document.getElementById('ci_nit').addEventListener('keypress', soloNumeros);
+    
+    // Validación del formulario al enviar
+    document.getElementById('pedido-form').addEventListener('submit', validarFormulario);
+
+    // Agregar eventos para limpiar espacios en blanco al inicio y final
+    const inputs = document.querySelectorAll('input[type="text"]');
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            this.value = this.value.trim();
+        });
+    });
+});
+
+// Agregar estilos CSS para los errores y validación
+const estilo = document.createElement('style');
+estilo.textContent = `
+    .alerta-errores {
+        margin: 20px 0;
+        padding: 15px;
+        border-radius: 4px;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+    }
+    .alerta-errores ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+    input.error {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+    input:valid {
+        border-color: #28a745;
+    }
+`;
+document.head.appendChild(estilo);
+    </script>
     </body>
 </html>

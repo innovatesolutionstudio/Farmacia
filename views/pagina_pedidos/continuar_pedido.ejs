@@ -84,55 +84,78 @@
             const carrito = JSON.parse(localStorage.getItem('cart')) || [];
     
             function mostrarCarrito() {
-                const cartItems = document.getElementById('cart-items');
-                const cartSummary = document.getElementById('cart-summary-details');
-                let subtotal = 0;
+    const cartItems = document.getElementById('cart-items');
+    const cartSummary = document.getElementById('cart-summary-details');
+    let subtotal = 0;
     
-                cartItems.innerHTML = '';
-                cartSummary.innerHTML = '';
+    cartItems.innerHTML = '';
+    cartSummary.innerHTML = '';
     
-                carrito.forEach(item => {
-                    const row = document.createElement('tr');
-                    const itemSubtotal = item.price * item.quantity;
-                    subtotal += itemSubtotal;
+    carrito.forEach((item, index) => {
+        const row = document.createElement('tr');
+        const itemSubtotal = item.price * item.quantity;
+        subtotal += itemSubtotal;
+        
+        row.innerHTML = `
+            <td>
+                <strong>${item.name}</strong><br>
+                ${item.description || ''}
+            </td>
+            <td>Bs ${item.price.toFixed(2)}/Unidad</td>
+            <td class="quantity-cell">
+                <button onclick="updateQuantity(${index}, -1)" class="quantity-btn">-</button>
+                <input 
+                    type="number" 
+                    value="${item.quantity}" 
+                    min="1" 
+                    class="quantity-input"
+                    onchange="updateQuantityInput(${index}, this.value)"
+                >
+                <button onclick="updateQuantity(${index}, 1)" class="quantity-btn">+</button>
+            </td>
+            <td>Bs ${itemSubtotal.toFixed(2)}</td>
+            <td>
+                <button onclick="removeFromCart(${index})" class="remove-btn">×</button>
+            </td>
+        `;
+        
+        cartItems.appendChild(row);
+        
+        // Resumen del carrito
+        const summaryRow = document.createElement('div');
+        summaryRow.className = 'summary-item';
+        summaryRow.innerHTML = `
+            ${item.name} | ${item.quantity} ${item.unit || 'Unidad'}: Bs ${itemSubtotal.toFixed(2)}
+        `;
+        cartSummary.appendChild(summaryRow);
+    });
     
-                    row.innerHTML = `
-                        <td>
-                            <div class="product-info">
-                                <img src="${item.image || '/fotos/img_productos/default.png'}" alt="${item.name}">
-                                <div>
-                                    <strong>${item.name}</strong>
-                                    <p>${item.description || ''}</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td>Bs ${item.price.toFixed(2)}/Unidad</td>
-                        <td>
-                            <div class="quantity-controls">
-                                <button class="btn-min" onclick="cambiarCantidad('${item.id}', -1)">-</button>
-                                <span class="cantidad-texto">${item.quantity}</span>
-                                <button class="btn-max" onclick="cambiarCantidad('${item.id}', 1)">+</button>
-                            </div>
-                        </td>
-                        <td>Bs ${itemSubtotal.toFixed(2)}</td>
-                        <td>
-                            <button class="remove-btn" onclick="eliminarDelCarrito('${item.id}')">×</button>
-                        </td>
-                    `;
-                    cartItems.appendChild(row);
-    
-                    // Resumen del carrito
-                    const summaryRow = document.createElement('div');
-                    summaryRow.className = 'summary-item';
-                    summaryRow.innerHTML = `
-                        ${item.name} | ${item.quantity} ${item.unit || 'Unidad'}: Bs ${itemSubtotal.toFixed(2)}
-                    `;
-                    cartSummary.appendChild(summaryRow);
-                });
-    
-                // Actualizar subtotal
-                document.getElementById('cart-subtotal').textContent = `Bs ${subtotal.toFixed(2)}`;
-            }
+    // Actualizar subtotal
+    document.getElementById('cart-subtotal').textContent = `Bs ${subtotal.toFixed(2)}`;
+}
+
+// Función para actualizar la cantidad desde el input
+function updateQuantityInput(index, newValue) {
+    newValue = parseInt(newValue);
+    if (newValue < 1) newValue = 1;
+    carrito[index].quantity = newValue;
+    mostrarCarrito();
+}
+
+// Función para actualizar la cantidad con los botones + y -
+function updateQuantity(index, change) {
+    const newQuantity = carrito[index].quantity + change;
+    if (newQuantity >= 1) {
+        carrito[index].quantity = newQuantity;
+        mostrarCarrito();
+    }
+}
+
+// Función para remover un item del carrito
+function removeFromCart(index) {
+    carrito.splice(index, 1);
+    mostrarCarrito();
+}
     
             function eliminarDelCarrito(productId) {
                 const index = carrito.findIndex(item => item.id === productId);
@@ -153,9 +176,27 @@
             }
     
             function finalizarCompra() {
-                const carritoQueryParam = encodeURIComponent(JSON.stringify(carrito));
-                window.location.href = `/pagina_pedidos/confirmar_pedido?carrito=${carritoQueryParam}`;
+    if (carrito.length === 0) {
+        Swal.fire({
+            title: '¡Tu carrito está vacío!',
+            text: '¿Deseas ver nuestros productos?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ver productos',
+            cancelButtonText: 'Cerrar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/productos'; // Redirige a la página de productos
             }
+        });
+        return;
+    }
+    // Si el carrito no está vacío, continúa con la redirección
+    const carritoQueryParam = encodeURIComponent(JSON.stringify(carrito));
+    window.location.href = `/pagina_pedidos/confirmar_pedido?carrito=${carritoQueryParam}`;
+}
 
 
 

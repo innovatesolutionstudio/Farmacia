@@ -93,14 +93,17 @@
                     </select>
                     <h3 class="category-title">Categoría Productos</h3>
                     <ul class="category-list">
-                        <li><a href="#">Belleza</a></li>
-                        <li><a href="#">Dispositivos Médicos</a></li>
-                        <li><a href="#">Vitaminas</a></li>
-                        <li><a href="#">Suplementos</a></li>
-                        <li><a href="#">Anticonceptivos</a></li>
-                        <li><a href="#">Bioseguridad</a></li>
-                    </ul>
-                    
+                        <li><a href="#" data-category="1" onclick="PorCategoria(1); return false;">Medicinas</a></li>
+                        <li><a href="#" data-category="2" onclick="PorCategoria(2); return false;">Bienestar</a></li>
+                        <li><a href="#" data-category="3" onclick="PorCategoria(3); return false;">Belleza</a></li>
+                        <li><a href="#" data-category="4" onclick="PorCategoria(4); return false;">Cuidado para bebé y mamá</a></li>
+                        <li><a href="#" data-category="5" onclick="PorCategoria(5); return false;">Cuidado personal</a></li>
+                        <li><a href="#" data-category="6" onclick="PorCategoria(6); return false;">Alimentos y Bebidas</a></li>
+                        <li><a href="#" data-category="7" onclick="PorCategoria(7); return false;">Dermocosmetica</a></li>
+                        <li><a href="#" data-category="8" onclick="PorCategoria(8); return false;">Suplementos y vitaminas</a></li>
+                        <li><a href="#" data-category="9" onclick="PorCategoria(9); return false;">Dispositivos Médicos</a></li>
+                        <li><a href="#" data-category="10" onclick="PorCategoria(10); return false;">Anticonceptivos</a></li>
+                    </ul>                    
                 </aside>
 
                 <!-- Productos -->
@@ -116,8 +119,6 @@
                                 onerror="this.src='/fotos/img_productos/default.png'; console.log('Imagen no encontrada:', this.src);"
                                 >
 
-                          
-                             
                             <h3 class="product-name"><%= product.Nombre %></h3>
                             <h3 class="product-name"><%= product.Unidad_Venta %></h3>
                             <p class="product-price">Bs <%=
@@ -384,27 +385,6 @@
         function buscarProductos(event) {
             event.preventDefault(); // Evita la recarga de la página
 
-            const searchTerm = document.getElementById('search-input').value.trim(); // Asegura que no haya espacios innecesarios
-            const idSucursal = document.getElementById('sucursal').value;
-
-            fetch(`/buscar_productos_cli?search=${encodeURIComponent(searchTerm)}&idSucursal=${idSucursal}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Error: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    actualizarProductos(data); // Actualiza los productos en la página
-                })
-                .catch(error => {
-                    console.error('Error al buscar productos:', error);
-                });
-        }
-
-        function buscarProductos(event) {
-            event.preventDefault(); // Evita la recarga de la página
-
             const searchTerm = document.getElementById('search-input').value.trim(); // Limpia espacios adicionales
             const idSucursal = document.getElementById('sucursal').value;
 
@@ -463,15 +443,8 @@
                 `;
                 productsGrid.appendChild(productCard);
             });
-
-            // No se toca el carrito
-            console.log('Productos actualizados, el carrito permanece intacto.');
         }
 
-
-
-
-       
 
 
         let carrito = [];
@@ -482,9 +455,15 @@
         function continuarPedido() {
             const carrito = JSON.parse(localStorage.getItem('cart')) || [];
             if (carrito.length === 0) {
-                alert("Tu carrito está vacío. Por favor, agrega productos antes de continuar.");
-                return;
-            }
+            Swal.fire({
+                title: '¡Carrito vacío!',
+                text: 'Por favor, agrega productos antes de continuar',
+                icon: 'info',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#3085d6'
+            });
+            return;
+        }
 
             // Serializa el carrito y almacénalo en localStorage o envíalo como parámetro
             localStorage.setItem('cartForCheckout', JSON.stringify(carrito));
@@ -582,7 +561,7 @@
             const cartItem = document.querySelector(`#cart-items [data-id="${id}"]`);
 
             if (!cartItem) {
-                console.error(`No se encontró un elemento con data-id="${id}"`);
+
                 return;
             }
 
@@ -590,7 +569,7 @@
 
             // Asegurarse de que el elemento quantitySpan exista
             if (!quantitySpan) {
-                console.error('No se encontró el elemento para mostrar la cantidad');
+
                 return;
             }
 
@@ -790,6 +769,237 @@
                 dropdown.style.display = 'none';
             }
         };
+        function filtrarPorCategoria(idCategoria) {
+    // Obtener el ID de la sucursal
+    const idSucursal = document.getElementById('sucursal').value;
+    
+    // Actualizar el estilo de los enlaces de categoría
+    document.querySelectorAll('.category-list a').forEach(link => {
+        if (link.dataset.category === idCategoria.toString()) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+
+    // Construir la URL con los parámetros necesarios
+    const url = `/productos?categoria=${idCategoria}&sucursal=${idSucursal}`;
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            actualizarProductos(data);
+        })
+        .catch(error => {
+            console.error("Error al cargar productos:", error);
+        });
+}
+
+function limpiarFiltroCategoria() {
+    // Obtener el ID de la sucursal
+    const idSucursal = document.getElementById('sucursal').value;
+    
+    // Remover resaltado de todas las categorías
+    document.querySelectorAll('.category-list a').forEach(link => {
+        link.classList.remove('active');
+    });
+
+    // Hacer la petición al servidor para obtener todos los productos
+    fetch(`/productos?categoria=todos&sucursal=${idSucursal}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            actualizarProductos(data);
+        })
+        .catch(error => {
+            console.error('Error al limpiar filtros:', error);
+        });
+}
+
+            // Función para limpiar los filtros de categoría
+            function limpiarFiltroCategoria() {
+                const idSucursal = document.getElementById('sucursal').value;
+                
+                // Remover resaltado de todas las categorías
+                document.querySelectorAll('.category-list a').forEach(link => {
+                    link.classList.remove('active');
+                });
+
+                // Hacer la petición al servidor para obtener todos los productos
+                fetch(`/buscar_productos_cli?search=&idSucursal=${idSucursal}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Error: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        actualizarProductos(data);
+                    })
+                    .catch(error => {
+                        console.error('Error al limpiar filtros:', error);
+                    });
+            }
+
+            function actualizarProductos(productos) {
+        const productsGrid = document.querySelector('.products-grid');
+        if (!productsGrid) {
+            console.error('No se encontró el contenedor de productos');
+            return;
+        }
+
+        // Limpiar grid actual
+        productsGrid.innerHTML = '';
+
+        // Verificar si hay productos
+        if (!productos || productos.length === 0) {
+            productsGrid.innerHTML = `
+                <div class="no-products">
+                    <p>No se encontraron productos en esta categoría</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Crear las tarjetas de productos
+        productos.forEach(product => {
+            try {
+                const productCard = document.createElement('div');
+                productCard.classList.add('product-card');
+                
+                // Asegurarse de que los valores existen antes de usarlos
+                const nombre = product.Nombre || 'Producto sin nombre';
+                const precio = product.Precio_Unitario || 0;
+                const cantidad = product.Cantidad || 0;
+                const unidad = product.Unidad_Venta || 'No definida';
+                const id = product.ID_Producto || '';
+                
+                productCard.innerHTML = `
+                    <img class="product-image" 
+                        src="${product.Fotografia ? `/fotos/img_productos/${product.Fotografia}` : '/fotos/img_productos/default.png'}" 
+                        alt="${nombre}"
+                        onerror="this.src='/fotos/img_productos/default.png'">
+                    <h3 class="product-name">${nombre}</h3>
+                    <p class="product-unit">${unidad}</p>
+                    <p class="product-price">Bs ${precio.toFixed(2)}/Unidad</p>
+                    <button class="add-to-cart" 
+                        onclick="agregarAlCarrito('${id}', '${nombre.replace(/'/g, "\\'")}', ${precio}, ${cantidad}, '${unidad}')">
+                        Añadir
+                    </button>
+                `;
+                
+                productsGrid.appendChild(productCard);
+            } catch (error) {
+                console.error('Error al crear tarjeta de producto:', error, product);
+            }
+        });
+    }
+    </script>
+    <script>
+        // Función para filtrar por categoría
+        function PorCategoria(categoriaId) {
+            console.log('Solicitando productos de categoría:', categoriaId);
+            
+            fetch(`/productos/categoria/${categoriaId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.details || 'Error en la petición');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(productos => {
+                    console.log('Productos recibidos:', productos);
+                    if (productos.length === 0) {
+                        document.querySelector('.products-grid').innerHTML = 
+                            '<p>No se encontraron productos en esta categoría.</p>';
+                        return;
+                    }
+                    mostrarProductos(productos);
+                })
+                .catch(error => {
+                    alert(`Error al cargar los productos: ${error.message}`);
+                });
+        }
+
+        // Función mejorada para mostrar productos
+        function mostrarProductos(productos) {
+            const contenedor = document.querySelector('.products-grid');
+            if (!contenedor) {
+                return;
+            }
+            
+            contenedor.innerHTML = ''; // Limpia el contenedor
+            
+            productos.forEach(product => {
+                const productoHTML = `
+                    <div class="product-card">
+                        <img class="product-image"
+                            src="${product.Fotografia ? `/fotos/img_productos/${product.Fotografia}` : '/fotos/img_productos/default.png'}"
+                            alt="Imagen del Producto"
+                            onerror="this.src='/fotos/img_productos/default.png'">
+                        <h3 class="product-name">${product.Nombre}</h3>
+                        <h3 class="product-name">${product.Unidad_Venta}</h3>
+                        <p class="product-price">Bs ${product.Precio_Unitario}/Unidad</p>
+                        <button class="add-to-cart" 
+                            onclick="agregarAlCarrito('${product.ID_Producto}', '${product.Nombre}', ${product.Precio_Unitario}, ${product.Cantidad || 0}, '${product.Unidad_Venta || "No definida"}')">
+                            Añadir
+                        </button>
+                    </div>
+                `;
+                contenedor.innerHTML += productoHTML;
+            });
+        }
+
+        // Función para verificar que la ruta existe
+        function verificarRuta() {
+            fetch('/productos/categoria/1')
+                .then(response => {
+                    console.log('Estado de la respuesta:', response.status);
+                    console.log('Headers:', response.headers);
+                    return response.text();
+                })
+                .then(text => {
+                    console.log('Contenido de la respuesta:', text);
+                })
+                .catch(error => {
+                    console.error('Error en la verificación de ruta:', error);
+                });
+        }
+
+        // Ejecuta la verificación al cargar la página
+        verificarRuta();
+
+
+        // Función para mostrar todos los productos
+        function limpiarFiltroCategoria() {
+            fetch('/productos/1') // Asumiendo que este es el endpoint correcto para todos los productos
+                .then(response => response.json())
+                .then(productos => {
+                    mostrarProductos(productos);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.querySelector('.products-grid').innerHTML = `
+                        <div class="text-center">
+                            <h3>Error al cargar los productos</h3>
+                            <p>${error.message}</p>
+                            <button onclick="limpiarFiltroCategoria()">
+                                Intentar de nuevo
+                            </button>
+                        </div>`;
+                });
+        }
     </script>
         <script>
         localStorage.removeItem('cart');

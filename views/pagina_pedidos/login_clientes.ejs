@@ -8,6 +8,8 @@
         href="/resources/css/sistema_clientes/paginapedidos_index.css" />
         <link rel="stylesheet"
             href="/resources/css/sistema_clientes/login_cliente_A.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
         <link rel="icon" href="resources/images/iconos/farmacia.ico">
      
 
@@ -50,9 +52,7 @@
             <main class="login-container">
                 <h1>Iniciar Sesión</h1>
 
-                <% if (typeof error !== 'undefined') { %>
-                <p class="error-message"><%= error %></p>
-                <% } %>
+
 
                 <form action="/pagina_pedidos/otros/login_clientes/"
                     method="POST">
@@ -67,11 +67,20 @@
                     <button type="submit" class="btn-login">Iniciar
                         Sesión</button>
                 </form>
-
-                <div class="forgot-password">
-                    ¿Olvidaste tu Cuenta? <a href="#">Recupérala aquí</a>
-                </div>
             </main>
-  
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>     
+            <% if (typeof alert != "undefined") { %>
+                <script>
+                    Swal.fire({
+                        title: '<%= alertTitle %>',
+                        text: '<%= alertMessage %>',
+                        icon: '<%= alertIcon %>',
+                        showConfirmButton: <%= showConfirmButton %>,  
+                        timer: <%= timer %>                           
+                    }).then(() => {
+                        window.location = '/<%= ruta %>';
+                    });
+                </script>
+            <% } %>             
     </body>
 </html>
