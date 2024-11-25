@@ -248,3 +248,106 @@
 
 
 /* ---------------Pie de Pagina--------------- */
+
+/* Media Queries para Responsive Design */
+
+/* Tablets y pantallas medianas */
+@media screen and (max-width: 1024px) {
+  .header-container {
+      padding: 0 20px;
+  }
+
+  .welcome-image img {
+      max-width: 100%;
+      height: auto;
+  }
+
+  .services-container {
+      gap: 15px;
+  }
+}
+
+/* Tablets pequeñas y pantallas medianas */
+@media screen and (max-width: 768px) {
+  .custom-nav .nav-list {
+      display: none; /* Aquí podrías agregar un menú hamburguesa */
+  }
+
+  .welcome-container {
+      flex-direction: column;
+  }
+
+  .welcome-text, .welcome-image {
+      max-width: 100%;
+      text-align: center;
+  }
+
+  .welcome-section {
+      height: auto;
+      padding: 40px 20px;
+  }
+
+  .welcome-title {
+      font-size: 28px;
+  }
+
+  .welcome-subtitle {
+      font-size: 16px;
+  }
+
+  .services-title {
+      font-size: 32px;
+  }
+}
+
+/* Móviles */
+@media screen and (max-width: 480px) {
+  .header-container {
+      height: auto;
+      flex-wrap: wrap;
+      padding: 10px;
+  }
+
+  .custom-logo img {
+      height: 50px;
+  }
+
+  .logo-main {
+      font-size: 16px;
+  }
+
+  .logo-sub {
+      font-size: 10px;
+  }
+
+  .header-actions {
+      width: 100%;
+      justify-content: center;
+      margin-top: 10px;
+  }
+
+  .location-select {
+      font-size: 12px;
+  }
+
+  .btn-login {
+      font-size: 12px;
+      padding: 6px 10px;
+  }
+
+  .service-card {
+      min-width: 100%;
+  }
+
+  .welcome-title {
+      font-size: 24px;
+  }
+
+  .welcome-subtitle {
+      font-size: 14px;
+  }
+
+  .services-title {
+      font-size: 28px;
+  }
+}

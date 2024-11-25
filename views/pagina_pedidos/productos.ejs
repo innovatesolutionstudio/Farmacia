@@ -79,7 +79,7 @@
                 <!-- Categorías -->
                 <aside class="category-section">
                     <h3 class="category-title">Selecciona tu Sucursal mas
-                        Sercano</h3>
+                        Cercano</h3>
                     <!-- Selector de Sucursales -->
                     <select name="sucursal" id="sucursal"
                         class="location-select" onchange="cambiarSucursal()">
@@ -418,7 +418,18 @@
                     return response.json();
                 })
                 .then(data => {
-                    actualizarProductos(data); // Actualiza solo los productos visibles
+                    // Limitar a solo 20 productos
+                    const productosLimitados = data.slice(0, 20);
+                    actualizarProductos(productosLimitados);
+                    
+                    // Opcional: Mostrar contador de productos totales
+                    const contenedor = document.querySelector('.products-grid');
+                    if (contenedor && data.length > 20) {
+                        const mensaje = document.createElement('div');
+                        mensaje.className = 'productos-contador';
+                        mensaje.textContent = `Mostrando 20 de ${data.length} productos`;
+                        contenedor.appendChild(mensaje);
+                    }
                 })
                 .catch(error => {
                     console.error('Error al limpiar el filtro:', error);
@@ -941,7 +952,10 @@ function limpiarFiltroCategoria() {
             
             contenedor.innerHTML = ''; // Limpia el contenedor
             
-            productos.forEach(product => {
+            // Limita a mostrar solo los primeros 20 productos
+            const productosLimitados = productos.slice(0, 20);
+            
+            productosLimitados.forEach(product => {
                 const productoHTML = `
                     <div class="product-card">
                         <img class="product-image"
@@ -959,6 +973,14 @@ function limpiarFiltroCategoria() {
                 `;
                 contenedor.innerHTML += productoHTML;
             });
+
+            // Opcional: Mostrar un mensaje si hay más productos
+            if (productos.length > 20) {
+                const mensaje = document.createElement('div');
+                mensaje.className = 'productos-adicionales';
+                mensaje.textContent = `Mostrando 20 de ${productos.length} productos disponibles`;
+                contenedor.appendChild(mensaje);
+            }
         }
 
         // Función para verificar que la ruta existe

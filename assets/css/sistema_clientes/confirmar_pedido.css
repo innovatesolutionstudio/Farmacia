@@ -8,14 +8,36 @@
     font-family: 'Arial', sans-serif;
 }
 
+/* Ajustes para .header-container */
 .header-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 100%; /* Asegura que no se salga de la pantalla */
+    width: 100%; /* Hace que ocupe el 100% del ancho disponible */
+    margin: 0 15px; /* Agrega un margen lateral para que no se pegue a los bordes */
     height: 70px;
+    box-sizing: border-box; /* Asegura que el padding y los márgenes se incluyan en el tamaño total */
+    overflow: hidden; /* Evita que el contenido sobresalga */
 }
+
+@media screen and (max-width: 1024px) {
+    .header-container {
+        padding: 0 10px; /* Ajusta el espacio lateral en pantallas más pequeñas */
+        flex-wrap: wrap; /* Permite que los elementos se ajusten cuando el espacio es pequeño */
+        height: auto; /* Ajusta la altura automáticamente para evitar que se recorte */
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .header-container {
+        flex-direction: column; /* Cambia la dirección de los elementos para que se apilen verticalmente */
+        align-items: center; /* Centra los elementos */
+        height: auto; /* Deja que la altura se ajuste automáticamente */
+        padding: 15px 10px; /* Agrega más espacio en pantallas pequeñas */
+    }
+}
+
 
 /* Logo Section */
 .custom-logo {
@@ -91,13 +113,6 @@
 .btn-login:hover {
     background-color: #cc7000;
 }
-
-
-
-
-
-
-
 
 body {
     font-family: Arial, sans-serif;
@@ -258,3 +273,4 @@ button:hover {
     border-radius: 5px;
     cursor: pointer;
 }
+

@@ -16,7 +16,6 @@
     <body>
 
         <header class="custom-header">
-            <p>inicio de sesion para administradores <a href="/login"></a></p>
             <div class="header-container">
                 <a href="/pagina_pedidos/clientes_index" class="custom-logo">
                     <img src="/resources/images/iconos/farmacia.ico"
@@ -71,14 +70,14 @@
                     <label for="ci_nit">CI/NIT:</label>
                     <input type="text" id="ci_nit" name="ci_nit" value="<%= cliente ? cliente.CI : '' %>" required>
                 
-                    <label for="direccion">Dirección:</label>
+                    <label for="direccion">Dirección de Entrga:</label>
                     <input type="text" id="direccion" name="direccion" required>
                 
                     <label for="telefono">Celular:</label>
                     <input type="text" id="telefono" name="telefono" value="<%= cliente ? cliente.Telefono : '' %>" required>
                 
                     <label for="notas">Notas:</label>
-                    <textarea id="notas" name="notas" rows="3" placeholder="Notas sobre tu pedido..."></textarea>
+                    <textarea id="notas" name="notas" rows="3" placeholder="Dejar en la recepción del edificio, tercer piso."></textarea>
                 
                     <label for="distrito">Distrito:</label>
                     <select id="distrito" name="distrito" class="district-select" required onchange="actualizarTotal()">

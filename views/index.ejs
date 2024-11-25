@@ -389,8 +389,7 @@
                                     <i class="fa fa-bell"
                                         style="font-size: 30px;"></i>
                                     <span>&nbsp;&nbsp;Notificaciones</span>
-                                    <span id="notification-count"
-                                        class="badge">2</span>
+                                  
                                     <!-- Contador de notificaciones -->
                                 </a>
                             </li>
@@ -432,8 +431,7 @@
                                                         NombreSucursal %>
                                                         <p
                                                             style="color: #000; font-family:math ; text-align: right;font-size: 18px;"
-                                                            id="fechaHora">16 de
-                                                            septiembre 2024 </p>
+                                                            id="fechaHora">Cargando... </p>
                                                     </div>
                                                 </li>
 
@@ -671,17 +669,30 @@
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
 </style>
-    <script>
+<script>
     function actualizarHora() {
         const ahora = new Date();
-        const fecha = ahora.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        // Configuración de la fecha en español
+        const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
+        let fecha = ahora.toLocaleDateString('es-ES', opcionesFecha);
+
+        // Capitaliza la primera letra del mes
+        fecha = fecha.charAt(0).toUpperCase() + fecha.slice(1);
+
+        // Obtiene la hora
         const hora = ahora.toLocaleTimeString('es-ES');
-        document.getElementById('fechaHora').innerText = `${fecha} -  ${hora}`;
+
+        // Muestra la fecha y hora actualizadas
+        document.getElementById('fechaHora').innerText = `${fecha} - ${hora}`;
     }
 
-    setInterval(actualizarHora, 1000);  // Actualiza cada segundo
-    window.onload = actualizarHora;  // Actualiza al cargar la página
+    setInterval(actualizarHora, 1000); // Actualiza cada segundo
+    window.onload = actualizarHora; // Actualiza al cargar la página
 </script>
+
+
+
     <script>
     
     $("#btnActualizar").click(function () {

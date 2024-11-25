@@ -255,3 +255,211 @@ background-color: #28a74600;
     width: 80px;
     height: 80px;
 }
+
+
+/*Estilo recien agregado*/
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+td {
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+strong {
+    font-size: 1.1em;
+    color: #333;
+}
+
+/* Estilo para los botones de cantidad */
+.quantity-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-size: 1.2em;
+    cursor: pointer;
+    border-radius: 4px;
+    margin: 0 5px;
+    transition: background-color 0.3s ease;
+}
+
+.quantity-btn:hover {
+    background-color: #45a049;
+}
+
+.quantity-btn:focus {
+    outline: none;
+}
+
+/* Ocultar flechas de incremento y decremento en campos de tipo number */
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.quantity-input[type="number"] {
+    -moz-appearance: textfield; /* Para Firefox */
+}
+
+
+/* Estilo para el input de cantidad */
+.quantity-input {
+    width: 60px;
+    padding: 8px;
+    text-align: center;
+    font-size: 1.1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 0 5px;
+    transition: border-color 0.3s ease;
+}
+
+.quantity-input:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Estilo para el precio */
+td:nth-child(2), td:nth-child(4) {
+    font-weight: bold;
+    color: #555;
+}
+
+
+/* Media Queries para Responsive Design */
+
+/* Tablets y pantallas medianas */
+@media screen and (max-width: 768px) {
+    /* Header Responsive */
+    .header-container {
+        flex-direction: column;
+        height: auto;
+        padding: 10px 0;
+    }
+
+    .custom-logo {
+        margin-bottom: 10px;
+    }
+
+    .custom-nav .nav-list {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .custom-nav .nav-link {
+        margin: 5px 10px;
+    }
+
+    .header-actions {
+        margin-top: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .location-select {
+        margin: 5px 10px;
+    }
+
+    /* Carrito Responsive */
+    .cart-details {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .cart-table {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .cart-summary {
+        width: 100%;
+    }
+
+    .product-suggestions {
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 10px;
+    }
+
+    .product-suggestion {
+        width: calc(50% - 20px);
+        margin: 10px 0;
+    }
+}
+
+/* Móviles y pantallas pequeñas */
+@media screen and (max-width: 480px) {
+    /* Header Responsive */
+    .custom-logo img {
+        height: 50px;
+    }
+
+    .logo-main {
+        font-size: 16px;
+    }
+
+    .logo-sub {
+        font-size: 10px;
+    }
+
+    .custom-nav .nav-link {
+        font-size: 12px;
+        margin: 3px 8px;
+    }
+
+    /* Carrito Responsive */
+    .cart-table th, .cart-table td {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .product-info img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .quantity-controls {
+        width: 70px;
+    }
+
+    .btn-min, .btn-max {
+        width: 25px;
+        height: 25px;
+    }
+
+    .cantidad-texto {
+        font-size: 16px;
+    }
+
+    .remove-btn {
+        width: 60px;
+        font-size: 30px;
+    }
+
+    .product-suggestion {
+        width: 100%;
+    }
+
+    .cart-actions button {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    /* Ajustes para la tabla en móvil */
+    .cart-table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .quantity-input {
+        width: 50px;
+        padding: 6px;
+        font-size: 14px;
+    }
+}

@@ -79,6 +79,8 @@
     
             
         </main>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     
         <script>
             const carrito = JSON.parse(localStorage.getItem('cart')) || [];
@@ -133,23 +135,49 @@
     // Actualizar subtotal
     document.getElementById('cart-subtotal').textContent = `Bs ${subtotal.toFixed(2)}`;
 }
+// Función para mostrar alertas elegantes centradas
+function showCustomAlert(message) {
+    Swal.fire({
+        title: '¡Atención!',
+        text: message,
+        icon: 'warning',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#3085d6',
+        allowOutsideClick: false,
+        position: 'center',
+        showClass: {
+            popup: 'animate__animated animate__fadeIn'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOut'
+        }
+    });
+}
 
-// Función para actualizar la cantidad desde el input
+// Función actualizada para actualizar la cantidad desde el input
 function updateQuantityInput(index, newValue) {
     newValue = parseInt(newValue);
-    if (newValue < 1) newValue = 1;
+    if (newValue < 1) newValue = 1; // Mínimo 1
+    if (newValue > 20) {
+        showCustomAlert("No puede exceder más de 20 por cada medicamento");
+        newValue = 20; // Máximo 20
+    }
     carrito[index].quantity = newValue;
     mostrarCarrito();
 }
 
-// Función para actualizar la cantidad con los botones + y -
+// Función actualizada para actualizar la cantidad con los botones + y -
 function updateQuantity(index, change) {
     const newQuantity = carrito[index].quantity + change;
-    if (newQuantity >= 1) {
+    if (newQuantity >= 1 && newQuantity <= 20) {
         carrito[index].quantity = newQuantity;
         mostrarCarrito();
+    } else if (newQuantity > 20) {
+        showCustomAlert("No puede exceder más de 20 por cada medicamento");
     }
 }
+
+
 
 // Función para remover un item del carrito
 function removeFromCart(index) {

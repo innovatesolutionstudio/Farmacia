@@ -300,7 +300,7 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
     const { nombre, apellido, direccion, ci_nit, telefono, distrito, notas, tarifaEnvio, productos } = req.body;
 
     console.log('Datos recibidos del cliente:', {
-        nombre, apellido, direccion, ci_nit, telefono, distrito, tarifaEnvio, productos,notas
+        nombre, apellido, direccion, ci_nit, telefono, distrito, tarifaEnvio, productos, notas
     });
 
     if (!Array.isArray(productos) || productos.length === 0) {
@@ -315,8 +315,6 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
             cantidad: producto.quantity,
         }));
 
-        console.log('Productos mapeados:', productosMapeados);
-
         connection = await new Promise((resolve, reject) => {
             pool.getConnection((err, conn) => {
                 if (err) return reject(err);
@@ -330,6 +328,22 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
                 resolve();
             });
         });
+
+        // Verificar cantidad disponible en inventario antes de proceder
+        for (const producto of productosMapeados) {
+            const cantidadActual = await new Promise((resolve, reject) => {
+                const query = 'SELECT Cantidad FROM inventario WHERE ID_Producto = ? AND ID_Sucursal = 1';
+                connection.query(query, [producto.ID_Producto], (err, results) => {
+                    if (err) return reject(err);
+                    if (results.length === 0) return reject(new Error('Producto no encontrado en inventario'));
+                    resolve(results[0].Cantidad);
+                });
+            });
+
+            if (cantidadActual < producto.cantidad) {
+                throw new Error(`Cantidad insuficiente en inventario para el producto ID ${producto.ID_Producto}`);
+            }
+        }
 
         let clienteId = null;
         const clienteExistente = await new Promise((resolve, reject) => {
@@ -383,13 +397,26 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
             });
         });
 
-        console.log('Detalles de la venta registrados.');
+        // Actualizar la cantidad en el inventario de cada producto
+        for (const producto of productosMapeados) {
+            await new Promise((resolve, reject) => {
+                const query = `
+                    UPDATE inventario 
+                    SET Cantidad = Cantidad - ? 
+                    WHERE ID_Producto = ? AND ID_Sucursal = 1
+                `;
+                connection.query(query, [producto.cantidad, producto.ID_Producto], (err) => {
+                    if (err) return reject(err);
+                    resolve();
+                });
+            });
+        }
 
-        // Registrar pedido en la tabla pedidos
+        // El resto del código se mantiene igual...
         const pedidoId = await new Promise(async (resolve, reject) => {
             const query = `
-                INSERT INTO pedidos (ID_Venta, ID_Empleado, ID_Cliente, ID_Distrito, Direccion, Estado, Fecha_Entrega,notas)
-                VALUES (?, ?, ?, ?, ?, 1, ?,?)
+                INSERT INTO pedidos (ID_Venta, ID_Empleado, ID_Cliente, ID_Distrito, Direccion, Estado, Fecha_Entrega, notas)
+                VALUES (?, ?, ?, ?, ?, 1, ?, ?)
             `;
 
             try {
@@ -409,7 +436,7 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
 
                 connection.query(
                     query,
-                    [ventaId, 24, clienteId, distrito, direccion, fechaEntrega,notas],
+                    [ventaId, 24, clienteId, distrito, direccion, fechaEntrega, notas],
                     (err, results) => {
                         if (err) return reject(err);
                         resolve(results.insertId);
@@ -419,8 +446,6 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
                 return reject(err);
             }
         });
-
-        console.log('Pedido registrado con ID:', pedidoId);
 
         await new Promise((resolve, reject) => {
             connection.commit(err => {
@@ -447,8 +472,6 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
             ID_Sucursal: 1,
         };
 
-        console.log('Datos enviados a generar_factura_pedido:', facturaData);
-
         let facturaResponse;
 
         try {
@@ -467,8 +490,6 @@ router.post('/pagina_pedidos/finalizar_pedido', async (req, res) => {
             console.error('Error al generar la factura:', error.message);
             throw new Error('Error al generar la factura');
         }
-
-        console.log('Factura generada correctamente:', facturaResponse);
 
         req.session.carrito = [];
         res.status(200).json({
@@ -688,8 +709,6 @@ router.post("/pagina_pedidos/generar_factura_pedido", async (req, res) => {
 ////////////////////////////////////////////////////////////////////////////rutas para sistema clientes////////////////////////////////
 
 
-
-
 router.post('/pagina_pedidos/otros/login_clientes/', (req, res) => {
     const { Codigo, Contrasena } = req.body;
 
@@ -705,7 +724,7 @@ router.post('/pagina_pedidos/otros/login_clientes/', (req, res) => {
             req.session.userIdCliente = cliente.ID_Cliente;
             req.session.clienteDatos = cliente;
 
-            res.redirect('/pagina_pedidos/otros/perfil');  // Redirige al perfil si las credenciales son correctas
+            res.redirect('/pagina_pedidos/otros/perfil');  
         } else {
             res.render("pagina_pedidos/login_clientes", {
                 alert: true,
@@ -724,28 +743,30 @@ router.get('/productos/categoria/:id', (req, res) => {
     
     const sql = `
     SELECT 
-        p.ID_Producto,
-        p.Nombre,
-        p.Precio_Unitario,
-        p.Fotografia,
-        p.Descripcion,
-        p.Indicaciones,
-        p.Efectos_Secundarios,
-        i.Cantidad AS Stock,
-        u.Nombre AS Unidad_Venta
-    FROM 
-        productos p
-    JOIN 
-        inventario i ON p.ID_Producto = i.ID_Producto
-    JOIN 
-        sucursales s ON i.ID_Sucursal = s.ID_Sucursal
-    LEFT JOIN
-        unidad_venta u ON p.ID_Unidad_Venta = u.ID_Unidad_Venta
-    INNER JOIN
-        categorias_productos c ON p.ID_Categoria = c.ID_Categoria
-    WHERE 
-        i.ID_Sucursal = 1 AND
-        c.ID_Categoria = ?`;
+    p.ID_Producto,
+    p.Nombre,
+    p.Precio_Unitario,
+    p.Fotografia,
+    p.Descripcion,
+    p.Indicaciones,
+    p.Efectos_Secundarios,
+    i.Cantidad AS Stock,
+    u.Nombre AS Unidad_Venta
+FROM 
+    productos p
+JOIN 
+    inventario i ON p.ID_Producto = i.ID_Producto
+JOIN 
+    sucursales s ON i.ID_Sucursal = s.ID_Sucursal
+LEFT JOIN
+    unidad_venta u ON p.ID_Unidad_Venta = u.ID_Unidad_Venta
+INNER JOIN
+    categorias_productos c ON p.ID_Categoria = c.ID_Categoria
+WHERE 
+    i.ID_Sucursal = 1 AND
+    c.ID_Categoria = ?
+ORDER BY p.Nombre
+LIMIT 20`;
     
     console.log('Ejecutando consulta con categoría:', categoriaId); // Debug
 
@@ -919,7 +940,6 @@ router.get('/pagina_pedidos/otros/miscompras', (req, res) => {
 
 // Ruta POST para guardar un nuevo recordatorio
 router.post('/guardar_recordatorio', (req, res) => {
-   
     const { 
         idCliente, 
         productoId, 
@@ -929,7 +949,7 @@ router.post('/guardar_recordatorio', (req, res) => {
         telefono, 
         fechaHora 
     } = req.body; // Recibimos los datos del formulario
-    console.log("DATOS PARA RECORDATORIO \n", req.body);
+
     // Guardar el recordatorio en la tabla 'recordatorios'
     const sqlInsertRecordatorio = `
     INSERT INTO recordatorios (ID_Cliente, ID_Producto, Telefono, Tiempo)
@@ -938,12 +958,7 @@ router.post('/guardar_recordatorio', (req, res) => {
 
     connection.query(sqlInsertRecordatorio, [idCliente, productoId, telefono, fechaHora], (error, resultadoRecordatorio) => {
         if (error) {
-            console.log("Insertado erroneo ");
             return res.status(500).send('Error al guardar el recordatorio');
-            
-        }
-        else{
-            console.log("Insertado correctamente tabla recordatorio");
         }
 
         // Ahora guardamos los detalles del recordatorio en la tabla 'detalle_recordatorio'

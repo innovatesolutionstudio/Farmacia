@@ -40,7 +40,7 @@
             </div> 
             <div>
                 <h2 id="prodconmayorganancias">Cargando..</h2>
-                <p>Producto con mayor ganancias</p>
+                <p>Producto con Mayor Ganancias</p>
             </div>
         </div>
     </div>
@@ -68,7 +68,7 @@
 <!-- Tabla de ventas y clientes facturados -->
 <div class="card3">
     <div class="header-card1">
-        <span>Historia de Clientes Facturados</span>
+        <span>Historia de Ganancias por Gestion</span>
     </div>
     <div class="content-card2">
         <table class="tabla-historial">
@@ -82,7 +82,7 @@
               <tr>
                 
                 <td><%= ganancia.Ano %></td>
-                <td><%= ganancia.Ganancia_Total_Anual %></td>
+                <td>Bs. <%= ganancia.Ganancia_Total_Anual %></td>
           
               </tr>
               <% }); %>
@@ -153,15 +153,16 @@
           html: `
            <canvas id="Chartline" width="400" height="200"></canvas>
             <br>
-            <!-- Select con las opciones de año -->
-            <select id="yearSelect">
-                <option value="${new Date().getFullYear() - 1}">${new Date().getFullYear() - 1}</option> <!-- Año pasado -->
-                <option value="${new Date().getFullYear()}" selected>${new Date().getFullYear()}</option> <!-- Año actual, seleccionado por defecto -->
-                <option value="${new Date().getFullYear() + 1}">${new Date().getFullYear() + 1}</option> <!-- Siguiente año -->
-            </select>
-            <button onclick="predecirGanancia()">Predecir Ganancia</button>
-            <p id="resultadoPrediccion">Cargando.../ selecciona el Año</p>
-
+            <div class="prediction-container">
+                <label for="yearSelect" class="year-label">Selecciona un Año:</label>
+                <select id="yearSelect" class="year-select">
+                    <option value="${new Date().getFullYear() - 1}">${new Date().getFullYear() - 1}</option>
+                    <option value="${new Date().getFullYear()}" selected>${new Date().getFullYear()}</option>
+                    <option value="${new Date().getFullYear() + 1}">${new Date().getFullYear() + 1}</option>
+                </select>
+                <button class="predict-button" onclick="predecirGanancia()">Predecir Ganancia</button>
+                <p id="resultadoPrediccion" class="prediction-result">Cargando.../ selecciona el Año</p>
+            </div>
           
 
           `,
@@ -216,7 +217,7 @@
   
       // Mostramos el resultado de la predicción en el párrafo
       document.getElementById('resultadoPrediccion').textContent = 
-          `La ganancia estimada para el año ${year} es de ${gananciaEstimada.toFixed(2)} unidades monetarias.`;
+          `La ganancia estimada para el año ${year} es de ${gananciaEstimada.toFixed(2)} Bs.`;
   }
   </script>
   <script>
@@ -253,3 +254,5 @@ fetch('/datosgananciasmetricas')
 </script>
 </body>
 </html>
+
+st

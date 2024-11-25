@@ -435,3 +435,68 @@ input:checked + .slider:before {
 .card-clientes .content-card-clientes {
   padding: 20px;
 }
+
+
+.prediction-container {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 400px;
+  margin: 20px auto;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.year-label {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #333;
+  font-weight: bold;
+}
+
+.year-select {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+.year-select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.predict-button {
+  background-color: #007bff;
+  color: #fff;
+  font-size: 1rem;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.predict-button:hover {
+  background-color: #0056b3;
+}
+
+.predict-button:active {
+  transform: scale(0.98);
+}
+
+.prediction-result {
+  margin-top: 15px;
+  font-size: 1rem;
+  color: #666;
+  font-style: italic;
+}
