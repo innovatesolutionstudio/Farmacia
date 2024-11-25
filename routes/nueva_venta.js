@@ -72,9 +72,10 @@ router.post("/buscar_cliente_por_carnet", (req, res) => {
 
 router.get("/obtener_cantidad_inventario/:idProducto", (req, res) => {
   if (req.session.loggedin) {
+    const ID_Sucursal =  req.session.ID_Sucursal
     const { idProducto } = req.params;
-    const query = "SELECT Cantidad FROM inventario WHERE ID_Producto = ?";
-    connection.query(query, [idProducto], (error, results) => {
+    const query = "SELECT Cantidad FROM inventario WHERE ID_Producto = ? AND ID_Sucursal = ?";
+    connection.query(query, [idProducto,ID_Sucursal], (error, results) => {
       if (error) {
         console.error(
           "Error al obtener la cantidad en inventario del producto:",
@@ -332,10 +333,10 @@ router.post("/nueva_venta", async (req, res) => {
                 productos.forEach((productoID, index) => {
                   const cantidadVendida = cantidades[index];
                   const actualizarInventarioQuery =
-                    "UPDATE inventario SET Cantidad = Cantidad - ? WHERE ID_Producto = ?";
+                    "UPDATE inventario SET Cantidad = Cantidad - ? WHERE ID_Producto = ? AND ID_Sucursal = ?";
                   connection.query(
                     actualizarInventarioQuery,
-                    [cantidadVendida, productoID],
+                    [cantidadVendida, productoID,ID_Sucursal],
                     (error) => {
                       if (error) {
                         console.error(

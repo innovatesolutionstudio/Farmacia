@@ -919,6 +919,7 @@ router.get('/pagina_pedidos/otros/miscompras', (req, res) => {
 
 // Ruta POST para guardar un nuevo recordatorio
 router.post('/guardar_recordatorio', (req, res) => {
+   
     const { 
         idCliente, 
         productoId, 
@@ -928,7 +929,7 @@ router.post('/guardar_recordatorio', (req, res) => {
         telefono, 
         fechaHora 
     } = req.body; // Recibimos los datos del formulario
-
+    console.log("DATOS PARA RECORDATORIO \n", req.body);
     // Guardar el recordatorio en la tabla 'recordatorios'
     const sqlInsertRecordatorio = `
     INSERT INTO recordatorios (ID_Cliente, ID_Producto, Telefono, Tiempo)
@@ -937,7 +938,12 @@ router.post('/guardar_recordatorio', (req, res) => {
 
     connection.query(sqlInsertRecordatorio, [idCliente, productoId, telefono, fechaHora], (error, resultadoRecordatorio) => {
         if (error) {
+            console.log("Insertado erroneo ");
             return res.status(500).send('Error al guardar el recordatorio');
+            
+        }
+        else{
+            console.log("Insertado correctamente tabla recordatorio");
         }
 
         // Ahora guardamos los detalles del recordatorio en la tabla 'detalle_recordatorio'
