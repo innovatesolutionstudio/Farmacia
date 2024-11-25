@@ -74,7 +74,14 @@
                     <input type="text" id="direccion" name="direccion" required>
                 
                     <label for="telefono">Celular:</label>
-                    <input type="text" id="telefono" name="telefono" value="<%= cliente ? cliente.Telefono : '' %>" required>
+                    <input 
+                        type="text" 
+                        id="telefono" 
+                        name="telefono" 
+                        value="<%= cliente ? cliente.Telefono : '' %>" 
+                        required 
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                    >
                 
                     <label for="notas">Notas:</label>
                     <textarea id="notas" name="notas" rows="3" placeholder="Dejar en la recepción del edificio, tercer piso."></textarea>
@@ -350,9 +357,17 @@
 });
     </script>
     <script>
-        // Función para validar en tiempo real que no se ingresen números en nombre y apellido
+       // Función para validar en tiempo real que no se ingresen números en nombre y apellido (máximo 50 caracteres)
 function soloLetras(e) {
+    const input = e.target;
     const char = String.fromCharCode(e.keyCode || e.which);
+    
+    // Limitar a 50 caracteres
+    if (input.value.length >= 25) {
+        e.preventDefault();
+        return false;
+    }
+    
     // Permite letras, espacios y algunos caracteres especiales para nombres compuestos
     if (!/^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s']$/.test(char)) {
         e.preventDefault();
@@ -361,14 +376,33 @@ function soloLetras(e) {
     return true;
 }
 
-// Función para validar en tiempo real que no se ingresen letras en CI/NIT
+// Función para validar en tiempo real que no se ingresen letras en CI/NIT (máximo 15 caracteres)
 function soloNumeros(e) {
+    const input = e.target;
     const char = String.fromCharCode(e.keyCode || e.which);
+    
+    // Limitar a 15 caracteres
+    if (input.value.length >= 15) {
+        e.preventDefault();
+        return false;
+    }
+    
     if (!/^\d$/.test(char)) {
         e.preventDefault();
         return false;
     }
     return true;
+}
+
+// Función para validar número telefónico (máximo 11 caracteres)
+function validarSoloNumeros(input) {
+    // Reemplaza cualquier carácter que no sea un número
+    input.value = input.value.replace(/[^0-9]/g, '');
+    
+    // Limitar a 11 caracteres
+    if (input.value.length > 11) {
+        input.value = input.value.slice(0, 11);
+    }
 }
 
 // Función para validar el formulario completo
