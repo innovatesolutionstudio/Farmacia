@@ -10,7 +10,7 @@ router.get("/cajas", (req, res) => {
     const sucursalID = req.session.ID_Sucursal;
 
     connection.query(
-      "SELECT Nombre FROM sucursales WHERE ID_Sucursal = ?",
+      "SELECT Nombre FROM sucursales WHERE ID_Sucursal = ? AND Figura = 1",
       [sucursalID],
       (error, results) => {
         if (error) {
@@ -108,6 +108,9 @@ router.get("/cajas", (req, res) => {
     res.render("./paginas/logout");
   }
 });
+
+
+
 
 // Ruta para abrir una caja
 router.post("/abrir-caja", (req, res) => {

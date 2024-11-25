@@ -16,7 +16,7 @@ router.get('/Rcajas', (req, res) => {
             WHERE c.Figura = 1
         `;
 
-        const querySucursales = `SELECT ID_Sucursal, Nombre FROM sucursales`;
+        const querySucursales = `SELECT ID_Sucursal, Nombre FROM sucursales WHERE Figura = 1`;
 
         coneccion.query(queryCajas, (error, cajas) => {
             if (error) {
@@ -51,7 +51,7 @@ router.get('/Rcajas-P', (req, res) => {
             WHERE c.Figura = 2
         `;
 
-        const querySucursales = `SELECT ID_Sucursal, Nombre FROM sucursales`;
+        const querySucursales = `SELECT ID_Sucursal, Nombre FROM sucursales WHERE Figura = 1`;
 
         coneccion.query(queryCajas, (error, cajas) => {
             if (error) {
@@ -77,6 +77,35 @@ router.get('/Rcajas-P', (req, res) => {
 });
 
 
+router.post('/Rcajas/verificar-duplicado', (req, res) => {
+    const { Codigo, ID_Caja } = req.body;
+  
+    try {
+      const query = ID_Caja
+        ? 'SELECT COUNT(*) AS duplicado FROM cajas WHERE Codigo = ? AND ID_Caja != ?'
+        : 'SELECT COUNT(*) AS duplicado FROM cajas WHERE Codigo = ?';
+  
+      const params = ID_Caja ? [Codigo, ID_Caja] : [Codigo];
+  
+      // Realizamos la consulta
+      coneccion.query(query, params, (err, results) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).send('Error al verificar duplicado.');
+        }
+  
+        // Verificamos si existe un duplicado
+        const duplicado = results[0].duplicado > 0;
+  
+        // Devolvemos la respuesta
+        res.json({ duplicado });
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Error al verificar duplicado.');
+    }
+  });
+  
 
 // Ruta para operaciones CRUD de cajas
 router.post('/Rcajas/:id?', (req, res) => {

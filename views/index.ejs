@@ -490,8 +490,9 @@
                 style="width: 400px; height: 500px; background-color: #fff; border-radius: 10px; padding: 20px;">
 
                 <h2
-                    style="text-align: center; font-size: 18px; margin-bottom: 20px;">FARMACIA
-                    SAN JUAN DE DIOS</h2>
+                    style="text-align: center; font-size: 18px; ">FARMACIA</h2>
+                <h2
+                    style="text-align: center; font-size: 18px; "> <%= NombreSucursal %></h2>
                 <div class="empleado-info" style="text-align: center;">
                     <img id="fotoEmpleado"
                         src="fotos/img_empleados/<%= Fotografia %>"
@@ -552,36 +553,53 @@
             <script src="resources/js/chart_custom_style1.js"></script>
             <script>
                 function activarMicrofono() {
-    if (!('webkitSpeechRecognition' in window)) {
-        alert('Tu navegador no soporta reconocimiento de voz.');
-        return;
-    }
+                if (!('webkitSpeechRecognition' in window)) {
+                    alert('Tu navegador no soporta reconocimiento de voz.');
+                    return;
+                }
 
-    const recognition = new webkitSpeechRecognition();
-    recognition.lang = 'es-ES'; // Idioma español
-    recognition.interimResults = false;
+                const recognition = new webkitSpeechRecognition();
+                recognition.lang = 'es-ES'; // Idioma español
+                recognition.interimResults = false;
 
-    recognition.onstart = () => {
-        console.log('Reconocimiento de voz iniciado');
-    };
+                recognition.onstart = () => {
+                    console.log('Reconocimiento de voz iniciado');
+                };
 
-    recognition.onerror = (event) => {
-        console.error('Error en el reconocimiento:', event.error);
-    };
+                recognition.onerror = (event) => {
+                    console.error('Error en el reconocimiento:', event.error);
+                };
 
-    recognition.onresult = (event) => {
-        const resultado = event.results[0][0].transcript;
-        console.log('Resultado:', resultado);
-        document.getElementById('searchInput').value = resultado; // Coloca el texto reconocido en el buscador
-    };
+                recognition.onresult = (event) => {
+                    const resultado = event.results[0][0].transcript;
+                    console.log('Resultado:', resultado);
+                    document.getElementById('searchInput').value = resultado; // Coloca el texto reconocido en el buscador
+                };
 
-    recognition.onend = () => {
-        console.log('Reconocimiento de voz terminado');
-    };
+                recognition.onend = () => {
+                    console.log('Reconocimiento de voz terminado');
+                };
 
-    recognition.start();
-}
+                recognition.start();
+            }
 
+            </script>
+             <script>
+                document.getElementById('sidebarCollapse').addEventListener('click', function () {
+                    const icon = this.querySelector('i');
+        
+                    // Cambiar el ícono
+                    if (icon.classList.contains('fa-angle-left')) {
+                        icon.classList.remove('fa-angle-left');
+                        icon.classList.add('fa-angle-right');
+                    } else {
+                        icon.classList.remove('fa-angle-right');
+                        icon.classList.add('fa-angle-left');
+                    }
+        
+                    // Aquí puedes añadir funcionalidad extra, como ocultar/mostrar un sidebar
+                    console.log('Botón clickeado'); // Para depuración
+                });
             </script>
         </body>
     </html>

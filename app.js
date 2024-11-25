@@ -61,7 +61,7 @@ const reporte_compras_GRoutes = require("./routes/reporte_compras_G");
 const reporte_Productos_VRoutes = require("./routes/reporte_Productos_V");
 const reporte_ventasRoutes = require("./routes/reporte_ventas");
 const reporte_proveedoresRoutes = require("./routes/reporte_proveedores");
-
+const reporte_pedidos = require("./routes/reporte_pedidos")
 //impresiones
 const impre_ciudades = require("./routes/impre_ciudades");
 const impre_paises = require("./routes/impre_paises");
@@ -275,6 +275,7 @@ app.use(reporte_compras_GRoutes);
 app.use(reporte_Productos_VRoutes);
 app.use(reporte_ventasRoutes);
 app.use(reporte_proveedoresRoutes);
+app.use(reporte_pedidos);
 //impresiones
 app.use(impre_ciudades);
 app.use(impre_paises);

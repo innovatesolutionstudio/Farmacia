@@ -269,30 +269,71 @@ const obtenerProveedorMasCompradoS = (ID_Sucursal) => {
 // funcion de consulta para hacer la consulta y recuperar datos de - tabla 1- ventas del mes
 const obtenerVentasDelMesGraficoM = (ID_Sucursal) => {
   return new Promise((resolve, reject) => {
+    // Configurar el idioma de MySQL
+    conexion.query("SET lc_time_names = 'es_ES';", (err) => {
+      if (err) return reject(err);
+
+      const sql = `
+        SELECT 
+            DATE_FORMAT(Fecha_Venta, '%d-%m-%Y') AS Fecha,
+            DAYNAME(Fecha_Venta) AS Dia,
+            SUM(Total_Venta) AS Total_Venta
+        FROM ventas
+        WHERE MONTH(Fecha_Venta) = MONTH(CURRENT_DATE()) 
+            AND YEAR(Fecha_Venta) = YEAR(CURRENT_DATE())
+            AND ID_Sucursal = ?
+        GROUP BY DATE_FORMAT(Fecha_Venta, '%d-%m-%Y'), DAYNAME(Fecha_Venta)
+        ORDER BY Fecha;
+      `;
+
+      conexion.query(sql, [ID_Sucursal], (err, results) => {
+        if (err) return reject(err);
+        if (results.length === 0) {
+          return resolve([]); // Devolver un arreglo vacío si no hay resultados
+        }
+        resolve(results);
+      });
+    });
+  });
+};
+
+
+// funcion de consulta para hacer la consulta y recuperar datos de - tabla  2-  clientes vendidos en el mes
+const obtenerClientesDelMesGraficoM = (ID_Sucursal) => {
+  return new Promise((resolve, reject) => {
+    // Configurar el idioma español para los días de la semana
+    const setLanguage = "SET lc_time_names = 'es_ES';";
+
     const sql = `
       SELECT 
         DATE(Fecha_Venta) AS Fecha,
-        DAY(Fecha_Venta) AS Dia,
-        SUM(Total_Venta) AS Total_Venta,
+        DAYNAME(Fecha_Venta) AS Dia,
         COUNT(DISTINCT ID_Cliente) AS Clientes
       FROM ventas
       WHERE MONTH(Fecha_Venta) = MONTH(CURRENT_DATE()) 
         AND YEAR(Fecha_Venta) = YEAR(CURRENT_DATE())
         AND ID_Sucursal = ?
-      GROUP BY DATE(Fecha_Venta), DAY(Fecha_Venta)
+      GROUP BY DATE(Fecha_Venta), DAYNAME(Fecha_Venta)
       ORDER BY Fecha;
     `;
 
-    conexion.query(sql, [ID_Sucursal], (err, results) => {
+    // Ejecutar primero el comando para configurar el idioma
+    conexion.query(setLanguage, (err) => {
       if (err) return reject(err);
-      // Verificar si hay resultados
-      if (results.length === 0) {
-        return resolve([]); // Devolver un arreglo vacío si no hay resultados
-      }
-      resolve(results);
+
+      // Luego ejecutar la consulta principal
+      conexion.query(sql, [ID_Sucursal], (err, results) => {
+        if (err) return reject(err);
+        // Verificar si hay resultados
+        if (results.length === 0) {
+          return resolve([]); // Devolver un arreglo vacío si no hay resultados
+        }
+        resolve(results);
+      });
     });
   });
 };
+
 
 // funcion de consulta para hacer la consulta y recuperar datos de - tabla  3-  las compras del mes
 const obtenerDetallesComprasMes = (ID_Sucursal) => {
@@ -457,6 +498,8 @@ const obtenerPedidosAnoActual = (ID_Sucursal) => {
 };
 
 
+
+
 router.get("/datos", async (req, res) => {
   if (req.session.loggedin) {
     const { ID_Sucursal } = req.session;
@@ -479,6 +522,7 @@ router.get("/datos", async (req, res) => {
         obtenerProveedorMasComprado,
         ventasMesGrafico,
         ObtenerTablaInventarios,
+        obtenerClientesDelMesGraficoMs,
         ventasMesActual,
         productosVendidosMes,
         obtenerTotalComprasC,
@@ -500,6 +544,7 @@ router.get("/datos", async (req, res) => {
         obtenerProveedorMasCompradoS(ID_Sucursal),
         obtenerVentasDelMesGraficoM(ID_Sucursal),
         ObtenerTablaInventario(ID_Sucursal),
+        obtenerClientesDelMesGraficoM(ID_Sucursal),
         obtenerVentasMesActual(ID_Sucursal),
         obtenerProductosVendidosMes(ID_Sucursal),
         obtenerTotalCompras(ID_Sucursal),
@@ -522,6 +567,7 @@ router.get("/datos", async (req, res) => {
         obtenerProveedorMasComprado,
         ventasMesGrafico,
         ObtenerTablaInventarios,
+        obtenerClientesDelMesGraficoMs,
         ventasMesActual,
         productosVendidosMes,
         obtenerTotalComprasC,

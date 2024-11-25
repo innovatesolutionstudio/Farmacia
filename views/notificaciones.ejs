@@ -52,59 +52,59 @@
         <div class="no-notifications">No hay usuarios bloqueados pendientes.</div>
       <% } %>
       
-
-    <script>
+      <script>
         function actualizarGradoA0(button) {
-            const correo = button.getAttribute('data-correo'); // Obtener el correo del botón
-
-            Swal.fire({
-                title: 'Confirmar',
-                text: `¿Estás seguro de que deseas desbloquear al usuario con correo ${correo}?`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, desbloquear',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#01a768',
-                cancelButtonColor: '#d33'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Enviar solicitud de desbloqueo
-                    fetch('/notificaciones/desbloquear', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ correo: correo })
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Error al desbloquear el usuario');
-                            }
-                            return response.json();
-                        })
-                        .then(() => {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Desbloqueado',
-                                text: `El usuario con correo ${correo} ha sido desbloqueado.`,
-                                confirmButtonColor: '#01a768'
-                            }).then(() => {
-                                button.parentElement.parentElement.remove(); // Eliminar la tarjeta de usuario
-                            });
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Hubo un problema al desbloquear el usuario.',
-                                confirmButtonColor: '#d33'
-                            });
-                        });
+          const correo = button.getAttribute('data-correo');
+      
+          Swal.fire({
+            title: 'Confirmar',
+            text: `¿Estás seguro de que deseas desbloquear al usuario con correo ${correo}?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, desbloquear',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#01a768',
+            cancelButtonColor: '#d33'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Enviar solicitud de desbloqueo
+              fetch('/notificaciones/desbloquear', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ correo: correo })
+              })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Error al desbloquear el usuario');
                 }
-            });
+                return response.json();
+              })
+              .then(data => {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Desbloqueado',
+                  text: data.message,
+                  confirmButtonColor: '#01a768'
+                }).then(() => {
+                  button.parentElement.parentElement.remove(); // Eliminar la tarjeta de usuario
+                });
+              })
+              .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'Hubo un problema al desbloquear el usuario.',
+                  confirmButtonColor: '#d33'
+                });
+              });
+            }
+          });
         }
-    </script>
+      </script>
+      
 </body>
 
 </html>

@@ -32,8 +32,8 @@
           <option value="excel">Exportar CSV</option>
           <option value="papeleria">Papelería</option>
         </select>
-        <a type="submit" href="#" class="btn btnCrear btn-danger"
-          style="font-size: 20px;">Añadir Nueva Caja</a>
+        <a type="submit" href="#" class="btn btnCrear btn-conft"
+          style="font-size: 20px;">+ Añadir Nueva Caja</a>
       </div>
     </div>
 
@@ -83,212 +83,163 @@
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
 
-    <script>
-    $(document).ready(function () {
-      let url = "/Rcajas/";
-
-      let tablaCajas = $("#tablaCajas").DataTable({
-        json: { url: url, dataSrc: "" },
-        columns: [
-          { data: "ID_Caja" },
-          { data: "Codigo" },
-          { data: "NombreSucursal" },
-          { data: "Estado" },
-          {
-            defaultContent: `
-              <td style="width: 200px;">
-                <select class="form-select acciones-select">
-                  <option selected disabled>Selecciona una acción</option>
-                  <option value="editar">Editar</option>
-                  <option value="eliminar">Eliminar</option>
-                </select>
-              </td>`
-          },
-        ],
-        language: { url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json" }
-      });
-
-      // Exportación de datos
-      $("#opciones").change(function () {
-        let selectedOption = $(this).val();
-        if (selectedOption === "excel") {
-          exportToExcel(); // Llama a la función para exportar a CSV
-        } else if (selectedOption === "papeleria") {
-          window.location.href = "/Rcajas-P"; // Redirige a la página de papelería
-        }
-      });
-
-      function exportToExcel() {
-        let wb = XLSX.utils.book_new();
-        let wsData = [];
-        $("#tablaCajas tbody tr").each(function () {
-          let rowData = [];
-          $(this).find("td").each(function () {
-            rowData.push($(this).text().trim());
-          });
-          wsData.push(rowData);
-        });
-        let ws = XLSX.utils.aoa_to_sheet([["ID_Caja", "Código", "Sucursal", "Estado"]].concat(wsData));
-        XLSX.utils.book_append_sheet(wb, ws, "Cajas");
-        XLSX.writeFile(wb, "cajas.xlsx");
-      }
-
-      $('.btnCrear').click(function () {
-    Swal.fire({
-        title: 'Crear Caja',
-        html: `
-            <div class="form-container">
-                <label for="Codigo" class="col-form-label">Código</label>
-                <input type="text" id="Codigo" class="form-input swal2-input" 
-                       maxlength="10" required oninput="this.value = this.value.trimStart()" placeholder="Ingrese el código">
-                
-                <label for="ID_Sucursal" class="col-form-label">Sucursal</label>
-                <select id="ID_Sucursal" class="form-select-form swal2-input" required>
+      <script>
+        $(document).ready(function () {
+          let url = "/Rcajas/";
+        
+          // Crear nueva caja
+          $('.btnCrear').click(function () {
+            Swal.fire({
+              title: 'Crear Caja',
+              html: `
+                <div class="form-container">
+                  <label for="Codigo" class="col-form-label">Código</label>
+                  <input type="text" id="Codigo" class="form-input swal2-input" 
+                         maxlength="20" required oninput="this.value = this.value.trimStart()" placeholder="Ingrese el código">
+                  
+                  <label for="ID_Sucursal" class="col-form-label">Sucursal</label>
+                  <select id="ID_Sucursal" class="form-select-form swal2-input" required>
                     <option value="">Selecciona una sucursal</option>
                     <% sucursales.forEach(sucursal => { %>
-                        <option value="<%= sucursal.ID_Sucursal %>"><%= sucursal.Nombre %></option>
+                      <option value="<%= sucursal.ID_Sucursal %>"><%= sucursal.Nombre %></option>
                     <% }); %>
-                </select>
-            </div>
-        `,
-        showCancelButton: true,
-        confirmButtonText: 'Guardar',
-        cancelButtonText: 'Cancelar',
-
-        preConfirm: () => {
-            // Validación de campos
-            const codigo = $('#Codigo').val().trim();
-            const sucursal = $('#ID_Sucursal').val();
-
-            // Verificar campos vacíos
-            if (!codigo || !sucursal) {
-                Swal.showValidationMessage(`Por favor, completa todos los campos.`);
-                return false;
-            }
-
-            // Validación de formato para el código (si aplica alguna restricción específica)
-            if (!/^[A-Za-z0-9]+$/.test(codigo)) {
-                Swal.showValidationMessage(`El código solo puede contener letras y números.`);
-                return false;
-            }
-
-            return {
-                Codigo: codigo,
-                ID_Sucursal: sucursal
-            };
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: { ...result.value, opcion: 'crear' },
-                success: function () {
-                    Swal.fire('¡Guardado!', 'Caja creada con éxito', 'success').then(() => {
-                        window.location.reload(); // Recarga la página después de guardar
-                    });
+                  </select>
+                </div>
+              `,
+              showCancelButton: true,
+              confirmButtonText: 'Guardar',
+              cancelButtonText: 'Cancelar',
+              preConfirm: () => {
+                const codigo = $('#Codigo').val().trim();
+                const sucursal = $('#ID_Sucursal').val();
+        
+                // Validar campos vacíos
+                if (!codigo || !sucursal) {
+                  Swal.showValidationMessage(`Por favor, completa todos los campos.`);
+                  return false;
                 }
+        
+                // Validar formato del código (letras, números, -, _)
+                if (!/^[A-Za-z0-9_-]+$/.test(codigo)) {
+                  Swal.showValidationMessage(`El código solo puede contener letras, números, guiones (-) y guiones bajos (_).`);
+                  return false;
+                }
+        
+                // Verificar duplicado del código mediante AJAX
+                return $.ajax({
+                  type: 'POST',
+                  url: url + 'verificar-duplicado',
+                  data: { Codigo: codigo },
+                  success: function (response) {
+                    if (response.duplicado) {
+                      Swal.showValidationMessage(`El código ya está registrado. Por favor, elige otro.`);
+                      return false;
+                    }
+                  },
+                  error: function () {
+                    Swal.showValidationMessage(`Error al verificar el código. Inténtalo nuevamente.`);
+                    return false;
+                  }
+                });
+              }
+            }).then((result) => {
+              if (result.isConfirmed) {
+                $.ajax({
+                  type: 'POST',
+                  url: url,
+                  data: { ...result.value, opcion: 'crear' },
+                  success: function () {
+                    Swal.fire('¡Guardado!', 'Caja creada con éxito', 'success').then(() => {
+                      window.location.reload(); // Recarga la página después de guardar
+                    });
+                  }
+                });
+              }
             });
-        }
-    });
-});
-
-
-$('#tablaCajas tbody').on('change', '.acciones-select', function () {
-    const data = tablaCajas.row($(this).parents('tr')).data();
-    const accion = $(this).val();
-
-    if (accion === 'editar') {
-        Swal.fire({
-            title: 'Editar Caja',
-            html: `
-                <div class="form-container">
+          });
+        
+          // Editar caja
+          $('#tablaCajas tbody').on('change', '.acciones-select', function () {
+            const data = tablaCajas.row($(this).parents('tr')).data();
+            const accion = $(this).val();
+        
+            if (accion === 'editar') {
+              Swal.fire({
+                title: 'Editar Caja',
+                html: `
+                  <div class="form-container">
                     <input type="text" id="ID_Caja" hidden value="${data.ID_Caja}" />
                     
                     <label for="Codigo" class="col-form-label">Código</label>
                     <input type="text" id="Codigo" class="form-input swal2-input" value="${data.Codigo}"
-                    maxlength="10" required oninput="this.value = this.value.trimStart()" placeholder="Ingrese el código">
-                    <p style="color: red;">sucursal: ${data.NombreSucursal}}</p>
+                           maxlength="20" required oninput="this.value = this.value.trimStart()" placeholder="Ingrese el código">
                     
                     <label for="ID_Sucursal" class="col-form-label">Sucursal</label>
                     <select id="ID_Sucursal" class="form-select-form swal2-input" required>
-                        <option value="">Selecciona una sucursal</option>
-                        <% sucursales.forEach(sucursal => { %>
-                            <option value="<%= sucursal.ID_Sucursal %>"><%= sucursal.Nombre %></option>
-                        <% }); %>
+                      <option value="">Selecciona una sucursal</option>
+                      <% sucursales.forEach(sucursal => { %>
+                        <option value="<%= sucursal.ID_Sucursal %>"><%= sucursal.Nombre %></option>
+                      <% }); %>
                     </select>
-                </div>
-            `,
-            showCancelButton: true,
-            confirmButtonText: 'Guardar',
-            cancelButtonText: 'Cancelar',
-            didOpen: () => {
-                // Preseleccionar la sucursal correcta
-                $('#ID_Sucursal').val(data.ID_Sucursal);
-            },
-            preConfirm: () => {
-                // Validación de campos
-                const codigo = $('#Codigo').val().trim();
-                const sucursal = $('#ID_Sucursal').val();
-
-                // Verificar campos vacíos
-                if (!codigo || !sucursal) {
+                  </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                didOpen: () => {
+                  $('#ID_Sucursal').val(data.ID_Sucursal); // Preseleccionar sucursal
+                },
+                preConfirm: () => {
+                  const codigo = $('#Codigo').val().trim();
+                  const sucursal = $('#ID_Sucursal').val();
+        
+                  // Validar campos vacíos
+                  if (!codigo || !sucursal) {
                     Swal.showValidationMessage(`Por favor, completa todos los campos.`);
                     return false;
-                }
-
-                // Validación de formato para el código (solo letras y números)
-                if (!/^[A-Za-z0-9]+$/.test(codigo)) {
-                    Swal.showValidationMessage(`El código solo puede contener letras y números.`);
+                  }
+        
+                  // Validar formato del código
+                  if (!/^[A-Za-z0-9_-]+$/.test(codigo)) {
+                    Swal.showValidationMessage(`El código solo puede contener letras, números, guiones (-) y guiones bajos (_).`);
                     return false;
+                  }
+        
+                  // Verificar duplicado del código
+                  return $.ajax({
+                    type: 'POST',
+                    url: url + 'verificar-duplicado',
+                    data: { Codigo: codigo, ID_Caja: data.ID_Caja },
+                    success: function (response) {
+                      if (response.duplicado) {
+                        Swal.showValidationMessage(`El código ya está registrado. Por favor, elige otro.`);
+                        return false;
+                      }
+                    },
+                    error: function () {
+                      Swal.showValidationMessage(`Error al verificar el código. Inténtalo nuevamente.`);
+                      return false;
+                    }
+                  });
                 }
-
-                return {
-                    ID_Caja: $('#ID_Caja').val(),
-                    Codigo: codigo,
-                    ID_Sucursal: sucursal
-                };
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  $.ajax({
                     type: 'POST',
                     url: url + data.ID_Caja,
                     data: { ...result.value, opcion: 'editar' },
                     success: function () {
-                        Swal.fire('¡Guardado!', 'Caja editada con éxito', 'success').then(() => {
-                            window.location.reload(); // Recarga la página después de guardar
-                        });
+                      Swal.fire('¡Guardado!', 'Caja editada con éxito', 'success').then(() => {
+                        window.location.reload(); // Recarga la página después de guardar
+                      });
                     }
-                });
+                  });
+                }
+              });
             }
+          });
         });
-    } else if (accion === 'eliminar') {
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "¡No podrás revertir esto!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    type: 'POST',
-                    url: `${url}${data.ID_Caja}`,
-                    data: { opcion: 'eliminar' },
-                    success: function () {
-                        Swal.fire('¡Eliminado!', 'La caja ha sido eliminada.', 'success').then(() => {
-                            window.location.reload(); // Recarga la página después de eliminar
-                        });
-                    }
-                });
-            }
-        });
-    }
-});
-
-    });
-  </script>
+        </script>
+        
   </body>
 </html>

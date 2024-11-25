@@ -19,9 +19,9 @@ router.get('/sucursales', (req, res) => {
             WHERE s.Figura = 1
         `;
 
-        const queryCiudades = `SELECT ID_Ciudad, Nombre FROM ciudades`;
-        const queryDepartamentos = `SELECT ID_Departamento, Nombre FROM departamentos`;
-        const queryPaises = `SELECT ID_Pais, Nombre FROM paises`;
+        const queryCiudades = `SELECT ID_Ciudad, Nombre FROM ciudades WHERE Figura = 1`;
+        const queryDepartamentos = `SELECT ID_Departamento, Nombre FROM departamentos WHERE Figura = 1`;
+        const queryPaises = `SELECT ID_Pais, Nombre FROM paises WHERE Figura = 1`;
 
         // Ejecutar las consultas de manera paralela para obtener todos los datos
         coneccion.query(querySucursales, (error, sucursales) => {
@@ -110,9 +110,9 @@ router.get('/sucursalesP', (req, res) => {
             WHERE s.Figura = 2
         `;
 
-        const queryCiudades = `SELECT ID_Ciudad, Nombre FROM ciudades`;
-        const queryDepartamentos = `SELECT ID_Departamento, Nombre FROM departamentos`;
-        const queryPaises = `SELECT ID_Pais, Nombre FROM paises`;
+        const queryCiudades = `SELECT ID_Ciudad, Nombre FROM ciudades WHERE Figura = 1`;
+        const queryDepartamentos = `SELECT ID_Departamento, Nombre FROM departamentos WHERE Figura = 1`;
+        const queryPaises = `SELECT ID_Pais, Nombre FROM paises WHERE Figura = 1`;
 
         // Ejecutar las consultas de manera paralela para obtener todos los datos
         coneccion.query(querySucursales, (error, sucursales) => {
@@ -171,7 +171,7 @@ router.post('/sucursales/:id?', (req, res) => {
                 ID_Departamento: req.body.ID_Departamento,
                 ID_Pais: req.body.ID_Pais
             };
-            coneccion.query('INSERT INTO sucursales SET ?', nuevaSucursal, (error, result) => {
+            coneccion.query('INSERT INTO sucursales SET ?, Figura = 1', nuevaSucursal, (error, result) => {
                 if (error) {
                     console.error('Error al crear una nueva sucursal:', error);
                     res.status(500).send('Error al crear una nueva sucursal');

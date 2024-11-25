@@ -113,6 +113,9 @@ body {
   justify-content: center;
   text-decoration: none; /* Quita la subrayado */
 }
+
+
+
 .btn-conft:hover {
   background-color: #00897b; /* Color de fondo rojo */
 }

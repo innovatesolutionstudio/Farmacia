@@ -55,6 +55,7 @@
           </div>
           <input type="submit" class="btn" value="Notificar" />
         </form>
+      
         
       </div>
     </div>
@@ -88,41 +89,41 @@
       </div>
     </div>
   </div>
-
   <script>
     document.getElementById('notificacion-form').addEventListener('submit', function(event) {
       event.preventDefault(); // Evitar el envío del formulario
-  
-      const correo = this.correo.value; // Obtener el valor del campo de correo
-  
-      // Validar el correo con la base de datos
-      fetch('/login/validar-correo', {
+
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+
+      // Enviar los datos al servidor
+      fetch('/notificar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ correo }) // Convertir el objeto a una cadena JSON
+        body: JSON.stringify(data)
       })
       .then(response => response.json())
       .then(data => {
-        if (data.exists) {
-          this.submit(); // Enviar el formulario si el correo existe
-        } else {
-          Swal.fire({
-            title: "Correo no registrado",
-            text: "El correo ingresado no está registrado en el sistema.",
-            icon: "error",
-            confirmButtonText: "Aceptar"
-          });
-        }
+        Swal.fire({
+          title: data.alertTitle,
+          text: data.alertMessage,
+          icon: data.alertIcon,
+          confirmButtonText: 'Aceptar'
+        }).then(() => {
+          if (data.ruta) {
+            window.location.href = data.ruta;
+          }
+        });
       })
       .catch(error => {
-        console.error("Error:", error);
+        console.error('Error:', error);
         Swal.fire({
-          title: "Error",
-          text: "Ocurrió un problema al validar el correo.",
-          icon: "error",
-          confirmButtonText: "Aceptar"
+          title: 'Error',
+          text: 'Ocurrió un problema al enviar la notificación.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
         });
       });
     });

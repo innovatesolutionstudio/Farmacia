@@ -24,7 +24,7 @@ router.get("/ventas", function (req, res) {
 
     // Si las fechas están presentes, agregar la cláusula WHERE
     if (fechaInicio && fechaFin) {
-      sql += ` AND v.Fecha_Venta BETWEEN ? AND ? ORDER BY v.Fecha_Venta DESC`;
+      sql += ` AND v.Fecha_Venta BETWEEN ? AND ? ORDER BY v.Fecha_Venta DESC `;
     } else {
       sql += ` ORDER BY v.Fecha_Venta DESC LIMIT 200`;
     }
