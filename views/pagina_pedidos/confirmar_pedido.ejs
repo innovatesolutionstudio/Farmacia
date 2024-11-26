@@ -62,29 +62,31 @@
                 <form action="/pagina_pedidos/finalizar_pedido" method="POST" id="pedido-form">
                     <input type="hidden" id="carrito" name="carrito">
                     <label for="nombre">Nombre:</label>
-                    <input type="text" id="nombre" name="nombre" value="<%= cliente ? cliente.Nombre : '' %>" required>
+                    <input type="text" id="nombre" name="nombre" value="<%= cliente ? cliente.Nombre : '' %>" required maxlength="30" minlength="3">
                 
                     <label for="apellido">Apellido:</label>
-                    <input type="text" id="apellido" name="apellido" value="<%= cliente ? cliente.Apellido : '' %>" required>
+                    <input type="text" id="apellido" name="apellido" value="<%= cliente ? cliente.Apellido : '' %>" required maxlength="30" minlength="3">
                 
                     <label for="ci_nit">CI/NIT:</label>
-                    <input type="text" id="ci_nit" name="ci_nit" value="<%= cliente ? cliente.CI : '' %>" required>
+                    <input type="text" id="ci_nit" name="ci_nit" value="<%= cliente ? cliente.CI : '' %>" required minlength="7" maxlength="12" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 
                     <label for="direccion">Dirección de Entrga:</label>
-                    <input type="text" id="direccion" name="direccion" required>
+                    <input type="text" id="direccion" name="direccion" required maxlength="50" minlength="1">
                 
                     <label for="telefono">Celular:</label>
                     <input 
+                        minlength="8"
                         type="text" 
                         id="telefono" 
                         name="telefono" 
                         value="<%= cliente ? cliente.Telefono : '' %>" 
                         required 
                         oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                        maxlength="12"
                     >
                 
                     <label for="notas">Notas:</label>
-                    <textarea id="notas" name="notas" rows="3" placeholder="Dejar en la recepción del edificio, tercer piso."></textarea>
+                    <textarea id="notas" name="notas" rows="3" placeholder="Dejar en la recepción del edificio, tercer piso." required></textarea>
                 
                     <label for="distrito">Distrito:</label>
                     <select id="distrito" name="distrito" class="district-select" required onchange="actualizarTotal()">
@@ -356,191 +358,6 @@
     }
 });
     </script>
-    <script>
-       // Función para validar en tiempo real que no se ingresen números en nombre y apellido (máximo 50 caracteres)
-function soloLetras(e) {
-    const input = e.target;
-    const char = String.fromCharCode(e.keyCode || e.which);
-    
-    // Limitar a 50 caracteres
-    if (input.value.length >= 25) {
-        e.preventDefault();
-        return false;
-    }
-    
-    // Permite letras, espacios y algunos caracteres especiales para nombres compuestos
-    if (!/^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s']$/.test(char)) {
-        e.preventDefault();
-        return false;
-    }
-    return true;
-}
 
-// Función para validar en tiempo real que no se ingresen letras en CI/NIT (máximo 15 caracteres)
-function soloNumeros(e) {
-    const input = e.target;
-    const char = String.fromCharCode(e.keyCode || e.which);
-    
-    // Limitar a 15 caracteres
-    if (input.value.length >= 15) {
-        e.preventDefault();
-        return false;
-    }
-    
-    if (!/^\d$/.test(char)) {
-        e.preventDefault();
-        return false;
-    }
-    return true;
-}
-
-// Función para validar número telefónico (máximo 11 caracteres)
-function validarSoloNumeros(input) {
-    // Reemplaza cualquier carácter que no sea un número
-    input.value = input.value.replace(/[^0-9]/g, '');
-    
-    // Limitar a 11 caracteres
-    if (input.value.length > 11) {
-        input.value = input.value.slice(0, 11);
-    }
-}
-
-// Función para validar el formulario completo
-function validarFormulario(e) {
-    e.preventDefault();
-    let errores = [];
-
-    // Validar Nombre
-    const nombre = document.getElementById('nombre').value.trim();
-    if (nombre.length < 2) {
-        errores.push('El nombre debe tener al menos 2 caracteres');
-    }
-    if (!/^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s']+$/.test(nombre)) {
-        errores.push('El nombre solo debe contener letras');
-    }
-
-    // Validar Apellido
-    const apellido = document.getElementById('apellido').value.trim();
-    if (apellido.length < 2) {
-        errores.push('El apellido debe tener al menos 2 caracteres');
-    }
-    if (!/^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s']+$/.test(apellido)) {
-        errores.push('El apellido solo debe contener letras');
-    }
-
-    // Validar CI/NIT
-    const ciNit = document.getElementById('ci_nit').value.trim();
-    if (!/^\d{5,12}$/.test(ciNit)) {
-        errores.push('El CI/NIT debe contener entre 5 y 12 números (sin letras)');
-    }
-
-    // Validar Dirección
-    const direccion = document.getElementById('direccion').value.trim();
-    if (direccion.length < 5) {
-        errores.push('La dirección debe tener al menos 5 caracteres');
-    }
-
-    // Validar Teléfono (formato Bolivia)
-    const telefono = document.getElementById('telefono').value.trim();
-    if (!/^[67]\d{7}$/.test(telefono)) {
-        errores.push('El número de celular debe comenzar con 6 o 7 y tener 8 dígitos en total');
-    }
-
-    // Validar Distrito
-    const distrito = document.getElementById('distrito').value;
-    if (!distrito) {
-        errores.push('Debe seleccionar un distrito');
-    }
-
-    // Validar que el carrito no esté vacío
-    const carrito = document.getElementById('carrito').value;
-    if (!carrito || carrito === '[]') {
-        errores.push('El carrito no puede estar vacío');
-    }
-
-    // Si hay errores, mostrarlos
-    if (errores.length > 0) {
-        mostrarErrores(errores);
-        return false;
-    }
-
-    // Si todo está correcto, enviar el formulario
-    document.getElementById('pedido-form').submit();
-    return true;
-}
-
-// Función para mostrar errores
-function mostrarErrores(errores) {
-    // Eliminar alertas previas si existen
-    const alertaPrevia = document.querySelector('.alerta-errores');
-    if (alertaPrevia) {
-        alertaPrevia.remove();
-    }
-
-    // Crear contenedor de errores
-    const contenedorErrores = document.createElement('div');
-    contenedorErrores.className = 'alerta-errores alert alert-danger';
-    
-    // Crear lista de errores
-    const listaErrores = document.createElement('ul');
-    errores.forEach(error => {
-        const li = document.createElement('li');
-        li.textContent = error;
-        listaErrores.appendChild(li);
-    });
-
-    contenedorErrores.appendChild(listaErrores);
-    
-    // Insertar antes del formulario
-    const formulario = document.getElementById('pedido-form');
-    formulario.parentNode.insertBefore(contenedorErrores, formulario);
-}
-
-// Agregar los event listeners para validación en tiempo real
-document.addEventListener('DOMContentLoaded', function() {
-    // Validación en tiempo real para nombre y apellido
-    document.getElementById('nombre').addEventListener('keypress', soloLetras);
-    document.getElementById('apellido').addEventListener('keypress', soloLetras);
-    
-    // Validación en tiempo real para CI/NIT
-    document.getElementById('ci_nit').addEventListener('keypress', soloNumeros);
-    
-    // Validación del formulario al enviar
-    document.getElementById('pedido-form').addEventListener('submit', validarFormulario);
-
-    // Agregar eventos para limpiar espacios en blanco al inicio y final
-    const inputs = document.querySelectorAll('input[type="text"]');
-    inputs.forEach(input => {
-        input.addEventListener('blur', function() {
-            this.value = this.value.trim();
-        });
-    });
-});
-
-// Agregar estilos CSS para los errores y validación
-const estilo = document.createElement('style');
-estilo.textContent = `
-    .alerta-errores {
-        margin: 20px 0;
-        padding: 15px;
-        border-radius: 4px;
-        background-color: #f8d7da;
-        border: 1px solid #f5c6cb;
-        color: #721c24;
-    }
-    .alerta-errores ul {
-        margin: 0;
-        padding-left: 20px;
-    }
-    input.error {
-        border-color: #dc3545;
-        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
-    }
-    input:valid {
-        border-color: #28a745;
-    }
-`;
-document.head.appendChild(estilo);
-    </script>
     </body>
 </html>
