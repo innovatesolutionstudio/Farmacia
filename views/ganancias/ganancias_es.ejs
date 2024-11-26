@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="resources/css/cajas.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Cargamos Chart.js para poder crear gráficos -->
+    <!-- Cargamos Chart.js para crear gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <title>Ventas - Finanzas</title>
@@ -30,7 +30,7 @@
     <!-- Card 1: Información del Empleado -->
     <div class="card1">
         <div class="header-card1">
-            <span>Grafico de Futuras Gananacias</span>
+            <span>Gráfico de Futuras Ganancias</span>
             <a href="#" onclick="verGrafico()">Ver más &raquo;</a>
         </div>
         <div class="content-card1">
@@ -53,7 +53,7 @@
         <div class="content-card1">
             <div>
                 <h2 id="gananciaAnual">Cargando...</h2>
-                <p>Gananacia Anual</p>
+                <p>Ganancia Anual</p>
             </div>
             <div>
                 <h2 id="gananciaMensual">Cargando...</h2>
@@ -65,192 +65,155 @@
 
 <br>
 
-<!-- Tabla de ventas y clientes facturados -->
+<!-- Tabla de ventas y ganancias -->
 <div class="card3">
     <div class="header-card1">
-        <span>Historia de Ganancias por Gestion</span>
+        <span>Historia de Ganancias por Gestión</span>
     </div>
     <div class="content-card2">
         <table class="tabla-historial">
             <thead>
                 <tr>
+                    <th>Ventas (Bs.)</th>
                     <th>Año</th>
-                    <th>Ganancia</th>
+                    <th>Ganancia (Bs.)</th>
                 </tr>
             </thead>
             <% results.forEach(function(ganancia) { %>
               <tr>
-                
+                <td>Bs. <%= ganancia.Ventas_Total_Anual.toFixed(2) %></td>
                 <td><%= ganancia.Ano %></td>
-                <td>Bs. <%= ganancia.Ganancia_Total_Anual %></td>
-          
+                <td>Bs. <%= ganancia.Ganancia_Total_Anual.toFixed(2) %></td>
               </tr>
-              <% }); %>
+            <% }); %>
         </table>
     </div>
 </div>
-<script>
-  // Definimos las variables globalmente para la regresión
-  let m, b;
-  
-  // Función para abrir el gráfico en una ventana emergente de SweetAlert2
-  function verGrafico() {
-      // Datos que vienen desde el servidor (incrustados en la plantilla EJS)
-      const resultados = <%- JSON.stringify(results) %>;
-  
-      // Extraemos los años y las ganancias de los resultados para trabajar con ellos
-      const anos = resultados.map(item => item.Ano);
-      const ganancias = resultados.map(item => item.Ganancia_Total_Anual);
-  
-      // Calculamos la regresión lineal y almacenamos m y b globalmente
-      const regresion = calcularRegresionLineal(anos, ganancias);
-      m = regresion.m;
-      b = regresion.b;
-  
-      // Configuración de los datos para el gráfico
-      var datiedu3 = {
-          labels: anos, // Etiquetas de los años para el eje X
-          datasets: [
-              {
-                  label: 'Ganancia Total Anual',
-                  data: anos.map((ano, index) => ({ x: ano, y: ganancias[index] })),
-                  backgroundColor: 'rgb(255, 99, 132)', // Color de los puntos de ganancia
-                  borderWidth: 1,
-                  showLine: false // No conectar los puntos, es un gráfico de dispersión
-              },
-              {
-                  label: 'Línea de Regresión',
-                  data: anos.map(x => ({ x: x, y: m * x + b })), // Puntos de la línea de regresión
-                  borderColor: 'rgb(54, 162, 235)', // Color de la línea de regresión
-                  fill: false,
-                  type: 'line', // Tipo de gráfico: línea
-                  pointRadius: 0 // No mostrar puntos en la línea de regresión
-              }
-          ]
-      };
-  
-      // Opciones de configuración del gráfico, incluyendo etiquetas para los ejes
-      var opzioni = {
-          scales: {
-              x: {
-                  title: {
-                      display: true,
-                      text: 'Año' // Etiqueta del eje X
-                  }
-              },
-              y: {
-                  title: {
-                      display: true,
-                      text: 'Ganancia Total Anual' // Etiqueta del eje Y
-                  }
-              }
-          }
-      };
-  
-      // Mostrar el gráfico dentro de una ventana emergente de SweetAlert2
-      Swal.fire({
-          title: 'Gráfico de Regresión Lineal',
-          html: `
-           <canvas id="Chartline" width="400" height="200"></canvas>
-            <br>
-            <div class="prediction-container">
-                <label for="yearSelect" class="year-label">Selecciona un Año:</label>
-                <select id="yearSelect" class="year-select">
-                    <option value="${new Date().getFullYear() - 1}">${new Date().getFullYear() - 1}</option>
-                    <option value="${new Date().getFullYear()}" selected>${new Date().getFullYear()}</option>
-                    <option value="${new Date().getFullYear() + 1}">${new Date().getFullYear() + 1}</option>
-                </select>
-                <button class="predict-button" onclick="predecirGanancia()">Predecir Ganancia</button>
-                <p id="resultadoPrediccion" class="prediction-result">Cargando.../ selecciona el Año</p>
-            </div>
-          
 
-          `,
-          showCloseButton: true,
-          width: '70%',
-     
-          showConfirmButton: false,
-          didOpen: () => {
-              // Renderizar el gráfico después de que se abre la ventana
-              const ctx = document.getElementById('Chartline').getContext('2d');
-              grafo2(datiedu3, opzioni, ctx);
-          }
-      });
-  }
-  
-  // Función para crear el gráfico usando Chart.js
-  function grafo2(dati, opzioni, ctx) {
-      new Chart(ctx, {
-          type: 'scatter',
-          data: dati,
-          options: opzioni || {} // Opciones adicionales, si hay
-      });
-  }
-  
-  // Función para calcular la regresión lineal (pendiente 'm' e intercepto 'b')
-  function calcularRegresionLineal(x, y) {
-      const n = x.length;
-      const sumX = x.reduce((acc, val) => acc + val, 0);
-      const sumY = y.reduce((acc, val) => acc + val, 0);
-      const sumXY = x.reduce((acc, val, i) => acc + val * y[i], 0);
-      const sumX2 = x.reduce((acc, val) => acc + val * val, 0);
-  
-      const m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-      const b = (sumY - m * sumX) / n;
-  
-      return { m, b };
-  }
-  
-  function predecirGanancia() {
-      // Tomamos el año ingresado por el usuario
-      const yearInput = document.getElementById('yearInput').value;
-      const year = parseInt(yearInput);
-  
-      // Validamos que el valor ingresado sea un número
-      if (isNaN(year)) {
-          document.getElementById('resultadoPrediccion').textContent = 'Por favor, ingresa un año válido.';
-          return;
-      }
-  
-      // Calculamos la ganancia estimada usando la ecuación de la recta: y = m * x + b
-      const gananciaEstimada = m * year + b;
-  
-      // Mostramos el resultado de la predicción en el párrafo
-      document.getElementById('resultadoPrediccion').textContent = 
-          `La ganancia estimada para el año ${year} es de ${gananciaEstimada.toFixed(2)} Bs.`;
-  }
-  </script>
-  <script>
-    // Función para predecir la ganancia basada en el año seleccionado
-    function predecirGanancia() {
-        // Tomamos el año seleccionado por el usuario
-        const yearSelect = document.getElementById('yearSelect').value;
-        const year = parseInt(yearSelect);
-    
-        // Calculamos la ganancia estimada usando la ecuación de la recta: y = m * x + b
-        const gananciaEstimada = m * year + b;
-    
-        // Mostramos el resultado de la predicción en el párrafo
-        document.getElementById('resultadoPrediccion').textContent = 
-            `La ganancia estimada para el año ${year} es de ${gananciaEstimada.toFixed(2)} unidades monetarias.`;
+<script>
+    let m, b;
+
+    // Función para abrir el gráfico
+    function verGrafico() {
+        const resultados = <%- JSON.stringify(results) %>;
+
+        // Extraemos las ventas, años y ganancias
+        const ventas = resultados.map(item => item.Ventas_Total_Anual);
+        const anos = resultados.map(item => item.Ano);
+        const ganancias = resultados.map(item => item.Ganancia_Total_Anual);
+
+        // Calcular la regresión lineal
+        const regresion = calcularRegresionLineal(ventas, ganancias);
+        m = regresion.m;
+        b = regresion.b;
+
+        // Configuración del gráfico
+        const datiedu3 = {
+            labels: ventas.map((venta, i) => `${venta.toFixed(2)} Bs. (${anos[i]})`),
+            datasets: [
+                {
+                    label: 'Ganancia Total Anual',
+                    data: ventas.map((venta, index) => ({ x: venta, y: ganancias[index] })),
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    borderWidth: 1,
+                    showLine: false
+                },
+                {
+                    label: 'Línea de Regresión',
+                    data: ventas.map(x => ({ x: x, y: m * x + b })),
+                    borderColor: 'rgb(54, 162, 235)',
+                    fill: false,
+                    type: 'line',
+                    pointRadius: 0
+                }
+            ]
+        };
+
+        const opzioni = {
+            scales: {
+                x: { title: { display: true, text: 'Ventas Totales (Bs.)' } },
+                y: { title: { display: true, text: 'Ganancia Total (Bs.)' } }
+            }
+        };
+
+        // Mostrar gráfico con SweetAlert2
+        Swal.fire({
+            title: 'Gráfico de Regresión Lineal',
+            html: `
+                <canvas id="Chartline" width="400" height="200"></canvas>
+                <br>
+                <div class="prediction-container">
+                    <label for="ventasSelect">Selecciona una Venta:</label>
+                    <select id="ventasSelect" class="ventas-select">
+                      ${ventas.map((venta, i) => `<option value="${venta}" data-ano="${anos[i]}">${venta.toFixed(2)} Bs. (${anos[i]})</option>`).join('')}
+                    </select>
+                    <p id="resultadoPrediccion">Predicción automática al seleccionar ventas...</p>
+                </div>
+            `,
+            showCloseButton: true,
+            width: '70%',
+            showConfirmButton: false,
+            didOpen: () => {
+                const ctx = document.getElementById('Chartline').getContext('2d');
+                grafo2(datiedu3, opzioni, ctx);
+
+                // Evento para predicción automática
+                document.getElementById('ventasSelect').addEventListener('change', predecirGanancia);
+            }
+        });
     }
-    </script>
+
+    // Crear gráfico con Chart.js
+    function grafo2(dati, opzioni, ctx) {
+        new Chart(ctx, { type: 'scatter', data: dati, options: opzioni || {} });
+    }
+
+    // Calcular regresión lineal
+    function calcularRegresionLineal(x, y) {
+        const n = x.length;
+        const sumX = x.reduce((acc, val) => acc + val, 0);
+        const sumY = y.reduce((acc, val) => acc + val, 0);
+        const sumXY = x.reduce((acc, val, i) => acc + val * y[i], 0);
+        const sumX2 = x.reduce((acc, val) => acc + val * val, 0);
+
+        const m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+        const b = (sumY - m * sumX) / n;
+
+        return { m, b };
+    }
+
+    // Predicción automática
+    function predecirGanancia() {
+        const select = document.getElementById('ventasSelect');
+        const ventas = parseFloat(select.value);
+        const ano = select.options[select.selectedIndex].dataset.ano;
+
+        if (isNaN(ventas)) {
+            document.getElementById('resultadoPrediccion').textContent = 'Selecciona un valor de ventas válido.';
+            return;
+        }
+
+        const gananciaEstimada = m * ventas + b;
+        document.getElementById('resultadoPrediccion').textContent = 
+            `La ganancia estimada para ventas de Bs. ${ventas.toFixed(2)} (${ano}) es de Bs. ${gananciaEstimada.toFixed(2)}.`;
+    }
+</script>
 <script>
        
-// Hacer una solicitud al servidor para obtener los datos
-fetch('/datosgananciasmetricas')
-  .then(response => response.json())
-  .then(data => {
-    // Actualizar los divs con los datos recibidos
-    document.getElementById('prodconmayorganancias').innerText =  data.prodconmayorganancias;
-    document.getElementById('gananciaAnual').innerText = ' Bs. '+  data.gananciaAnual;
-    document.getElementById('gananciaMensual').innerText = ' Bs. '+  data.gananciaMensual;
-    document.getElementById('nombreSuc').innerText = data.nombreSuc;
-    
-  })
-  .catch(error => {
-    console.error('Error fetching data:', error);
-  });
-</script>
+    // Hacer una solicitud al servidor para obtener los datos
+    fetch('/datosgananciasmetricas')
+      .then(response => response.json())
+      .then(data => {
+        // Actualizar los divs con los datos recibidos
+        document.getElementById('prodconmayorganancias').innerText =  data.prodconmayorganancias;
+        document.getElementById('gananciaAnual').innerText = ' Bs. '+  data.gananciaAnual;
+        document.getElementById('gananciaMensual').innerText = ' Bs. '+  data.gananciaMensual;
+        document.getElementById('nombreSuc').innerText = data.nombreSuc;
+        
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+    </script>
 </body>
 </html>

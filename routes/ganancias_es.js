@@ -4,33 +4,32 @@ const router = express.Router();
 
 // Invocamos a la conexión de la base de datos
 const conexion = require('../database/db');
-
-
 router.get('/vista_ganancias', function(req, res) {
   const { ID_Sucursal } = req.session; // Asegúrate de que ID_Sucursal está en la sesión
 
   if (!ID_Sucursal) {
     // Si no hay sucursal en la sesión, redirige o muestra un mensaje de error
     res.render('./paginas/logout');
+    return;
   }
 
-  // Realiza la consulta a la base de datos para obtener las ganancias por año, filtradas por la sucursal del empleado
+  // Consulta a la vista en lugar de construir la lógica en la ruta
   const query = `
-    SELECT YEAR(v.Fecha_Venta) AS Ano, SUM(g.Ganancia_Total) AS Ganancia_Total_Anual
-    FROM ganancias g
-    JOIN detalles_venta dv ON g.ID_Detalle_Venta = dv.ID_Detalle_Venta
-    JOIN ventas v ON dv.ID_Venta = v.ID_Venta
-    WHERE v.ID_Sucursal = ?
-    GROUP BY YEAR(v.Fecha_Venta)
-    ORDER BY Ano;
-
-      `;
+    SELECT 
+      Ano, Ventas_Total_Anual, Ganancia_Total_Anual
+    FROM 
+      vista_ganancias
+    WHERE 
+      Sucursal = ?
+    ORDER BY 
+      Ano;
+  `;
 
   // Ejecuta la consulta y pasa el ID de la sucursal como parámetro
   conexion.query(query, [ID_Sucursal], (error, results) => {
     if (error) {
-      console.error('Error al obtener datos de la tabla ganancias:', error);
-      res.status(500).send('Error al obtener datos de la tabla ganancias');
+      console.error('Error al obtener datos de la vista vista_ganancias:', error);
+      res.status(500).send('Error al obtener datos de la vista vista_ganancias');
     } else {
       // Renderiza la vista EJS y pasa los resultados de la consulta como variable
       res.render('./ganancias/ganancias_es', { results: results });
@@ -41,67 +40,55 @@ router.get('/vista_ganancias', function(req, res) {
 
 
 
-
 const ProductoConMasGanancias = (ID_Sucursal) => {
-    return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
       const sql = `
-        SELECT p.Nombre
-        FROM ganancias g
-        JOIN detalles_venta dv ON g.ID_Detalle_Venta = dv.ID_Detalle_Venta
-        JOIN productos p ON dv.ID_Producto = p.ID_Producto
-        JOIN ventas v ON dv.ID_Venta = v.ID_Venta
-        WHERE v.ID_Sucursal = ?
-        GROUP BY p.Nombre
-        ORDER BY SUM(g.Ganancia_Total) DESC
-        LIMIT 1;
+          SELECT Producto
+          FROM vista_producto_con_mas_ganancias
+          WHERE Sucursal = ?
+          LIMIT 1;
       `;
-  
+
       conexion.query(sql, [ID_Sucursal], (err, results) => {
-        if (err) return reject(err);
-  
-        resolve(results.length > 0 ? results[0].Nombre : null); // extraer el nombre del producto
+          if (err) return reject(err);
+
+          resolve(results.length > 0 ? results[0].Producto : null); // extraer el producto
       });
-    });
+  });
 };
 
-  
+
 const GananciasGetion = (ID_Sucursal) => {
-    return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
       const sql = `
-        SELECT SUM(g.Ganancia_Total) AS GananciaAnual
-        FROM ganancias g
-        JOIN detalles_venta dv ON g.ID_Detalle_Venta = dv.ID_Detalle_Venta
-        JOIN ventas v ON dv.ID_Venta = v.ID_Venta
-        WHERE YEAR(v.Fecha_Venta) = YEAR(CURDATE()) 
-        AND v.ID_Sucursal = ?;
+          SELECT Ganancia_Anual AS GananciaAnual
+          FROM vista_ganancias_anuales
+          WHERE Sucursal = ? AND Ano = YEAR(CURDATE());
       `;
-  
-      conexion.query(sql, [ID_Sucursal], (err, results) => {
-        if (err) return reject(err);
-  
-        resolve(results.length > 0 ? results[0].GananciaAnual : 0); // extraer la ganancia anual
-      });
-    });
-};
 
-const GananciaMensual = (ID_Sucursal) => {
-    return new Promise((resolve, reject) => {
-      const sql = `
-        SELECT SUM(g.Ganancia_Total) AS GananciaMensual
-        FROM ganancias g
-        JOIN detalles_venta dv ON g.ID_Detalle_Venta = dv.ID_Detalle_Venta
-        JOIN ventas v ON dv.ID_Venta = v.ID_Venta
-        WHERE YEAR(v.Fecha_Venta) = YEAR(CURDATE()) 
-        AND MONTH(v.Fecha_Venta) = MONTH(CURDATE()) 
-        AND v.ID_Sucursal = ?;
-      `;
-  
       conexion.query(sql, [ID_Sucursal], (err, results) => {
-        if (err) return reject(err);
-  
-        resolve(results.length > 0 ? results[0].GananciaMensual : 0); // extraer la ganancia mensual
+          if (err) return reject(err);
+
+          resolve(results.length > 0 ? results[0].GananciaAnual : 0); // extraer la ganancia anual
       });
-    });
+  });
+};
+const GananciaMensual = (ID_Sucursal) => {
+  return new Promise((resolve, reject) => {
+      const sql = `
+          SELECT Ganancia_Mensual AS GananciaMensual
+          FROM vista_ganancias_mensuales
+          WHERE Sucursal = ? 
+          AND Ano = YEAR(CURDATE()) 
+          AND Mes = MONTH(CURDATE());
+      `;
+
+      conexion.query(sql, [ID_Sucursal], (err, results) => {
+          if (err) return reject(err);
+
+          resolve(results.length > 0 ? results[0].GananciaMensual : 0); // extraer la ganancia mensual
+      });
+  });
 };
 
 
