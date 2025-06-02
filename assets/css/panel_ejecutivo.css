@@ -1,0 +1,122 @@
+.tablero-container {
+  padding: 30px;
+  background-color: #f4f7fb;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.titulo-tablero {
+  color: #011a36;
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-align: center;
+}
+.titulo-tablero-sub{
+  color: #011a36;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+
+.botones-tablero {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.btn-tablero {
+  background-color: #007B8F;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  margin: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.btn-tablero:hover {
+  background-color: #005f6b;
+}
+
+.tabla-wrapper {
+  overflow-x: auto;
+}
+
+.tabla-tablero {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tabla-tablero thead {
+  background-color: #006680;
+  color: #ffffff;
+}
+
+.tabla-tablero th,
+.tabla-tablero td {
+  padding: 14px 12px;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+  vertical-align: middle;
+}
+
+.tabla-tablero tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Centrar y estilizar semáforo como círculo */
+.tabla-tablero td[class^="semaforo-"] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.tabla-tablero .semaforo-verde,
+.tabla-tablero .semaforo-amarillo,
+.tabla-tablero .semaforo-rojo {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.semaforo-verde {
+  background-color: #28a745;
+}
+
+.semaforo-amarillo {
+  background-color: #ffc107;
+}
+
+.semaforo-rojo {
+  background-color: #dc3545;
+}
+
+@media screen and (max-width: 768px) {
+  .tabla-tablero th,
+  .tabla-tablero td {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .titulo-tablero {
+    font-size: 20px;
+  }
+
+  .btn-tablero {
+    width: 100%;
+    margin: 8px 0;
+  }
+}

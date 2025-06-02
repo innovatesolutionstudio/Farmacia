@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"></script>
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      crossorigin="anonymous" />
+    <link rel="stylesheet" href="resources/css/recursosH.css" />
+    <link rel="stylesheet" href="resources/css/panel_ejecutivo.css" />
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <title>Panel ejecutivo - crecimiento</title>
+
+  </head>
+
+  <body>
+    <!-- Encabezado -->
+    <div class="header-container">
+      <div class="breadcrumb">
+        <a href="/panel_ejecutivo" class="reporte-link">
+          <h1
+            style="color: #858B92; font-weight: bold; margin-right: 5px;">Panel
+            Ejecutivo</h1>
+        </a>
+        <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+        <h1 style="font-weight: bold;"><%= areaNombre %></h1>
+      </div>
+
+    </div>
+
+    <br>
+    <!-- Nueva tabla de tablero -->
+    <div class="tablero-container">
+      <h2 class="titulo-tablero">
+        Matriz del Tablero de Comando - <%= areaNombre %>
+      </h2>
+      <h4 class="titulo-tablero-sub">
+        Fecha de inicio: <%= fechaInicio %> —
+        Fecha de finalización: <%= fechaFin %>
+      </h4>
+
+      <div class="botones-tablero">
+        <button class="btn-tablero"> Ver Grafico</button>
+        <button id="btnAgregarObjetivo" class="btn-tablero">Agregar objetivos</button>
+
+        <button id="btnAgregarIndicador" class="btn-tablero">Agregar indicadores</button>
+
+        <button id="btnAsignarPersonas" class="btn-tablero">Asignar personas</button>
+
+        <button class="btn-tablero"> publicar</button>
+        <button class="btn-tablero"> Eliminar</button>
+      </div>
+
+      <div class="tabla-wrapper">
+        <table class="tabla-tablero">
+          <thead>
+            <tr>
+              <th>Objetivo Estratégico</th>
+              <th>Indicador (Lagging)</th>
+              <th>%</th>
+              <th>Semáforo</th>
+              <th>Indicador de Proceso (Leading)</th>
+              <th>Plan de Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (let nombre in objetivos) {
+            let lista = objetivos[nombre]; %>
+            <% lista.forEach((item, index) => { %>
+            <tr>
+              <% if (index === 0) { %>
+              <td rowspan="<%= lista.length %>"><%= nombre %></td>
+              <% } %>
+              <td><%= item.kpi %></td>
+              <td><%= item.valor %> %</td>
+              <td><span class="semaforo-<%= item.semaforo %>"></span></td>
+              <td><%= item.inductor %></td>
+              <td><%= item.accion %></td>
+            </tr>
+            <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+    <div class="tablero-container" style="margin-top: 40px;">
+      <h2 class="titulo-tablero">👥 Personal implicado a completar estos objetivos</h2>
+
+      <% if (equipo.length > 0) { %>
+        <div class="tabla-wrapper">
+          <table class="tabla-tablero">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Rol</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% equipo.forEach(persona => { %>
+                <tr>
+                  <td><%= persona.ID_Empleado %></td>
+                  <td><%= persona.Nombre %></td>
+                  <td><%= persona.Apellido %></td>
+                  <td><%= persona.Rol || 'Sin Rol' %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <p style="text-align:center;">No hay empleados asignados a esta área aún.</p>
+      <% } %>
+    </div>
+
+  </body>
+
+  <script type="text/javascript"
+    src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script type="text/javascript"
+    src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  document.getElementById("btnAgregarObjetivo").addEventListener("click", async () => {
+    const { value: objetivoText } = await Swal.fire({
+      title: 'Nuevo Objetivo Estratégico',
+      input: 'textarea',
+      inputLabel: 'Describe el objetivo',
+      inputPlaceholder: 'Ej. Mejorar la capacitación continua...',
+      inputAttributes: {
+        'aria-label': 'Escribe tu objetivo aquí'
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Guardar',
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (!value.trim()) {
+          return '¡Debes ingresar un objetivo!';
+        }
+      }
+    });
+
+    if (objetivoText) {
+      fetch('/objetivo/crear', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ID_Area_objetivo: <%= ID_Area_objetivo %>,  // asegúrate de pasar este valor desde el router
+          Objetivo: objetivoText
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        Swal.fire({
+          icon: 'success',
+          title: '¡Objetivo creado!',
+          text: data.message
+        }).then(() => location.reload());
+      })
+      .catch(err => {
+        Swal.fire('Error', 'No se pudo crear el objetivo', 'error');
+      });
+    }
+  });
+</script>
+
+<script>
+  document.getElementById("btnAgregarIndicador").addEventListener("click", async () => {
+    // Cargar objetivos del área por AJAX
+    const response = await fetch('/objetivos/por_area/<%= ID_Area_objetivo %>');
+    const objetivos = await response.json();
+
+    if (objetivos.length === 0) {
+      return Swal.fire('Sin objetivos', 'Primero debes registrar un objetivo para esta área.', 'info');
+    }
+
+    const options = objetivos.map(obj => `<option value="${obj.ID_Objetivo}">${obj.Objetivo}</option>`).join('');
+
+    const { value: formValues } = await Swal.fire({
+      title: 'Nuevo Indicador (KPI)',
+      html: `
+        <div style="text-align: left;">
+          <label for="objetivo">Objetivo asociado:</label><br>
+          <select id="objetivo" class="swal2-select" style="width:80%; margin-bottom:10px;">
+            ${options}
+          </select>
+      <br>
+          <label for="kpi">KPI:</label><br>
+          <input type="text" id="kpi" class="swal2-input" placeholder="Ej. Porcentaje de cumplimiento" style="width:80%;>
+      <br>
+          <label for="valor">Valor (%):</label><br>
+          <input type="number" id="valor" value="0" class="swal2-input" placeholder="Ej." min="0" max="100" style="width:80%;>
+      <br>
+          <label for="inductor">Palanca / Inductor:</label><br>
+          <input type="text" id="inductor" class="swal2-input" placeholder="Ej. Número de capacitaciones" style="width:80%;>
+      <br>
+          <label for="accion">Plan de acción:</label><br>
+          <textarea id="accion" class="swal2-textarea" placeholder="Ej. Implementar un programa de formación continua"></textarea>
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Guardar',
+      preConfirm: () => {
+        const ID_Objetivo = document.getElementById('objetivo').value;
+        const KPI = document.getElementById('kpi').value;
+        const Valor = document.getElementById('valor').value;
+        const Palanca = document.getElementById('inductor').value;
+        const Accion = document.getElementById('accion').value;
+
+        if (!ID_Objetivo || !KPI || !Valor || !Palanca || !Accion) {
+          Swal.showValidationMessage('Todos los campos son obligatorios');
+        }
+
+        return { ID_Objetivo, KPI, Valor, Palanca, Accion };
+      }
+    });
+
+    if (formValues) {
+      fetch('/kpi/crear', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formValues)
+      })
+      .then(res => res.json())
+      .then(data => {
+        Swal.fire('¡Éxito!', data.message, 'success').then(() => location.reload());
+      })
+      .catch(() => {
+        Swal.fire('Error', 'No se pudo guardar el KPI', 'error');
+      });
+    }
+  });
+</script>
+
+<script>
+  document.getElementById("btnAsignarPersonas").addEventListener("click", async () => {
+    // Obtener empleados disponibles
+    const response = await fetch('/empleados/disponibles');
+    const empleados = await response.json();
+
+    if (empleados.length === 0) {
+      return Swal.fire('Sin empleados', 'No hay empleados disponibles.', 'info');
+    }
+
+    const options = empleados.map(emp => 
+      `<option value="${emp.ID_Empleado}">${emp.Nombre} ${emp.Apellido}</option>`
+    ).join('');
+
+    const { value: selectedEmpleado } = await Swal.fire({
+      title: 'Asignar persona al área',
+      html: `
+        <div style="text-align:left;">
+          <label for="empleado">Empleado:</label><br>
+          <select id="empleado" class="swal2-select" style="width:100%;">${options}</select>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Asignar',
+      preConfirm: () => {
+        const ID_Empleado = document.getElementById('empleado').value;
+        if (!ID_Empleado) {
+          Swal.showValidationMessage('Debes seleccionar un empleado');
+        }
+        return ID_Empleado;
+      }
+    });
+
+    if (selectedEmpleado) {
+      fetch('/equipo_objetivo/asignar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ID_Area_objetivo: <%= ID_Area_objetivo %>,
+          ID_Empleado: selectedEmpleado
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        Swal.fire('Asignado', data.message, 'success').then(() => location.reload());
+      })
+      .catch(() => {
+        Swal.fire('Error', 'No se pudo asignar el empleado', 'error');
+      });
+    }
+  });
+</script>
+
+
+</html>

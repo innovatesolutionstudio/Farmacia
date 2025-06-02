@@ -87,6 +87,10 @@ const buscadorIARouter = require("./routes/buscador_ai");
 //coneccion a la base de datos
 const coneccion = require("./database/db");
 
+//panel ejecutivo
+const panel_ejecutivo = require("./routes/panel_ejecutivo");
+
+
 
 
 
@@ -138,7 +142,6 @@ app.use(
 app.use("/facturas_ventas", express.static(path.resolve(__dirname, "facturas_ventas")));
 
 app.use("/js", express.static(__dirname + "/views/graficos/js"));
-//#endregion
 
 
 
@@ -300,6 +303,8 @@ app.use(compras_pRouter);
 
 //AI
 app.use(buscadorIARouter);
+
+app.use(panel_ejecutivo);
 
 //#endregion
 

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://kit.fontawesome.com/a076d05399.js"
+            crossorigin="anonymous"></script>
+
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+            integrity="sha512-Fo3rlrZj/kMVqz1K3lJu3g4C2yOt6nfx1NNMRdyz0HXov9pGi3mXKjbl2XFK9xZPd9XyG6XTB/8x8es5X+Xw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"
+            integrity="sha384-UzomW2R7c1D7vo/vSjtyUlbhlmJ8LZ+DRjW/zhbKUp7AWGzZQL57/bjH5CV2N2zJ"
+            crossorigin="anonymous">
+        <link rel="stylesheet" href="resources/css/graficos.css" />
+        <link rel="stylesheet" href="resources/css/recursosH.css" />
+        <title>panel ejecutivo</title>
+
+    </head>
+    <body>
+
+        <div class="header-container">
+            <h1>Panel Ejecutivo</h1>
+               <div class="button-container">
+                <!-- Botón para abrir el modal de crear objetivo -->
+                <button id="btnCrearArea" class="btn btn-conft">+ Nueva Área Objetivo</button>  
+
+            </div>
+        </div>
+
+        <p>Aqui podra gestionar los objetivos.</p>
+         
+        <div class="container">
+        <% areas.forEach(area => { %>
+            <div class="card" style="border: 2px solid #A7DCF5;">
+            <a href="/panel_ejecutivo_crecimiento?area=<%= area.ID_Area_objetivo %>" class="btn-group">
+                <img class="icono" src="resources/images/iconos/money1.svg" />
+            </a>
+            <h2 style="font-size: 24px;"><%= area.Nombre %></h2>
+            <p>Administrar tablero de comandos de esta área.</p>
+            <div class="details">
+                <a href="/panel_ejecutivo_crecimiento?area=<%= area.ID_Area_objetivo %>"
+                style="background-color: #A7DCF5; color: black;">
+                Gestionar &raquo;
+                </a>
+            </div>
+            </div>
+        <% }); %>
+        </div>
+
+
+    </body>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  document.getElementById("btnCrearArea").addEventListener("click", async () => {
+    const { value: formValues } = await Swal.fire({
+      title: 'Nueva Área de Objetivo',
+      html: `
+        <input type="text" id="nombre" class="swal2-input" placeholder="Nombre del área">
+        <label>Fecha de Inicio:</label>
+        <input type="date" id="fecha_inicio" class="swal2-input">
+        <label>Fecha de Fin:</label>
+        <input type="date" id="fecha_fin" class="swal2-input">
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Guardar',
+      preConfirm: () => {
+        const nombre = document.getElementById('nombre').value;
+        const fecha_inicio = document.getElementById('fecha_inicio').value;
+        const fecha_fin = document.getElementById('fecha_fin').value;
+        if (!nombre || !fecha_inicio || !fecha_fin) {
+          Swal.showValidationMessage('Todos los campos son obligatorios');
+        }
+        return { nombre, fecha_inicio, fecha_fin };
+      }
+    });
+
+    if (formValues) {
+      fetch('/area_objetivo/crear', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formValues)
+      })
+      .then(res => res.json())
+      .then(data => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Área creada',
+          text: 'La nueva área se registró correctamente'
+        }).then(() => location.reload());
+      })
+      .catch(err => {
+        Swal.fire('Error', 'No se pudo guardar el área', 'error');
+      });
+    }
+  });
+</script>
+
+
+</html>
