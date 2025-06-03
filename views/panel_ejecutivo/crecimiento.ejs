@@ -1,39 +1,40 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://kit.fontawesome.com/a076d05399.js"
-      crossorigin="anonymous"></script>
-    <link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-      crossorigin="anonymous" />
-    <link rel="stylesheet" href="resources/css/recursosH.css" />
-    <link rel="stylesheet" href="resources/css/panel_ejecutivo.css" />
-    <link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <title>Panel ejecutivo - crecimiento</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="resources/css/recursosH.css" />
+  <link rel="stylesheet" href="resources/css/panel_ejecutivo.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-  </head>
+  <title>Panel ejecutivo - Cuadro de Mando Integral</title>
 
-  <body>
-    <!-- Encabezado -->
-    <div class="header-container">
-      <div class="breadcrumb">
-        <a href="/panel_ejecutivo" class="reporte-link">
-          <h1
-            style="color: #858B92; font-weight: bold; margin-right: 5px;">Panel
-            Ejecutivo</h1>
-        </a>
-        <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
-        <h1 style="font-weight: bold;"><%= areaNombre %></h1>
-      </div>
+</head>
 
+<body>
+  <!-- Encabezado -->
+  <div class="header-container">
+    <div class="breadcrumb">
+      <a href="/panel_ejecutivo" class="reporte-link">
+        <h1 style="color: #858B92; font-weight: bold; margin-right: 5px;">Panel
+          Ejecutivo</h1>
+      </a>
+      <h2 style="font-size: 40px; margin: 0 10px;">›</h2>
+      <h1 style="font-weight: bold;">
+        <%= areaNombre %>
+      </h1>
     </div>
 
-    <br>
+  </div>
+
+  <br>
+  <div id="contenido-pdf">
     <!-- Nueva tabla de tablero -->
     <div class="tablero-container">
       <h2 class="titulo-tablero">
@@ -41,17 +42,15 @@
       </h2>
       <h4 class="titulo-tablero-sub">
         Fecha de inicio: <%= fechaInicio %> —
-        Fecha de finalización: <%= fechaFin %>
+          Fecha de finalización: <%= fechaFin %>
       </h4>
 
       <div class="botones-tablero">
         <button class="btn-tablero"> Ver Grafico</button>
         <button id="btnAgregarObjetivo" class="btn-tablero">Agregar objetivos</button>
-
         <button id="btnAgregarIndicador" class="btn-tablero">Agregar indicadores</button>
-
         <button id="btnAsignarPersonas" class="btn-tablero">Asignar personas</button>
-
+        <button id="EXportarPDF" class="btn-tablero">Exportar PDF</button>
         <button class="btn-tablero"> publicar</button>
         <button class="btn-tablero"> Eliminar</button>
       </div>
@@ -66,33 +65,59 @@
               <th>Semáforo</th>
               <th>Indicador de Proceso (Leading)</th>
               <th>Plan de Acción</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            <% for (let nombre in objetivos) {
-            let lista = objetivos[nombre]; %>
-            <% lista.forEach((item, index) => { %>
-            <tr>
-              <% if (index === 0) { %>
-              <td rowspan="<%= lista.length %>"><%= nombre %></td>
-              <% } %>
-              <td><%= item.kpi %></td>
-              <td><%= item.valor %> %</td>
-              <td><span class="semaforo-<%= item.semaforo %>"></span></td>
-              <td><%= item.inductor %></td>
-              <td><%= item.accion %></td>
-            </tr>
-            <% }) %>
-            <% } %>
+            <% for (let nombre in objetivos) { let lista=objetivos[nombre]; %>
+              <% lista.forEach((item, index)=> { %>
+                <tr>
+                  <% if (index===0) { %>
+                    <td rowspan="<%= lista.length %>">
+                      <%= nombre %>
+                    </td>
+                    <% } %>
+                      <td>
+                        <%= item.kpi %>
+                      </td>
+                      <td>
+                        <%= item.valor %>
+                      </td>
+                      <td><span class="semaforo-<%= item.semaforo %>"></span></td>
+                      <td>
+                        <%= item.inductor %>
+                      </td>
+                      <td>
+                        <%= item.accion %>
+                      </td>
+                      <td>
+                        <button class="boton-accion btn-completado"
+                          onclick="editarValor(<%= item.kpi_id %>, <%= item.valor %>)">
+                          Editar Valor (%)
+                        </button>
+
+                        <button class="boton boton-eliminar" onclick="eliminarKPI(<%= item.kpi_id %>)">
+                          Eliminar indicador
+                        </button>
+                        <button class="boton boton-eliminar" onclick="eliminarObjetivo(<%= item.id %>)">
+                          Eliminar objetivo
+                        </button>
+
+                      </td>
+
+
+                </tr>
+                <% }) %>
+                  <% } %>
           </tbody>
         </table>
       </div>
 
     </div>
     <div class="tablero-container" style="margin-top: 40px;">
-      <h2 class="titulo-tablero">👥 Personal implicado a completar estos objetivos</h2>
+      <h2 class="titulo-tablero">Personal implicado a completar estos objetivos</h2>
 
-      <% if (equipo.length > 0) { %>
+      <% if (equipo.length> 0) { %>
         <div class="tabla-wrapper">
           <table class="tabla-tablero">
             <thead>
@@ -101,34 +126,188 @@
                 <th>Nombre</th>
                 <th>Apellido</th>
                 <th>Rol</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              <% equipo.forEach(persona => { %>
+              <% equipo.forEach(persona=> { %>
                 <tr>
-                  <td><%= persona.ID_Empleado %></td>
-                  <td><%= persona.Nombre %></td>
-                  <td><%= persona.Apellido %></td>
-                  <td><%= persona.Rol || 'Sin Rol' %></td>
+                  <td>
+                    <%= persona.ID_Empleado %>
+                  </td>
+                  <td>
+                    <%= persona.Nombre %>
+                  </td>
+                  <td>
+                    <%= persona.Apellido %>
+                  </td>
+                  <td>
+                    <%= persona.Rol || 'Sin Rol' %>
+                  </td>
+                  <td>
+                    <button class="boton boton-eliminar" onclick="eliminarPersona(<%= persona.ID_Empleado %>)">
+                      Eliminar
+                    </button>
+                  </td>
+
                 </tr>
-              <% }); %>
+                <% }); %>
             </tbody>
           </table>
         </div>
-      <% } else { %>
-        <p style="text-align:center;">No hay empleados asignados a esta área aún.</p>
-      <% } %>
+        <% } else { %>
+          <p style="text-align:center;">No hay empleados asignados a esta área aún.</p>
+          <% } %>
     </div>
+  </div>
+</body>
 
-  </body>
-
-  <script type="text/javascript"
-    src="https://code.jquery.com/jquery-3.5.1.js"></script>
-  <script type="text/javascript"
-    src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  document.querySelector(".btn-tablero").addEventListener("click", async () => {
+    try {
+      const res = await fetch(`/objetivos/promedios/<%= ID_Area_objetivo %>`);
+      const data = await res.json();
+
+      const labels = data.map(obj => obj.Objetivo);
+      const valores = data.map(obj => Math.round(obj.Promedio));
+
+      const canvas = document.createElement("canvas");
+      canvas.width = 400;
+      canvas.height = 300;
+
+      await Swal.fire({
+        title: 'Promedio de objetivos cumplidos',
+        html: canvas,
+        width: 1000,
+        showConfirmButton: true,
+        didOpen: () => {
+          new Chart(canvas.getContext("2d"), {
+            type: 'bar',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: '% Promedio',
+                data: valores,
+                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+              }]
+            },
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  max: 100
+                }
+              }
+            }
+          });
+        }
+      });
+
+    } catch (error) {
+      console.error("Error al cargar gráfico:", error);
+      Swal.fire("Error", "No se pudo generar el gráfico", "error");
+    }
+  });
+</script>
+
+
+<script>
+  async function editarValor(id, valorActual) {
+    const { value: nuevoValor } = await Swal.fire({
+      title: 'Editar porcentaje del KPI',
+      html: `
+        <label for="valorInput">Ingrese el nuevo porcentaje:</label>
+        <input id="valorInput" type="number" class="swal2-input" value="${valorActual}" min="0" max="100" placeholder="Ej: 80">
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Guardar',
+      preConfirm: () => {
+        const valor = document.getElementById('valorInput').value;
+        if (!valor || valor < 0 || valor > 100) {
+          Swal.showValidationMessage('Debe ser un número entre 0 y 100');
+          return false;
+        }
+        return valor;
+      }
+    });
+
+    if (nuevoValor !== undefined) {
+      try {
+        const response = await fetch('/panel_ejecutivo/valor', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, valor: nuevoValor })
+        });
+
+        const data = await response.json();
+        Swal.fire('Actualizado', data.message, 'success').then(() => location.reload());
+      } catch (err) {
+        Swal.fire('Error', 'No se pudo actualizar el valor.', 'error');
+      }
+    }
+  }
+
+  async function eliminarKPI(id) {
+    const confirmacion = await Swal.fire({
+      title: '¿Deseas eliminar este KPI?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (confirmacion.isConfirmed) {
+      try {
+        const response = await fetch('/panel_ejecutivo/eliminar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+
+        const data = await response.json();
+        Swal.fire('Eliminado', data.message, 'success').then(() => location.reload());
+      } catch (err) {
+        Swal.fire('Error', 'No se pudo eliminar el KPI.', 'error');
+      }
+    }
+  }
+
+  async function eliminarObjetivo(id) {
+    const confirmacion = await Swal.fire({
+      title: '¿Eliminar este objetivo?',
+      text: 'Se eliminará también todos sus indicadores asociados.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (confirmacion.isConfirmed) {
+      try {
+        const response = await fetch('/panel_ejecutivo/eliminar_objetivo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+
+        const data = await response.json();
+        Swal.fire('Eliminado', data.message, 'success').then(() => location.reload());
+      } catch (err) {
+        Swal.fire('Error', 'No se pudo eliminar el objetivo.', 'error');
+      }
+    }
+  }
+
+</script>
 
 <script>
   document.getElementById("btnAgregarObjetivo").addEventListener("click", async () => {
@@ -158,18 +337,18 @@
           ID_Area_objetivo: <%= ID_Area_objetivo %>,  // asegúrate de pasar este valor desde el router
           Objetivo: objetivoText
         })
-      })
-      .then(res => res.json())
-      .then(data => {
-        Swal.fire({
-          icon: 'success',
-          title: '¡Objetivo creado!',
-          text: data.message
-        }).then(() => location.reload());
-      })
-      .catch(err => {
-        Swal.fire('Error', 'No se pudo crear el objetivo', 'error');
-      });
+    })
+    .then(res => res.json())
+    .then(data => {
+      Swal.fire({
+        icon: 'success',
+        title: '¡Objetivo creado!',
+        text: data.message
+      }).then(() => location.reload());
+    })
+    .catch(err => {
+      Swal.fire('Error', 'No se pudo crear el objetivo', 'error');
+    });
     }
   });
 </script>
@@ -232,13 +411,13 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formValues)
       })
-      .then(res => res.json())
-      .then(data => {
-        Swal.fire('¡Éxito!', data.message, 'success').then(() => location.reload());
-      })
-      .catch(() => {
-        Swal.fire('Error', 'No se pudo guardar el KPI', 'error');
-      });
+        .then(res => res.json())
+        .then(data => {
+          Swal.fire('¡Éxito!', data.message, 'success').then(() => location.reload());
+        })
+        .catch(() => {
+          Swal.fire('Error', 'No se pudo guardar el KPI', 'error');
+        });
     }
   });
 </script>
@@ -253,7 +432,7 @@
       return Swal.fire('Sin empleados', 'No hay empleados disponibles.', 'info');
     }
 
-    const options = empleados.map(emp => 
+    const options = empleados.map(emp =>
       `<option value="${emp.ID_Empleado}">${emp.Nombre} ${emp.Apellido}</option>`
     ).join('');
 
@@ -284,15 +463,52 @@
           ID_Area_objetivo: <%= ID_Area_objetivo %>,
           ID_Empleado: selectedEmpleado
         })
-      })
-      .then(res => res.json())
-      .then(data => {
-        Swal.fire('Asignado', data.message, 'success').then(() => location.reload());
-      })
-      .catch(() => {
-        Swal.fire('Error', 'No se pudo asignar el empleado', 'error');
-      });
+    })
+    .then(res => res.json())
+    .then(data => {
+      Swal.fire('Asignado', data.message, 'success').then(() => location.reload());
+    })
+    .catch(() => {
+      Swal.fire('Error', 'No se pudo asignar el empleado', 'error');
+    });
     }
+  });
+</script>
+
+<script>
+  async function eliminarPersona(ID_Empleado) {
+    const confirmacion = await Swal.fire({
+      title: '¿Eliminar persona del área?',
+      text: 'Esta acción eliminará su asignación al objetivo.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (confirmacion.isConfirmed) {
+      try {
+        const response = await fetch('/equipo_objetivo/eliminar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ID_Empleado: ID_Empleado,
+            ID_Area_objetivo: <%= ID_Area_objetivo %>
+          })
+      });
+
+      const data = await response.json();
+      Swal.fire('Eliminado', data.message, 'success').then(() => location.reload());
+    } catch (err) {
+      Swal.fire('Error', 'No se pudo eliminar la persona.', 'error');
+    }
+  }
+  }
+</script>
+<script>
+  document.getElementById("EXportarPDF").addEventListener("click", () => {
+    const idArea = <%= ID_Area_objetivo %>;
+    window.open(`/reporte_panel/${idArea}`, "_blank");
   });
 </script>
 

@@ -378,45 +378,28 @@
                             </li>
                         </ul>
                         <% } %>
-                         <% if (sesion === 1 || sesion === 4) {
-                        %>
-                        <ul class="list-unstyled components ">
-                            <li class="active">
-                                <a href="#panel_ejecutivo"
-                                    onclick="cargarContenido('/panel_ejecutivo')"
-                                    data-toggle="collapse" aria-expanded="false"
-                                    class="dropdown-toggle btn-group"
-                                    style="font-size: 18px; font-family: monospace; "><i
-                                        class="fa fa-pager"
+                        
+                        <!-- panel administrativo solo para administradores  -->
+                        <% if (sesion === 1 || sesion === 4) { %>
+                        <ul class="list-unstyled components"
+                            style="border-bottom: 1px solid #ffffff69">
+                            <li>
+                                <a href="#"
+                                    onclick="cargarContenido('/panel_ejecutivo'); marcarComoLeidas();"
+                                    class="btn-group"
+                                    style="font-size: 18px; font-family: monospace;">
+                                    <i class="fa fa-pager"
                                         style="font-size: 30px;"></i>
-                                    <span>&nbsp;&nbsp;Panel Ejecutivo</span></a>
-                                <ul class="collapse list-unstyled"
-                                    id="panel_ejecutivo">
-                                    <li><a href="#"
-                                            onclick="cargarContenido('/panel_ejecutivo_crecimiento')"
-                                            style="font-size: 18px; font-family: monospace; ">>
-                                            <span>Crecimiento
-                                                </span></a></li>
-                                    <li><a href="#"
-                                            onclick="cargarContenido('/empleados')"
-                                            style="font-size: 18px; font-family: monospace; ">>
-                                            <span>Procesos</span></a></li>
-                                    <li><a href="#"
-                                            onclick="cargarContenido('/empleados')"
-                                            style="font-size: 18px; font-family: monospace; ">>
-                                            <span>Cliente</span></a></li>
-                                    <li><a href="#"
-                                            onclick="cargarContenido('/empleados')"
-                                            style="font-size: 18px; font-family: monospace; ">>
-                                            <span>Financiera</span></a></li>
-                                </ul>
+                                    <span>&nbsp;&nbsp;Panel Ejecutivo</span>
+                                  
+                                </a>
                             </li>
                         </ul>
                         <% } %>
                         
 
                         <!-- Notificacion solo para administradores  -->
-                        <% if (sesion === 1 || sesion === 4) { %>
+                        
                         <ul class="list-unstyled components"
                             style="border-bottom: 1px solid #ffffff69">
                             <li>
@@ -432,7 +415,7 @@
                                 </a>
                             </li>
                         </ul>
-                        <% } %>
+                       
                         
 
                     </div>

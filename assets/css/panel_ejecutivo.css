@@ -120,3 +120,53 @@
     margin: 8px 0;
   }
 }
+
+
+.boton-accion {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  margin: 2px;
+  color: #fff;
+}
+
+.btn-completado {
+  background-color: #28a745; /* verde */
+}
+
+.btn-completado:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
+.btn-incompleto {
+  background-color: #ffc107; /* amarillo */
+  color: #000;
+}
+
+.btn-incompleto:hover {
+  background-color: #e0a800;
+  transform: scale(1.05);
+}
+
+.boton-eliminar {
+  background-color: #dc3545; /* rojo */
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background-color 0.3s, transform 0.2s;
+  border: none;
+  margin: 2px;
+  cursor: pointer;
+}
+
+.boton-eliminar:hover {
+  background-color: #bd2130;
+  transform: scale(1.05);
+}

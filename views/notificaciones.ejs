@@ -23,7 +23,12 @@
         <p class="subtext">Notificaciones pendientes.</p>
     </div>
 
-    <% if (notificaciones && notificaciones.length > 0) { %>
+    <% if (rol === 1 || rol === 2|| rol === 3|| rol === 4|| rol === 5|| rol === 6|| rol === 7|| rol === 8) { %>
+      
+    <% } %>
+
+    <% if (rol === 1 || rol ===4) { %>
+      <% if (notificaciones && notificaciones.length > 0) { %>
         <% notificaciones.forEach(function (notification) { %>
           <div class="pedido-card">
             <div class="pedido-icon">
@@ -51,6 +56,8 @@
       <% } else { %>
         <div class="no-notifications">No hay usuarios bloqueados pendientes.</div>
       <% } %>
+    
+    <% } %>
       
       <script>
         function actualizarGradoA0(button) {

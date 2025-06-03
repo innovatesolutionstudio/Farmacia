@@ -74,6 +74,7 @@ const impre_areas_producto = require("./routes/impre_areas_producto");
 const impre_categoria = require("./routes/impre_categoria");
 const impre_tipo_paciente = require("./routes/impre_tipo_paciente");
 const impre_clientes = require("./routes/impre_clientes");
+const impre_panel = require("./routes/impre_panel");
 
 const api_datos = require("./routes/apis");
 
@@ -293,6 +294,7 @@ app.use(impre_categoria);
 app.use(impre_tipo_paciente);
 app.use(impre_clientes);
 app.use(reporteganancias);
+app.use(impre_panel);
 //dashboard
 app.use(graficosRouter);
 

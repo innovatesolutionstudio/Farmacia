@@ -8,7 +8,7 @@ const multer = require("multer");
 const path = require("path");
 const { Console } = require("console");
 
-
+//ruta para mostrar todos los tableros de comandos
 router.get("/panel_ejecutivo", (req, res) => {
   if (!req.session.loggedin) {
     return res.render("./paginas/logout");
@@ -28,6 +28,7 @@ router.get("/panel_ejecutivo", (req, res) => {
   });
 });
 
+//ruta para crear un nuevo tablero de comando 
 router.post("/area_objetivo/crear", (req, res) => {
   const { nombre, fecha_inicio, fecha_fin } = req.body;
   const sql = "INSERT INTO area_objetivo (Nombre, Fecha_Inicio, Fecha_Fin) VALUES (?, ?, ?)";
@@ -38,7 +39,7 @@ router.post("/area_objetivo/crear", (req, res) => {
   });
 });
 
-
+//ruta para mostrar tablero de compnado especifico
 router.get("/panel_ejecutivo_crecimiento", (req, res) => {
   if (!req.session.loggedin) return res.render("./paginas/logout");
 
@@ -47,12 +48,14 @@ router.get("/panel_ejecutivo_crecimiento", (req, res) => {
   const sqlArea = "SELECT * FROM area_objetivo WHERE ID_Area_objetivo = ?";
   const sqlObjetivos = `
     SELECT 
-      o.ID_Objetivo,
+    o.ID_Objetivo,
       o.Objetivo AS ObjetivoEstrategico,
+      k.ID_KPI AS KPI_ID,   -- NUEVO
       k.KPI,
       k.Valor,
       k.Palanca_Inductor_Proceso,
       k.Iniciativa_Estrategica
+
     FROM objetivo o
     LEFT JOIN objetivos_kpi k ON k.ID_Objetivo = o.ID_Objetivo
     WHERE o.ID_Area_objetivo = ?
@@ -108,13 +111,15 @@ router.get("/panel_ejecutivo_crecimiento", (req, res) => {
 
           if (row.KPI) {
             objetivos[row.ObjetivoEstrategico].push({
-              id: row.ID_Objetivo,
-              kpi: row.KPI,
-              valor: row.Valor,
-              semaforo: row.Valor >= 70 ? "verde" : row.Valor >= 50 ? "amarillo" : "rojo",
-              inductor: row.Palanca_Inductor_Proceso,
-              accion: row.Iniciativa_Estrategica
-            });
+            id: row.ID_Objetivo, // se mantiene
+            kpi_id: row.KPI_ID,   // nuevo campo para edición
+            kpi: row.KPI,
+            valor: row.Valor,
+            semaforo: row.Valor >= 70 ? "verde" : row.Valor >= 50 ? "amarillo" : "rojo",
+            inductor: row.Palanca_Inductor_Proceso,
+            accion: row.Iniciativa_Estrategica
+          });
+
           } else {
             // Objetivo sin KPI
             objetivos[row.ObjetivoEstrategico].push({
@@ -134,6 +139,7 @@ router.get("/panel_ejecutivo_crecimiento", (req, res) => {
           fechaFin: formatFecha(area.Fecha_Fin),
           ID_Area_objetivo: area.ID_Area_objetivo,
           objetivos,
+          
           equipo
         });
       });
@@ -141,6 +147,20 @@ router.get("/panel_ejecutivo_crecimiento", (req, res) => {
   });
 });
 
+//ruta para mostrar todos los objetivos de un area especifica 
+router.get("/objetivos/por_area/:id", (req, res) => {
+  const areaId = req.params.id;
+  const sql = "SELECT ID_Objetivo, Objetivo FROM objetivo WHERE ID_Area_objetivo = ?";
+  conexion.query(sql, [areaId], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Error al obtener objetivos' });
+    }
+    res.json(results);
+  });
+});
+
+//ruta para crear un nuevo objetivo para el tablero
 router.post("/objetivo/crear", (req, res) => {
   const { ID_Area_objetivo, Objetivo } = req.body;
 
@@ -159,20 +179,7 @@ router.post("/objetivo/crear", (req, res) => {
   });
 });
 
-
-router.get("/objetivos/por_area/:id", (req, res) => {
-  const areaId = req.params.id;
-  const sql = "SELECT ID_Objetivo, Objetivo FROM objetivo WHERE ID_Area_objetivo = ?";
-  conexion.query(sql, [areaId], (err, results) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Error al obtener objetivos' });
-    }
-    res.json(results);
-  });
-});
-
-
+//ruta para crear nuevo KPI
 router.post("/kpi/crear", (req, res) => {
   const { ID_Objetivo, KPI, Valor, Palanca, Accion } = req.body;
 
@@ -195,6 +202,7 @@ router.post("/kpi/crear", (req, res) => {
   });
 });
 
+//verificar para ver que empleados estan disponibles
 router.get("/empleados/disponibles", (req, res) => {
   const sql = "SELECT ID_Empleado, Nombre, Apellido FROM empleados WHERE Estado = 1";
   conexion.query(sql, (err, results) => {
@@ -202,6 +210,8 @@ router.get("/empleados/disponibles", (req, res) => {
     res.json(results);
   });
 });
+
+//ruta para agerar empleados al objetivo
 router.post("/equipo_objetivo/asignar", (req, res) => {
   const { ID_Area_objetivo, ID_Empleado } = req.body;
 
@@ -219,6 +229,101 @@ router.post("/equipo_objetivo/asignar", (req, res) => {
       return res.status(500).json({ error: "No se pudo asignar al equipo" });
     }
     res.json({ message: "Empleado asignado correctamente al área" });
+  });
+});
+
+
+router.post('/panel_ejecutivo/valor', (req, res) => {
+  const { id, valor } = req.body;
+
+  console.log(req.body);
+
+  const valorEntero = parseInt(valor);  // ✅ Asegura tipo INT
+
+  if (isNaN(valorEntero)) {
+    return res.status(400).json({ message: 'El valor debe ser numérico.' });
+  }
+
+  const sql = 'UPDATE objetivos_kpi SET Valor = ? WHERE ID_KPI = ?';
+  conexion.query(sql, [valorEntero, id], (err, result) => {
+    if (err) {
+      console.error('Error SQL:', err);
+      return res.status(500).json({ message: 'Error al actualizar el valor del KPI.' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'No se encontró ningún KPI con ese ID.' });
+    }
+
+    res.json({ message: 'Valor del KPI actualizado correctamente.' });
+  });
+});
+
+router.post('/panel_ejecutivo/eliminar', (req, res) => {
+  const { id } = req.body;
+  const sql = 'DELETE FROM objetivos_kpi WHERE ID_KPI = ?';
+
+  conexion.query(sql, [id], (err) => {
+    if (err) return res.status(500).json({ message: 'Error al eliminar KPI.' });
+    res.json({ message: 'KPI eliminado exitosamente.' });
+  });
+});
+
+router.post('/panel_ejecutivo/eliminar_objetivo', (req, res) => {
+  const { id } = req.body;
+
+  const sql = 'DELETE FROM objetivo WHERE ID_Objetivo = ?';
+
+  conexion.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error('Error SQL:', err);
+      return res.status(500).json({ message: 'Error al eliminar el objetivo.' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'No se encontró ningún objetivo con ese ID.' });
+    }
+
+    res.json({ message: 'Objetivo (y sus indicadores) eliminado correctamente.' });
+  });
+});
+
+
+router.post('/equipo_objetivo/eliminar', (req, res) => {
+  const { ID_Empleado, ID_Area_objetivo } = req.body;
+
+  const sql = `DELETE FROM equipo_objetivo WHERE ID_Empleado = ? AND ID_Area_objetivo = ?`;
+
+  conexion.query(sql, [ID_Empleado, ID_Area_objetivo], (err, result) => {
+    if (err) {
+      console.error('Error SQL:', err);
+      return res.status(500).json({ message: 'Error al eliminar al empleado del equipo.' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'No se encontró la asignación del empleado.' });
+    }
+
+    res.json({ message: 'Empleado eliminado del área correctamente.' });
+  });
+});
+
+router.get("/objetivos/promedios/:idArea", (req, res) => {
+  const { idArea } = req.params;
+  const sql = `
+    SELECT o.Objetivo, AVG(k.Valor) AS Promedio
+    FROM objetivo o
+    LEFT JOIN objetivos_kpi k ON o.ID_Objetivo = k.ID_Objetivo
+    WHERE o.ID_Area_objetivo = ?
+    GROUP BY o.Objetivo
+  `;
+
+  conexion.query(sql, [idArea], (err, result) => {
+    if (err) {
+      console.error("Error al obtener promedios:", err);
+      return res.status(500).json({ error: "Error al calcular promedios" });
+    }
+    res.json(result);
   });
 });
 

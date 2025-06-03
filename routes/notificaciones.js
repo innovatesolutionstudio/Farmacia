@@ -70,7 +70,9 @@ router.post('/notificar', (req, res) => {
 
 router.get("/notificaciones", (req, res) => {
   if (req.session.loggedin) {
+    console.log(req.session.ID_Rol);
     const { ID_Sucursal } = req.session;
+    const rol = req.session.ID_Rol;
     const query = `
       SELECT 
         e.Nombre AS Nombre,
@@ -91,7 +93,7 @@ router.get("/notificaciones", (req, res) => {
       }
 
      
-      res.render("notificaciones", { notificaciones: results });
+      res.render("notificaciones", { notificaciones: results,rol});
     });
   } else {
     res.render("./paginas/logout");
