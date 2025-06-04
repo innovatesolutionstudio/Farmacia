@@ -51,7 +51,9 @@
         <button id="btnAgregarIndicador" class="btn-tablero">Agregar indicadores</button>
         <button id="btnAsignarPersonas" class="btn-tablero">Asignar personas</button>
         <button id="EXportarPDF" class="btn-tablero">Exportar PDF</button>
-        <button class="btn-tablero"> publicar</button>
+        <button class="btn-tablero" onclick="publicarNotificacionArea(<%= ID_Area_objetivo %>)">Publicar</button>
+
+
         <button class="btn-tablero"> Eliminar</button>
       </div>
 
@@ -168,6 +170,44 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  async function publicarNotificacionArea(idArea) {
+    const { value: texto } = await Swal.fire({
+      title: 'Publicar notificación',
+      input: 'textarea',
+      inputLabel: 'Mensaje para el equipo asignado',
+      inputPlaceholder: 'Escribe aquí el mensaje...',
+      showCancelButton: true,
+      confirmButtonText: 'Publicar',
+      preConfirm: (value) => {
+        if (!value || value.trim().length === 0) {
+          Swal.showValidationMessage('El mensaje no puede estar vacío');
+          return false;
+        }
+        return value;
+      }
+    });
+
+    if (texto) {
+      try {
+        const response = await fetch('/publicar-notificacion-area', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ idArea, descripcion: texto })
+        });
+
+        const data = await response.json();
+        Swal.fire('Publicado', data.message, 'success');
+      } catch (err) {
+        Swal.fire('Error', 'No se pudo enviar la notificación', 'error');
+      }
+    }
+  }
+</script>
+
 
 <script>
   document.querySelector(".btn-tablero").addEventListener("click", async () => {

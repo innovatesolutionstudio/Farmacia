@@ -66,38 +66,77 @@ router.post('/notificar', (req, res) => {
     });
   });
 });
-
-
 router.get("/notificaciones", (req, res) => {
-  if (req.session.loggedin) {
-    console.log(req.session.ID_Rol);
-    const { ID_Sucursal } = req.session;
-    const rol = req.session.ID_Rol;
-    const query = `
-      SELECT 
-        e.Nombre AS Nombre,
-        e.Email AS Correo,
-        IFNULL(r.Nombre, 'Sin rol asignado') AS Rol,
-        n.Descripcion,
-        n.Fecha
-      FROM notificaciones n
-      JOIN empleados e ON n.ID_Empleado = e.ID_Empleado
-      LEFT JOIN roles r ON e.ID_Rol = r.ID_Rol
-      WHERE n.Estado = 1 AND e.ID_Sucursal = ?
-      ORDER BY n.Fecha DESC
-    `;
-    coneccion.query(query, [ID_Sucursal], (err, results) => {
-      if (err) {
-        console.error("Error al obtener notificaciones:", err);
-        return res.status(500).send("Error al obtener notificaciones");
-      }
+  if (!req.session.loggedin) return res.render("./paginas/logout");
 
-     
-      res.render("notificaciones", { notificaciones: results,rol});
+  const { ID_Sucursal, ID_Empleado, ID_Rol: rol } = req.session;
+
+  const queryGenerales = `
+    SELECT 
+      e.Nombre AS Nombre,
+      e.Email AS Correo,
+      IFNULL(r.Nombre, 'Sin rol asignado') AS Rol,
+      n.Descripcion,
+      n.Fecha
+    FROM notificaciones n
+    JOIN empleados e ON n.ID_Empleado = e.ID_Empleado
+    LEFT JOIN roles r ON e.ID_Rol = r.ID_Rol
+    WHERE (n.Estado IS NULL OR n.Estado = 1) AND e.ID_Sucursal = ?
+    ORDER BY n.Fecha DESC
+  `;
+
+  const queryBloqueo = `
+    SELECT 
+      n.Descripcion,
+      n.Fecha
+    FROM notificaciones n
+    WHERE n.ID_Empleado = ? AND (n.Estado = 1 OR n.Estado = 2)
+    ORDER BY n.Fecha DESC
+  `;
+
+  const queryInfo = `
+    SELECT 
+      n.Descripcion,
+      n.Fecha
+    FROM notificaciones n
+    WHERE n.ID_Empleado = ? AND n.Estado = 3
+    ORDER BY n.Fecha DESC
+  `;
+
+  const queryPDFs = `
+    SELECT 
+      ao.Nombre AS Area,
+      ao.Informe,
+      ao.Fecha_Inicio,
+      ao.Fecha_Fin
+    FROM equipo_objetivo eo
+    JOIN area_objetivo ao ON ao.ID_Area_objetivo = eo.ID_Area_objetivo
+    WHERE eo.ID_Empleado = ? AND ao.Informe IS NOT NULL
+  `;
+
+  coneccion.query(queryGenerales, [ID_Sucursal], (err, generales) => {
+    if (err) return res.status(500).send("Error al obtener notificaciones generales");
+
+    coneccion.query(queryBloqueo, [ID_Empleado], (err, bloqueos) => {
+      if (err) return res.status(500).send("Error al obtener notificaciones de bloqueo");
+
+      coneccion.query(queryInfo, [ID_Empleado], (err, informativas) => {
+        if (err) return res.status(500).send("Error al obtener notificaciones informativas");
+
+        coneccion.query(queryPDFs, [ID_Empleado], (err, informes) => {
+          if (err) return res.status(500).send("Error al obtener informes PDF");
+
+          res.render("notificaciones", {
+            notificaciones: generales,
+            bloqueos,
+            informativas,
+            informes,
+            rol
+          });
+        });
+      });
     });
-  } else {
-    res.render("./paginas/logout");
-  }
+  });
 });
 
 

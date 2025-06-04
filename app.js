@@ -136,6 +136,7 @@ app.use(
   express.static(path.join(__dirname, "reportes_generados"))
 );
 app.use("/impre", express.static(path.join(__dirname, "impresiones")));
+
 app.use(
   "/facturas_ventas",
   express.static(path.join(__dirname, "facturas_ventas"))

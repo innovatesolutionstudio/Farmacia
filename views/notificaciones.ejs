@@ -23,9 +23,31 @@
         <p class="subtext">Notificaciones pendientes.</p>
     </div>
 
-    <% if (rol === 1 || rol === 2|| rol === 3|| rol === 4|| rol === 5|| rol === 6|| rol === 7|| rol === 8) { %>
-      
-    <% } %>
+<% if (informes && informes.length > 0) { %>
+  <h3>Informes asignados a tu equipo</h3>
+  <% informes.forEach(function(inf) { %>
+    <div class="pedido-card personal informe">
+      <div class="pedido-icon">
+        <i class="fas fa-file-pdf"></i>
+      </div>
+      <div class="pedido-details">
+        <p><strong>Área:</strong> <%= inf.Area %></p>
+        <p><strong>Periodo:</strong> 
+          <%= new Date(inf.Fecha_Inicio).toLocaleDateString() %> — 
+          <%= new Date(inf.Fecha_Fin).toLocaleDateString() %>
+        </p>
+ 
+<a href="<%= inf.Informe %>" target="_blank" class="btn btn-pdf">
+  Ver PDF
+</a>
+
+
+      </div>
+    </div>
+  <% }); %>
+<% } %>
+
+
 
     <% if (rol === 1 || rol ===4) { %>
       <% if (notificaciones && notificaciones.length > 0) { %>

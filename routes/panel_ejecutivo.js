@@ -327,5 +327,34 @@ router.get("/objetivos/promedios/:idArea", (req, res) => {
   });
 });
 
+router.post("/publicar-notificacion-area", (req, res) => {
+  const { idArea, descripcion } = req.body;
+
+  if (!idArea || !descripcion) {
+    return res.status(400).json({ message: "Datos incompletos" });
+  }
+
+  const sql = `
+    SELECT ID_Empleado 
+    FROM equipo_objetivo 
+    WHERE ID_Area_objetivo = ?
+  `;
+
+  conexion.query(sql, [idArea], (err, empleados) => {
+    if (err) return res.status(500).json({ message: "Error al obtener empleados asignados" });
+
+    if (empleados.length === 0) {
+      return res.status(404).json({ message: "No hay empleados asignados a esta área" });
+    }
+
+    const notificaciones = empleados.map(emp => [emp.ID_Empleado, descripcion, 3]);
+    const insertSql = "INSERT INTO notificaciones (ID_Empleado, Descripcion, Estado) VALUES ?";
+
+    conexion.query(insertSql, [notificaciones], (err) => {
+      if (err) return res.status(500).json({ message: "Error al insertar notificaciones" });
+      res.json({ message: `Notificación enviada a ${empleados.length} empleado(s)` });
+    });
+  });
+});
 
 module.exports = router;

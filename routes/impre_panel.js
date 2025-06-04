@@ -210,8 +210,18 @@ router.get("/reporte_panel/:idArea", async (req, res) => {
   } finally {
     doc.end();
     stream.on("finish", () => {
-      res.redirect(`/impre/${path.basename(filePath)}`);
+      const rutaRelativa = `impre/${fileName}`;
+      const updateSql = "UPDATE area_objetivo SET Informe = ? WHERE ID_Area_objetivo = ?";
+      conexion.query(updateSql, [rutaRelativa, idArea], (err, result) => {
+        if (err) {
+          console.error("Error al actualizar la ruta del informe:", err);
+        } else {
+          console.log("Informe actualizado correctamente en la base de datos.");
+        }
+        res.redirect(`/impre/${fileName}`);
+      });
     });
+
   }
 });
 
